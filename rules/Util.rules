@@ -1,0 +1,195 @@
+# output directory and log
+U_OUT, U_LOG = prepare_environment('Util')
+
+rule _DOWNLOAD_HUMAN_DB:
+    output:
+        expand("{path}/{filter}.{ext}", path=config["human_filtering"]["db_path"], filter=config["human_filtering"]["filter"], ext=['fa'])
+    params:
+        filter = config["human_filtering"]["filter"], outdir = config["human_filtering"]["db_path"]
+    shell:
+        """
+        TMPD=$(mktemp -d -t --tmpdir={TMPDIR} "XXXXXX")
+        wget {config[human_filtering][url]} -O $TMPD/{params.filter}.fa.gz
+        gunzip $TMPD/{params.filter}.fa.gz
+        mkdir -p {params.outdir}
+        mv $TMPD/{params.filter}.fa {params.outdir}
+        rm -rf $TMPD
+        """
+
+
+rule _DOWNLOAD_SORTMERNA_DATABASES:
+    output:
+        expand("{path}/{files}.fasta", files=config["sortmerna"]["files"], path=config["sortmerna"]["db_path"])
+    shell:
+        """
+        TMPD=$(mktemp -d -t --tmpdir={tmp} "XXXXXX")
+        wget {pkg_url} -O $TMPD/sortmerna.tgz
+        tar -xzf  $TMPD/sortmerna.tgz --strip-components=1 -C $TMPD
+        mkdir -p {path}
+        mv $TMPD/rRNA_databases/*.fasta {path}/.
+        rm -rf $TMPD
+        """.format(pkg_url=config["sortmerna"]["pkg_url"], path=config["sortmerna"]["db_path"], tmp='{TMPDIR}')
+
+rule _DOWNLOAD_PROKKA_DATABASES:
+    output:
+        expand("{path}/{db}", path=config["prokka"]["db_path"], db=config["prokka"]["databases"])
+    shell:
+        """
+        TMPDIR=$(mktemp -d -t "XXXXXX")
+        wget {pkg_url} -O $TMPDIR/prokka.tgz
+        tar -xzf $TMPDIR/prokka.tgz --strip-components=1 -C $TMPDIR
+        mkdir -p {path}
+        cp -r $TMPDIR/db/* {path}/.
+        rm -rf $TMPDIR
+        prokka --setupdb
+        """.format(pkg_url=config["prokka"]["pkg_url"], path=config["prokka"]["db_path"])
+
+
+rule _DOWNLOAD_LIBRARY_FILES:
+    output:
+        "lib/d3.min.js", "lib/d3pie.min.js", "lib/jquery-2.1.1.min.js"
+    shell:
+        """
+        wget https://raw.githubusercontent.com/mbostock/d3/master/d3.min.js -O lib/d3.min.js
+        wget https://raw.githubusercontent.com/benkeen/d3pie/0.1.3/d3pie/d3pie.min.js -O lib/d3pie.min.js
+        wget http://code.jquery.com/jquery-2.1.1.min.js -O lib/jquery-2.1.1.min.js
+        """
+
+rule INDEX_SORTMERNA_DB:
+    log:
+        U_LOG
+    benchmark:
+        "%s/benchmarks/INDEX_SORTMERNA_DB.json" % U_OUT
+    input:
+        expand("{path}/{files}.fasta", files=config["sortmerna"]["files"], path=config["sortmerna"]["db_path"])
+    output:
+        expand(
+            "{path}/idx/{files}.{ext}",
+            files=config["sortmerna"]["files"],
+            path=config["sortmerna"]["db_path"],
+            ext=['bursttrie_0.dat', 'kmer_0.dat', 'pos_0.dat', 'stats'])
+    params:
+        outdir = "%s/idx" % config["sortmerna"]["db_path"]
+    run:
+        fastaindexed = expand(
+            "{path}/idx/{files}",
+            files=config["sortmerna"]["files"],
+            path=config["sortmerna"]["db_path"])
+        ref = ':'.join('%s,%s' % (a, b) for a, b in zip(input, fastaindexed))
+        shell("mkdir -p {params.outdir}")
+        shell("indexdb_rna --ref {ref} > {log}  2>&1")
+
+
+rule DIAGRAMMS:
+    message:
+        "Creating diagramms."
+    output:
+        expand(["{dir}/workflow.png", "{dir}/workflow.pdf"], dir=OUTPUTDIR)
+    params:
+        outdir = "%s" % OUTPUTDIR
+    shell:
+        """
+        snakemake RUN --forceall --dag | dot -Tpng > {params.outdir}/workflow.png
+        snakemake RUN --forceall --dag | dot -Tpdf > {params.outdir}/workflow.pdf
+        """
+
+rule REPORT:
+    input:
+        ["lib/imp.html", "lib/d3.min.js", "lib/jquery-2.1.1.min.js", "lib/imp.js"] + expand(["{dir}/workflow.png", "{dir}/workflow.pdf"], dir=OUTPUTDIR)
+    params:
+        outdir = "%s" % OUTPUTDIR
+    message:
+        'Create report'
+    run:
+        with open('%s/data.js' % OUTPUTDIR, 'w') as whandle:
+            towrite = json.dumps(config)
+            whandle.write("IMP_CONFIG = %s;" % towrite)
+            if os.path.exists('stats.json'):
+                with open('stats.json', 'r') as rhandle:
+                    towrite = json.load(rhandle)
+                    whandle.write("\nIMP_STATS = %s;" % towrite )
+        shell("cp {input[0]} {params.outdir}/IMP.html")
+        shell("cp {input[1]} {params.outdir}")
+        shell("cp {input[2]} {params.outdir}")
+        shell("cp {input[3]} {params.outdir}")
+        if os.path.exists('imp.log'):
+            shell("mv imp.log {params.outdir}")
+
+
+rule REPORT2:
+        input:
+            ["lib/imp.html", "lib/d3.min.js", "lib/jquery-2.1.1.min.js", "lib/imp.js"]
+        params:
+            outdir = "%s" % OUTPUTDIR
+        message:
+            'Create report'
+        run:
+          with open('%s/data.js' % OUTPUTDIR, 'w') as whandle:
+                  towrite = json.dumps(config)
+                  whandle.write("IMP_CONFIG = %s;" % towrite)
+                  if os.path.exists('stats.json'):
+                          with open('stats.json', 'r') as rhandle:
+                                  towrite = json.load(rhandle)
+                                  whandle.write("\nIMP_STATS = %s;" % towrite)
+          shell("cp {input[0]} {params.outdir}/IMP.html")
+          shell("cp {input[1]} {params.outdir}")
+          shell("cp {input[2]} {params.outdir}")
+          shell("cp {input[3]} {params.outdir}")
+          if os.path.exists('imp.log'):
+            shell("mv imp.log {params.outdir}")
+
+
+rule INDEX_FASTA_FILE:
+    log:
+        U_LOG
+    benchmark:
+        "%s/benchmarks/INDEX_FASTA_FILE.json" % U_OUT
+    input:
+        "{fasta}"
+    output:
+        "{fasta}.amb",
+        "{fasta}.bwt",
+        "{fasta}.pac",
+        "{fasta}.sa",
+        "{fasta}.ann"
+    shell:
+        """
+        bwa index {wildcards.fasta} > {log} 2>&1
+        """
+
+rule CHECK_TOOLS_VERSION:
+    log:
+        U_LOG
+    benchmark:
+        "%s/benchmarks/CHECK_TOOLS_VERSION.json" % U_OUT
+    output:
+        "%s/tools.versions" % U_OUT
+    shell:
+        """
+        echo "# ht2-stat" > {output}
+        ht2-stat --version >> {output}
+        echo "# ht2-stat-draw.pl" >> {output}
+        which ht2-stat-draw.pl | md5sum | awk '{{print $1}}' >> {output}
+        echo "# Trimmomatic" >> {output}
+        echo "{config[Preprocessing][trimmomatic][jarfile]}" | grep -Eo '[0-9]+.[0-9]+' >> {output}
+        echo "# Sortmerna" >> {output} 2>&1
+        sortmerna --version >> {output} 2>&1
+        echo "# megahit" >> {output}
+        megahit --help > megahit_version 2>&1
+        cat megahit_version | head -1 >> {output}
+        echo "# bwa" >> {output}
+        bwa > bwa_version 2>&1
+        cat bwa_version | grep -i "version" >> {output}
+        echo "# samtools" >> {output}
+        samtools > samtools_version 2>&1
+        cat samtools_version | grep "Version" >> {output}
+        echo "# bamToFastq" >> {output}
+        bamToFastq > bamToFastq_version 2>&1
+        cat bamToFastq_version | grep -i "version" >> {output}
+        echo "# idba_ud" >> {output}
+        echo "# fq2fa" >> {output}
+        echo "# cap3"  >> {output}
+        echo "# coverageBed"  >> {output}
+        echo "# bh_tsne" >> {output}
+
+        """

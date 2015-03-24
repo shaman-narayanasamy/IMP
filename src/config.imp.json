@@ -1,0 +1,89 @@
+{
+    "General": {
+      "threads": 4,
+      "memory_total_gb": 8,
+      "memory_per_core_gb": 2,
+      "tmp_dir": "./build/tmp",
+      "imp_src": "src",
+      "datadir": "TEST_DATA",
+      "raws": {
+          "Metagenomics": "MG.R1.5_percent.fq MG.R2.5_percent.fq",
+          "Metatranscriptomics": "MT.R1.5_percent.fq MT.R2.5_percent.fq"
+      },
+      "sample": "test",
+      "outputdir": "build"
+    },
+    "Preprocessing": {
+      "pre": "echo '//LOADING PREPROCESSING MODULE'",
+      "filtering": true,
+      "trimmomatic": {
+          "adapter": "TruSeq3",
+          "leading": 20,
+          "minlen": 40,
+          "palindrome_clip_threshold": 30,
+          "simple_clip_threshold": 10,
+          "trailing": 20,
+          "seed_mismatch": 2,
+          "window_size": 1,
+          "window_quality": 3,
+          "strictness": 0.5,
+          "target_length": 40,
+          "jarfile": "/home/imp/lib/trimmomatic-0.32.jar",
+          "databases": "/usr/db/trimmomatic"
+      }
+    },
+    "Assembly": {
+      "pre": "echo '//LOADING ASSEMBLY MODULE'",
+      "idba_ud": {
+          "mink": 25,
+          "maxk": 95,
+          "step": 5,
+          "perid": 0.98
+      }
+    },
+    "Analysis": {
+      "pre": "echo '//LOADING ANALYSIS MODULE'",
+      "vizbin": {
+          "dimension": 50,
+          "length": 5,
+          "size": 4,
+          "theta": 0.5,
+          "perp": 1,
+          "minlen": 1000
+      }
+    },
+    "Util": {
+      "pre": "echo '//LOADING UTIL MODULE'"
+    },
+    "human_filtering": {
+        "filter": "chr21",
+        "url": "http://hgdownload.cse.ucsc.edu/goldenPath/hg38/chromosomes/chr21.fa.gz",
+        "db_path": "/usr/db/human"
+    },
+    "sortmerna": {
+        "db_path": "/usr/db/sortmerna",
+        "pkg_url": "https://github.com/biocore/sortmerna/archive/2.0.tar.gz",
+        "scripts_path": "/home/imp/lib",
+
+        "files": [
+            "rfam-5.8s-database-id98",
+            "silva-arc-16s-id95",
+            "silva-bac-16s-id90",
+            "silva-euk-18s-id95",
+            "rfam-5s-database-id98",
+            "silva-arc-23s-id98",
+            "silva-bac-23s-id98",
+            "silva-euk-28s-id98"
+        ]
+    },
+    "prokka": {
+        "pkg_url": "http://www.vicbioinformatics.com/prokka-1.10.tar.gz",
+        "db_path": "/usr/db",
+        "databases": [
+            "cm/Bacteria.i1i",
+            "genus/Staphylococcus.phr",
+            "hmm/CLUSTERS.hmm.h3f",
+            "kingdom/Archaea/sprot.phr"
+        ]
+    }
+}

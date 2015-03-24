@@ -1,0 +1,298 @@
+################
+# ## MT SECTION
+################
+
+rule ASSEMBLY_MT_ASSEMBLY_1:
+    log:
+        A_LOG
+    benchmark:
+        "%s/benchmarks/ASSEMBLY_MT_ASSEMBLY_1.json" % A_OUT
+    input:
+        preprocessed_mt('R1'),
+        preprocessed_mt('R2'),
+        preprocessed_mt('SE')
+    output:
+        '{dir}/MT.assembly_1/final.contigs.fa'.format(dir=A_OUT)
+    params:
+        outdir = "{dir}/MT.assembly_1".format(dir=A_OUT)
+    shell:
+        """
+        MAX_READ_LEN=$(cat {input} | sed -n '1~4s/^@/>/p;2~4p' |\
+        awk '$0 ~ \">\" {{c=0\"\t\"; }} $0 !~ \">\" {{c+=length($0); max=(max>c)?max:c;}} END {{print max}}')
+        echo "Max read length: $MAX_READ_LEN"
+        MEMBYTES=$(({MEMTOTAL}*1000*1000*1000))
+        echo "Available memory in bytes: $MEMBYTES"
+        megahit -o {params.outdir} --cpu-only -m $MEMBYTES --mem-flag 1\
+        -l $MAX_READ_LEN --input-cmd "cat {input}" -t {THREADS} --continue > {log} 2>&1
+        """
+
+
+rule ASSEMBLY_MT_EXTRACT_UNMAPPED_FROM_ASSEMBLY_1:
+    log:
+        A_LOG
+    benchmark:
+        "%s/benchmarks/ASSEMBLY_MT_EXTRACT_UNMAPPED_FROM_ASSEMBLY_1.json" % A_OUT
+    input:
+        preprocessed_mt('R1'),
+        preprocessed_mt('R2'),
+        preprocessed_mt('SE'),
+        '{dir}/MT.assembly_1/final.contigs.fa'.format(dir=A_OUT),
+        expand('{dir}/MT.assembly_1/final.contigs.fa.{ext}', dir=A_OUT, ext=['amb', 'bwt', 'pac', 'sa', 'ann'])
+    output:
+        expand('{dir}/{name}', name=[
+            'MT.R1.unmapped.fq',
+            'MT.R2.unmapped.fq',
+            'MT.SE.unmapped.fq'], dir=A_OUT)
+    shell:
+        """
+        TMP_FILE=$(mktemp --tmpdir={TMPDIR} -t "alignment_XXXXXX.bam")
+        BUFFER=$(mktemp --tmpdir={TMPDIR} -t "alignment_buffer_XXXXXX.bam")
+        bwa mem -v 1 -t {THREADS} {input[3]} {input[0]} {input[1]} | samtools view -@ {THREADS} -bS - > $TMP_FILE
+        samtools merge -@ {THREADS} -u - \
+        <(samtools view -@ {THREADS} -u  -f 4 -F 264 $TMP_FILE) \
+        <(samtools view -@ {THREADS} -u -f 8 -F 260 $TMP_FILE) \
+        <(samtools view -@ {THREADS} -u -f 12 -F 256 $TMP_FILE) | \
+        samtools view -@ {THREADS} -bF 0x800 -  | samtools sort -o -@ {THREADS} -m {MEMCORE}G -n - $BUFFER | \
+        bamToFastq -i stdin -fq {output[0]} -fq2 {output[1]}
+        bwa mem -v 1 -t {THREADS} {input[3]} {input[2]} | \
+        samtools view -@ {THREADS} -bS - | samtools view -@ {THREADS} -uf 4 - | \
+        bamToFastq -i stdin -fq {output[2]}
+        rm -rf $BUFFER* $TMP_FILE
+        """
+
+rule ASSEMBLY_MT_ASSEMBLY_2:
+    log:
+        A_LOG
+    benchmark:
+        "%s/benchmarks/ASSEMBLY_MT_ASSEMBLY_2.json" % A_OUT
+    input:
+        expand('{dir}/{name}', name=[
+            'MT.R1.unmapped.fq',
+            'MT.R2.unmapped.fq',
+            'MT.SE.unmapped.fq'], dir=A_OUT)
+    output:
+        '{dir}/MT.assembly_2/final.contigs.fa'.format(dir=A_OUT)
+    params:
+        outdir = "{dir}/MT.assembly_2".format(dir=A_OUT)
+    shell:
+        """
+        MAX_READ_LEN=$(cat {input} | sed -n '1~4s/^@/>/p;2~4p' | \
+        awk '$0 ~ \">\" {{c=0\"\t\"; }} $0 !~ \">\" {{c+=length($0); max=(max>c)?max:c;}} END {{print max}}')
+        MEMBYTES=$(({MEMTOTAL}*1000*1000*1000))
+        megahit -o {params.outdir} --cpu-only -m $MEMBYTES --mem-flag 1 -l $MAX_READ_LEN \
+        --input-cmd "cat {input}" -t {THREADS} --continue > {log} 2>&1
+        """
+
+rule ASSEMBLY_MT_CAT_ASSEMBLY:
+    log:
+        A_LOG
+    benchmark:
+        "%s/benchmarks/ASSEMBLY_MT_CAT_ASSEMBLY.json" % A_OUT
+    input:
+        '{dir}/MT.assembly_1/final.contigs.fa'.format(dir=A_OUT),
+        '{dir}/MT.assembly_2/final.contigs.fa'.format(dir=A_OUT)
+    output:
+        '{dir}/MT.assembly.cat.fa'.format(dir=A_OUT)
+    shell:
+        """
+        cat {input[0]} {input[1]} | awk '/^>/{{print ">contig_MT_" ++i; next}}{{print}}' > {output}
+        """
+##################
+# ## MGMT SECTION - ASSEMBLY
+##################
+
+rule ASSEMBLY_MGMT_ASSEMBLY_SE_CAT:
+    log:
+        A_LOG
+    benchmark:
+        "%s/benchmarks/ASSEMBLY_MGMT_ASSEMBLY_SE_CAT.json" % A_OUT
+    input:
+        '{dir}/MT.assembly.cat.fa'.format(dir=A_OUT),
+        preprocessed_mg('SE')
+    output:
+        '{dir}/MGMT.MT_assembly-MG_SE.fa'.format(dir=A_OUT),
+    shell:
+        ""
+        "cat {input[0]} <(cat {input[1]} | sed -n '1~4s/^@/>/p;2~4p') > {output}"
+
+
+rule ASSEMBLY_MGMT_ASSEMBLY_1:
+    log:
+        A_LOG
+    benchmark:
+        "%s/benchmarks/ASSEMBLY_MGMT_ASSEMBLY_1.json" % A_OUT
+    input:
+        preprocessed_mg('R1'),
+        preprocessed_mg('R2'),
+        expand('{dir}/{name}', name=[
+            'MGMT.MT_assembly-MG_SE.fa'], dir=A_OUT)
+    output:
+        '{dir}/MGMT.assembly_1.fa'.format(dir=A_OUT),
+    shell:
+        """
+        TMPD=$(mktemp -d -t --tmpdir={TMPDIR} "XXXXXX")
+        fq2fa --merge {input[0]} {input[1]} $TMPD/merged.fa
+        idba_ud -r $TMPD/merged.fa \
+        -l {input[2]} -o $TMPD \
+        --mink {config[Assembly][idba_ud][mink]} --maxk {config[Assembly][idba_ud][maxk]} \
+        --step {config[Assembly][idba_ud][step]} --num_threads {THREADS} \
+        --similar {config[Assembly][idba_ud][perid]} --pre_correction
+        mv $TMPD/contig.fa {output}
+        rm -rf $TMPD
+        """
+
+
+rule ASSEMBLY_MGMT_EXTRACT_UNMAPPED_FROM_ASSEMBLY_1:
+    log:
+        A_LOG
+    benchmark:
+        "%s/benchmarks/ASSEMBLY_MGMT_EXTRACT_UNMAPPED_FROM_ASSEMBLY_1.json" % A_OUT
+    input:
+        preprocessed_mg('R1'),
+        preprocessed_mg('R2'),
+        preprocessed_mg('SE'),
+        '{dir}/MGMT.assembly_1.fa'.format(dir=A_OUT),
+        expand('{dir}/MGMT.assembly_1.fa.{ext}', dir=A_OUT, ext=['amb', 'bwt', 'pac', 'sa', 'ann'])
+    output:
+        expand('{dir}/{name}', name=[
+            'MGMT.assembly_1.R1.fq',
+            'MGMT.assembly_1.R2.fq',
+            'MGMT.assembly_1.SE.fq'], dir=A_OUT)
+    shell:
+        """
+        TMP_FILE=$(mktemp --tmpdir={TMPDIR} -t "alignment_XXXXXX.bam")
+        BUFFER=$(mktemp --tmpdir={TMPDIR} -t "alignment_XXXXXX.bam")
+        bwa mem -v 1 -t {THREADS} {input[3]} {input[0]} {input[1]} | samtools view -@ {THREADS} -bS - > $TMP_FILE
+        samtools merge -@ {THREADS} -u - \
+        <(samtools view -@ {THREADS} -u  -f 4 -F 264 $TMP_FILE) \
+        <(samtools view -@ {THREADS} -u -f 8 -F 260 $TMP_FILE) \
+        <(samtools view -@ {THREADS} -u -f 12 -F 256 $TMP_FILE) | \
+        samtools view -@ {THREADS} -bF 0x800 -  | samtools sort -o -@ {THREADS} -m {MEMCORE}G -n - BUFFER | \
+        bamToFastq -i stdin -fq {output[0]} -fq2 {output[1]}
+        bwa mem -v 1 -t {THREADS} {input[3]} {input[2]} | samtools view -@ {THREADS} -bS - | \
+        samtools view -@ {THREADS} -uf 4 - | bamToFastq -i stdin -fq {output[2]}
+        rm -rf $BUFFER* $TMP_FILE
+        """
+
+
+rule ASSEMBLY_MGMT_ASSEMBLY_2:
+    log:
+        A_LOG
+    benchmark:
+        "%s/benchmarks/ASSEMBLY_MGMT_ASSEMBLY_2.json" % A_OUT
+    input:
+        expand('{dir}/{name}', name=[
+            'MGMT.assembly_1.R1.fq',
+            'MGMT.assembly_1.R2.fq',
+            'MGMT.assembly_1.SE.fq'], dir=A_OUT)
+    output:
+        '{dir}/MGMT.assembly_2.fa'.format(dir=A_OUT),
+    shell:
+        """
+        TMPD=$(mktemp -d -t --tmpdir={TMPDIR} "XXXXXX")
+        fq2fa --merge {input[0]} {input[1]} $TMPD/merged.fa
+        idba_ud -r $TMPD/merged.fa \
+        -l {input[2]} -o $TMPD \
+        --mink {config[Assembly][idba_ud][mink]} --maxk {config[Assembly][idba_ud][maxk]} \
+        --step {config[Assembly][idba_ud][step]} --num_threads {THREADS} \
+        --similar {config[Assembly][idba_ud][perid]} --pre_correction
+        mv $TMPD/contig.fa {output}
+        rm -rf $TMPD
+        """
+
+rule ASSEMBLY_MGMT_MERGE_ASSEMBLY:
+    log:
+        A_LOG
+    benchmark:
+        "%s/benchmarks/ASSEMBLY_MGMT_MERGE_ASSEMBLY.json" % A_OUT
+    input:
+        '{dir}/MGMT.assembly_1.fa'.format(dir=A_OUT),
+        '{dir}/MGMT.assembly_2.fa'.format(dir=A_OUT)
+    output:
+        '{dir}/MGMT.assembly.merged.fa'.format(dir=A_OUT),
+    shell:
+        """
+        NAME={A_OUT}/MGMT.assembly
+        cat {input} > $NAME.cat.fa
+        cap3 $NAME.cat.fa
+        # Concatenate assembled contigs, singletons and rename the contigs
+        cat $NAME.cat.fa.cap.contigs $NAME.cat.fa.cap.singlets | \
+        awk '/^>/{{print \">contig_\" ++i; next}}{{print}}' > $NAME.merged.fa
+        """
+
+
+##################
+# ## MGMT SECTION - MAPPING
+##################
+
+rule ASSEMBLY_MG_MAPPING:
+    log:
+        A_LOG
+    benchmark:
+        "%s/benchmarks/ASSEMBLY_MG_MAPPING.json" % A_OUT
+    input:
+        preprocessed_mg('R1'),
+        preprocessed_mg('R2'),
+        preprocessed_mg('SE'),
+        expand('{dir}/{name}', name=[
+            'MGMT.assembly.merged.fa'], dir=A_OUT)
+    params:
+        prefix = "%s/MG.reads" % A_OUT, sample = SAMPLE
+    output:
+        expand('{dir}/{name}', name=[
+            'MG.reads.sorted.bam',
+            'MG.reads.sorted.bam.bai'], dir=A_OUT),
+    shell:
+        """
+        SAMHEADER="@RG\\tID:{SAMPLE}\\tSM:MG"
+        PREFIX={A_OUT}/MG.reads
+        # index
+        bwa index {input[3]}
+        # merge paired and se
+        samtools merge -@ {THREADS} -f $PREFIX.merged.bam \
+        <(bwa mem -v 1 -t {THREADS} -M -R \"$SAMHEADER\" {input[3]} {input[0]} {input[1]} | \
+        samtools view -@ {THREADS} -bS -) \
+        <(bwa mem -v 1 -t {THREADS} -M -R \"$SAMHEADER\" {input[3]} {input[2]} | \
+        samtools view -@ {THREADS} -bS -)
+        # sort
+        samtools sort -@ {THREADS} -m {MEMCORE}G $PREFIX.merged.bam $PREFIX.sorted
+        rm $PREFIX.merged.bam
+        # index
+        samtools index $PREFIX.sorted.bam
+        """
+
+rule ASSEMBLY_MT_MAPPING:
+    log:
+        A_LOG
+    benchmark:
+        "%s/benchmarks/ASSEMBLY_MGMT_MAPPING.json" % A_OUT
+    input:
+        preprocessed_mt('R1'),
+        preprocessed_mt('R2'),
+        preprocessed_mt('SE'),
+        expand('{dir}/{name}', name=[
+            'MGMT.assembly.merged.fa'], dir=A_OUT)
+    params:
+        prefix = "%s/MT.reads" % A_OUT, sample = SAMPLE
+    output:
+        expand('{dir}/{name}', name=[
+            'MT.reads.sorted.bam',
+            'MT.reads.sorted.bam.bai'], dir=A_OUT),
+    shell:
+        """
+        SAMHEADER="@RG\\tID:{SAMPLE}\\tSM:MG"
+        PREFIX={A_OUT}/MT.reads
+        # index
+        bwa index {input[3]}
+        # merge paired and se
+        samtools merge -@ {THREADS} -f $PREFIX.merged.bam \
+        <(bwa mem -v 1 -t {THREADS} -M -R \"$SAMHEADER\" {input[3]} {input[0]} {input[1]} | \
+        samtools view -@ {THREADS} -bS -) \
+        <(bwa mem -v 1 -t {THREADS} -M -R \"$SAMHEADER\" {input[3]} {input[2]} | \
+        samtools view -@ {THREADS} -bS -)
+        # sort
+        samtools sort -@ {THREADS} -m {MEMCORE}G $PREFIX.merged.bam $PREFIX.sorted
+        rm $PREFIX.merged.bam
+        # index
+        samtools index $PREFIX.sorted.bam
+        """

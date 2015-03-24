@@ -1,0 +1,527 @@
+
+rule ANALYSIS_ANNOTATE:
+    log:
+        AN_LOG
+    benchmark:
+        "%s/benchmarks/ANALYSIS_ANNOTATE.json" % AN_OUT
+    input:
+        '{dir}/MGMT.assembly.merged.fa'.format(dir=A_OUT),
+        expand("{path}/{db}", path=config["prokka"]["db_path"], db=config["prokka"]["databases"])
+    output:
+        "%s/annotation/annotation.filt.gff" % AN_OUT
+    shell:
+        """
+        prokka --force --outdir {AN_OUT}/annotation --cpus {THREADS} --metagenome --norrna {input[0]} > {log} 2>&1
+        # Prokka gives a weird gff file with all the sequences. We need to write some small code to produce a file that
+        # cleans up the output
+
+        LN=`grep -Hn "^>" {AN_OUT}/annotation/PROKKA_*.gff | head -n1 | cut -f2 -d ":"`
+        LN1=1
+        LN=$(($LN-$LN1))
+        head -n $LN {AN_OUT}/annotation/*.gff | grep -v "^#" | sort | uniq | grep -v "^==" > {output}
+        """
+
+rule ANALYSIS_MG_GENE_COVERAGE:
+    log:
+        AN_LOG
+    benchmark:
+        "%s/benchmarks/ANALYSIS_MG_GENE_COVERAGE.json" % AN_OUT
+    input:
+        "%s/annotation/annotation.filt.gff" % AN_OUT,
+        "%s/MG.reads.sorted.bam" % A_OUT
+    output:
+        "%s/MG.annotation.bed" % AN_OUT,
+        "%s/MG.gene_depth.hist" % AN_OUT,
+        "%s/MG.gene_depth.avg" % AN_OUT,
+        "%s/MG.gene.len" % AN_OUT,
+    shell:
+        """
+        coverageBed -hist -abam {input[1]} -b {input[0]} | grep -v "^all" > {output[0]}
+        paste <(cat {output[0]} | cut -f9 | cut -f1 -d \";\" | sed -e \"s/ID=//g\") \
+        <(cut -f10,11,12,13 {output[0]}) > {output[1]}
+        ## This code was adapted and modified from the CONCOCT script to calculate depth
+        ## It prints out a file that contains the average depth of all the genes
+        awk -v OFS='\t' 'BEGIN {{pc=""}}
+        {{
+            c=$1;
+            if (c == pc) {{
+                    cov=cov+$2*$5;
+            }} else {{
+                print pc,cov;
+                cov=$2*$5;
+                pc=c
+            }}
+        }} END {{print pc,cov}}' < {output[1]} | tail -n +2 > {output[2]}
+        # Record gene length file
+        cut -f 1,4 {output[1]} | uniq > {output[3]}
+        """
+
+
+rule ANALYSIS_MT_GENE_COVERAGE:
+    log:
+        AN_LOG
+    benchmark:
+        "%s/benchmarks/ANALYSIS_MT_GENE_COVERAGE.json" % AN_OUT
+    input:
+        "%s/annotation/annotation.filt.gff" % AN_OUT,
+        "%s/MT.reads.sorted.bam" % A_OUT
+    output:
+        "%s/MT.annotation.bed" % AN_OUT,
+        "%s/MT.gene_depth.hist" % AN_OUT,
+        "%s/MT.gene_depth.avg" % AN_OUT,
+        "%s/MT.gene.len" % AN_OUT,
+    shell:
+        """
+        coverageBed -hist -abam {input[1]} -b {input[0]} | grep -v "^all" > {output[0]}
+        paste <(cat {output[0]} | cut -f9 | cut -f1 -d \";\" | sed -e \"s/ID=//g\") \
+        <(cut -f10,11,12,13 {output[0]}) > {output[1]}
+        ## This code was adapted and modified from the CONCOCT script to calculate depth
+        ## It prints out a file that contains the average depth of all the genes
+        awk -v OFS='\t' 'BEGIN {{pc=""}}
+        {{
+            c=$1;
+            if (c == pc) {{
+                    cov=cov+$2*$5;
+            }} else {{
+                print pc,cov;
+                cov=$2*$5;
+                pc=c
+            }}
+        }} END {{print pc,cov}}' < {output[1]} | tail -n +2 > {output[2]}
+        # Record gene length file
+        cut -f 1,4 {output[1]} | uniq > {output[3]}
+        """
+
+
+rule ANALYSIS_MG_VARIANT_CALLING:
+    log:
+        AN_LOG
+    benchmark:
+        "%s/benchmarks/ANALYSIS_MG_VARIANT_CALLING.json" % AN_OUT
+    input:
+        "%s/MGMT.assembly.merged.fa" % A_OUT,
+        "%s/MG.reads.sorted.bam" % A_OUT,
+    output:
+        "%s/MG.variants.isec.vcf.gz" % AN_OUT
+    shell:
+        """
+        echo "[x]  VARIANT CALLING `date +"%Y/%m/%d %H:%M:%S"`"
+        if [[ ! -f {input[1]}.bai ]]
+        then
+            echo "Bam index doesn't exist, Creating one..."
+            echo "Indexing bam: {input[1]}"
+            samtools index {input[1]}
+        fi
+
+        if [[ ! -f {input[0]}.fai ]]
+        then
+          echo "Fasta index doesn't exist, Creating one..."
+          echo "Indexing fasta: {input[0]}"
+          samtools faidx {input[0]}
+        fi
+
+        #temporary directory and files
+        VCF_MPU=$(mktemp --tmpdir={TMPDIR} -t "XXXXXX.mpu.vcf")
+        VCF_FRB=$(mktemp --tmpdir={TMPDIR} -t "XXXXXX.frb.vcf")
+        VCF_PLT=$(mktemp --tmpdir={TMPDIR} -t "XXXXXX.plt.vcf")
+
+        ### run_mpileup {input[0]} {input[1]} $VCF_MPU
+        samtools mpileup -uf {input[0]} {input[1]} | bcftools view -vcg - > $VCF_MPU
+        wait
+        bgzip -c $VCF_MPU > $VCF_MPU.gz
+        tabix -f -p vcf $VCF_MPU.gz
+
+        ### run_freebayes {input[0]} {input[1]} $VCF_FRB
+        freebayes -f {input[0]} {input[1]} > $VCF_FRB
+        bgzip -c $VCF_FRB > $VCF_FRB.gz
+        tabix -f -p vcf $VCF_FRB.gz
+
+        ### run_platypus {input[0]} {input[1]} $VCF_PLT
+        Platypus.py callVariants --refFile={input[0]} --bamFiles={input[1]} --nCPU={THREADS} -o $VCF_PLT
+        bgzip -c $VCF_PLT > $VCF_PLT.gz
+        tabix -f -p vcf $VCF_PLT.gz
+
+
+
+        ### "Merging outputs "
+
+        ## Must remove colons from the contig names in upstream steps. Unable to merge the variants
+        ## due to this problem
+        vcf-isec -f -a -n +2 $VCF_PLT.gz $VCF_FRB.gz $VCF_MPU.gz > {AN_OUT}/MG.variants.isec.vcf
+
+        # Compress and index the output.
+        bgzip -c {AN_OUT}/MG.variants.isec.vcf > {AN_OUT}/MG.variants.isec.vcf.gz
+        tabix -f -p vcf {AN_OUT}/MG.variants.isec.vcf.gz
+
+        # Clean up directory
+        echo "Cleaning up directory"
+        cat log.txt > {log}
+        rm -f {AN_OUT}/MG.variants.isec.vcf log.txt
+        """
+
+
+rule ANALYSIS_MT_VARIANT_CALLING:
+    log:
+        AN_LOG
+    benchmark:
+        "%s/benchmarks/ANALYSIS_MT_VARIANT_CALLING.json" % AN_OUT
+    input:
+        "%s/MGMT.assembly.merged.fa" % A_OUT,
+        "%s/MT.reads.sorted.bam" % A_OUT,
+    output:
+        "%s/MT.variants.isec.vcf.gz" % AN_OUT
+    shell:
+        """
+        echo "[x]  VARIANT CALLING `date +"%Y/%m/%d %H:%M:%S"`"
+        if [[ ! -f {input[1]}.bai ]]
+        then
+            echo "Bam index doesn't exist, Creating one..."
+            echo "Indexing bam: {input[1]}"
+            samtools index {input[1]}
+        fi
+
+        if [[ ! -f {input[0]}.fai ]]
+        then
+          echo "Fasta index doesn't exist, Creating one..."
+          echo "Indexing fasta: {input[0]}"
+          samtools faidx {input[0]}
+        fi
+
+        #temporary directory and files
+        VCF_MPU=$(mktemp --tmpdir={TMPDIR} -t "XXXXXX.mpu.vcf")
+        VCF_FRB=$(mktemp --tmpdir={TMPDIR} -t "XXXXXX.frb.vcf")
+        VCF_PLT=$(mktemp --tmpdir={TMPDIR} -t "XXXXXX.plt.vcf")
+
+        ### run_mpileup {input[0]} {input[1]} $VCF_MPU
+        samtools mpileup -uf {input[0]} {input[1]} | bcftools view -vcg - > $VCF_MPU
+        wait
+        bgzip -c $VCF_MPU > $VCF_MPU.gz
+        tabix -f -p vcf $VCF_MPU.gz
+
+        ### run_freebayes {input[0]} {input[1]} $VCF_FRB
+        freebayes -f {input[0]} {input[1]} > $VCF_FRB
+        bgzip -c $VCF_FRB > $VCF_FRB.gz
+        tabix -f -p vcf $VCF_FRB.gz
+
+        ### run_platypus {input[0]} {input[1]} $VCF_PLT
+        Platypus.py callVariants --refFile={input[0]} --bamFiles={input[1]} --nCPU={THREADS} -o $VCF_PLT
+        bgzip -c $VCF_PLT > $VCF_PLT.gz
+        tabix -f -p vcf $VCF_PLT.gz
+
+
+
+        ### "Merging outputs "
+
+        ## Must remove colons from the contig names in upstream steps. Unable to merge the variants
+        ## due to this problem
+        vcf-isec -f -a -n +2 $VCF_PLT.gz $VCF_FRB.gz $VCF_MPU.gz > {AN_OUT}/MT.variants.isec.vcf
+
+        # Compress and index the output.
+        bgzip -c {AN_OUT}/MT.variants.isec.vcf > {AN_OUT}/MT.variants.isec.vcf.gz
+        tabix -f -p vcf {AN_OUT}/MT.variants.isec.vcf.gz
+
+        # Clean up directory
+        echo "Cleaning up directory"
+        cat log.txt > {log}
+        rm -f {AN_OUT}/MT.variants.isec.vcf log.txt
+        """
+
+
+rule ANALYSIS_MGMT_CONTIG_LENGTH:
+    log:
+        AN_LOG
+    benchmark:
+        "%s/benchmarks/ANALYSIS_MGMT_CONTIG_LENGTH.json" % AN_OUT
+    input:
+        "%s/MGMT.assembly.merged.fa" % A_OUT,
+    output:
+        "%s/MGMT.assembly.length.txt" % AN_OUT,
+        "%s/MGMT.assembly.gc_content.txt" % AN_OUT,
+    shell:
+        """
+        echo "[x]  LENGTH `date +"%Y/%m/%d %H:%M:%S"`" >> {log}
+        echo "Obtaining contig lengths"
+        perl {SRCDIR}/fastaNamesSizes.pl {input} > {output[0]}
+
+        echo "Obtaining GC content"
+        TMP_GC=$(mktemp --tmpdir={TMPDIR} -t "gc_out_XXXXXX.txt")
+        perl {SRCDIR}/get_GC_content.pl {input} $TMP_GC
+
+        # Th program above provides a file gc_out.txt. This command cleans the output
+        echo "Clean up output"
+        cut -f1,2 $TMP_GC | sed -e 's/>//g'> {output[1]}
+        echo "Remove intermediate files"
+        rm $TMP_GC
+        """
+
+
+rule ANALYSIS_MG_CONTIG_COVERAGE:
+    log:
+        AN_LOG
+    benchmark:
+        "%s/benchmarks/ANALYSIS_MG_CONTIG_COVERAGE.json" % AN_OUT
+    input:
+        "%s/MG.reads.sorted.bam" % A_OUT,
+        "%s/MGMT.assembly.merged.fa" % A_OUT,
+    output:
+        "%s/MG.assembly.coverage_coverage.txt" % AN_OUT,
+        "%s/MG.assembly.coverage_depth.txt" % AN_OUT,
+        "%s/MG.assembly.coverage_flagstat.txt" % AN_OUT,
+    shell:
+        """
+        echo "[x]  COVERAGE AND DEPTH `date +"%Y/%m/%d %H:%M:%S"`" >> {log}
+        echo "Creating genome file ..." >> {log}
+        if [[ ! -f {input[1]}.fai ]]
+        then
+          echo "No fasta index! Creating one." >> {log}
+          samtools faidx {input[1]}
+        fi
+        cat {input[1]}.fai | awk '{{print $1 \"\t0\t\" $2}}' > {input[1]}.bed3
+        echo "Done creating bed file" >> {log}
+
+        echo "Running BEDTools coverage calculation ..." >> {log}
+        coverageBed -abam {input[0]} -b {input[1]}.bed3 > {output[0]}
+        echo "Coverage calculation done" >> {log}
+        echo "Running BEDTools for average depth in each position" >> {log}
+        TMP_DEPTH=$(mktemp --tmpdir={TMPDIR} -t "depth_file_XXXXXX.txt")
+        genomeCoverageBed -ibam {input[0]} | grep -v "genome" > $TMP_DEPTH
+        echo "Depth calculation done" >> {log}
+
+        ## This method of depth calculation was adapted and modified from the CONCOCT code
+        awk -v OFS='\t' 'BEGIN {{pc=""}}
+        {{
+        c=$1;
+        if (c == pc) {{
+        cov=cov+$2*$5;
+        }} else {{
+        print pc,cov;
+        cov=$2*$5;
+        pc=c}}
+        }} END {{print pc,cov}}' $TMP_DEPTH | tail -n +2 > {output[1]}
+
+        echo "Remove the temporary file" >> {log}
+        rm $TMP_DEPTH
+        echo "flagstat" >> {log}
+        samtools flagstat {input[0]} | cut -f1 -d ' ' > {output[2]}
+        """
+
+rule ANALYSIS_MT_CONTIG_COVERAGE:
+    log:
+        AN_LOG
+    benchmark:
+        "%s/benchmarks/ANALYSIS_MT_CONTIG_COVERAGE.json" % AN_OUT
+    input:
+        "%s/MT.reads.sorted.bam" % A_OUT,
+        "%s/MGMT.assembly.merged.fa" % A_OUT,
+    output:
+        "%s/MT.assembly.coverage_coverage.txt" % AN_OUT,
+        "%s/MT.assembly.coverage_depth.txt" % AN_OUT,
+        "%s/MT.assembly.coverage_flagstat.txt" % AN_OUT,
+    shell:
+        """
+        echo "[x]  COVERAGE AND DEPTH `date +"%Y/%m/%d %H:%M:%S"`" >> {log}
+        echo "Creating genome file ..." >> {log}
+        if [[ ! -f {input[1]}.fai ]]
+        then
+          echo "No fasta index! Creating one." >> {log}
+          samtools faidx {input[1]}
+        fi
+        cat {input[1]}.fai | awk '{{print $1 \"\t0\t\" $2}}' > {input[1]}.bed3
+        echo "Done creating bed file" >> {log}
+
+        echo "Running BEDTools coverage calculation ..." >> {log}
+        coverageBed -abam {input[0]} -b {input[1]}.bed3 > {output[0]}
+        echo "Coverage calculation done" >> {log}
+        echo "Running BEDTools for average depth in each position" >> {log}
+        TMP_DEPTH=$(mktemp --tmpdir={TMPDIR} -t "depth_file_XXXXXX.txt")
+        genomeCoverageBed -ibam {input[0]} | grep -v "genome" > $TMP_DEPTH
+        echo "Depth calculation done" >> {log}
+
+        ## This method of depth calculation was adapted and modified from the CONCOCT code
+        awk -v OFS='\t' 'BEGIN {{pc=""}}
+        {{
+        c=$1;
+        if (c == pc) {{
+        cov=cov+$2*$5;
+        }} else {{
+        print pc,cov;
+        cov=$2*$5;
+        pc=c}}
+        }} END {{print pc,cov}}' $TMP_DEPTH | tail -n +2 > {output[1]}
+
+        echo "Remove the temporary file" >> {log}
+        rm $TMP_DEPTH
+        echo "flagstat" >> {log}
+        samtools flagstat {input[0]} | cut -f1 -d ' ' > {output[2]}
+        """
+
+
+def mg_fqfiles():
+    raw = expand('{dir}/{raw}', raw=['MG.R1.fq', 'MG.R2.fq'], dir=P_OUT)
+    uniq = expand('{dir}/{uniq}', uniq=['MG.R1.uniq.fq', 'MG.R2.uniq.fq'], dir=P_OUT)
+    trim = expand('{dir}/{trim}', trim=[
+        'MG.R1.uniq.trimmed.fq',
+        'MG.R2.uniq.trimmed.fq',
+        'MG.SE.uniq.trimmed.fq'], dir=P_OUT)
+    filter = expand('{dir}/{filter}', filter=expand([
+        'MG.R1.uniq.trimmed.{f}.fq',
+        'MG.R2.uniq.trimmed.{f}.fq',
+        'MG.SE.uniq.trimmed.{f}.fq'], f=config['human_filtering']['filter']), dir=P_OUT)
+    if config['Preprocessing']['filtering']:
+        return raw + uniq + trim + filter
+    return raw + uniq + trim
+
+
+def mt_fqfiles():
+    raw = expand('{dir}/{raw}', raw=['MT.R1.fq', 'MT.R2.fq'], dir=P_OUT)
+    trim = expand('{dir}/{trim}', trim=[
+        'MT.R1.trimmed.fq',
+        'MT.R2.trimmed.fq',
+        'MT.SE.trimmed.fq'], dir=P_OUT)
+    rna_filter = expand('{dir}/{filter}', filter=[
+        'MT.R1.trimmed.rna_filtered.fq',
+        'MT.R2.trimmed.rna_filtered.fq',
+        'MT.SE.trimmed.rna_filtered.fq'], dir=P_OUT)
+    h_filter = expand('{dir}/{filter}', filter=expand([
+        'MT.R1.trimmed.rna_filtered.{f}.fq',
+        'MT.R2.trimmed.rna_filtered.{f}.fq',
+        'MT.SE.trimmed.rna_filtered.{f}.fq'], f=config['human_filtering']['filter']), dir=P_OUT)
+    if config['Preprocessing']['filtering']:
+        return raw + trim + rna_filter + h_filter
+    return raw + trim + rna_filter
+
+
+rule ANALYSIS_MG_READ_COUNT:
+    log:
+        AN_LOG
+    benchmark:
+        "%s/benchmarks/ANALYSIS_MG_READ_COUNT.json" % AN_OUT
+    input:
+        mg_fqfiles()
+    output:
+        '%s/MG.read_counts.txt' % AN_OUT
+    run:
+        for idx, f in enumerate({input}):
+            if idx == 0:
+                shell("wc -l {f} > {output}")
+            else:
+                shell("wc -l {f} >> {output}")
+
+rule ANALYSIS_MT_READ_COUNT:
+    log:
+        AN_LOG
+    benchmark:
+        "%s/benchmarks/ANALYSIS_MT_READ_COUNT.json" % AN_OUT
+    input:
+        mt_fqfiles()
+    output:
+        '%s/MT.read_counts.txt' % AN_OUT
+    run:
+        for idx, f in enumerate({input}):
+            if idx == 0:
+                shell("wc -l {f} > {output}")
+            else:
+                shell("wc -l {f} >> {output}")
+
+rule ANALYSIS_VIZBIN:
+    log:
+        AN_LOG
+    benchmark:
+        "%s/benchmarks/ANALYSIS_VIZBIN.json" % AN_OUT
+    input:
+        "%s/MGMT.assembly.merged.fa" % A_OUT,
+    output:
+        "%s/MGMT.vizbin.points" % AN_OUT,
+        "%s/MGMT.vizbin.filtered.fa" % AN_OUT,
+        "%s/MGMT.vizbin.with-contig-names.points" % AN_OUT
+    shell:
+        """
+        TMP_VIZBIN=$(mktemp --tmpdir={TMPDIR} -dt "VIZBIN_XXXXXX")
+        # tools used in this script: they must be in the PATH
+        VIZBIN={SRCDIR}/vizbin.py
+
+        echo "[x] VIZBIN `date +"%Y/%m/%d %H:%M:%S"`" >> {log}
+        python $VIZBIN {input} {AN_OUT}/MGMT.vizbin {config[Analysis][vizbin][dimension]} \
+        -l {config[Analysis][vizbin][length]} \
+        -s {config[Analysis][vizbin][size]} \
+        -t {config[Analysis][vizbin][theta]} \
+        -p {config[Analysis][vizbin][perp]} \
+        -f {config[Analysis][vizbin][minlen]} \
+        -o {output[1]} >> {log}
+
+        cp {AN_OUT}/MGMT.vizbin.{config[Analysis][vizbin][dimension]}.dat $TMP_VIZBIN/data.dat
+        BACK=$PWD
+        cd $TMP_VIZBIN
+        bh_tsne >> $BACK/{log}
+        cd $BACK
+        cp $TMP_VIZBIN/points.txt {AN_OUT}/MGMT.vizbin.points
+        rm -rf $TMP_VIZBIN
+        grep '^>' {output[1]} | sed 's/>//g' > {AN_OUT}/MGMT.vizbin.contigs
+        paste {AN_OUT}/MGMT.vizbin.contigs {output[0]} | sed -e 's/,/\t/g' > {output[2]}
+        """
+
+
+def analysis_plot_files_output():
+    return expand('{dir}/{name}', name=[
+                  "IMP-reads_density.png",
+                  "IMP-rpkm_density.png",
+                  "IMP-coverage_density.png",
+                  "IMP-depth_density.png",
+                  "IMP-var_count.png",
+                  "IMP-var_density.png",
+                  "IMP-vizbin_length.png",
+                  "IMP-vizbin_length_GC.png",
+                  "IMP-vizbin_length_MGcov.png",
+                  "IMP-vizbin_length_MGdepth.png",
+                  "IMP-vizbin_length_MGvardens.png",
+                  "IMP-vizbin_length_MTcov.png",
+                  "IMP-vizbin_length_MTdepth.png",
+                  "IMP-vizbin_length_MTvardens.png",
+                  "IMP-vizbin_length_covRatio.png",
+                  "IMP-vizbin_length_depthRatio.png",
+                  "IMP-vizbin_length_geneDensity.png",
+                  "IMP-vizbin_length_rpkmRatio.png",
+                  "IMP-vizbin_standard.png",
+                  "MG.read_stats.html",
+                  "MG.read_stats.txt",
+                  "MG_mapping_stats.html",
+                  "MG_mapping_stats.txt",
+                  "MT.read_stats.html",
+                  "MT.read_stats.txt",
+                  "MT_mapping_stats.html",
+                  "MT_mapping_stats.txt",
+                  "assembly_stats.html",
+                  "assembly_stats.txt"], dir='%s/results' % AN_OUT)
+
+rule ANALYSIS_PLOT:
+    log:
+        AN_LOG
+    benchmark:
+        "%s/benchmarks/ANALYSIS_PLOT.json" % AN_OUT
+    input:
+        expand('{dir}/{name}', name=[
+               'MG.read_counts.txt',
+               'MT.read_counts.txt',
+               'MG.assembly.coverage_flagstat.txt',
+               'MT.assembly.coverage_flagstat.txt',
+               'MG.assembly.coverage_coverage.txt',
+               'MT.assembly.coverage_coverage.txt',
+               'MG.assembly.coverage_depth.txt',
+               'MT.assembly.coverage_depth.txt',
+               'MG.variants.isec.vcf.gz',
+               'MT.variants.isec.vcf.gz',
+               'MGMT.assembly.gc_content.txt',
+               "MGMT.vizbin.with-contig-names.points",
+               "annotation/annotation.filt.gff"], dir=AN_OUT)
+    output:
+        analysis_plot_files_output()
+    params:
+        outdir = "%s/results" % AN_OUT
+    shell:
+        """
+        PLOT_SCRIPT="{SRCDIR}/IMP_visualize_MGMT.R"
+
+        echo "[x] PLOT `date +"%Y/%m/%d %H:%M:%S"`" >> {log}
+        mkdir -p {AN_OUT}/results
+        Rscript $PLOT_SCRIPT {AN_OUT}/results {input}
+        """

@@ -1,0 +1,19 @@
+# output directory and log
+A_OUT, A_LOG = prepare_environment('Assembly')
+
+# include sub rules
+include:
+    "MGMT.rules"
+
+
+def assembly_output_files():
+    return expand('{dir}/{name}', name=[
+        'MG.reads.sorted.bam',
+        'MT.reads.sorted.bam'], dir=A_OUT)
+
+# master command
+rule ASSEMBLY:
+    input:
+        assembly_output_files()
+    shell:
+        "echo 'Assembly Done'"

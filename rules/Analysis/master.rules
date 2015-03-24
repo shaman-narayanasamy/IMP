@@ -1,0 +1,37 @@
+# output directory and log
+AN_OUT, AN_LOG = prepare_environment('Analysis')
+
+
+# include sub rules
+include:
+    "MGMT.rules"
+
+
+def analysis_output_files():
+    all = expand("{dir}/{name}", name=[
+                 "MT.read_counts.txt",
+                 "MG.read_counts.txt",
+                 # "MG.annotation.bed",
+                 # "MT.annotation.bed",
+                 "MG.variants.isec.vcf.gz",
+                 "MT.variants.isec.vcf.gz",
+                 "MGMT.assembly.length.txt",
+                 "MGMT.assembly.gc_content.txt",
+                 "MT.assembly.coverage_coverage.txt",
+                 "MT.assembly.coverage_depth.txt",
+                 "MT.assembly.coverage_flagstat.txt",
+                 "MG.assembly.coverage_coverage.txt",
+                 "MG.assembly.coverage_depth.txt",
+                 "MG.assembly.coverage_flagstat.txt",
+                 "MGMT.vizbin.points",
+                 "MGMT.vizbin.filtered.fa",
+                 "MGMT.vizbin.with-contig-names.points"], dir=AN_OUT)
+    plots = analysis_plot_files_output()
+    return all + plots
+
+# master command
+rule ANALYSIS:
+    input:
+        analysis_output_files()
+    shell:
+        "echo 'Analysis Done'"

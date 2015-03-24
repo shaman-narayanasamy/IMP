@@ -1,0 +1,4 @@
+.snakemake
+TEST_DATA
+build
+.DS_Store

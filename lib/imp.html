@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
+  <script src="d3.min.js"></script>
+  <script src="jquery-2.1.1.min.js"></script>
+  <script src="data.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+  <style>
+  body {
+    padding-top: 70px;
+  }
+  .bar {
+    fill: steelblue;
+  }
+
+  .axis text {
+    font: 10px sans-serif;
+  }
+
+  .axis path,
+  .axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+  }
+
+  .img-result-container {
+    width: 350px;
+    float: left;
+  }
+
+  .table-result {
+    float: left;
+    margin: 10px;
+  }
+  .table-result table,td {
+    border: 1px solid steelblue;
+    padding: 5px;
+    text-align: center;
+  }
+
+
+  </style>
+</head>
+<body>
+  <div id="block-stats" class="container-fluid">
+
+    <div id="tabs" role="tabpanel">
+      <div class="row">
+      <ul class="nav nav-tabs navbar-nav navbar-fixed-top navbar-inverse" role="tablist">
+        <a class="navbar-brand" href="#"> IMP <small>Integrated Metaomic Pipeline </small></a>
+        <li><a href="#preprocessing" aria-controls="preprocessing" role="tab" data-toggle="tab">Preprocessing</a></li>
+        <li><a href="#assembly" aria-controls="assembly" role="tab" data-toggle="tab">Assembly</a></li>
+        <li><a href="#mapping" aria-controls="mapping" role="tab" data-toggle="tab">Mapping</a></li>
+        <li><a href="#annotation" aria-controls="annotation" role="tab" data-toggle="tab">Annotation</a></li>
+        <li><a href="#variants" aria-controls="variants" role="tab" data-toggle="tab">Variants</a></li>
+        <li><a href="#ratio" aria-controls="ratio" role="tab" data-toggle="tab">Ratio</a></li>
+        <li><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Workflow overview</a></li>
+        <li><a href="#configurations" aria-controls="configurations" role="tab" data-toggle="tab">Configuration</a></li>
+        <li><a href="#references" aria-controls="references" role="tab" data-toggle="tab">References</a></li>
+        <p class="navbar-text navbar-right"></p>
+      </ul>
+    </div>
+      <div class="container">
+        <div class="tab-content">
+          <!-- STATISTICS -->
+          <div role="tabpanel" class="tab-pane fade active" id="preprocessing">
+            <section id="files-statistics" class="row">
+              <div class="row">
+                <h3><small>Metagenomics files</small></h3>
+                <div class="col-sm-1 col-md-1"></div>
+                <div class="col-sm-4 col-md-4">
+                  <h4><small>Raw</small></h4>
+                  <div id="carousel-mg-raw-wrapper"></div>
+                </div>
+                <div class="col-sm-1 col-md-1"></div>
+                <div class="col-sm-4 col-md-4">
+                  <h4><small>Preprocessed</small></h4>
+                  <div id="carousel-mg-preprocessed-wrapper"></div>
+                </div>
+                <div class="col-sm-1 col-md-1"></div>
+              </div>
+              <div class="row">
+                <div class="col-sm-1 col-md-1">
+                  <a class="left carousel-control" role="button" data-slide="prev">
+                    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                  </a>
+                </div>
+                <div class="col-sm-10 col-md-10"></div>
+                <div class="col-sm-1 col-md-1">
+                  <a class="right carousel-control" role="button" data-slide="next">
+                    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                  </a>
+                </div>
+              </div>
+              <div class="row">
+                <h3><small>Metatranscriptomics files</small></h3>
+                <div class="col-sm-1 col-md-1"></div>
+                <div class="col-sm-4 col-md-4">
+                  <h4><small>Raw</small></h4>
+                  <div id="carousel-mt-raw-wrapper"></div>
+                </div>
+                <div class="col-sm-1 col-md-1"></div>
+                <div class="col-sm-4 col-md-4">
+                  <h4><small>Preprocessed</small></h4>
+                  <div id="carousel-mt-preprocessed-wrapper"></div>
+                </div>
+                <div class="col-sm-1 col-md-1"></div>
+              </div>
+            </section>
+            <!-- FILTERING -->
+            <section id="filtering-section" class="row">
+              <div class="row">
+                <div class="table-result" id="MG_read_stats"></div>
+                <div class="table-result" id="MT_read_stats"></div>
+              </div>
+            </section>
+          </div>
+          <!--  ASSEMBLY -->
+          <div role="tabpanel" class="tab-pane fade" id="assembly">
+            <section id="assembly-section" class="row">
+              <h2><small>Assembly </small></h2>
+              <div class="row">
+                <div class="col-sm-3 col-md-3"></div>
+                <div class="col-sm-6 col-md-6 table-result" id="assembly_stats"></div>
+                <div class="col-sm-3 col-md-3"></div>
+              </div>
+
+              <div class="row">
+                  <div id="carousel-assembly-wrapper"></div>
+              </div>
+            </section>
+          </div>
+
+          <!-- MAPPING -->
+          <div role="tabpanel" class="tab-pane fade" id="mapping">
+            <section id="mapping-section" class="row">
+              <div class="row">
+                <div class="col-sm-1 col-md-1"></div>
+                <div class="col-sm-5 col-md-5 table-result" id="MG_mapping_stats"></div>
+                <div class="col-sm-5 col-md-5 table-result" id="MT_mapping_stats"></div>
+              </div>
+
+              <div class="col-sm-1 col-md-1"></div>
+            <div class="row">
+                <div id="carousel-mapping-wrapper"></div>
+            </div>
+          </section>
+        </div>
+
+        <!-- ANNOTATION -->
+        <div role="tabpanel" class="tab-pane fade" id="annotation">
+          <section id="annotation-section" class="row">
+            <div class="col-sm-3 col-md-3"></div>
+            <div class="img-result-container"><img class="img-responsive img-thumbnail" src="MGMT/results/IMP-vizbin_length_geneDensity.png" /></div>
+          </section>
+        </div>
+
+
+        <!-- RATIO -->
+        <div role="tabpanel" class="tab-pane fade" id="ratio">
+          <section id="ration-section" class="row">
+
+            <div class="row">
+                <div id="carousel-ration-wrapper"></div>
+            </div>
+
+          </section>
+        </div>
+
+
+        <!-- VARIANTS -->
+        <div role="tabpanel" class="tab-pane fade" id="variants">
+          <section id="variants-section" class="row">
+           <h2><small>Variants </small></h2>
+            <div class="row">
+                <div id="carousel-variant-wrapper"></div>
+            </div>
+
+
+          </section>
+        </div>
+        <!--  IMP STATS -->
+        <div role="tabpanel" class="tab-pane fade" id="overview">
+          <section class="row">
+            <section id="impstatistics-section">
+              <h2><small>Statistics </small></h2>
+              <div id="imp-stats-alert" class="row" style="display: none;">
+                <div class="alert alert-warning alert-dismissible" role="alert">
+                  <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                  <strong>Warning!</strong> You don't have any statistics about the run. Next time don't forget to use Snakemake with the <kbd>--stats stats.json</kbd> option.
+                </div>
+              </div>
+              <div id="imp-stats" class="row">
+                <div id="basic-info"></div>
+                <div id="time-charts-mean"></div>
+                <div id="bar-chart"></div>
+              </div>
+            </section>
+
+            <!--  DIAGRAMS -->
+            <span id="diagrams"></span>
+            <section id="diagrams-section">
+              <h2><small>Workflow diagram </small></h2>
+              <div id="imp-diagram" class="row">
+                <p>The workflow is also available in <a href="workflow.pdf">PDF</a>.</p>
+                <img src="workflow.png"></img>
+              </div>
+            </section>
+          </section>
+        </div>
+        <!-- IMP CONFIG -->
+        <div role="tabpanel" class="tab-pane fade" id="configurations">
+          <section id="config-section" class="row">
+            <h2><small>Configuration </small></h2>
+            <div>
+              IMP has run with the configuration file saved at: <a href="config.json">config.json</a>.
+              <ul id="configuration" class="list-group">
+              </ul>
+            </div>
+          </section>
+          <!-- IMP LOG -->
+          <span id="log"></span>
+          <section id="log-section"  class="row">
+            <h2><small>Log </small></h2>
+            <div>
+              <p>The log file register all commands that have been run by IMP.</p>
+            </div>
+            <div>
+              <p>The log is accessible here: <a href="imp.log">imp.log</a>.</p>
+            </div>
+          </section>
+        </div>
+        <!-- REFERENCES -->
+        <div role="tabpanel" class="tab-pane fade" id="references">
+          <section id="references-section" class="row">
+            <h2><small>References </small></h2>
+            <div>
+              <p>We sould put some references here</p>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="imp.js"></script>
+</body>
+
+</html>

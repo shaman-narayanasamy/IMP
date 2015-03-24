@@ -1,0 +1,91 @@
+# output directory and log
+P_OUT, P_LOG = prepare_environment('Preprocessing')
+
+# include sub rules
+include:
+    "MG.rules"
+include:
+    "MT.rules"
+
+
+def preprocessing_output_files():
+    """
+    Dynamically generate output files names based on parameters
+    """
+    stats = expand([
+        '{dir}/{stat_flag}/{rtype}/cycle_composition_{n}.{ext}',
+        '{dir}/{stat_flag}/{rtype}/cycle_quality_{n}.{ext}',
+        '{dir}/{stat_flag}/{rtype}/cycle_quality_box_{n}.{ext}',
+        '{dir}/{stat_flag}/{rtype}/info.tab',
+        '{dir}/{stat_flag}/{rtype}/lane_tile_quality_{n}.{ext}',
+        '{dir}/{stat_flag}/{rtype}/quality_QQ.{ext}',
+        '{dir}/{stat_flag}/{rtype}/reads_length.{ext}',
+        '{dir}/{stat_flag}/{rtype}/reads_quality.{ext}'],
+        n=['1', '2'],
+        ext=['gnuplot', 'png', 'tab'],
+        dir=P_OUT,
+        stat_flag=['stats', 'stats_after_preprocessing'],
+        rtype=['MG', 'MT'])
+    return stats + [preprocessed_mt('R1'), preprocessed_mt('R2'), preprocessed_mt('SE')] + [preprocessed_mg('R1'), preprocessed_mg('R2'), preprocessed_mg('SE')]
+
+
+def preprocessed_mg(target):
+    if config['Preprocessing']['filtering']:
+        # with human filtering ON
+        return '{dir}/MG.{target}.uniq.trimmed.{f}.fq'.format(
+            f=config['human_filtering']['filter'],
+            dir=P_OUT,
+            target=target)
+    # with human filtering OFF
+    return '{dir}/{target}.uniq.trimmed.fq'.format(dir=P_OUT, target=target)
+
+
+def preprocessed_mt(target):
+    if config['Preprocessing']['filtering']:
+        # with human filtering ON
+        return '{dir}/MT.{target}.trimmed.rna_filtered.{f}.fq'.format(
+            f=config['human_filtering']['filter'],
+            dir=P_OUT,
+            target=target)
+    # with human filtering OFF
+    return '{dir}/{target}.trimmed.rna_filtered.fq'.format(dir=P_OUT, target=target)
+
+
+def prepare_input_files(input, rtype):
+    """
+    Prepare file names from input.
+    Will copy and/or ungzip paired input files into output directory named as '{rtype}.R1.fq' and '{rtype}.R2.fq'.
+    input: input names from the user
+    rtype: MG or MT
+
+    """
+    if len(input) != 2:
+        raise OSError("//[IMP] %s files must be two paired files." % rtype)
+
+    for idx, inp in enumerate(input):
+        if idx % 2 == 0:
+            tmp = '%s.R1.fq' % rtype
+        elif idx % 2 == 1:
+            tmp = '%s.R2.fq' % rtype
+
+        # get out path
+        p, fname = os.path.split(inp)
+        outfilename = os.path.join(P_OUT, tmp)
+        print(inp, '=>', outfilename)
+        # ungunzip
+        if os.path.splitext(fname)[-1] in ['.gz', '.gzip']:
+            with open(outfilename, 'wb') as whandle:
+                with gzip.open(inp, 'rb') as rhandle:
+                    whandle.write(rhandle.read())
+                    # copy
+        else:
+            shutil.copy(inp, outfilename)
+
+# master command
+rule PREPROCESSING:
+    input:
+        preprocessing_output_files()
+    benchmark:
+        "benchmarks/Preprocessing/preprocessing.json"
+    shell:
+        "echo 'Preprocessing Done'"
