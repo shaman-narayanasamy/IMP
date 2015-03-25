@@ -3,7 +3,7 @@
       "threads": 4
     },
     "Preprocessing": {
-      "pre": "echo '//LOADING ASSEMBLY MODULE: You can write custom shell commands here'",
+      "pre": "echo '//LOADING PREPROCESSING MODULE: You can write custom shell commands here'",
       "filtering": true
     },
     "Assembly": {
