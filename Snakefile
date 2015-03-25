@@ -80,13 +80,14 @@ def prepare_environment(stepname):
 
 # INCLUDES RULES
 include:
+    "rules/Util.rules"
+include:
     "rules/Preprocessing/master.rules"
 include:
     "rules/Assembly/master.rules"
 include:
     "rules/Analysis/master.rules"
-include:
-    "rules/Util.rules"
+
 
 # locate source directory and name scripts
 src = lambda p: os.path.join(SRCDIR, p)
