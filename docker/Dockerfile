@@ -39,8 +39,8 @@ RUN mkdir -p /home/imp/tmp /home/imp/lib \
 && pip3 install snakemake docopt \
 && pip2.7 install numpy \
 && pip2.7 install scipy scikit-learn docopt \
-&& pip install bioservices \
-&& pip install pandas \
+## Install bioservices. Using version 1.3.5 because script doesn't work with latest version
+&& pip install -Iv https://pypi.python.org/packages/source/b/bioservices/bioservices-1.3.5.tar.gz \
 && rm get-pip.py \
 ## fastuniq
 && wget http://downloads.sourceforge.net/project/fastuniq/FastUniq-1.1.tar.gz \
