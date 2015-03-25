@@ -40,6 +40,7 @@ RUN mkdir -p /home/imp/tmp /home/imp/lib \
 && pip2.7 install numpy \
 && pip2.7 install scipy scikit-learn docopt \
 && pip install bioservices \
+&& pip install pandas \
 && rm get-pip.py \
 ## fastuniq
 && wget http://downloads.sourceforge.net/project/fastuniq/FastUniq-1.1.tar.gz \
