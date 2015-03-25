@@ -34,6 +34,7 @@ rule ANALYSIS_MG_GENE_COVERAGE:
         "%s/MG.gene_depth.hist" % AN_OUT,
         "%s/MG.gene_depth.avg" % AN_OUT,
         "%s/MG.gene.len" % AN_OUT,
+        "%s/MG.prokkaID2ec.txt" % AN_OUT
     shell:
         """
         coverageBed -hist -abam {input[1]} -b {input[0]} | grep -v "^all" > {output[0]}
@@ -54,6 +55,7 @@ rule ANALYSIS_MG_GENE_COVERAGE:
         }} END {{print pc,cov}}' < {output[1]} | tail -n +2 > {output[2]}
         # Record gene length file
         cut -f 1,4 {output[1]} | uniq > {output[3]}
+        grep "eC_number="$ANNOT | cut -f9 | cut -f1,2 -d ';'| sed 's/ID=//g'| sed 's/;eC_number=/\t/g' > {output[4]}
         """
 
 
@@ -70,6 +72,7 @@ rule ANALYSIS_MT_GENE_COVERAGE:
         "%s/MT.gene_depth.hist" % AN_OUT,
         "%s/MT.gene_depth.avg" % AN_OUT,
         "%s/MT.gene.len" % AN_OUT,
+        "%s/MT.prokkaID2ec.txt" % AN_OUT
     shell:
         """
         coverageBed -hist -abam {input[1]} -b {input[0]} | grep -v "^all" > {output[0]}
@@ -90,6 +93,7 @@ rule ANALYSIS_MT_GENE_COVERAGE:
         }} END {{print pc,cov}}' < {output[1]} | tail -n +2 > {output[2]}
         # Record gene length file
         cut -f 1,4 {output[1]} | uniq > {output[3]}
+        grep "eC_number="$ANNOT | cut -f9 | cut -f1,2 -d ';'| sed 's/ID=//g'| sed 's/;eC_number=/\t/g' > {output[4]}
         """
 
 
@@ -264,9 +268,9 @@ rule ANALYSIS_MG_CONTIG_COVERAGE:
         "%s/MG.reads.sorted.bam" % A_OUT,
         "%s/MGMT.assembly.merged.fa" % A_OUT,
     output:
-        "%s/MG.assembly.coverage_coverage.txt" % AN_OUT,
-        "%s/MG.assembly.coverage_depth.txt" % AN_OUT,
-        "%s/MG.assembly.coverage_flagstat.txt" % AN_OUT,
+        "%s/MG.assembly.contig_coverage.txt" % AN_OUT,
+        "%s/MG.assembly.contig_depth.txt" % AN_OUT,
+        "%s/MG.assembly.contig_flagstat.txt" % AN_OUT,
     shell:
         """
         echo "[x]  COVERAGE AND DEPTH `date +"%Y/%m/%d %H:%M:%S"`" >> {log}
@@ -314,9 +318,9 @@ rule ANALYSIS_MT_CONTIG_COVERAGE:
         "%s/MT.reads.sorted.bam" % A_OUT,
         "%s/MGMT.assembly.merged.fa" % A_OUT,
     output:
-        "%s/MT.assembly.coverage_coverage.txt" % AN_OUT,
-        "%s/MT.assembly.coverage_depth.txt" % AN_OUT,
-        "%s/MT.assembly.coverage_flagstat.txt" % AN_OUT,
+        "%s/MT.assembly.contig_coverage.txt" % AN_OUT,
+        "%s/MT.assembly.contig_depth.txt" % AN_OUT,
+        "%s/MT.assembly.contig_flagstat.txt" % AN_OUT,
     shell:
         """
         echo "[x]  COVERAGE AND DEPTH `date +"%Y/%m/%d %H:%M:%S"`" >> {log}
@@ -502,12 +506,12 @@ rule ANALYSIS_PLOT:
         expand('{dir}/{name}', name=[
                'MG.read_counts.txt',
                'MT.read_counts.txt',
-               'MG.assembly.coverage_flagstat.txt',
-               'MT.assembly.coverage_flagstat.txt',
-               'MG.assembly.coverage_coverage.txt',
-               'MT.assembly.coverage_coverage.txt',
-               'MG.assembly.coverage_depth.txt',
-               'MT.assembly.coverage_depth.txt',
+               'MG.assembly.contig_flagstat.txt',
+               'MT.assembly.contig_flagstat.txt',
+               'MG.assembly.contig_coverage.txt',
+               'MT.assembly.contig_coverage.txt',
+               'MG.assembly.contig_depth.txt',
+               'MT.assembly.contig_depth.txt',
                'MG.variants.isec.vcf.gz',
                'MT.variants.isec.vcf.gz',
                'MGMT.assembly.gc_content.txt',
@@ -524,4 +528,43 @@ rule ANALYSIS_PLOT:
         echo "[x] PLOT `date +"%Y/%m/%d %H:%M:%S"`" >> {log}
         mkdir -p {AN_OUT}/results
         Rscript $PLOT_SCRIPT {AN_OUT}/results {input}
+        """
+
+rule ANALYSIS_KRONA_PLOT_MG:
+    log:
+        AN_LOG
+    benchmark:
+        "%s/benchmarks/ANALYSIS_KRONA_PLOT.json" % AN_OUT
+    input:
+        "{AN_OUT}/MG.prokkaID2ec.txt",
+        "{U_OUT}/ec2pwy.txt",
+        "{U_OUT}/pwy2hierarchy.txt",
+        "{AN_OUT}/MG.gene_depth.avg",
+        "{AN_OUT}/MG.gene.len",
+        "{AN_OUT}/results/MG.gene_kegg_krona.txt",
+        "{AN_OUT}/results/MG.gene_kegg_krona.html"
+    shell:
+        """
+        echo "[x] PLOT KRONA `date +"%Y/%m/%d %H:%M:%S"`" >> {log}
+        python {SRCDIR}/genes.to.kronaTable.py -i {input[0]} -m {input[1]} -H {input[2]} -c {input[3]} -L {input[3]} -o {input[4]}
+        ktImportText -o {input[5]} {input[4]}"
+        """
+rule ANALYSIS_KRONA_PLOT_MT:
+    log:
+        AN_LOG
+    benchmark:
+        "%s/benchmarks/ANALYSIS_KRONA_PLOT.json" % AN_OUT
+    input:
+        "{AN_OUT}/MT.prokkaID2ec.txt",
+        "{U_OUT}/ec2pwy.txt",
+        "{U_OUT}/pwy2hierarchy.txt",
+        "{AN_OUT}/MT.gene_depth.avg",
+        "{AN_OUT}/MT.gene.len",
+        "{AN_OUT}/results/MT.gene_kegg_krona.txt",
+        "{AN_OUT}/results/MT.gene_kegg_krona.html"
+    shell:
+        """
+        echo "[x] PLOT KRONA `date +"%Y/%m/%d %H:%M:%S"`" >> {log}
+        python {SRCDIR}/genes.to.kronaTable.py -i {input[0]} -m {input[1]} -H {input[2]} -c {input[3]} -L {input[3]} -o {input[4]}
+        ktImportText -o {input[5]} {input[4]}"
         """

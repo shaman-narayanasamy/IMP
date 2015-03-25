@@ -193,3 +193,19 @@ rule CHECK_TOOLS_VERSION:
         echo "# bh_tsne" >> {output}
 
         """
+
+rule DOWNLOAD_KEGG_INFORMATION:
+    log:
+        U_LOG
+    benchmark:
+        "%s/benchmarks/DOWNLOAD_KEGG_INFORMATION.json" % U_OUT
+    output:
+        "%s/ec2pwy.txt" % U_OUT,
+        "%s/pwy2hierarchy.txt" % U_OUT
+    shell:
+        """
+        echo "[x] DOWNLOAD_KEGG_INFORMATION `date +"%Y/%m/%d %H:%M:%S"`" >> {log}
+        python make.ec.to.pwy.kegg.py > {output[0]}
+        python make.pwy.hierarchy.kegg.py > {output[1]}
+        """
+
