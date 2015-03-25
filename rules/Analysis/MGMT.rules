@@ -541,14 +541,16 @@ rule ANALYSIS_KRONA_PLOT_MG:
         "{U_OUT}/pwy2hierarchy.txt",
         "{AN_OUT}/MG.gene_depth.avg",
         "{AN_OUT}/MG.gene.len",
+    output:
         "{AN_OUT}/results/MG.gene_kegg_krona.txt",
         "{AN_OUT}/results/MG.gene_kegg_krona.html"
     shell:
         """
         echo "[x] PLOT KRONA `date +"%Y/%m/%d %H:%M:%S"`" >> {log}
-        python {SRCDIR}/genes.to.kronaTable.py -i {input[0]} -m {input[1]} -H {input[2]} -c {input[3]} -L {input[3]} -o {input[4]}
-        ktImportText -o {input[5]} {input[4]}"
+        python {SRCDIR}/genes.to.kronaTable.py -i {input[0]} -m {input[1]} -H {input[2]} -c {input[3]} -L {input[3]} -o {output[0]}
+        ktImportText -o {output[1]} {output[0]}"
         """
+
 rule ANALYSIS_KRONA_PLOT_MT:
     log:
         AN_LOG
@@ -560,11 +562,14 @@ rule ANALYSIS_KRONA_PLOT_MT:
         "{U_OUT}/pwy2hierarchy.txt",
         "{AN_OUT}/MT.gene_depth.avg",
         "{AN_OUT}/MT.gene.len",
+    output:
         "{AN_OUT}/results/MT.gene_kegg_krona.txt",
         "{AN_OUT}/results/MT.gene_kegg_krona.html"
     shell:
         """
         echo "[x] PLOT KRONA `date +"%Y/%m/%d %H:%M:%S"`" >> {log}
-        python {SRCDIR}/genes.to.kronaTable.py -i {input[0]} -m {input[1]} -H {input[2]} -c {input[3]} -L {input[3]} -o {input[4]}
-        ktImportText -o {input[5]} {input[4]}"
+        python {SRCDIR}/genes.to.kronaTable.py -i {input[0]} -m {input[1]} -H {input[2]} -c {input[3]} -L {input[3]} -o {output[0]}
+        ktImportText -o {output[1]} {output[0]}"
         """
+
+

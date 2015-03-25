@@ -171,9 +171,6 @@ RUN cd /home/imp/lib \
 && cd megahit \
 && make
 
-## KronaTools
-
-
 ######################
 # ship pipeline code #
 ######################
