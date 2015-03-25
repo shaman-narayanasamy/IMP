@@ -530,46 +530,29 @@ rule ANALYSIS_PLOT:
         Rscript $PLOT_SCRIPT {AN_OUT}/results {input}
         """
 
-#rule ANALYSIS_KRONA_PLOT_MG:
-#    log:
-#        AN_LOG
-#    benchmark:
-#        "%s/benchmarks/ANALYSIS_KRONA_PLOT.json" % AN_OUT
-#    input:
-#        "%s/MG.prokkaID2ec.txt % AN_OUT,
+rule ANALYSIS_KRONA_PLOT_MG:
+    log:
+        AN_LOG
+    benchmark:
+        "%s/benchmarks/ANALYSIS_KRONA_PLOT.json" % AN_OUT
+    input:
+        "%s/MG.prokkaID2ec.txt" % AN_OUT,
 #        "%s/ec2pwy.txt" % U_OUT,
 #        "%s/pwy2hierarchy.txt" % U_OUT,
-#        "%s/MG.gene_depth.avg" % AN_OUT,
-#        "%s/MG.gene.len" % AN_OUT
-#    output:
+        "%s/MG.gene_depth.avg" % AN_OUT,
+        "%s/MG.gene.len" % AN_OUT
+    output:
 #        "%s/results/MG.gene_kegg_krona.txt" % AN_OUT,
 #        "%s/results/MG.gene_kegg_krona.html" % AN_OUT
-#    shell:
-#        """
-#        echo "[x] PLOT KRONA `date +"%Y/%m/%d %H:%M:%S"`" >> {log}
-#        python {SRCDIR}/genes.to.kronaTable.py -i {input[0]} -m {input[1]} -H {input[2]} -c {input[3]} -L {input[3]} -o {output[0]}
+        "%s/krona.done" % AN_OUT
+    shell:
+        """
+        echo "[x] PLOT KRONA `date +"%Y/%m/%d %H:%M:%S"`" >> {log}
+        echo {input}
+        echo {output[0]}
+        touch {output[0]}
+        """
+#        python {SRCDIR}/genes.to.kronaTable.py -i {input[0]} -m {input[1]} -H {input[2]} -c {input[3]} -L {input[4]} -o {output[0]}
 #        ktImportText -o {output[1]} {output[0]}
-#        """
+
 #rule ANALYSIS_KRONA_PLOT_MT:
-#    log:
-#        AN_LOG
-#    benchmark:
-#        "%s/benchmarks/ANALYSIS_KRONA_PLOT.json" % AN_OUT
-#    input:
-#        "%s/MT.prokkaID2ec.txt % AN_OUT,
-#        "%s/ec2pwy.txt" % U_OUT,
-#        "%s/pwy2hierarchy.txt" % U_OUT,
-#        "%s/MT.gene_depth.avg" % AN_OUT,
-#        "%s/MT.gene.len" % AN_OUT
-#    output:
-#        "%s/results/MT.gene_kegg_krona.txt" % AN_OUT,
-#        "%s/results/MT.gene_kegg_krona.html" % AN_OUT
-#    shell:
-#        """
-#        echo "[x] PLOT KRONA `date +"%Y/%m/%d %H:%M:%S"`" >> {log}
-#        python {SRCDIR}/genes.to.kronaTable.py -i {input[0]} -m {input[1]} -H {input[2]} -c {input[3]} -L {input[3]} -o {output[0]}
-#        ktImportText -o {output[1]} {output[0]}
-#        """
-#
-#
-#

@@ -205,7 +205,9 @@ rule _DOWNLOAD_KEGG_INFORMATION:
     shell:
         """
         echo "[x] DOWNLOAD_KEGG_INFORMATION `date +"%Y/%m/%d %H:%M:%S"`" >> {log}
+        echo "Preparing EC to KEGG ID mappings"
         python {SRCDIR}/make.ec.to.pwy.kegg.py -o {output[0]}
+        echo "Preparing KEGG ID to pathway mappings"
         python {SRCDIR}/make.pwy.hierarchy.kegg.py -o {output[1]}
         """
 
