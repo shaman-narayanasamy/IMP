@@ -205,7 +205,7 @@ rule DOWNLOAD_KEGG_INFORMATION:
     shell:
         """
         echo "[x] DOWNLOAD_KEGG_INFORMATION `date +"%Y/%m/%d %H:%M:%S"`" >> {log}
-        python {SRCDIR}/make.ec.to.pwy.kegg.py > {output[0]}
-        python {SRCDIR}/make.pwy.hierarchy.kegg.py > {output[1]}
+        python {SRCDIR}/make.ec.to.pwy.kegg.py -o {output[0]}
+        python {SRCDIR}/make.pwy.hierarchy.kegg.py -o {output[1]}
         """
 
