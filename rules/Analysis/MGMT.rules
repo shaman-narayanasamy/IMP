@@ -55,7 +55,7 @@ rule ANALYSIS_MG_GENE_COVERAGE:
         }} END {{print pc,cov}}' < {output[1]} | tail -n +2 > {output[2]}
         # Record gene length file
         cut -f 1,4 {output[1]} | uniq > {output[3]}
-        grep "eC_number="$ANNOT | cut -f9 | cut -f1,2 -d ';'| sed 's/ID=//g'| sed 's/;eC_number=/\t/g' > {output[4]}
+        grep "eC_number=" {input[0]} | cut -f9 | cut -f1,2 -d ';'| sed 's/ID=//g'| sed 's/;eC_number=/\t/g' > {output[4]}
         """
 
 
@@ -93,7 +93,7 @@ rule ANALYSIS_MT_GENE_COVERAGE:
         }} END {{print pc,cov}}' < {output[1]} | tail -n +2 > {output[2]}
         # Record gene length file
         cut -f 1,4 {output[1]} | uniq > {output[3]}
-        grep "eC_number="$ANNOT | cut -f9 | cut -f1,2 -d ';'| sed 's/ID=//g'| sed 's/;eC_number=/\t/g' > {output[4]}
+        grep "eC_number=" {input[0]} | cut -f9 | cut -f1,2 -d ';'| sed 's/ID=//g'| sed 's/;eC_number=/\t/g' > {output[4]}
         """
 
 
@@ -530,46 +530,46 @@ rule ANALYSIS_PLOT:
         Rscript $PLOT_SCRIPT {AN_OUT}/results {input}
         """
 
-rule ANALYSIS_KRONA_PLOT_MG:
-    log:
-        AN_LOG
-    benchmark:
-        "%s/benchmarks/ANALYSIS_KRONA_PLOT.json" % AN_OUT
-    input:
-        "{AN_OUT}/MG.prokkaID2ec.txt",
-        "{U_OUT}/ec2pwy.txt",
-        "{U_OUT}/pwy2hierarchy.txt",
-        "{AN_OUT}/MG.gene_depth.avg",
-        "{AN_OUT}/MG.gene.len",
-    output:
-        "{AN_OUT}/results/MG.gene_kegg_krona.txt",
-        "{AN_OUT}/results/MG.gene_kegg_krona.html"
-    shell:
-        """
-        echo "[x] PLOT KRONA `date +"%Y/%m/%d %H:%M:%S"`" >> {log}
-        python {SRCDIR}/genes.to.kronaTable.py -i {input[0]} -m {input[1]} -H {input[2]} -c {input[3]} -L {input[3]} -o {output[0]}
-        ktImportText -o {output[1]} {output[0]}"
-        """
-
-rule ANALYSIS_KRONA_PLOT_MT:
-    log:
-        AN_LOG
-    benchmark:
-        "%s/benchmarks/ANALYSIS_KRONA_PLOT.json" % AN_OUT
-    input:
-        "{AN_OUT}/MT.prokkaID2ec.txt",
-        "{U_OUT}/ec2pwy.txt",
-        "{U_OUT}/pwy2hierarchy.txt",
-        "{AN_OUT}/MT.gene_depth.avg",
-        "{AN_OUT}/MT.gene.len",
-    output:
-        "{AN_OUT}/results/MT.gene_kegg_krona.txt",
-        "{AN_OUT}/results/MT.gene_kegg_krona.html"
-    shell:
-        """
-        echo "[x] PLOT KRONA `date +"%Y/%m/%d %H:%M:%S"`" >> {log}
-        python {SRCDIR}/genes.to.kronaTable.py -i {input[0]} -m {input[1]} -H {input[2]} -c {input[3]} -L {input[3]} -o {output[0]}
-        ktImportText -o {output[1]} {output[0]}"
-        """
-
-
+#rule ANALYSIS_KRONA_PLOT_MG:
+#    log:
+#        AN_LOG
+#    benchmark:
+#        "%s/benchmarks/ANALYSIS_KRONA_PLOT.json" % AN_OUT
+#    input:
+#        "%s/MG.prokkaID2ec.txt % AN_OUT,
+#        "%s/ec2pwy.txt" % U_OUT,
+#        "%s/pwy2hierarchy.txt" % U_OUT,
+#        "%s/MG.gene_depth.avg" % AN_OUT,
+#        "%s/MG.gene.len" % AN_OUT
+#    output:
+#        "%s/results/MG.gene_kegg_krona.txt" % AN_OUT,
+#        "%s/results/MG.gene_kegg_krona.html" % AN_OUT
+#    shell:
+#        """
+#        echo "[x] PLOT KRONA `date +"%Y/%m/%d %H:%M:%S"`" >> {log}
+#        python {SRCDIR}/genes.to.kronaTable.py -i {input[0]} -m {input[1]} -H {input[2]} -c {input[3]} -L {input[3]} -o {output[0]}
+#        ktImportText -o {output[1]} {output[0]}
+#        """
+#rule ANALYSIS_KRONA_PLOT_MT:
+#    log:
+#        AN_LOG
+#    benchmark:
+#        "%s/benchmarks/ANALYSIS_KRONA_PLOT.json" % AN_OUT
+#    input:
+#        "%s/MT.prokkaID2ec.txt % AN_OUT,
+#        "%s/ec2pwy.txt" % U_OUT,
+#        "%s/pwy2hierarchy.txt" % U_OUT,
+#        "%s/MT.gene_depth.avg" % AN_OUT,
+#        "%s/MT.gene.len" % AN_OUT
+#    output:
+#        "%s/results/MT.gene_kegg_krona.txt" % AN_OUT,
+#        "%s/results/MT.gene_kegg_krona.html" % AN_OUT
+#    shell:
+#        """
+#        echo "[x] PLOT KRONA `date +"%Y/%m/%d %H:%M:%S"`" >> {log}
+#        python {SRCDIR}/genes.to.kronaTable.py -i {input[0]} -m {input[1]} -H {input[2]} -c {input[3]} -L {input[3]} -o {output[0]}
+#        ktImportText -o {output[1]} {output[0]}
+#        """
+#
+#
+#

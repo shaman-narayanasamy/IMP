@@ -6,13 +6,22 @@ AN_OUT, AN_LOG = prepare_environment('Analysis')
 include:
     "MGMT.rules"
 
-
 def analysis_output_files():
     all = expand("{dir}/{name}", name=[
                  "MT.read_counts.txt",
                  "MG.read_counts.txt",
-                 # "MG.annotation.bed",
-                 # "MT.annotation.bed",
+                 #### Added this ####
+                 "MG.annotation.bed",
+                 "MG.gene_depth.hist",
+                 "MG.gene_depth.avg",
+                 "MG.gene.len",
+                 "MG.prokkaID2ec.txt",
+                 "MT.annotation.bed",
+                 "MT.gene_depth.hist",
+                 "MT.gene_depth.avg",
+                 "MT.gene.len",
+                 "MT.prokkaID2ec.txt",
+                 #####################
                  "MG.variants.isec.vcf.gz",
                  "MT.variants.isec.vcf.gz",
                  "MGMT.assembly.length.txt",
@@ -25,6 +34,12 @@ def analysis_output_files():
                  "MG.assembly.contig_flagstat.txt",
                  "MGMT.vizbin.points",
                  "MGMT.vizbin.filtered.fa",
+                 #### Added this ####
+                 #"results/MT.gene_kegg_krona.txt",
+                 #"results/MT.gene_kegg_krona.html",
+                 #"results/MG.gene_kegg_krona.txt",
+                 #"results/MG.gene_kegg_krona.html",
+                 #####################
                  "MGMT.vizbin.with-contig-names.points"], dir=AN_OUT)
     plots = analysis_plot_files_output()
     return all + plots
