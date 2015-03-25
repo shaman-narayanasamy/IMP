@@ -194,7 +194,7 @@ rule CHECK_TOOLS_VERSION:
 
         """
 
-rule DOWNLOAD_KEGG_INFORMATION:
+rule _DOWNLOAD_KEGG_INFORMATION:
     log:
         U_LOG
     benchmark:
