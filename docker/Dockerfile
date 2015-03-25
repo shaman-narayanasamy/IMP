@@ -56,6 +56,7 @@ RUN mkdir -p /home/imp/tmp /home/imp/lib \
 && mkdir -p /usr/db/trimmomatic \
 && cp adapters/* /usr/db/trimmomatic/. \
 && cd .. && rm -rf *rimmomatic*
+
 ## idba ud
 RUN wget http://hku-idba.googlecode.com/files/idba-1.1.1.tar.gz \
 && tar -xzf idba-1.1.1.tar.gz \
@@ -79,6 +80,7 @@ RUN wget http://hku-idba.googlecode.com/files/idba-1.1.1.tar.gz \
 && make \
 && mv bwa /usr/bin \
 && cd .. && rm -rf bwa*
+
 ## htqc toolbox
 RUN wget http://downloads.sourceforge.net/project/htqc/htqc-1.91.1-Source.tar.gz \
 && tar -xzf htqc-1.91.1-Source.tar.gz \
@@ -111,6 +113,7 @@ RUN wget http://downloads.sourceforge.net/project/htqc/htqc-1.91.1-Source.tar.gz
 && cp -r bin/* /usr/bin \
 && cp -r perl/* /etc/perl/. \
 && cd .. && rm -rf vcftools*
+
 ## prokka
 RUN wget http://www.vicbioinformatics.com/prokka-1.10.tar.gz \
 && tar -xzf prokka-1.10.tar.gz \
@@ -157,13 +160,29 @@ RUN echo "r <- getOption('repos'); r['CRAN'] <- 'http://cran.us.r-project.org'; 
 && Rscript -e "install.packages('beanplot')" \
 && Rscript -e "source('http://bioconductor.org/biocLite.R');biocLite('genomeIntervals')"
 
+
+## Install KronaPlot
+RUN cd /home/imp/lib \
+&& wget "http://downloads.sourceforge.net/project/krona/KronaTools (Mac, Linux)/KronaTools-2.5.tar" \
+&& tar -xvf KronaTools-2.5.tar \
+&& cd KronaTools-2.5 \
+&& perl install.pl
+
+
+## htslib
+RUN cd /tmp \
+&& wget https://github.com/samtools/htslib/releases/download/1.2.1/htslib-1.2.1.tar.bz2 \
+&& tar -jxvf htslib-1.2.1.tar.bz2 \
+&& cd htslib-1.2.1 \
+&& ./configure && make && make install \
+&& cd .. && rm -rf htslib-1.2.1
+
 ## Platypus
 RUN cd /home/imp/lib \
 && wget http://www.well.ox.ac.uk/bioinformatics/Software/Platypus-latest.tgz \
 && tar -xvzf Platypus-latest.tgz \
-&& cd Platypus_0.7.9.1 \
+&& cd Platypus_0.8.1 \
 && bash buildPlatypus.sh
-
 
 ## Megahit
 RUN cd /home/imp/lib \
@@ -176,7 +195,6 @@ RUN cd /home/imp/lib \
 ######################
 #COPY Snakefile /home/imp/integrated-metaomic-pipeline/Snakefile
 #COPY src/ /home/imp/integrated-metaomic-pipeline/src
-##RUN git clone http://yjarosz:gitlablcsb@lcsb-git.uni.lux/shaman/integrated-metaomic-pipeline.git
 
 #################
 # add test data #
@@ -186,7 +204,7 @@ RUN cd /home/imp/lib \
 ######################
 # runtime parameters #
 ######################
-ENV PATH /home/imp/lib/trinityrnaseq_r20140717:/home/imp/lib/Platypus_0.7.9.1:/home/imp/lib/megahit:$PATH
+ENV PATH /home/imp/lib/trinityrnaseq_r20140717:/home/imp/lib/Platypus_0.8.1:/home/imp/lib/megahit:$PATH
 
 VOLUME ["/shared"]
 WORKDIR /home/imp/integrated-metaomic-pipeline
