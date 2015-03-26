@@ -5,7 +5,6 @@ A_OUT, A_LOG = prepare_environment('Assembly')
 include:
     "MGMT.rules"
 
-
 def assembly_output_files():
     return expand('{dir}/{name}', name=[
         'MG.reads.sorted.bam',
