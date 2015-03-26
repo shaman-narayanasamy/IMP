@@ -17,3 +17,11 @@ rule ASSEMBLY:
         assembly_output_files()
     shell:
         "echo 'Assembly Done'"
+
+# MT ASSEMBLY command
+rule ASSEMBLY_MT_ALL:
+    input:
+        "%s/MT.assembly.cat.fa" % A_OUT
+    shell:
+        "echo 'MT Assembly Done'"
+
