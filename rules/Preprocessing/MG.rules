@@ -11,7 +11,7 @@ rule PREPROCESSING_MG_GET_FILES:
         prepare_input_files(input, 'MG')
 
 
-rule PREPROCESSING_MG_FILES_STATISTICS:
+rule PREPROCESSING_MG_QUALITY_STATS:
     input:
         expand('{dir}/{raw}', raw=['MG.R1.fq', 'MG.R2.fq'], dir=P_OUT)
     output:
@@ -25,7 +25,7 @@ rule PREPROCESSING_MG_FILES_STATISTICS:
                 '{dir}/reads_quality.{ext}'
                 ], n=['1', '2'], ext=['gnuplot', 'png', 'tab'], dir='%s/stats/MG' % P_OUT)
     benchmark:
-        "%s/benchmarks/PREPROCESSING_MG_FILES_STATISTICS.json" % P_OUT
+        "%s/benchmarks/PREPROCESSING_MG_QUALITY_STATS.json" % P_OUT
     log:
         P_LOG
     shell:
@@ -84,7 +84,7 @@ rule PREPROCESSING_MG_CONCAT_TRIMMED_SE:
         "%s/benchmarks/PREPROCESSING_MG_CONCAT_TRIMMED_SE.json" % P_OUT
 
 
-rule PREPROCESSING_MG_PREPROCESSED_FILES_STATISTICS:
+rule PREPROCESSING_MG_PREPROCESSED_QUALITY_STATS:
     log:
         P_LOG
     input:
@@ -106,10 +106,10 @@ rule PREPROCESSING_MG_PREPROCESSED_FILES_STATISTICS:
         ht2-stat-draw.pl --dir {P_OUT}/stats_after_preprocessing/MG > {log} 2>&1
         """
     benchmark:
-        "%s/benchmarks/PREPROCESSING_MG_PREPROCESSED_FILES_STATISTICS.json" % P_OUT
+        "%s/benchmarks/PREPROCESSING_MG_PREPROCESSED_QUALITY_STATS.json" % P_OUT
 
 
-rule PREPROCESSING_MG_FILTER_HUMAN:
+rule PREPROCESSING_MG_FILTER_HG:
     log:
         P_LOG
     input:
@@ -128,7 +128,7 @@ rule PREPROCESSING_MG_FILTER_HUMAN:
             'MG.R2.uniq.trimmed.{f}.fq',
             'MG.SE.uniq.trimmed.{f}.fq'], f=config['human_filtering']['filter']), dir=P_OUT)
     benchmark:
-        "%s/benchmarks/PREPROCESSING_MG_FILTER_HUMAN.json" % P_OUT
+        "%s/benchmarks/PREPROCESSING_MG_FILTER_HG.json" % P_OUT
     shell:
         """
         TMP_FILE=$(mktemp --tmpdir={TMPDIR} -t "alignment_XXXXXX.bam")
@@ -146,4 +146,3 @@ rule PREPROCESSING_MG_FILTER_HUMAN:
         """
 
 
-#
