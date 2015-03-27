@@ -3,7 +3,8 @@ A_OUT, A_LOG = prepare_environment('Assembly')
 
 # include sub rules
 include:
-    "MGMT.rules",
+    "MGMT.rules"
+include:
     "MG.rules"
 
 def assembly_output_files():

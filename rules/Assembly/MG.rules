@@ -28,15 +28,16 @@ rule ASSEMBLY_MG_ASSEMBLY_1:
         """
         TMPD=$(mktemp -d -t --tmpdir={TMPDIR} "XXXXXX")
         fq2fa --merge {input[0]} {input[1]} $TMPD/merged.fa
-        fq2fa --merge {input[2]} $TMPD/se.fa
+        fq2fa {input[2]} $TMPD/se.fa
+        echo $TMPDIR
         idba_ud -r $TMPD/merged.fa \
         -l $TMPD/se.fa -o $TMPD \
         --mink {config[Assembly][idba_ud][mink]} --maxk {config[Assembly][idba_ud][maxk]} \
         --step {config[Assembly][idba_ud][step]} --num_threads {THREADS} \
         --similar {config[Assembly][idba_ud][perid]} --pre_correction
         mv $TMPD/contig.fa {output}
-        rm -rf $TMPD
         """
+        #rm -rf $TMPD
 
 rule ASSEMBLY_MG_EXTRACT_UNMAPPED_FROM_ASSEMBLY_1:
     log:
