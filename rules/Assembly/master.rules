@@ -34,9 +34,9 @@ rule ASSEMBLY_MG_ALL:
     shell:
         "echo 'MG Assembly Done'"
 
-#rule ASSEMBLY_FAST:
+#rule ASSEMBLY_MG_FAST:
 #    input:
-#        "%s/MGMT.assembly.merged.fa" % A_OUT
+#        "%s/MG.assembly.merged.fa" % A_OUT
 #    shell:
-#        "echo 'MGMT fast assembly Done'"
+#        "echo 'MG fast assembly done'"
 #
