@@ -1,3 +1,7 @@
+#################
+## MG ONLY ASSEMBLY WITH IDBA
+#################
+
 rule ASSEMBLY_MG_ASSEMBLY_SE_CAT:
     log:
         A_LOG
