@@ -69,7 +69,7 @@ rule PREPROCESSING_MG_TRIM:
         "%s/benchmarks/PREPROCESSING_MG_TRIM.json" % P_OUT
 
 
-rule PREPROCESSING_MG_CONCAT_TRIMMED_SE:
+rule PREPROCESSING_MG_CAT_TRIMMED_SE:
     log:
         P_LOG
     input:
@@ -81,7 +81,7 @@ rule PREPROCESSING_MG_CONCAT_TRIMMED_SE:
     shell:
         "cat {input[0]} {input[1]} > {output}"
     benchmark:
-        "%s/benchmarks/PREPROCESSING_MG_CONCAT_TRIMMED_SE.json" % P_OUT
+        "%s/benchmarks/PREPROCESSING_MG_CAT_TRIMMED_SE.json" % P_OUT
 
 
 rule PREPROCESSING_MG_PREPROCESSED_QUALITY_STATS:

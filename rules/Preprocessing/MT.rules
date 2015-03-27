@@ -8,11 +8,11 @@ rule PREPROCESSING_MT_GET_FILES:
     run:
         prepare_input_files(input, 'MT')
 
-rule PREPROCESSING_MT_FILES_STATISTICS:
+rule PREPROCESSING_MT_QUALITY_STATS:
     log:
         P_LOG
     benchmark:
-        "%s/benchmarks/PREPROCESSING_MT_FILES_STATISTICS.json" % P_OUT
+        "%s/benchmarks/PREPROCESSING_MT_QUALITY_STATS.json" % P_OUT
     input:
         expand('{dir}/{raw}', raw=['MT.R1.fq', 'MT.R2.fq'], dir=P_OUT)
     output:
@@ -49,11 +49,11 @@ rule PREPROCESSING_MT_TRIM:
         "%s/benchmarks/PREPROCESSING_MT_TRIM.json" % P_OUT
 
 
-rule PREPROCESSING_MT_CONCAT_TRIMMED_SE:
+rule PREPROCESSING_MT_CAT_TRIMMED_SE:
     log:
         P_LOG
     benchmark:
-        "%s/benchmarks/PREPROCESSING_MT_CONCAT_TRIMMED_SE.json" % P_OUT
+        "%s/benchmarks/PREPROCESSING_MT_CAT_TRIMMED_SE.json" % P_OUT
     input:
         expand('{dir}/{trim}', trim=[
             'MT.SE1.trimmed.fq',
@@ -65,11 +65,11 @@ rule PREPROCESSING_MT_CONCAT_TRIMMED_SE:
         "cat {input[0]} {input[1]} > {output}"
 
 
-rule PREPROCESSING_MT_PREPROCESSED_FILES_STATISTICS:
+rule PREPROCESSING_MT_PREPROCESSED_QUALITY_STATS:
     log:
         P_LOG
     benchmark:
-        "%s/benchmarks/PREPROCESSING_MT_PREPROCESSED_FILES_STATISTICS.json" % P_OUT
+        "%s/benchmarks/PREPROCESSING_MT_PREPROCESSED_QUALITY_STATS.json" % P_OUT
     input:
         expand('{dir}/{trim}', trim=[
             'MT.R1.trimmed.fq',
