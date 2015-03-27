@@ -300,7 +300,7 @@ rule ASSEMBLY_MT_MAPPING:
 # ## MGMT FAST ASSEMBLY USING MEGAHIT
 ################
 
-rule ASSEMBLY_MG_FAST_1:
+rule ASSEMBLY_MGMT_FAST_1:
     log:
         A_LOG
     benchmark:
