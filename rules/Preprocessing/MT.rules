@@ -91,11 +91,11 @@ rule PREPROCESSING_MT_PREPROCESSED_QUALITY_STATS:
         """
 
 
-rule PREPROCESSING_MT_FILTER_RNA:
+rule PREPROCESSING_MT_FILTER_RRNA:
     log:
         P_LOG
     benchmark:
-        "%s/benchmarks/PREPROCESSING_MT_FILTER_RNA.json" % P_OUT
+        "%s/benchmarks/PREPROCESSING_MT_FILTER_RRNA.json" % P_OUT
     input:
         expand('{dir}/{trim}', trim=[
             'MT.R1.trimmed.fq',
@@ -133,11 +133,11 @@ rule PREPROCESSING_MT_FILTER_RNA:
         rm $TMP_R12*
         """)
 
-rule PREPROCESSING_MT_FILTER_HUMAN:
+rule PREPROCESSING_MT_FILTER_HG:
     log:
         P_LOG
     benchmark:
-        "%s/benchmarks/PREPROCESSING_MT_FILTER_HUMAN.json" % P_OUT
+        "%s/benchmarks/PREPROCESSING_MT_FILTER_HG.json" % P_OUT
     input:
         expand('{dir}/{filter}', filter=[
             'MT.R1.trimmed.rna_filtered.fq',
