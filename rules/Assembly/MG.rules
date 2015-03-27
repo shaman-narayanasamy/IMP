@@ -121,7 +121,7 @@ rule ASSEMBLY_MG_MERGE_ASSEMBLY:
         """
 
 ################
-# ## MGMT FAST ASSEMBLY USING MEGAHIT
+# ## MG FAST ASSEMBLY USING MEGAHIT
 ################
 
 rule ASSEMBLY_MG_FAST_1:
@@ -135,9 +135,9 @@ rule ASSEMBLY_MG_FAST_1:
         preprocessed_mg('SE'),
         '{dir}/MT.assembly_1/final.contigs.fa'.format(dir=A_OUT)
     output:
-        '{dir}/MGMT.assembly_1/final.contigs.fa'.format(dir=A_OUT)
+        '{dir}/MG.assembly_1/final.contigs.fa'.format(dir=A_OUT)
     params:
-        outdir = "{dir}/MGMT.assembly_1".format(dir=A_OUT)
+        outdir = "{dir}/MG.assembly_1".format(dir=A_OUT)
     shell:
         """
         MAX_READ_LEN=$(cat {input} | sed -n '1~4s/^@/>/p;2~4p' |\
@@ -149,7 +149,7 @@ rule ASSEMBLY_MG_FAST_1:
         -l $MAX_READ_LEN --input-cmd "cat {input}" -t {THREADS} --continue > {log} 2>&1
         """
 
-rule ASSEMBLY_MGMT_EXTRACT_UNMAPPED_FROM_FAST_1:
+rule ASSEMBLY_MG_EXTRACT_UNMAPPED_FROM_FAST_1:
     log:
         A_LOG
     benchmark:
@@ -158,8 +158,8 @@ rule ASSEMBLY_MGMT_EXTRACT_UNMAPPED_FROM_FAST_1:
         preprocessed_mg('R1'),
         preprocessed_mg('R2'),
         preprocessed_mg('SE'),
-        '{dir}/MGMT.assembly_1/final.contigs.fa'.format(dir=A_OUT),
-        expand('{dir}/MGMT.assembly_1/final.contigs.fa.{ext}', dir=A_OUT, ext=['amb', 'bwt', 'pac', 'sa', 'ann'])
+        '{dir}/MG.assembly_1/final.contigs.fa'.format(dir=A_OUT),
+        expand('{dir}/MG.assembly_1/final.contigs.fa.{ext}', dir=A_OUT, ext=['amb', 'bwt', 'pac', 'sa', 'ann'])
     output:
         expand('{dir}/{name}', name=[
             'MG.R1.unmapped.fq',
@@ -182,7 +182,7 @@ rule ASSEMBLY_MGMT_EXTRACT_UNMAPPED_FROM_FAST_1:
         rm -rf $BUFFER* $TMP_FILE
         """
 
-rule ASSEMBLY_MGMT_FAST_2:
+rule ASSEMBLY_MG_FAST_2:
     log:
         A_LOG
     benchmark:
@@ -193,9 +193,9 @@ rule ASSEMBLY_MGMT_FAST_2:
             'MG.R2.unmapped.fq',
             'MG.SE.unmapped.fq'], dir=A_OUT)
     output:
-        '{dir}/MGMT.assembly_2/final.contigs.fa'.format(dir=A_OUT)
+        '{dir}/MG.assembly_2/final.contigs.fa'.format(dir=A_OUT)
     params:
-        outdir = "{dir}/MGMT.assembly_2".format(dir=A_OUT)
+        outdir = "{dir}/MG.assembly_2".format(dir=A_OUT)
     shell:
         """
         MAX_READ_LEN=$(cat {input} | sed -n '1~4s/^@/>/p;2~4p' | \
