@@ -3,7 +3,8 @@ A_OUT, A_LOG = prepare_environment('Assembly')
 
 # include sub rules
 include:
-    "MGMT.rules"
+    "MGMT.rules",
+    "MG.rules"
 
 def assembly_output_files():
     return expand('{dir}/{name}', name=[
@@ -23,4 +24,12 @@ rule ASSEMBLY_MT_ALL:
         "%s/MT.assembly.cat.fa" % A_OUT
     shell:
         "echo 'MT Assembly Done'"
+
+# MG ASSEMBLY command
+# This will produce an MG-only assembly
+rule ASSEMBLY_MG_ALL:
+    input:
+        "%s/MG.assembly.merged.fa" % A_OUT
+    shell:
+        "echo 'MG Assembly Done'"
 

@@ -141,7 +141,6 @@ rule ASSEMBLY_MGMT_ASSEMBLY_1:
         rm -rf $TMPD
         """
 
-
 rule ASSEMBLY_MGMT_EXTRACT_UNMAPPED_FROM_ASSEMBLY_1:
     log:
         A_LOG
@@ -173,7 +172,6 @@ rule ASSEMBLY_MGMT_EXTRACT_UNMAPPED_FROM_ASSEMBLY_1:
         samtools view -@ {THREADS} -uf 4 - | bamToFastq -i stdin -fq {output[2]}
         rm -rf $BUFFER* $TMP_FILE
         """
-
 
 rule ASSEMBLY_MGMT_ASSEMBLY_2:
     log:
