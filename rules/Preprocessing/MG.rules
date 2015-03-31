@@ -54,7 +54,8 @@ rule PREPROCESSING_MG_TRIM:
     log:
         P_LOG
     input:
-        expand('{dir}/{uniq}', uniq=['MG.R1.fq', 'MG.R2.fq'], dir=P_OUT)
+        expand('{dir}/{uniq}', uniq=['MG.R1.fq', 'MG.R2.fq'], dir=P_OUT),
+        DBPATH + "/adapters/adapters.done"
     output:
         expand('{dir}/{trim}', trim=[
             'MG.R1.uniq.trimmed.fq',
@@ -63,7 +64,7 @@ rule PREPROCESSING_MG_TRIM:
             'MG.SE2.uniq.trimmed.fq'], dir=P_OUT)
     shell:
         """
-        java -jar {config[Preprocessing][trimmomatic][jarfile]} PE -threads {THREADS} {input} {output} ILLUMINACLIP:{config[Preprocessing][trimmomatic][databases]}/{config[Preprocessing][trimmomatic][adapter]}-PE.fa:{config[Preprocessing][trimmomatic][seed_mismatch]}:{config[Preprocessing][trimmomatic][palindrome_clip_threshold]}:{config[Preprocessing][trimmomatic][simple_clip_threshold]} LEADING:{config[Preprocessing][trimmomatic][leading]} TRAILING:{config[Preprocessing][trimmomatic][trailing]} SLIDINGWINDOW:{config[Preprocessing][trimmomatic][window_size]}:{config[Preprocessing][trimmomatic][window_quality]} MINLEN:{config[Preprocessing][trimmomatic][minlen]} MAXINFO:{config[Preprocessing][trimmomatic][target_length]}:{config[Preprocessing][trimmomatic][strictness]} > {log} 2>&1
+        java -jar {config[Preprocessing][trimmomatic][jarfile]} PE -threads {THREADS} {input[0]} {input[1]} {output} ILLUMINACLIP:{config[Preprocessing][trimmomatic][databases]}/{config[Preprocessing][trimmomatic][adapter]}-PE.fa:{config[Preprocessing][trimmomatic][seed_mismatch]}:{config[Preprocessing][trimmomatic][palindrome_clip_threshold]}:{config[Preprocessing][trimmomatic][simple_clip_threshold]} LEADING:{config[Preprocessing][trimmomatic][leading]} TRAILING:{config[Preprocessing][trimmomatic][trailing]} SLIDINGWINDOW:{config[Preprocessing][trimmomatic][window_size]}:{config[Preprocessing][trimmomatic][window_quality]} MINLEN:{config[Preprocessing][trimmomatic][minlen]} MAXINFO:{config[Preprocessing][trimmomatic][target_length]}:{config[Preprocessing][trimmomatic][strictness]} > {log} 2>&1
         """
     benchmark:
         "%s/benchmarks/PREPROCESSING_MG_TRIM.json" % P_OUT
@@ -117,11 +118,10 @@ rule PREPROCESSING_MG_FILTER_HG:
             'MG.R1.uniq.trimmed.fq',
             'MG.R2.uniq.trimmed.fq',
             'MG.SE.uniq.trimmed.fq'], dir=P_OUT),
-        '{dir}/{ref}.fa'.format(dir=config['human_filtering']['db_path'], ref=config['human_filtering']['filter']),
+        '{dir}/{ref}.fa'.format(dir=DBPATH + "/human", ref=config['human_filtering']['filter']),
         expand(
-            "{path}/{filter}.{ext}",
-            path=config["human_filtering"]["db_path"], filter=config["human_filtering"]["filter"],
-            ext=['fa', 'fa.amb', 'fa.ann', 'fa.bwt', 'fa.pac', 'fa.sa'])
+            "{p}/human/{filter}.{ext}", filter=config["human_filtering"]["filter"],
+            ext=['fa', 'fa.amb', 'fa.ann', 'fa.bwt', 'fa.pac', 'fa.sa'], p=DBPATH)
     output:
         expand('{dir}/{filter}', filter=expand([
             'MG.R1.uniq.trimmed.{f}.fq',
@@ -144,5 +144,3 @@ rule PREPROCESSING_MG_FILTER_HG:
         samtools view -@ {THREADS} -uf 4 - | bamToFastq -i stdin -fq {output[2]}
         rm -rf $BUFFER* $TMP_FILE
         """
-
-

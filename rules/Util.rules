@@ -3,9 +3,9 @@ U_OUT, U_LOG = prepare_environment('Util')
 
 rule _DOWNLOAD_HUMAN_DB:
     output:
-        expand("{path}/{filter}.{ext}", path=config["human_filtering"]["db_path"], filter=config["human_filtering"]["filter"], ext=['fa'])
+        expand("{path}/{filter}.{ext}", path="{DBPATH}/human", filter=config["human_filtering"]["filter"], ext=['fa'])
     params:
-        filter = config["human_filtering"]["filter"], outdir = config["human_filtering"]["db_path"]
+        filter = config["human_filtering"]["filter"], outdir = "{DBPATH}/human"
     shell:
         """
         TMPD=$(mktemp -d -t --tmpdir={TMPDIR} "XXXXXX")
@@ -19,7 +19,7 @@ rule _DOWNLOAD_HUMAN_DB:
 
 rule _DOWNLOAD_SORTMERNA_DATABASES:
     output:
-        expand("{path}/{files}.fasta", files=config["sortmerna"]["files"], path=config["sortmerna"]["db_path"])
+        expand("{path}/{files}.fasta", files=config["sortmerna"]["files"], path="{DBPATH}/sortmerna")
     shell:
         """
         TMPD=$(mktemp -d -t --tmpdir={tmp} "XXXXXX")
@@ -28,11 +28,11 @@ rule _DOWNLOAD_SORTMERNA_DATABASES:
         mkdir -p {path}
         mv $TMPD/rRNA_databases/*.fasta {path}/.
         rm -rf $TMPD
-        """.format(pkg_url=config["sortmerna"]["pkg_url"], path=config["sortmerna"]["db_path"], tmp='{TMPDIR}')
+        """.format(pkg_url=config["sortmerna"]["pkg_url"], path="{DBPATH}/sortmerna", tmp='{TMPDIR}')
 
 rule _DOWNLOAD_PROKKA_DATABASES:
     output:
-        expand("{path}/{db}", path=config["prokka"]["db_path"], db=config["prokka"]["databases"])
+        expand("{path}/{db}", path="{DBPATH}", db=config["prokka"]["databases"])
     shell:
         """
         TMPDIR=$(mktemp -d -t "XXXXXX")
@@ -42,7 +42,20 @@ rule _DOWNLOAD_PROKKA_DATABASES:
         cp -r $TMPDIR/db/* {path}/.
         rm -rf $TMPDIR
         prokka --setupdb
-        """.format(pkg_url=config["prokka"]["pkg_url"], path=config["prokka"]["db_path"])
+        """.format(pkg_url=config["prokka"]["pkg_url"], path="{DBPATH}")
+
+
+rule _DOWNLOAD_TRIMMOMATIC_ADAPTERS:
+    output:
+        "{DBPATH}/adapters/adapters.done"
+    shell:
+        """
+        wget http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-Src-0.32.zip
+        unzip Trimmomatic-Src-0.32.zip
+        cp -r trimmomatic-0.32/adapters {DBPATH}
+        rm Trimmomatic-Src-0.32.zip && rm -rf trimmomatic-0.32
+        touch {output}
+        """
 
 
 rule _DOWNLOAD_LIBRARY_FILES:
@@ -61,20 +74,20 @@ rule INDEX_SORTMERNA_DB:
     benchmark:
         "%s/benchmarks/INDEX_SORTMERNA_DB.json" % U_OUT
     input:
-        expand("{path}/{files}.fasta", files=config["sortmerna"]["files"], path=config["sortmerna"]["db_path"])
+        expand("{path}/{files}.fasta", files=config["sortmerna"]["files"], path="{DBPATH}/sortmerna")
     output:
         expand(
             "{path}/idx/{files}.{ext}",
             files=config["sortmerna"]["files"],
-            path=config["sortmerna"]["db_path"],
+            path="{DBPATH}/sortmerna",
             ext=['bursttrie_0.dat', 'kmer_0.dat', 'pos_0.dat', 'stats'])
     params:
-        outdir = "%s/idx" % config["sortmerna"]["db_path"]
+        outdir = "%s/idx" % "{DBPATH}/sortmerna"
     run:
         fastaindexed = expand(
             "{path}/idx/{files}",
             files=config["sortmerna"]["files"],
-            path=config["sortmerna"]["db_path"])
+            path="{DBPATH}/sortmerna")
         ref = ':'.join('%s,%s' % (a, b) for a, b in zip(input, fastaindexed))
         shell("mkdir -p {params.outdir}")
         shell("indexdb_rna --ref {ref} > {log}  2>&1")
@@ -89,8 +102,8 @@ rule DIAGRAMMS:
         outdir = "%s" % OUTPUTDIR
     shell:
         """
-        snakemake RUN --forceall --dag | dot -Tpng > {params.outdir}/workflow.png
-        snakemake RUN --forceall --dag | dot -Tpdf > {params.outdir}/workflow.pdf
+        snakemake ALL --forceall --dag | dot -Tpng > {params.outdir}/workflow.png
+        snakemake ALL --forceall --dag | dot -Tpdf > {params.outdir}/workflow.pdf
         """
 
 rule REPORT:
@@ -211,4 +224,3 @@ rule _DOWNLOAD_KEGG_INFORMATION:
         echo "Preparing KEGG ID to pathway mappings"
         python {SRCDIR}/make.pwy.hierarchy.kegg.py -o {output[1]}
         """
-

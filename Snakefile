@@ -45,6 +45,9 @@ OUTPUTDIR = os.environ.get("OUTPUTDIR", config['General']['outputdir'])
 MG = os.environ.get("MG", config['General']['raws']['Metagenomics']).split()
 MT = os.environ.get("MT", config['General']['raws']['Metatranscriptomics']).split()
 SAMPLE = os.environ.get("SAMPLE", config['General']['sample'])
+DBPATH = os.environ.get("DBPATH", config['General']['db_path'])
+if not os.path.exists(DBPATH):
+    os.makedirs(DBPATH)
 
 # Get general parameters
 THREADS = os.environ.get("THREADS", config['General']['threads'])
@@ -66,7 +69,7 @@ def prepare_environment(stepname):
     if not os.path.exists(out):
         os.makedirs(out)
     elif not os.path.isdir(out):
-        raise OSError("[IMP] Output is not a directory: %s" % out)
+        raise OSError("//[IMP] Output is not a directory: %s" % out)
     if not os.path.exists(TMPDIR):
         os.makedirs(TMPDIR)
     bench = os.path.join(out, 'benchmarks')

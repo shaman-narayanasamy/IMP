@@ -11,7 +11,8 @@
           "Metatranscriptomics": "MT.R1.5_percent.fq MT.R2.5_percent.fq"
       },
       "sample": "test",
-      "outputdir": "build"
+      "outputdir": "build",
+      "db_path": "db"
     },
     "Preprocessing": {
       "pre": "echo '//LOADING PREPROCESSING MODULE'",
@@ -28,8 +29,7 @@
           "window_quality": 3,
           "strictness": 0.5,
           "target_length": 40,
-          "jarfile": "/home/imp/lib/trimmomatic-0.32.jar",
-          "databases": "/usr/db/trimmomatic"
+          "jarfile": "/home/imp/lib/trimmomatic-0.32.jar"
       }
     },
     "Assembly": {
@@ -57,11 +57,9 @@
     },
     "human_filtering": {
         "filter": "chr21",
-        "url": "http://hgdownload.cse.ucsc.edu/goldenPath/hg38/chromosomes/chr21.fa.gz",
-        "db_path": "/usr/db/human"
+        "url": "http://hgdownload.cse.ucsc.edu/goldenPath/hg38/chromosomes/chr21.fa.gz"
     },
     "sortmerna": {
-        "db_path": "/usr/db/sortmerna",
         "pkg_url": "https://github.com/biocore/sortmerna/archive/2.0.tar.gz",
         "scripts_path": "/home/imp/lib",
 
@@ -78,7 +76,6 @@
     },
     "prokka": {
         "pkg_url": "http://www.vicbioinformatics.com/prokka-1.10.tar.gz",
-        "db_path": "/usr/db",
         "databases": [
             "cm/Bacteria.i1i",
             "genus/Staphylococcus.phr",

@@ -6,7 +6,7 @@ rule ANALYSIS_ANNOTATE:
         "%s/benchmarks/ANALYSIS_ANNOTATE.json" % AN_OUT
     input:
         '{dir}/MGMT.assembly.merged.fa'.format(dir=A_OUT),
-        expand("{path}/{db}", path=config["prokka"]["db_path"], db=config["prokka"]["databases"])
+        expand("{path}/{db}", path=DBPATH, db=config["prokka"]["databases"])
     output:
         "%s/annotation/annotation.filt.gff" % AN_OUT
     shell:

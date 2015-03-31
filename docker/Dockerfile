@@ -55,8 +55,8 @@ RUN mkdir -p /home/imp/tmp /home/imp/lib \
 && cd trimmomatic-0.32 \
 && ant \
 && cp dist/jar/trimmomatic-0.32.jar /home/imp/lib/. \
-&& mkdir -p /usr/db/trimmomatic \
-&& cp adapters/* /usr/db/trimmomatic/. \
+#&& mkdir -p /usr/db/trimmomatic \
+#&& cp adapters/* /usr/db/trimmomatic/. \
 && cd .. && rm -rf *rimmomatic*
 
 ## idba ud

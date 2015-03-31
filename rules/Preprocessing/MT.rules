@@ -34,7 +34,8 @@ rule PREPROCESSING_MT_TRIM:
     log:
         P_LOG
     input:
-        expand('{dir}/{uniq}', uniq=['MT.R1.fq', 'MT.R2.fq'], dir=P_OUT)
+        expand('{dir}/{uniq}', uniq=['MT.R1.fq', 'MT.R2.fq'], dir=P_OUT),
+        DBPATH + "/adapters/adapters.done"
     output:
         expand('{dir}/{trim}', trim=[
             'MT.R1.trimmed.fq',
@@ -43,7 +44,7 @@ rule PREPROCESSING_MT_TRIM:
             'MT.SE2.trimmed.fq'], dir=P_OUT)
     shell:
         """
-        java -jar {config[Preprocessing][trimmomatic][jarfile]} PE -threads {THREADS} {input} {output} ILLUMINACLIP:{config[Preprocessing][trimmomatic][databases]}/{config[Preprocessing][trimmomatic][adapter]}-PE.fa:{config[Preprocessing][trimmomatic][seed_mismatch]}:{config[Preprocessing][trimmomatic][palindrome_clip_threshold]}:{config[Preprocessing][trimmomatic][simple_clip_threshold]} LEADING:{config[Preprocessing][trimmomatic][leading]} TRAILING:{config[Preprocessing][trimmomatic][trailing]} SLIDINGWINDOW:{config[Preprocessing][trimmomatic][window_size]}:{config[Preprocessing][trimmomatic][window_quality]} MINLEN:{config[Preprocessing][trimmomatic][minlen]} MAXINFO:{config[Preprocessing][trimmomatic][target_length]}:{config[Preprocessing][trimmomatic][strictness]} > {log} 2>&1
+        java -jar {config[Preprocessing][trimmomatic][jarfile]} PE -threads {THREADS} {input[0]} {input[1]} {output} ILLUMINACLIP:{DBPATH}/trimmomatic/{config[Preprocessing][trimmomatic][adapter]}-PE.fa:{config[Preprocessing][trimmomatic][seed_mismatch]}:{config[Preprocessing][trimmomatic][palindrome_clip_threshold]}:{config[Preprocessing][trimmomatic][simple_clip_threshold]} LEADING:{config[Preprocessing][trimmomatic][leading]} TRAILING:{config[Preprocessing][trimmomatic][trailing]} SLIDINGWINDOW:{config[Preprocessing][trimmomatic][window_size]}:{config[Preprocessing][trimmomatic][window_quality]} MINLEN:{config[Preprocessing][trimmomatic][minlen]} MAXINFO:{config[Preprocessing][trimmomatic][target_length]}:{config[Preprocessing][trimmomatic][strictness]} > {log} 2>&1
         """
     benchmark:
         "%s/benchmarks/PREPROCESSING_MT_TRIM.json" % P_OUT
@@ -105,7 +106,7 @@ rule PREPROCESSING_MT_FILTER_RRNA:
         expand(
             "{path}/idx/{files}.{ext}",
             files=config["sortmerna"]["files"],
-            path=config["sortmerna"]["db_path"],
+            path=DBPATH + "/sortmerna",
             ext=['bursttrie_0.dat', 'kmer_0.dat', 'pos_0.dat', 'stats'])
     output:
         expand('{dir}/{filter}', filter=[
@@ -117,8 +118,8 @@ rule PREPROCESSING_MT_FILTER_RRNA:
             'MT.SE.trimmed.rna.fq',
             ], dir=P_OUT)
     run:
-        fastafiles = expand("{path}/{files}.fasta", files=config["sortmerna"]["files"], path=config["sortmerna"]["db_path"])
-        fastaindexed = expand("{path}/idx/{files}", files=config["sortmerna"]["files"], path=config["sortmerna"]["db_path"])
+        fastafiles = expand("{path}/{files}.fasta", files=config["sortmerna"]["files"], path="{DBPATH}/sortmerna")
+        fastaindexed = expand("{path}/idx/{files}", files=config["sortmerna"]["files"], path="{DBPATH}/sortmerna")
         ref = ':'.join('%s,%s' % (a, b) for a, b in zip(fastafiles, fastaindexed))
         # shell("{EXE} {SCRIPTS[filter_rna]} -t {config[sortmerna][threads]} \
         # -d %s -p {config[sortmerna][scripts_path]} \
@@ -143,10 +144,10 @@ rule PREPROCESSING_MT_FILTER_HG:
             'MT.R1.trimmed.rna_filtered.fq',
             'MT.R2.trimmed.rna_filtered.fq',
             'MT.SE.trimmed.rna_filtered.fq'], dir=P_OUT),
-        '{dir}/{ref}.fa'.format(dir=config['human_filtering']['db_path'], ref=config['human_filtering']['filter']),
+        '{dir}/{ref}.fa'.format(dir=DBPATH + "/human", ref=config['human_filtering']['filter']),
         expand(
             "{path}/{filter}.{ext}",
-            path=config["human_filtering"]["db_path"],
+            path=DBPATH + "/human",
             filter=config["human_filtering"]["filter"],
             ext=['fa', 'fa.amb', 'fa.ann', 'fa.bwt', 'fa.pac', 'fa.sa'])
     output:
