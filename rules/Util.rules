@@ -157,11 +157,11 @@ rule INDEX_FASTA_FILE:
         bwa index {wildcards.fasta} > {log} 2>&1
         """
 
-rule CHECK_TOOLS_VERSION:
+rule CHECK_TOOL_VERSION:
     log:
         U_LOG
     benchmark:
-        "%s/benchmarks/CHECK_TOOLS_VERSION.json" % U_OUT
+        "%s/benchmarks/CHECK_TOOL_VERSION.json" % U_OUT
     output:
         "%s/tools.versions" % U_OUT
     shell:
@@ -191,6 +191,7 @@ rule CHECK_TOOLS_VERSION:
         echo "# cap3"  >> {output}
         echo "# coverageBed"  >> {output}
         echo "# bh_tsne" >> {output}
+        echo "# KronaTools" >> {output}
 
         """
 
