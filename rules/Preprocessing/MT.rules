@@ -118,8 +118,8 @@ rule PREPROCESSING_MT_FILTER_RRNA:
             'MT.SE.trimmed.rna.fq',
             ], dir=P_OUT)
     run:
-        fastafiles = expand("{path}/{files}.fasta", files=config["sortmerna"]["files"], path="{DBPATH}/sortmerna")
-        fastaindexed = expand("{path}/idx/{files}", files=config["sortmerna"]["files"], path="{DBPATH}/sortmerna")
+        fastafiles = expand("{path}/{files}.fasta", files=config["sortmerna"]["files"], path=DBPATH + "/sortmerna")
+        fastaindexed = expand("{path}/idx/{files}", files=config["sortmerna"]["files"], path=DBPATH + "/sortmerna")
         ref = ':'.join('%s,%s' % (a, b) for a, b in zip(fastafiles, fastaindexed))
         # shell("{EXE} {SCRIPTS[filter_rna]} -t {config[sortmerna][threads]} \
         # -d %s -p {config[sortmerna][scripts_path]} \
