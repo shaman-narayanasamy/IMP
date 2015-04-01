@@ -90,7 +90,7 @@ rule INDEX_SORTMERNA_DB:
             path="{DBPATH}/sortmerna")
         ref = ':'.join('%s,%s' % (a, b) for a, b in zip(input, fastaindexed))
         shell("mkdir -p {params.outdir}")
-        shell("indexdb_rna --ref {ref} > {log}  2>&1")
+        shell("indexdb_rna --ref {ref} --fast > {log}  2>&1")
 
 
 rule DIAGRAMMS:
