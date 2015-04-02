@@ -8,3 +8,4 @@ docker/Dockerfile~
 rules/Analysis/MGMT.rules~
 rules/Analysis/master.rules~
 db
+conf/userconfig.imp.json
