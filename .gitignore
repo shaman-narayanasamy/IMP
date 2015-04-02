@@ -5,5 +5,5 @@ build
 KronaTools-2.5.tar
 KronaTools-2.5/
 db
-conf/userconfig.imp.json
+conf/
 *~
