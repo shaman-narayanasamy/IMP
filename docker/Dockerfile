@@ -117,9 +117,9 @@ RUN wget http://downloads.sourceforge.net/project/htqc/htqc-1.91.1-Source.tar.gz
 && cd .. && rm -rf vcftools*
 
 ## prokka
-RUN wget http://www.vicbioinformatics.com/prokka-1.10.tar.gz \
-&& tar -xzf prokka-1.10.tar.gz \
-&& cd prokka-1.10 \
+RUN wget http://www.vicbioinformatics.com/prokka-1.11.tar.gz \
+&& tar -xzf prokka-1.11.tar.gz \
+&& cd prokka-1.11 \
 && cp bin/prokka* /usr/bin \
 && cp binaries/linux/* /usr/bin \
 && cd .. && rm -rf prokka* \
