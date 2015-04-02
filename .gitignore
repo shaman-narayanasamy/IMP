@@ -4,8 +4,6 @@ build
 .DS_Store
 KronaTools-2.5.tar
 KronaTools-2.5/
-docker/Dockerfile~
-rules/Analysis/MGMT.rules~
-rules/Analysis/master.rules~
 db
 conf/userconfig.imp.json
+*~
