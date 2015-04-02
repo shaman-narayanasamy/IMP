@@ -35,14 +35,24 @@ rule _DOWNLOAD_PROKKA_DATABASES:
         expand("{path}/{db}", path=DBPATH, db=config["prokka"]["databases"])
     shell:
         """
+        ### prokka by default will look databases where is located the binary.
+        ### we have to softlink to put the binary somewhere and the databases somewhere else.
+        if [[ "{DBPATH}" = /* ]]
+        then
+            PP={DBPATH};
+        else
+            PP=$PWD/{DBPATH};
+        fi
+        cd $(dirname $(which prokka))/.. && ln -s $PP db
+        echo "Softlinking $(dirname $(which prokka))/../db to $PP"
         TMPDIR=$(mktemp -d -t "XXXXXX")
-        wget {pkg_url} -O $TMPDIR/prokka.tgz
+        wget {config[prokka][pkg_url]} -O $TMPDIR/prokka.tgz
         tar -xzf $TMPDIR/prokka.tgz --strip-components=1 -C $TMPDIR
-        mkdir -p {path}
-        cp -r $TMPDIR/db/* {path}/.
+        mkdir -p {DBPATH}
+        cp -r $TMPDIR/db/* {DBPATH}/.
         rm -rf $TMPDIR
         prokka --setupdb
-        """.format(pkg_url=config["prokka"]["pkg_url"], path=DBPATH)
+        """
 
 
 rule _DOWNLOAD_TRIMMOMATIC_ADAPTERS:
