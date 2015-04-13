@@ -1,0 +1,11 @@
+
+~/.local/bin/virtualenv env/
+source env/bin/actviate
+pip install -U pip
+pip install -U setuptools
+
+pip install snakemake
+
+
+#install numpy??
+#export PYTHONPATH=env/lib/python3.2/site-packages/
