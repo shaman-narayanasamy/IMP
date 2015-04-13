@@ -86,6 +86,6 @@ rule PREPROCESSING:
     input:
         preprocessing_output_files()
     benchmark:
-        "benchmarks/Preprocessing/preprocessing.json"
+        "%s/benchmarks/Preprocessing/preprocessing.json" % P_OUT
     shell:
         "echo 'Preprocessing Done'"
