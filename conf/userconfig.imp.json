@@ -6,7 +6,9 @@
       "pre": "echo '//LOADING PREPROCESSING MODULE: You can write custom shell commands here' ",
       "filtering": false,
       "trimmomatic": {
-      "jarfile": "/mnt/nfs/projects/ecosystem_biology/local_tools/Trimmomatic-0.32/trimmomatic-0.32.jar",
+          "adapter": "TruSeq2"
+          "jarfile": "/mnt/nfs/projects/ecosystem_biology/local_tools/Trimmomatic-0.32/trimmomatic-0.32.jar"
+      }
       "datadir": "TEST_DATA",
       "raws": {
           "Metagenomics": "MG.R1.5_percent.fq MG.R2.5_percent.fq",
