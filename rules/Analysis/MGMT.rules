@@ -11,7 +11,7 @@ rule ANALYSIS_ANNOTATE:
         "%s/annotation/annotation.filt.gff" % AN_OUT
     shell:
         """
-        prokka --force --outdir {AN_OUT}/annotation --cpus {THREADS} --metagenome --norrna {input[0]} > {log} 2>&1
+        prokka --force --outdir {AN_OUT}/annotation --cpus {THREADS} --metagenome --norrna {input[0]} >> {log} 2>&1
         # Prokka gives a weird gff file with all the sequences. We need to write some small code to produce a file that
         # cleans up the output
 
@@ -159,7 +159,7 @@ rule ANALYSIS_MG_VARIANT_CALLING:
 
         # Clean up directory
         echo "Cleaning up directory"
-        cat log.txt > {log}
+        cat log.txt >> {log}
         rm -f {AN_OUT}/MG.variants.isec.vcf log.txt
         """
 
@@ -226,7 +226,7 @@ rule ANALYSIS_MT_VARIANT_CALLING:
 
         # Clean up directory
         echo "Cleaning up directory"
-        cat log.txt > {log}
+        cat log.txt >> {log}
         rm -f {AN_OUT}/MT.variants.isec.vcf log.txt
         """
 
