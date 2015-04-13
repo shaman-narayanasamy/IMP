@@ -1,0 +1,35 @@
+{
+    "General": {
+      "threads": 4
+    },
+    "Preprocessing": {
+      "pre": "echo '//LOADING PREPROCESSING MODULE: You can write custom shell commands here' && source /home/users/snarayanasamy/repositories/IMP/conf/gaia_PREPROCESSING_modules.sh",
+      "filtering": false,
+      "trimmomatic": {
+          "jarfile": "/mnt/nfs/projects/ecosystem_biology/local_tools/Trimmomatic-0.32/trimmomatic-0.32.jar"
+     }
+   },
+    "Assembly": {
+      "pre": "echo '//LOADING ASSEMBLY MODULE'"
+    },
+    "Analysis": {
+      "pre": "echo '//LOADING ANALYSIS MODULE'"
+    },
+    "Util": {
+      "pre": "echo '//LOADING UTIL MODULE'"
+    },
+    "human_filtering": {
+        "filter": "chr21"
+    },
+    "sortmerna": {
+        "scripts_path": "/mnt/nfs/projects/ecosystem_biology/local_tools/sortmerna-1.99-beta/scripts"
+    },
+    "prokka": {
+        "databases": [
+            "cm/Bacteria.i1i",
+            "genus/Staphylococcus.phr",
+            "hmm/CLUSTERS.hmm.h3f",
+            "kingdom/Archaea/sprot.phr"
+        ]
+    }
+}
