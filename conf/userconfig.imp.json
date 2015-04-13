@@ -3,7 +3,7 @@
       "threads": 4
     },
     "Preprocessing": {
-      "pre": "echo '//LOADING PREPROCESSING MODULE: You can write custom shell commands here' && source /home/users/snarayanasamy/repositories/IMP/conf/gaia_PREPROCESSING_modules.sh",
+      "pre": "echo '//LOADING PREPROCESSING MODULE: You can write custom shell commands here' ",
       "filtering": false,
       "trimmomatic": {
       "jarfile": "/mnt/nfs/projects/ecosystem_biology/local_tools/Trimmomatic-0.32/trimmomatic-0.32.jar",
@@ -18,7 +18,7 @@
       }
    },
     "Assembly": {
-      "pre": "echo '//LOADING ASSEMBLY MODULE' && source /home/users/mherold/TOOLS/IMP/conf/gaia_ASSEMBLY_modules.sh"
+      "pre": "echo '//LOADING ASSEMBLY MODULE'"
     },
     "Analysis": {
       "pre": "echo '//LOADING ANALYSIS MODULE'"
