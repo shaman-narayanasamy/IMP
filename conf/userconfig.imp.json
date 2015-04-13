@@ -6,11 +6,19 @@
       "pre": "echo '//LOADING PREPROCESSING MODULE: You can write custom shell commands here' && source /home/users/snarayanasamy/repositories/IMP/conf/gaia_PREPROCESSING_modules.sh",
       "filtering": false,
       "trimmomatic": {
-          "jarfile": "/mnt/nfs/projects/ecosystem_biology/local_tools/Trimmomatic-0.32/trimmomatic-0.32.jar"
-     }
+      "jarfile": "/mnt/nfs/projects/ecosystem_biology/local_tools/Trimmomatic-0.32/trimmomatic-0.32.jar",
+      "datadir": "TEST_DATA",
+      "raws": {
+          "Metagenomics": "MG.R1.5_percent.fq MG.R2.5_percent.fq",
+          "Metatranscriptomics": "MT.R1.5_percent.fq MT.R2.5_percent.fq"
+      },
+      "sample": "test",
+      "outputdir": "build",
+      "db_path": "db"
+      }
    },
     "Assembly": {
-      "pre": "echo '//LOADING ASSEMBLY MODULE'"
+      "pre": "echo '//LOADING ASSEMBLY MODULE' && source /home/users/mherold/TOOLS/IMP/conf/gaia_ASSEMBLY_modules.sh"
     },
     "Analysis": {
       "pre": "echo '//LOADING ANALYSIS MODULE'"
