@@ -203,6 +203,9 @@ RUN cd /home/imp/lib \
 #################
 #COPY test/ /home/imp/integrated-metaomic-pipeline/test
 
+# add snakemake completion
+RUN echo "`snakemake --bash-completion`" >> ~/.bashrc
+
 ######################
 # runtime parameters #
 ######################
