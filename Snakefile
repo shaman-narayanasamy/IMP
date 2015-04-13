@@ -76,8 +76,6 @@ def prepare_environment(stepname):
     if not os.path.exists(bench):
         os.makedirs(bench)
 
-    if stepname in config and 'pre' in config[stepname]:
-        shell(config[stepname]['pre'])
     return out, os.path.join(out, '%s.log' % stepname)
 
 

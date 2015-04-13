@@ -15,7 +15,6 @@
       "db_path": "db"
     },
     "Preprocessing": {
-      "pre": "echo '//LOADING PREPROCESSING MODULE'",
       "filtering": true,
       "trimmomatic": {
           "adapter": "TruSeq3",
@@ -33,7 +32,6 @@
       }
     },
     "Assembly": {
-      "pre": "echo '//LOADING ASSEMBLY MODULE'",
       "idba_ud": {
           "mink": 25,
           "maxk": 95,
@@ -42,7 +40,6 @@
       }
     },
     "Analysis": {
-      "pre": "echo '//LOADING ANALYSIS MODULE'",
       "vizbin": {
           "dimension": 50,
           "length": 5,
@@ -53,7 +50,6 @@
       }
     },
     "Util": {
-      "pre": "echo '//LOADING UTIL MODULE'"
     },
     "human_filtering": {
         "filter": "chr21",
