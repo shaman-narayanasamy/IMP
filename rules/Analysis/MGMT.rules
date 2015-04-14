@@ -368,7 +368,7 @@ def mg_fqfiles():
         'MG.R1.uniq.trimmed.{f}.fq',
         'MG.R2.uniq.trimmed.{f}.fq',
         'MG.SE.uniq.trimmed.{f}.fq'], f=config['human_filtering']['filter']), dir=P_OUT)
-    if config['Preprocessing']['filtering']:
+    if config['preprocessing_filtering']:
         return raw + uniq + trim + filter
     return raw + uniq + trim
 
@@ -387,7 +387,7 @@ def mt_fqfiles():
         'MT.R1.trimmed.rna_filtered.{f}.fq',
         'MT.R2.trimmed.rna_filtered.{f}.fq',
         'MT.SE.trimmed.rna_filtered.{f}.fq'], f=config['human_filtering']['filter']), dir=P_OUT)
-    if config['Preprocessing']['filtering']:
+    if config['preprocessing_filtering']:
         return raw + trim + rna_filter + h_filter
     return raw + trim + rna_filter
 
@@ -442,15 +442,15 @@ rule ANALYSIS_VIZBIN:
         VIZBIN={SRCDIR}/vizbin.py
 
         echo "[x] VIZBIN `date +"%Y/%m/%d %H:%M:%S"`" >> {log}
-        python $VIZBIN {input} {AN_OUT}/MGMT.vizbin {config[Analysis][vizbin][dimension]} \
-        -l {config[Analysis][vizbin][length]} \
-        -s {config[Analysis][vizbin][size]} \
-        -t {config[Analysis][vizbin][theta]} \
-        -p {config[Analysis][vizbin][perp]} \
-        -f {config[Analysis][vizbin][minlen]} \
+        python $VIZBIN {input} {AN_OUT}/MGMT.vizbin {config[vizbin][dimension]} \
+        -l {config[vizbin][length]} \
+        -s {config[vizbin][size]} \
+        -t {config[vizbin][theta]} \
+        -p {config[vizbin][perp]} \
+        -f {config[vizbin][minlen]} \
         -o {output[1]} >> {log}
 
-        cp {AN_OUT}/MGMT.vizbin.{config[Analysis][vizbin][dimension]}.dat $TMP_VIZBIN/data.dat
+        cp {AN_OUT}/MGMT.vizbin.{config[vizbin][dimension]}.dat $TMP_VIZBIN/data.dat
         BACK=$PWD
         cd $TMP_VIZBIN
         bh_tsne >> $BACK/{log}

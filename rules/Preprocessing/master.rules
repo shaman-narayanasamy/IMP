@@ -30,7 +30,7 @@ def preprocessing_output_files():
 
 
 def preprocessed_mg(target):
-    if config['Preprocessing']['filtering']:
+    if config['preprocessing_filtering']:
         # with human filtering ON
         return '{dir}/MG.{target}.uniq.trimmed.{f}.fq'.format(
             f=config['human_filtering']['filter'],
@@ -41,7 +41,7 @@ def preprocessed_mg(target):
 
 
 def preprocessed_mt(target):
-    if config['Preprocessing']['filtering']:
+    if config['preprocessing_filtering']:
         # with human filtering ON
         return '{dir}/MT.{target}.trimmed.rna_filtered.{f}.fq'.format(
             f=config['human_filtering']['filter'],
