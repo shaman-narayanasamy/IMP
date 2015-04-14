@@ -131,7 +131,6 @@ rule ANALYSIS_MG_VARIANT_CALLING:
 
         ### run_mpileup {input[0]} {input[1]} $VCF_MPU
         samtools mpileup -uf {input[0]} {input[1]} | bcftools view -vcg - > $VCF_MPU
-        wait
         bgzip -c $VCF_MPU > $VCF_MPU.gz
         tabix -f -p vcf $VCF_MPU.gz
 
@@ -144,8 +143,6 @@ rule ANALYSIS_MG_VARIANT_CALLING:
         Platypus.py callVariants --refFile={input[0]} --bamFiles={input[1]} --nCPU={THREADS} -o $VCF_PLT
         bgzip -c $VCF_PLT > $VCF_PLT.gz
         tabix -f -p vcf $VCF_PLT.gz
-
-
 
         ### "Merging outputs "
 
