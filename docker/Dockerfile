@@ -192,6 +192,7 @@ RUN cd /home/imp/lib \
 && cd megahit \
 && make
 
+
 ######################
 # ship pipeline code #
 ######################
@@ -202,6 +203,11 @@ RUN cd /home/imp/lib \
 # add test data #
 #################
 #COPY test/ /home/imp/integrated-metaomic-pipeline/test
+
+# add snakemake completion
+RUN echo "`snakemake --bash-completion`" >> ~/.bashrc
+# add LD_LIBRARY_PATH
+RUN echo "export LD_LIBRARY_PATH=/usr/local/lib" >> ~/.bashrc
 
 ######################
 # runtime parameters #

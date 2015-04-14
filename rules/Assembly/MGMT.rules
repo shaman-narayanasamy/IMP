@@ -27,7 +27,7 @@ rule ASSEMBLY_MT_MEGAHIT_1:
         MEMBYTES=$(({MEMTOTAL}*1000*1000*1000))
         echo "Available memory in bytes: $MEMBYTES"
         megahit -o {params.outdir} --cpu-only -m $MEMBYTES --mem-flag 1\
-        -l $MAX_READ_LEN --input-cmd "cat {input}" -t {THREADS} --continue > {log} 2>&1
+        -l $MAX_READ_LEN --input-cmd "cat {input}" -t {THREADS} --continue >> {log} 2>&1
         """
 
 
@@ -86,7 +86,7 @@ rule ASSEMBLY_MT_MEGAHIT_2:
         MEMBYTES=$(({MEMTOTAL}*1000*1000*1000))
         echo "Available memory in bytes: $MEMBYTES"
         megahit -o {params.outdir} --cpu-only -m $MEMBYTES --mem-flag 1 -l $MAX_READ_LEN \
-        --input-cmd "cat {input}" -t {THREADS} --continue > {log} 2>&1
+        --input-cmd "cat {input}" -t {THREADS} --continue >> {log} 2>&1
         """
 
 rule ASSEMBLY_MT_CAT_MEGAHIT:
@@ -242,9 +242,9 @@ rule ASSEMBLY_MGMT_ASSEMBLY_1:
         fq2fa --merge {input[0]} {input[1]} $TMPD/merged.fa
         idba_ud -r $TMPD/merged.fa \
         -l {input[2]} -o $TMPD \
-        --mink {config[Assembly][idba_ud][mink]} --maxk {config[Assembly][idba_ud][maxk]} \
-        --step {config[Assembly][idba_ud][step]} --num_threads {THREADS} \
-        --similar {config[Assembly][idba_ud][perid]} --pre_correction
+        --mink {config[idba_ud][mink]} --maxk {config[idba_ud][maxk]} \
+        --step {config[idba_ud][step]} --num_threads {THREADS} \
+        --similar {config[idba_ud][perid]} --pre_correction
         mv $TMPD/contig.fa {output}
         rm -rf $TMPD
         """
@@ -299,9 +299,9 @@ rule ASSEMBLY_MGMT_ASSEMBLY_2:
         fq2fa --merge {input[0]} {input[1]} $TMPD/merged.fa
         idba_ud -r $TMPD/merged.fa \
         -l {input[2]} -o $TMPD \
-        --mink {config[Assembly][idba_ud][mink]} --maxk {config[Assembly][idba_ud][maxk]} \
-        --step {config[Assembly][idba_ud][step]} --num_threads {THREADS} \
-        --similar {config[Assembly][idba_ud][perid]} --pre_correction
+        --mink {config[idba_ud][mink]} --maxk {config[idba_ud][maxk]} \
+        --step {config[idba_ud][step]} --num_threads {THREADS} \
+        --similar {config[idba_ud][perid]} --pre_correction
         mv $TMPD/contig.fa {output}
         rm -rf $TMPD
         """
@@ -430,7 +430,7 @@ rule ASSEMBLY_MGMT_FAST_1:
         MEMBYTES=$(({MEMTOTAL}*1000*1000*1000))
         echo "Available memory in bytes: $MEMBYTES"
         megahit -o {params.outdir} --cpu-only -m $MEMBYTES --mem-flag 1\
-        -l $MAX_READ_LEN --input-cmd "cat {input}" -t {THREADS} --continue > {log} 2>&1
+        -l $MAX_READ_LEN --input-cmd "cat {input}" -t {THREADS} --continue >> {log} 2>&1
         """
 
 rule ASSEMBLY_MGMT_EXTRACT_UNMAPPED_FROM_FAST_1:
@@ -486,6 +486,5 @@ rule ASSEMBLY_MGMT_FAST_2:
         awk '$0 ~ \">\" {{c=0\"\t\"; }} $0 !~ \">\" {{c+=length($0); max=(max>c)?max:c;}} END {{print max}}')
         MEMBYTES=$(({MEMTOTAL}*1000*1000*1000))
         megahit -o {params.outdir} --cpu-only -m $MEMBYTES --mem-flag 1 -l $MAX_READ_LEN \
-        --input-cmd "cat {input}" -t {THREADS} --continue > {log} 2>&1
+        --input-cmd "cat {input}" -t {THREADS} --continue >> {log} 2>&1
         """
-

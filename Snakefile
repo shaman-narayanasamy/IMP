@@ -37,25 +37,25 @@ if os.path.exists(CUSTOM_CONFIG_PATH):
 
 
 # some parameters
-SRCDIR = os.environ.get("SRCDIR", config['General']['imp_src'])
+SRCDIR = os.environ.get("SRCDIR", config['imp_src'])
 
 # get parameters from the command line
-DATADIR = os.environ.get("DATADIR", config['General']['datadir'])
-OUTPUTDIR = os.environ.get("OUTPUTDIR", config['General']['outputdir'])
-MG = os.environ.get("MG", config['General']['raws']['Metagenomics']).split()
-MT = os.environ.get("MT", config['General']['raws']['Metatranscriptomics']).split()
-SAMPLE = os.environ.get("SAMPLE", config['General']['sample'])
-DBPATH = os.environ.get("DBPATH", config['General']['db_path'])
+DATADIR = os.environ.get("DATADIR", config['datadir'])
+OUTPUTDIR = os.environ.get("OUTPUTDIR", config['outputdir'])
+MG = os.environ.get("MG", config['raws']['Metagenomics']).split()
+MT = os.environ.get("MT", config['raws']['Metatranscriptomics']).split()
+SAMPLE = os.environ.get("SAMPLE", config['sample'])
+DBPATH = os.environ.get("DBPATH", config['db_path'])
 if not os.path.exists(DBPATH):
     os.makedirs(DBPATH)
 
 # Get general parameters
-THREADS = os.environ.get("THREADS", config['General']['threads'])
-MEMTOTAL = os.environ.get("MEMTOTAL", config['General']['memory_total_gb'])
-MEMCORE = os.environ.get("MEMCORE", config['General']['memory_per_core_gb'])
+THREADS = os.environ.get("THREADS", config['threads'])
+MEMTOTAL = os.environ.get("MEMTOTAL", config['memory_total_gb'])
+MEMCORE = os.environ.get("MEMCORE", config['memory_per_core_gb'])
 
 # temporary directory will be stored inside the OUTPUTDIR directory
-TMPDIR = os.environ.get("TMPDIR", config['General']['tmp_dir'])
+TMPDIR = os.environ.get("TMPDIR", config['tmp_dir'])
 
 
 def prepare_environment(stepname):
@@ -76,8 +76,6 @@ def prepare_environment(stepname):
     if not os.path.exists(bench):
         os.makedirs(bench)
 
-    if stepname in config and 'pre' in config[stepname]:
-        shell(config[stepname]['pre'])
     return out, os.path.join(out, '%s.log' % stepname)
 
 
@@ -95,6 +93,7 @@ include:
 # locate source directory and name scripts
 src = lambda p: os.path.join(SRCDIR, p)
 
+
 rule ALL:
     input:
         preprocessing_output_files(),
@@ -103,3 +102,9 @@ rule ALL:
 
     shell:
         "echo 'DONE'"
+
+rule MODULE_LOAD_TEST:
+    shell:
+        """
+        IMPPRL="{config[preload][test]}"; if [[ -n $IMPPRL ]]; then $IMPPRL; fi
+        """

@@ -26,8 +26,8 @@ rule PREPROCESSING_MT_QUALITY_STATS:
                 ], n=['1', '2'], ext=['gnuplot', 'png', 'tab'], dir='%s/stats/MT' % P_OUT)
     shell:
         """
-        ht2-stat --encode=sanger -q -P -t {THREADS} -o  {P_OUT}/stats/MT -i {input} > {log} 2>&1
-        ht2-stat-draw.pl --dir {P_OUT}/stats/MT > {log} 2>&1
+        ht2-stat --encode=sanger -q -P -t {THREADS} -o  {P_OUT}/stats/MT -i {input} >> {log} 2>&1
+        ht2-stat-draw.pl --dir {P_OUT}/stats/MT >> {log} 2>&1
         """
 
 rule PREPROCESSING_MT_TRIM:
@@ -44,7 +44,7 @@ rule PREPROCESSING_MT_TRIM:
             'MT.SE2.trimmed.fq'], dir=P_OUT)
     shell:
         """
-        java -jar {config[Preprocessing][trimmomatic][jarfile]} PE -threads {THREADS} {input[0]} {input[1]} {output} ILLUMINACLIP:{DBPATH}/trimmomatic/{config[Preprocessing][trimmomatic][adapter]}-PE.fa:{config[Preprocessing][trimmomatic][seed_mismatch]}:{config[Preprocessing][trimmomatic][palindrome_clip_threshold]}:{config[Preprocessing][trimmomatic][simple_clip_threshold]} LEADING:{config[Preprocessing][trimmomatic][leading]} TRAILING:{config[Preprocessing][trimmomatic][trailing]} SLIDINGWINDOW:{config[Preprocessing][trimmomatic][window_size]}:{config[Preprocessing][trimmomatic][window_quality]} MINLEN:{config[Preprocessing][trimmomatic][minlen]} MAXINFO:{config[Preprocessing][trimmomatic][target_length]}:{config[Preprocessing][trimmomatic][strictness]} > {log} 2>&1
+        java -jar {config[trimmomatic][jarfile]} PE -threads {THREADS} {input[0]} {input[1]} {output} ILLUMINACLIP:{DBPATH}/trimmomatic/{config[trimmomatic][adapter]}-PE.fa:{config[trimmomatic][seed_mismatch]}:{config[trimmomatic][palindrome_clip_threshold]}:{config[trimmomatic][simple_clip_threshold]} LEADING:{config[trimmomatic][leading]} TRAILING:{config[trimmomatic][trailing]} SLIDINGWINDOW:{config[trimmomatic][window_size]}:{config[trimmomatic][window_quality]} MINLEN:{config[trimmomatic][minlen]} MAXINFO:{config[trimmomatic][target_length]}:{config[trimmomatic][strictness]} >> {log} 2>&1
         """
     benchmark:
         "%s/benchmarks/PREPROCESSING_MT_TRIM.json" % P_OUT
@@ -87,8 +87,8 @@ rule PREPROCESSING_MT_PREPROCESSED_QUALITY_STATS:
                 ], n=['1', '2'], ext=['gnuplot', 'png', 'tab'], dir='%s/stats_after_preprocessing/MT' % P_OUT)
     shell:
         """
-        ht2-stat --encode=sanger -q -P -t {THREADS} -o  {P_OUT}/stats_after_preprocessing/MT -i {input} > {log} 2>&1
-        ht2-stat-draw.pl --dir {P_OUT}/stats_after_preprocessing/MT > {log} 2>&1
+        ht2-stat --encode=sanger -q -P -t {THREADS} -o  {P_OUT}/stats_after_preprocessing/MT -i {input} >> {log} 2>&1
+        ht2-stat-draw.pl --dir {P_OUT}/stats_after_preprocessing/MT >> {log} 2>&1
         """
 
 
