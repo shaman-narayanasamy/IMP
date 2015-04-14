@@ -22,6 +22,6 @@ export PATH=$PATH:/mnt/nfs/projects/ecosystem_biology/local_tools/tabix-0.2.6
 export PATH=$PATH:/mnt/nfs/projects/ecosystem_biology/local_tools/gkno_launcher/tools/freebayes/bin
 export PATH=$PATH:/mnt/nfs/projects/ecosystem_biology/local_tools/vcftools/bin
 export PERL5LIB=$PERL5LIB:/mnt/nfs/projects/ecosystem_biology/local_tools/vcftools/perl
-export PATH=$PATH:/mnt/nfs/projects/ecosystem_biology/local_tools/Platypus_0.7.9.1
+export PATH=$PATH:/mnt/nfs/projects/ecosystem_biology/local_tools/Platypus/Platypus_0.7.9.1
 
 module list
