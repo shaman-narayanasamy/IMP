@@ -1,6 +1,6 @@
 {
     "General": {
-      "threads": 4
+      "threads": 4,
       "datadir": "TEST_DATA",
       "sample": "test",
       "outputdir": "build",
@@ -12,8 +12,8 @@
       "trimmomatic": {
           "adapter": "TruSeq2",
           "jarfile": "/mnt/nfs/projects/ecosystem_biology/local_tools/Trimmomatic-0.32/trimmomatic-0.32.jar"
-     }
-   },
+        }
+    },
     "Assembly": {
       "pre": "echo '//LOADING ASSEMBLY MODULE'"
     },
