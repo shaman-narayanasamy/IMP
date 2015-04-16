@@ -494,6 +494,22 @@ def analysis_plot_files_output():
                   "assembly_stats.html",
                   "assembly_stats.txt"], dir='%s/results' % AN_OUT)
 
+def analysis_stats_files_output():
+    return expand([
+                 '{dir}/{stat_flag}/{rtype}/cycle_composition_{n}.{ext}',
+                 '{dir}/{stat_flag}/{rtype}/cycle_quality_{n}.{ext}',
+                 '{dir}/{stat_flag}/{rtype}/cycle_quality_box_{n}.{ext}',
+                 '{dir}/{stat_flag}/{rtype}/info.tab',
+                 '{dir}/{stat_flag}/{rtype}/lane_tile_quality_{n}.{ext}',
+                 '{dir}/{stat_flag}/{rtype}/quality_QQ.{ext}',
+                 '{dir}/{stat_flag}/{rtype}/reads_length.{ext}',
+                 '{dir}/{stat_flag}/{rtype}/reads_quality.{ext}'],
+                 n = ['1', '2'],
+                 ext = ['gnuplot', 'png', 'tab'],
+                 dir = P_OUT,
+                 stat_flag = ['stats', 'stats_after_preprocessing'],
+                 rtype = ['MG', 'MT'])
+
 rule ANALYSIS_PLOT:
     log:
         AN_LOG
