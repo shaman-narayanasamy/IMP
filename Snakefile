@@ -2,6 +2,7 @@ import os
 import shutil
 import gzip
 import json
+import bz2
 from copy import deepcopy
 
 
