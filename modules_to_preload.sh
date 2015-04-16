@@ -28,3 +28,14 @@ module load R
 Rscript -e "install.packages('beanplot')"
 
 module list
+
+#The Boost C++ Libraries were successfully built!
+#
+#The following directory should be added to compiler include paths:
+#
+#    /mnt/src_nfs1/projects/ecosystem_biology/local_tools/IMP/dependencies/boost_1_54_0
+#
+#The following directory should be added to linker library paths:
+#
+#    /mnt/src_nfs1/projects/ecosystem_biology/local_tools/IMP/dependencies/boost_1_54_0/stage/lib
+#
