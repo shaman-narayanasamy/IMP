@@ -1,6 +1,6 @@
 {
     "threads": 4,
-    "datadir": "TEST_DATA",
+    "datadir": "TEST_DATA/raw",
     "sample": "test",
     "outputdir": "build",
     "db_path": "db",

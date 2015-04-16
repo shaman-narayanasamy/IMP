@@ -72,12 +72,17 @@ def prepare_input_files(input, rtype):
         p, fname = os.path.split(inp)
         outfilename = os.path.join(P_OUT, tmp)
         print(inp, '=>', outfilename)
+        import bz2
         # ungunzip
         if os.path.splitext(fname)[-1] in ['.gz', '.gzip']:
             with open(outfilename, 'wb') as whandle:
                 with gzip.open(inp, 'rb') as rhandle:
                     whandle.write(rhandle.read())
                     # copy
+        elif os.path.splitext(fname)[-1] in ['.bz2', '.bzip2']:
+            with open(outfilename, 'wb') as whandle:
+                with bz2.BZ2File(inp, 'r') as rhandle:
+                    whandle.write(rhandle)
         else:
             shutil.copy(inp, outfilename)
 
