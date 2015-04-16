@@ -8,28 +8,6 @@ rule PREPROCESSING_MT_GET_FILES:
     run:
         prepare_input_files(input, 'MT')
 
-rule PREPROCESSING_MT_QUALITY_STATS:
-    log:
-        P_LOG
-    benchmark:
-        "%s/benchmarks/PREPROCESSING_MT_QUALITY_STATS.json" % P_OUT
-    input:
-        expand('{dir}/{raw}', raw=['MT.R1.fq', 'MT.R2.fq'], dir=P_OUT)
-    output:
-        expand(['{dir}/cycle_composition_{n}.{ext}',
-                '{dir}/cycle_quality_{n}.{ext}',
-                '{dir}/cycle_quality_box_{n}.{ext}',
-                '{dir}/info.tab', '{dir}/lane_tile_quality_{n}.{ext}',
-                '{dir}/quality_QQ.{ext}',
-                '{dir}/reads_length.{ext}',
-                '{dir}/reads_quality.{ext}'
-                ], n=['1', '2'], ext=['gnuplot', 'png', 'tab'], dir='%s/stats/MT' % P_OUT)
-    shell:
-        """
-        ht2-stat --encode=sanger -q -P -t {THREADS} -o  {P_OUT}/stats/MT -i {input} >> {log} 2>&1
-        ht2-stat-draw.pl --dir {P_OUT}/stats/MT >> {log} 2>&1
-        """
-
 rule PREPROCESSING_MT_TRIM:
     log:
         P_LOG
@@ -65,31 +43,6 @@ rule PREPROCESSING_MT_CAT_TRIMMED_SE:
     shell:
         "cat {input[0]} {input[1]} > {output}"
 
-
-rule PREPROCESSING_MT_PREPROCESSED_QUALITY_STATS:
-    log:
-        P_LOG
-    benchmark:
-        "%s/benchmarks/PREPROCESSING_MT_PREPROCESSED_QUALITY_STATS.json" % P_OUT
-    input:
-        expand('{dir}/{trim}', trim=[
-            'MT.R1.trimmed.fq',
-            'MT.R2.trimmed.fq',
-            ], dir=P_OUT)
-    output:
-        expand(['{dir}/cycle_composition_{n}.{ext}',
-                '{dir}/cycle_quality_{n}.{ext}',
-                '{dir}/cycle_quality_box_{n}.{ext}',
-                '{dir}/info.tab', '{dir}/lane_tile_quality_{n}.{ext}',
-                '{dir}/quality_QQ.{ext}',
-                '{dir}/reads_length.{ext}',
-                '{dir}/reads_quality.{ext}'
-                ], n=['1', '2'], ext=['gnuplot', 'png', 'tab'], dir='%s/stats_after_preprocessing/MT' % P_OUT)
-    shell:
-        """
-        ht2-stat --encode=sanger -q -P -t {THREADS} -o  {P_OUT}/stats_after_preprocessing/MT -i {input} >> {log} 2>&1
-        ht2-stat-draw.pl --dir {P_OUT}/stats_after_preprocessing/MT >> {log} 2>&1
-        """
 
 
 rule PREPROCESSING_MT_FILTER_RRNA:

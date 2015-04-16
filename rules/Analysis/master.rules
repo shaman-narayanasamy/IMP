@@ -42,8 +42,22 @@ def analysis_output_files():
                  #"results/MG.gene_kegg_krona.html",
                  #####################
                  "MGMT.vizbin.with-contig-names.points"], dir=AN_OUT)
+#    stats = expand([
+#                 '{dir}/{stat_flag}/{rtype}/cycle_composition_{n}.{ext}',
+#                 '{dir}/{stat_flag}/{rtype}/cycle_quality_{n}.{ext}',
+#                 '{dir}/{stat_flag}/{rtype}/cycle_quality_box_{n}.{ext}',
+#                 '{dir}/{stat_flag}/{rtype}/info.tab',
+#                 '{dir}/{stat_flag}/{rtype}/lane_tile_quality_{n}.{ext}',
+#                 '{dir}/{stat_flag}/{rtype}/quality_QQ.{ext}',
+#                 '{dir}/{stat_flag}/{rtype}/reads_length.{ext}',
+#                 '{dir}/{stat_flag}/{rtype}/reads_quality.{ext}'],
+#                 n=['1', '2'],
+#                 ext=['gnuplot', 'png', 'tab'],
+#                 dir=AN_OUT,
+#                 stat_flag=['stats', 'stats_after_preprocessing'],
+#                 rtype=['MG', 'MT'])
     plots = analysis_plot_files_output()
-    return all + plots
+    return all + plots # + stats
 
 # master command
 rule ANALYSIS:

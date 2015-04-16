@@ -11,29 +11,6 @@ rule PREPROCESSING_MG_GET_FILES:
         prepare_input_files(input, 'MG')
 
 
-rule PREPROCESSING_MG_QUALITY_STATS:
-    input:
-        expand('{dir}/{raw}', raw=['MG.R1.fq', 'MG.R2.fq'], dir=P_OUT)
-    output:
-        expand(['{dir}/cycle_composition_{n}.{ext}',
-                '{dir}/cycle_quality_{n}.{ext}',
-                '{dir}/cycle_quality_box_{n}.{ext}',
-                '{dir}/info.tab',
-                '{dir}/lane_tile_quality_{n}.{ext}',
-                '{dir}/quality_QQ.{ext}',
-                '{dir}/reads_length.{ext}',
-                '{dir}/reads_quality.{ext}'
-                ], n=['1', '2'], ext=['gnuplot', 'png', 'tab'], dir='%s/stats/MG' % P_OUT)
-    benchmark:
-        "%s/benchmarks/PREPROCESSING_MG_QUALITY_STATS.json" % P_OUT
-    log:
-        P_LOG
-    shell:
-        """
-        ht2-stat --encode=sanger -q -P -t {THREADS} -o  {P_OUT}/stats/MG -i {input} >> {log} 2>&1
-        ht2-stat-draw.pl --dir {P_OUT}/stats/MG >> {log} 2>&1
-        """
-
 
 rule PREPROCESSING_MG_DEDUPLICATE:
     log:
@@ -48,7 +25,6 @@ rule PREPROCESSING_MG_DEDUPLICATE:
         """
         fastuniq -i <(echo -e "{input[0]}\\n{input[1]}") -o {output[0]} -p {output[1]} >> {log} 2>&1
         """
-
 
 rule PREPROCESSING_MG_TRIM:
     log:
@@ -83,32 +59,6 @@ rule PREPROCESSING_MG_CAT_TRIMMED_SE:
         "cat {input[0]} {input[1]} > {output}"
     benchmark:
         "%s/benchmarks/PREPROCESSING_MG_CAT_TRIMMED_SE.json" % P_OUT
-
-
-rule PREPROCESSING_MG_PREPROCESSED_QUALITY_STATS:
-    log:
-        P_LOG
-    input:
-        expand('{dir}/{trim}', trim=[
-            'MG.R1.uniq.trimmed.fq',
-            'MG.R2.uniq.trimmed.fq'], dir=P_OUT)
-    output:
-        expand(['{dir}/cycle_composition_{n}.{ext}',
-                '{dir}/cycle_quality_{n}.{ext}',
-                '{dir}/cycle_quality_box_{n}.{ext}',
-                '{dir}/info.tab', '{dir}/lane_tile_quality_{n}.{ext}',
-                '{dir}/quality_QQ.{ext}',
-                '{dir}/reads_length.{ext}',
-                '{dir}/reads_quality.{ext}'
-                ], n=['1', '2'], ext=['gnuplot', 'png', 'tab'], dir='%s/stats_after_preprocessing/MG' % P_OUT)
-    shell:
-        """
-        ht2-stat --encode=sanger -q -P -t {THREADS} -o  {P_OUT}/stats_after_preprocessing/MG -i {input} >> {log} 2>&1
-        ht2-stat-draw.pl --dir {P_OUT}/stats_after_preprocessing/MG >> {log} 2>&1
-        """
-    benchmark:
-        "%s/benchmarks/PREPROCESSING_MG_PREPROCESSED_QUALITY_STATS.json" % P_OUT
-
 
 rule PREPROCESSING_MG_FILTER_HG:
     log:
