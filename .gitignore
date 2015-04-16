@@ -7,4 +7,6 @@ KronaTools-2.5/
 db
 env/
 run_IMP_A02-20150318.sh
+build_gz/
+run_tests.sh
 *~
