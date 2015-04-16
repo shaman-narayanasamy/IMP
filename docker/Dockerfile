@@ -58,7 +58,6 @@ RUN mkdir -p /home/imp/tmp /home/imp/lib \
 #&& mkdir -p /usr/db/trimmomatic \
 #&& cp adapters/* /usr/db/trimmomatic/. \
 && cd .. && rm -rf *rimmomatic*
-
 ## idba ud
 RUN wget http://hku-idba.googlecode.com/files/idba-1.1.1.tar.gz \
 && tar -xzf idba-1.1.1.tar.gz \
@@ -82,7 +81,6 @@ RUN wget http://hku-idba.googlecode.com/files/idba-1.1.1.tar.gz \
 && make \
 && mv bwa /usr/bin \
 && cd .. && rm -rf bwa*
-
 ## htqc toolbox
 RUN wget http://downloads.sourceforge.net/project/htqc/htqc-1.91.1-Source.tar.gz \
 && tar -xzf htqc-1.91.1-Source.tar.gz \
@@ -93,12 +91,6 @@ RUN wget http://downloads.sourceforge.net/project/htqc/htqc-1.91.1-Source.tar.gz
 && make \
 && make install \
 && cd ../.. && rm -rf htqc* \
-## cufflinks
-&& wget http://cole-trapnell-lab.github.io/cufflinks/assets/downloads/cufflinks-2.2.1.Linux_x86_64.tar.gz \
-&& tar -xzf cufflinks-2.2.1.Linux_x86_64.tar.gz \
-&& cd cufflinks-2.2.1.Linux_x86_64 \
-&& cp cuffcompare  cuffdiff  cufflinks  cuffmerge  cuffnorm  cuffquant  gffread  gtf_to_sam /usr/bin \
-&& cd .. && rm -rf cufflinks* \
 ## freebayes
 && git clone --recursive git://github.com/ekg/freebayes.git \
 && cd freebayes \
@@ -140,6 +132,11 @@ RUN wget http://www.vicbioinformatics.com/prokka-1.11.tar.gz \
 && mv scripts/*.sh /home/imp/lib/. \
 && cd .. && rm -rf sortmerna* \
 && cd /home/imp/lib
+# Bedtools
+RUN git clone https://github.com/arq5x/bedtools2.git
+&& cd bedtools2/
+&& git checkout v2.22.0
+&& make
 # bh_tsne
 RUN cd /home/imp/tmp \
 && git clone https://github.com/claczny/VizBin.git \
