@@ -1,5 +1,5 @@
 {
-    "threads": 4,
+    "threads": 12,
     "datadir": "TEST_DATA/raw",
     "sample": "test",
     "outputdir": "build",
@@ -7,7 +7,7 @@
     "preprocessing_filtering": false,
     "trimmomatic": {
           "adapter": "TruSeq2",
-          "jarfile": "/mnt/nfs/projects/ecosystem_biology/local_tools/Trimmomatic-0.32/trimmomatic-0.32.jar"
+          "jarfile": "/mnt/nfs/projects/ecosystem_biology/local_tools/IMP/dependencies/trimmomatic-0.32/dist/jar/trimmomatic-0.32.jar"
     },
     "human_filtering": {
         "filter": "chr21"
