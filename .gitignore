@@ -10,3 +10,4 @@ run_IMP_A02-20150318.sh
 build_gz/
 run_tests.sh
 *~
+build_bz2/
