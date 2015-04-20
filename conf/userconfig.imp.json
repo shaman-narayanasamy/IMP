@@ -1,5 +1,7 @@
 {
     "threads": 12,
+    "memory_total_gb": 48,
+    "memory_per_core_gb": 4,
     "datadir": "TEST_DATA/raw",
     "sample": "test",
     "outputdir": "build",
