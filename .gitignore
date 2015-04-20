@@ -11,3 +11,4 @@ build_gz/
 run_tests.sh
 *~
 build_bz2/
+run_A01.sh
