@@ -41,7 +41,6 @@ if os.path.exists(CUSTOM_CONFIG_PATH):
 SRCDIR = os.environ.get("SRCDIR", config['imp_src'])
 
 # get parameters from the command line
-DATADIR = os.environ.get("DATADIR", config['datadir'])
 OUTPUTDIR = os.environ.get("OUTPUTDIR", config['outputdir'])
 MG = os.environ.get("MG", config['raws']['Metagenomics']).split()
 MT = os.environ.get("MT", config['raws']['Metatranscriptomics']).split()

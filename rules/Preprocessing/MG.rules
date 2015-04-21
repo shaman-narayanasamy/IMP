@@ -2,7 +2,7 @@ rule PREPROCESSING_MG_GET_FILES:
     message:
         "Preparing MG DATA files : %s." % ', '.join(MG)
     input:
-        expand('{dir}/{raw}', raw=MG, dir=DATADIR)
+        MG
     output:
         expand('{dir}/{raw}', raw=['MG.R1.fq', 'MG.R2.fq'], dir=P_OUT)
     benchmark:

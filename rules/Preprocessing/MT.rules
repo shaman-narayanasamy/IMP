@@ -2,7 +2,7 @@ rule PREPROCESSING_MT_GET_FILES:
     message:
         "Preparing MT DATA files : %s." % ', '.join(MT)
     input:
-        expand('{dir}/{raw}', raw=MT, dir=DATADIR)
+        MT
     output:
         expand('{dir}/{raw}', raw=['MT.R1.fq', 'MT.R2.fq'], dir=P_OUT)
     run:
