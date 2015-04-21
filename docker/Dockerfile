@@ -150,8 +150,8 @@ RUN cd /home/imp/tmp \
     && mv scripts/*.sh /home/imp/lib/. \
     && cd .. && rm -rf sortmerna* \
 ## bedtools2
-    && git clone https://github.com/arq5x/bedtools2.git
-    && cd bedtools2 /
+    && git clone https://github.com/arq5x/bedtools2.git \
+    && cd bedtools2 \
     && git checkout v2.22.0 \
     && make
 
@@ -192,7 +192,7 @@ RUN cd /home/imp/lib \
     && git clone https://github.com/voutcn/megahit.git \
     && cd megahit \
     && make \
-    && mv bin/* /usr/bin/.
+    && mv megahit* /usr/bin/.
 
 
 ######################
