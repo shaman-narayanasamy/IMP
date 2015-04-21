@@ -191,6 +191,7 @@ RUN cd /home/imp/lib \
 RUN cd /home/imp/lib \
     && git clone https://github.com/voutcn/megahit.git \
     && cd megahit \
+    && git checkout v0.2.1 \
     && make \
     && mv megahit* /usr/bin/.
 
