@@ -4,10 +4,9 @@
     "memory_per_core_gb": 2,
     "tmp_dir": "./build/tmp",
     "imp_src": "src",
-    "datadir": "TEST_DATA",
     "raws": {
-      "Metagenomics": "MG.R1.5_percent.fq MG.R2.5_percent.fq",
-      "Metatranscriptomics": "MT.R1.5_percent.fq MT.R2.5_percent.fq"
+      "Metagenomics": "TEST_DATA/MG.R1.5_percent.fq TEST_DATA/MG.R2.5_percent.fq",
+      "Metatranscriptomics": "TEST_DATA/MT.R1.5_percent.fq TEST_DATA/MT.R2.5_percent.fq"
     },
     "sample": "test",
     "outputdir": "build",
