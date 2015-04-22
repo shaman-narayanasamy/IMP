@@ -64,7 +64,7 @@ rule PREPROCESSING_MG_TRIM:
             'MG.SE2.uniq.trimmed.fq'], dir=P_OUT)
     shell:
         """
-        java -jar {config[trimmomatic][jarfile]} PE -threads {THREADS} {input[0]} {input[1]} {output} ILLUMINACLIP:{DBPATH}/trimmomatic/{config[trimmomatic][adapter]}-PE.fa:{config[trimmomatic][seed_mismatch]}:{config[trimmomatic][palindrome_clip_threshold]}:{config[trimmomatic][simple_clip_threshold]} LEADING:{config[trimmomatic][leading]} TRAILING:{config[trimmomatic][trailing]} SLIDINGWINDOW:{config[trimmomatic][window_size]}:{config[trimmomatic][window_quality]} MINLEN:{config[trimmomatic][minlen]} MAXINFO:{config[trimmomatic][target_length]}:{config[trimmomatic][strictness]} >> {log} 2>&1
+        java -jar {config[trimmomatic][jarfile]} PE -threads {THREADS} {input[0]} {input[1]} {output} ILLUMINACLIP:{DBPATH}/adapters/{config[trimmomatic][adapter]}-PE.fa:{config[trimmomatic][seed_mismatch]}:{config[trimmomatic][palindrome_clip_threshold]}:{config[trimmomatic][simple_clip_threshold]} LEADING:{config[trimmomatic][leading]} TRAILING:{config[trimmomatic][trailing]} SLIDINGWINDOW:{config[trimmomatic][window_size]}:{config[trimmomatic][window_quality]} MINLEN:{config[trimmomatic][minlen]} MAXINFO:{config[trimmomatic][target_length]}:{config[trimmomatic][strictness]} >> {log} 2>&1
         """
     benchmark:
         "%s/benchmarks/PREPROCESSING_MG_TRIM.json" % P_OUT
