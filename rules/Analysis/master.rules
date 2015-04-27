@@ -43,7 +43,8 @@ def analysis_output_files():
                  #####################
                  "MGMT.vizbin.with-contig-names.points"], dir=AN_OUT)
     plots = analysis_plot_files_output()
-    return all + plots
+    stats = analysis_stats_files_output()
+    return all + plots + stats
 
 # master command
 rule ANALYSIS:

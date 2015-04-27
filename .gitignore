@@ -5,6 +5,10 @@ build
 KronaTools-2.5.tar
 KronaTools-2.5/
 db
-conf/userconfig.imp.json
-conf/gaia_PREPROCESSING_modules.sh
+env/
+run_IMP_A02-20150318.sh
+build_gz/
+run_tests.sh
 *~
+build_bz2/
+run_A01.sh

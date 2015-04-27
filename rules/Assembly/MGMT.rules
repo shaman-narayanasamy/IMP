@@ -82,7 +82,9 @@ rule ASSEMBLY_MT_MEGAHIT_2:
         """
         MAX_READ_LEN=$(cat {input} | sed -n '1~4s/^@/>/p;2~4p' | \
         awk '$0 ~ \">\" {{c=0\"\t\"; }} $0 !~ \">\" {{c+=length($0); max=(max>c)?max:c;}} END {{print max}}')
+        echo "Max read length: $MAX_READ_LEN"
         MEMBYTES=$(({MEMTOTAL}*1000*1000*1000))
+        echo "Available memory in bytes: $MEMBYTES"
         megahit -o {params.outdir} --cpu-only -m $MEMBYTES --mem-flag 1 -l $MAX_READ_LEN \
         --input-cmd "cat {input}" -t {THREADS} --continue >> {log} 2>&1
         """

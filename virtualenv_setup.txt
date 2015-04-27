@@ -1,0 +1,14 @@
+
+#load 3.3?
+#module load Python 
+#~/.local/bin/virtualenv-3.2 /mnt/nfs/projects/ecosystem_biology/local_tools/IMP
+source /mnt/nfs/projects/ecosystem_biology/local_tools/IMP/bin/actviate
+#pip install -U pip
+#pip install -U setuptools
+
+pip install snakemake
+pip install numpy
+easy_install scipy
+easy_install scikit-learn
+#easy_install numpy??
+#export PYTHONPATH=env/lib/python3.2/site-packages/
