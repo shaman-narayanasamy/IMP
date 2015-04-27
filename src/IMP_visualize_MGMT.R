@@ -999,6 +999,4 @@ dev.off()
 ## Save the R workspace
 save.image(name_plot("results.Rdat"))
 
-## Beanplot function
-
 
