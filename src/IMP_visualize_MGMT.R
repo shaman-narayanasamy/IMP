@@ -379,7 +379,7 @@ coords <- read.table(coords_file, colClasses=c("factor", "numeric", "numeric"),
 ## Merge the data sets without the vizbin coordinates
 ###################################################################################################
 print("Merging data")
-all.dat <- merge(MG.cov, MT.cov, by=c("contig", "length"), all=T, incomparables=NA)
+all.dat <- merge(MG.cov, MT.cov, by=c("contig", "length"), all=T)
 all.dat <- merge(all.dat, GC.dat, by=c("contig"), all=T, incomparables=NA)
 all.dat <- merge(all.dat, MG.depth, by=c("contig"), all=T, incomparables=NA)
 all.dat <- merge(all.dat, MT.depth, by=c("contig"), all=T, incomparables=NA)
@@ -392,7 +392,7 @@ all.dat <- merge(all.dat, annot.4, by=c("contig"), all=T, incomparables=NA)
 ###################################################################################################
 # Calculate and merge data
 print("Perform calculations")
-
+save.image(name_plot("results.Rdat"))
 # Get new column numbers
 newcols <- ncol(all.dat) + 1
 all.dat <- cbind(all.dat,
