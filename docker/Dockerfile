@@ -193,7 +193,8 @@ RUN cd /home/imp/lib \
     && cd megahit \
     && git checkout v0.2.1 \
     && make \
-    && mv megahit* /usr/bin/.
+    && mv megahit* /usr/bin/. \
+    && mv sdbg_builder_cpu /usr/bin/.
 
 
 ######################
