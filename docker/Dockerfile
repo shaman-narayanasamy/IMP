@@ -9,16 +9,21 @@ MAINTAINER yohan.jarosz@uni.lu
 ################
 # dependencies #
 ################
-RUN apt-get update && apt-get -yq upgrade \
-    && apt-get install -yq libboost-dev \
-    && apt-get install -yq make cmake wget build-essential unzip \
-    && apt-get install -yq openjdk-7-jdk ant git tig vim \
+RUN echo "deb http://ftp.halifax.rwth-aachen.de/ubuntu trusty main restricted universe multiverse" > /etc/apt/sources.list
+RUN echo "deb http://ftp.halifax.rwth-aachen.de/ubuntu trusty-security main restricted universe" >> /etc/apt/sources.list
+RUN echo "deb http://ftp.halifax.rwth-aachen.de/ubuntu trusty-updates main restricted universe multiverse">> /etc/apt/sources.list
+RUN apt-get update \
+    && apt-get install -yq python-software-properties software-properties-common \
+    && add-apt-repository "deb http://cran.stat.ucla.edu/bin/linux/ubuntu trusty/" \
+    && gpg --keyserver keyserver.ubuntu.com --recv-key E084DAB9 \
+    && gpg -a --export E084DAB9 | apt-key add - \
+    && apt-get update \
+    && apt-get -yq upgrade \
+    && apt-get install -yq make cmake wget build-essential unzip openjdk-7-jdk ant git tig vim \
     && apt-get install -yq libboost-filesystem1.54-dev libboost-program-options1.54-dev libboost-regex1.54-dev libboost-system1.54-dev libboost-thread1.54-dev libboost-system1.54-dev \
-    && apt-get install -yq bioperl=1.6.923-1 tabix=0.2.6-2 zlib1g zlib1g-dev \
-    && apt-get install -yq samtools gnuplot python3 \
+    && apt-get install -yq bioperl=1.6.923-1 tabix=0.2.6-2 zlib1g zlib1g-dev samtools gnuplot python3 \
     && apt-get install -yq r-base r-base-dev \
     && apt-get install -yq libncurses5 libncurses5-dev sudo libatlas-base-dev python2.7 gfortran python-dev \
-    && rm -rf /var/lib/apt/lists/* \
     && update-alternatives --set java /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/java
 
 
@@ -34,17 +39,11 @@ RUN mkdir -p /home/imp/tmp /home/imp/lib \
     && pip install -Iv https://pypi.python.org/packages/source/b/bioservices/bioservices-1.3.5.tar.gz \
     && rm get-pip.py
 
-
-## R
+# R with checkpoint libraries
+ADD dependencies.R /home/imp/lib/
 RUN echo "r <- getOption('repos'); r['CRAN'] <- 'http://cran.us.r-project.org'; options(repos = r);" > ~/.Rprofile \
-    && Rscript -e "install.packages('ggplot2')" \
-    && Rscript -e "install.packages('gtools')" \
-    && Rscript -e "install.packages('data.table')" \
-    && Rscript -e "install.packages('reshape')" \
-    && Rscript -e "install.packages('stringr')" \
-    && Rscript -e "install.packages('xtable')" \
-    && Rscript -e "install.packages('psych')" \
-    && Rscript -e "install.packages('beanplot')" \
+    && Rscript -e "install.packages('checkpoint')" \
+    && Rscript -e "library(checkpoint);checkpoint('2015-04-27', project='/home/imp/lib')" \
     && Rscript -e "source('http://bioconductor.org/biocLite.R');biocLite('genomeIntervals')"
 
 

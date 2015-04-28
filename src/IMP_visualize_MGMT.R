@@ -3,6 +3,8 @@
 ###################################################################################################
 ## Load required packages
 ###################################################################################################
+library(checkpoint)
+checkpoint('2015-04-27')
 
 require(ggplot2)
 require(gtools)
@@ -682,11 +684,11 @@ print("Generating mapped reads plot")
 var1 <-log10(c(all.dat$MG_reads,all.dat$MT_reads))
 var1[is.infinite(var1)]=NA
 var2 <- c(rep("MG",nrow(all.dat)),rep("MT",nrow(all.dat)))
-mapped_reads<-data.frame(var1,var2) 
+mapped_reads<-data.frame(var1,var2)
 
 png(name_plot("IMP-reads_density.png"), width=350, height=700)
 par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
-beanplot(var1 ~ var2, data= mapped_reads,  side = "both",log="auto", 
+beanplot(var1 ~ var2, data= mapped_reads,  side = "both",log="auto",
 what=c(1,1,1,0), border = NA, col = list("blue", c("red", "white")),
 bw="nrd0", main="Mappable reads", ylab=expression(log[10]*~"count"))
 legend("bottomleft", fill =c("blue", "red"), legend = c("MG", "MT"))
@@ -697,11 +699,11 @@ print("Generating rpkm plot")
 var1 <-log10(c(all.dat$MG_rpkm,all.dat$MT_rpkm))
 var1[is.infinite(var1)]=NA
 var2 <- c(rep("MG",nrow(all.dat)),rep("MT",nrow(all.dat)))
-rpkm<-data.frame(var1,var2) 
+rpkm<-data.frame(var1,var2)
 
 png(name_plot("IMP-rpkm_density.png"), width=350, height=700)
 par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
-beanplot(var1 ~ var2, data= rpkm,  side = "both",log="auto", 
+beanplot(var1 ~ var2, data= rpkm,  side = "both",log="auto",
 what=c(1,1,1,0), border = NA, col = list("blue", c("red", "white")),
 bw="nrd0", main="RPKM", ylab=expression(log[10]*~"RPKM"))
 legend("bottomleft", fill =c("blue", "red"), legend = c("MG", "MT"))
@@ -711,11 +713,11 @@ dev.off()
 print("Generating coverage plot")
 var1 <-c(all.dat$MG_cov,all.dat$MT_cov)
 var2 <- c(rep("MG",nrow(all.dat)),rep("MT",nrow(all.dat)))
-coverage<-data.frame(var1,var2) 
+coverage<-data.frame(var1,var2)
 
 png(name_plot("IMP-coverage_density.png"), width=350, height=700)
 par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
-beanplot(var1 ~ var2, data= coverage,  side = "both",log="auto", 
+beanplot(var1 ~ var2, data= coverage,  side = "both",log="auto",
 what=c(1,1,1,0), border = NA, col = list("blue", c("red", "white")),
 bw="nrd0", main="Coverage", ylab="fraction")
 legend("bottomleft", fill =c("blue", "red"), legend = c("MG", "MT"))
@@ -725,11 +727,11 @@ dev.off()
 print("Generating depth density plot")
 var1 <-log10(c(all.dat$MG_depth,all.dat$MT_depth))
 var2 <- c(rep("MG",nrow(all.dat)),rep("MT",nrow(all.dat)))
-depth<-data.frame(var1,var2) 
+depth<-data.frame(var1,var2)
 
 png(name_plot("IMP-depth_density.png"), width=350, height=700)
 par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
-beanplot(var1 ~ var2, data= depth,  side = "both",log="auto", 
+beanplot(var1 ~ var2, data= depth,  side = "both",log="auto",
 what=c(1,1,1,0), border = NA, col = list("blue", c("red", "white")),
 bw="nrd0", main="Depth", ylab=expression(log[10]*~"avg. depth"))
 legend("bottomleft", fill =c("blue", "red"), legend = c("MG", "MT"))
@@ -786,13 +788,13 @@ dev.off()
 var1 <-log10(c(all.dat$MG_var,all.dat$MT_var))
 var1[is.infinite(var1)]=NA
 var2 <- c(rep("MG",nrow(all.dat)),rep("MT",nrow(all.dat)))
-variant_count<-data.frame(var1,var2) 
+variant_count<-data.frame(var1,var2)
 
 print("Generating variant count plots")
 png(name_plot("IMP-var_count.png") ,width=350, height=700)
 
 par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
-beanplot(var1 ~ var2, data= variant_count,  side = "both",log="auto", 
+beanplot(var1 ~ var2, data= variant_count,  side = "both",log="auto",
 what=c(1,1,1,0), border = NA, col = list("blue", c("red", "white")),
 main="Variant count", ylab=expression(log[10]*~count))
 legend("bottomleft", fill =c("blue", "red"), legend = c("MG", "MT"))
@@ -802,13 +804,13 @@ dev.off()
 var1 <-c(all.dat$MG_var_dens,all.dat$MT_var_dens)
 var1[is.infinite(var1)]=NA
 var2 <- c(rep("MG",nrow(all.dat)),rep("MT",nrow(all.dat)))
-variant_density<-data.frame(var1,var2) 
+variant_density<-data.frame(var1,var2)
 
 print("Generating variant density plots")
 png(name_plot("IMP-var_density.png") ,width=350, height=700)
 
 par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
-beanplot(var1 ~ var2, data= variant_density,  side = "both",log="auto", 
+beanplot(var1 ~ var2, data= variant_density,  side = "both",log="auto",
 what=c(1,1,1,0), border = NA, col = list("blue", c("red", "white")),
 main="Variant density", ylab="count / RPKM")
 legend("bottomleft", fill =c("blue", "red"), legend = c("MG", "MT"))
@@ -1000,3 +1002,4 @@ dev.off()
 save.image(name_plot("results.Rdat"))
 
 
+## Beanplot function
