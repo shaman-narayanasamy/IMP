@@ -324,12 +324,9 @@ coords <- read.table(coords_file, colClasses=c("factor", "numeric", "numeric"),
 ###################################################################################################
 
 print("Merging data")
-all.dat <- merge(MG.cov, MT.cov, by=c("contig", "length"), all=T)
-all.dat <- merge(all.dat, GC.dat, by=c("contig"), all=T, incomparables=NA)
+all.dat <- merge(MG.cov, GC.dat, by=c("contig"), all=T, incomparables=NA)
 all.dat <- merge(all.dat, MG.depth, by=c("contig"), all=T, incomparables=NA)
-all.dat <- merge(all.dat, MT.depth, by=c("contig"), all=T, incomparables=NA)
 all.dat <- merge(all.dat, MG.var, by=c("contig"), all=T, incomparables=NA)
-all.dat <- merge(all.dat, MT.var, by=c("contig"), all=T, incomparables=NA)
 all.dat <- merge(all.dat, annot.4, by=c("contig"), all=T, incomparables=NA)
 
 ###################################################################################################
@@ -344,47 +341,16 @@ all.dat <- cbind(all.dat,
       gene_density(all.dat$no_of_genes, all.dat$length),
       coding_density(all.dat$total_gene_length, all.dat$length),
       contig_rpkm(all.dat$MG_reads, all.dat$length),
-      contig_rpkm(all.dat$MT_reads, all.dat$length),
-      var_density(all.dat$MG_var, all.dat$length, all.dat$MG_reads),
-      var_density(all.dat$MT_var, all.dat$length, all.dat$MT_reads),
-      all.dat$MT_cov/all.dat$MG_cov,
-      all.dat$MT_depth/all.dat$MG_depth
+      var_density(all.dat$MG_var, all.dat$length, all.dat$MG_reads)
 )
 colnames(all.dat)[newcols:ncol(all.dat)] <- c(
 			      "gene_dens",
 			      "coding_dens",
 			      "MG_rpkm",
-			      "MT_rpkm",
-			      "MG_var_dens",
-			      "MT_var_dens",
-			      "cov_ratio",
-			      "depth_ratio"
+			      "MG_var_dens"
 			      )
 # Get new column numbers
 newcols <- ncol(all.dat) + 1
-
-# Calculate ratio values
-all.dat <- cbind(all.dat,
-		 all.dat$MT_rpkm/all.dat$MG_rpkm,
-		 all.dat$MT_var_dens/all.dat$MG_var_dens)
-colnames(all.dat)[c(newcols, ncol(all.dat))] <- c("rpkm_ratio",
-					     "var_ratio")
-# Calculate log ratio values
-# Get new column numbers
-newcols <- ncol(all.dat) + 1
-
-
-all.dat <- cbind(all.dat,
-		 log10(all.dat$cov_ratio),
-		 log10(all.dat$depth_ratio),
-		 log10(all.dat$rpkm_ratio),
-		 log10(all.dat$var_ratio)
-		 )
-
-colnames(all.dat)[c(newcols:ncol(all.dat))] <- c("log_cov_ratio",
-					    "log_depth_ratio",
-					    "log_rpkm_ratio",
-					    "log_var_ratio")
 
 ###################################################################################################
 ## Organize filtering statistics and create table
@@ -441,63 +407,6 @@ write.table(MG.read.count.final, name_plot("MG.read_stats.txt"),
 	    sep="\t", quote=F,
 	    row.names=F)
 
-####################################################################
-## Organize MT filtering procedures
-
-print("Printing metatranscriptomic filtering statistics")
-# Obtain file names without path
-MT.read.count$file <- unlist(lapply(MT.read.count$file, get_file_name))
-
-# Obtain string length
-MT.read.count <- cbind(MT.read.count,
-		       unlist(lapply(MT.read.count$file, nchar)))
-colnames(MT.read.count)[ncol(MT.read.count)] <- "string_len"
-
-# Order the file names according to the string length
-MT.read.count <- MT.read.count[order(MT.read.count$string_len),]
-
-# Create additional column for fastq file types (paired or singletons)
-MT.read.count <- cbind(MT.read.count, rep(NA, nrow(MT.read.count)))
-colnames(MT.read.count)[ncol(MT.read.count)] <- "type"
-MT.read.count$type[grep("R[12]", MT.read.count$file)] <- "paired-end"
-MT.read.count$type[grep("SE", MT.read.count$file)] <- "singletons"
-
-# Create new columns with filtering type (within file names)
-MT.read.count <- cbind(MT.read.count,
-		      unlist(lapply(MT.read.count$file, filtering)))
-colnames(MT.read.count)[ncol(MT.read.count)] <- "filtering"
-MT.read.count$filtering <- as.character(MT.read.count$filtering)
-
-# Rename filtering steps
-MT.read.count$filtering[ # Unfiltered/raw
-			grep("R[12]", MT.read.count$filtering)] <-
-			   "unfiltered (raw)"
-MT.read.count$filtering <- # Remove _filt extension in file name
-   gsub("_filt", "", MT.read.count$filtering, ignore.case=TRUE)
-MT.read.count$filtering <- # Remove _filt extension in file name
-   gsub("trimmed", "adapter trimmed and quality filtered", MT.read.count$filtering, ignore.case=TRUE)
-MT.read.count$filtering <- # Convert uniq to unique
-   gsub("uniq", "collapsed unique", MT.read.count$filtering, ignore.case=TRUE)
-MT.read.count$filtering <- # Convert rna to "rrna sequences"
-    gsub("rna", "rrna sequences filtered", MT.read.count$filtering,
-	ignore.case=TRUE)
-MT.read.count$filtering <- # Convert hg to "human sequences"
-    gsub("hg\\d+", "human sequences filtered", MT.read.count$filtering,
-	ignore.case=TRUE)
-
-# Summarize table for final report
-MT.read.count.final <- unique(MT.read.count[,c(5,4,2)])
-MT.read.count.final$count <- as.integer(MT.read.count.final$count)
-
-# Write out table in html and tab separated files
-sink(name_plot("MT.read_stats.html"))
-print(xtable(MT.read.count.final, html.table.attributes=""), type = "html")
-sink()
-
-write.table(MT.read.count.final, name_plot("MT.read_stats.txt"),
-	    sep="\t", quote=F,
-	    row.names=F)
-
 ###################################################################################################
 ## Calculate assembly statistics and create table
 ###################################################################################################
@@ -535,11 +444,8 @@ vb_dat[is.na(vb_dat)] <- 0
 
 # Remove outliers and infinite values
 vb_dat$MG_var_dens <- outliers(vb_dat$MG_var_dens,2)
-vb_dat$MT_var_dens <- outliers(vb_dat$MT_var_dens,2)
 vb_dat$MG_depth <- outliers(vb_dat$MG_depth,2)
-vb_dat$MT_depth <- outliers(vb_dat$MT_depth,2)
 vb_dat$MG_rpkm <- outliers(vb_dat$MG_rpkm,2)
-vb_dat$MT_rpkm <- outliers(vb_dat$MT_rpkm,2)
 vb_dat$cov_ratio <- outliers(vb_dat$cov_ratio,2)
 vb_dat$depth_ratio <- outliers(vb_dat$depth_ratio,2)
 vb_dat$rpkm_ratio <- outliers(vb_dat$rpkm_ratio,2)
@@ -576,16 +482,6 @@ print(xtable(MG.map.summary, html.table.attributes=""), type="html")
 sink()
 
 write.table(MG.map.summary, name_plot("MG_mapping_stats.txt"),
-	    sep="\t", quote=F,
-	    row.names=F)
-
-## Output mapping stats table
-print("Print metatranscriptomics mapping statistics table")
-sink(name_plot("MT_mapping_stats.html"))
-print(xtable(MT.map.summary, html.table.attributes=""), type="html")
-sink()
-
-write.table(MT.map.summary, name_plot("MT_mapping_stats.txt"),
 	    sep="\t", quote=F,
 	    row.names=F)
 
