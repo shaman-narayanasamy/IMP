@@ -4,6 +4,7 @@
 ## Load required packages
 ###################################################################################################
 
+print("Loading required R libraries")
 require(ggplot2)
 require(gtools)
 require(data.table)
@@ -34,197 +35,19 @@ GC.dat_file	    <- args[12]
 coords_file	    <- args[13]
 annot_file	    <- args[14]
 
-# Only for testing purposes
-# out_dir	    <-   "/scratch/users/snarayanasamy/A02_20141212/MGMT/results/"
-# MG.read.count_file  <-  "/scratch/users/snarayanasamy/A02_20141212/MG/MG.read_counts.txt"
-# MG.map.summary_file <-  "/scratch/users/snarayanasamy/A02_20141212/MG/MG.assembly.merged.coverage_flagstat.txt"
-# MG.cov_file	    <-   "/scratch/users/snarayanasamy/A02_20141212/MG/MG.assembly.merged.coverage_coverage.txt"
-# MG.depth_file	    <-   "/scratch/users/snarayanasamy/A02_20141212/MG/MG.assembly.merged.coverage_depth.txt"
-# MG.var_file	    <-   "/scratch/users/snarayanasamy/A02_20141212/MG/MG.variants.isec.vcf.gz"
-# GC.dat_file	    <-   "/scratch/users/snarayanasamy/A02_20141212/MGMT/MGMT.assembly.merged.gc_content.txt"
-# coords_file	    <-   "/scratch/users/snarayanasamy/A02_20141212/MGMT/MGMT.vizbin.points_annot"
-# annot_file	    <-   "/scratch/users/snarayanasamy/A02_20141212/MGMT/annotation/annotation.filt.gff"
-
 ###################################################################################################
 ## Initialize functions for various calculations and normalizations
 ###################################################################################################
 
-print("Initializing functions")
-## calculate coverage using the "traditional" method
-get_coverage=function(reads_mapped, length, read_len){
-    M <- reads_mapped
-    L <- length
-    R <- read_len
-
-    # coverage*contig length/read length
-    C <- (M*L)/R
-    return(C)
-}
-
-####################################################################
-## Contig based "RPKM" values, similar to used in
-## Muller et al. (2014, Nat. Comm.), ## only here it
-## is applied to
-## every contig
-contig_rpkm=function(reads_mapped, length){
-    N <- sum(reads_mapped)
-    R <- reads_mapped
-    L <- length
-
-    # reads mapped/([length of contig]/1000)/([total reads]/10^6)
-    R/(L/1000)/(N/10^6)
-}
-
-####################################################################
-## Calculate variant density:
-## i)  Traditional variats per kilo base
-## ii) Normalized by contig rpkm (Muller et al., 2014)
-var_density=function(variants, length, reads_mapped){
-    V <- variants
-    L <- length
-    rpkmC <- contig_rpkm(reads_mapped, L)
-
-    D <- (V/L)/1000/rpkmC
-    return(D)
-}
-
-####################################################################
-## Calculate gene density
-gene_density=function(total_genes, length){
-    G <- total_genes
-    L <- length
-
-    C <- (G)/(L/1000)
-    return(C)
-}
-####################################################################
-## Calculate coding density
-coding_density=function(total_len_genes, length){
-    G <- total_len_genes
-    L <- length
-
-    C <- (G/1000)/(L/1000)
-    return(C)
-}
-
-####################################################################
-## Calculate N50
-get_n50=function(lengths){
-    x=lengths
-    x[cumsum(x) > sum(x)/2][1]
-}
-
-
-####################################################################
-## Get assembly statistics
-get_stats=function(dat){
-    contigs <- nrow(dat)
-    N50 <- get_n50(dat$length)
-    max_len <- max(dat$length)
-    mean_len <- mean(dat$length)
-    med_len <- median(dat$length)
-    total_length <- sum(dat$length)
-    return(c(contigs,N50,max_len,mean_len,med_len,total_length))
-}
-
-
-####################################################################
-## Function to scale data between 0 and 1 (for plotting)
-range01 <- function(x){(x-min(x))/(max(x)-min(x))}
-
-####################################################################
-## Filter out outliers and set them as floor/ceiling value (min/max)
-outliers=function(z, dist){
-    z[is.infinite(z)] <- max(z[is.finite(z)])
-    z[which(z > mean(z) + dist*sd(z))] = round(mean(z) + dist*sd(z))
-    z[which(z < mean(z) - dist*sd(z))] = round(mean(z) - dist*sd(z))
-    return(z)
-}
-
-####################################################################
-## Function to name files
-name_plot=function(name){
-    filename <- paste(out_dir, name, sep='/')
-    return(filename)
-}
-
-####################################################################
-# Function to obtain number of character (char) occurences
-# within string
-countCharOccurrences <- function(char, s) {
-    s2 <- gsub(char,"",s)
-    return (nchar(s) - nchar(s2))
-}
-
-####################################################################
-# Function to output filename without the path
-get_file_name <- function(file_path){
-    n <- countCharOccurrences('/', as.character(file_path))
-    filename <- str_split_fixed(file_path, "/", n+1)[n+1]
-    return(filename)
-}
-
-####################################################################
-# Function to obtain filtering information (contained in file names)
-filtering <- function(file){
-    n <- countCharOccurrences("\\.", as.character(file))
-    filter <- str_split_fixed(file, "\\.", n+1)[n]
-    return(filter)
-}
-
-## Function for white background theme with no axes
-theme_nothing <- function(base_size = 12, base_family = "Helvetica")
-  {
-  theme_bw(base_size = base_size, base_family = base_family) %+replace%
-      theme(
-            rect             = element_blank(),
-            line             = element_blank(),
-            axis.ticks.margin = unit(0, "lines"),
-	    axis.text.x=element_blank(),
-	    axis.text.y=element_blank(),
-            axis.ticks=element_blank(),
-            axis.title.x=element_blank(),
-            axis.title.y=element_blank()
-           )
-}
-
-## Function for black background theme with no axes
-theme_black <- function(base_size = 12, base_family = "Helvetica")
-  {
-  theme_bw(base_size = base_size, base_family = base_family) %+replace%
-      theme(
-	    panel.background = element_rect(fill="black", colour="black"),
-            line             = element_blank(),
-            axis.ticks.margin = unit(0, "lines"),
-	    axis.text.x=element_blank(),
-	    axis.text.y=element_blank(),
-            axis.ticks=element_blank(),
-            axis.title.x=element_blank(),
-            axis.title.y=element_blank()
-           )
-}
-
-## Set maximum value for plots based on standard deviation
-set_max_sd=function(x, dist){
-    max_val <- mean(x, na.rm=T) + dist*sd(x, na.rm=T)
-    return(max_val)
-}
-
-## Set maximum value for plots based on percentage
-set_max_perc=function(x, percentage){
-    max_val <- max(x[is.finite(x)], na.rm=T)*(percentage/100)
-}
-
-## Special string for length
-log10len <- expression(bold(atop("Contig length", paste("(",log[10], bp, ")"))))
-
-## Metagenomic and metatranscriptomic labels
-mgmt_labs <- c("metagenomic","metatranscriptomic")
-
+print("Loading IMP custom R functions")
+source("IMP_plot_functions.R")
 
 ###################################################################################################
 ## Read in the necessary input files
 ###################################################################################################
+
+print("Reading input files...")
+
 ## Read counts MG
 print("Read in MG read count file")
 MG.read.count <- read.table(MG.read.count_file)
@@ -520,60 +343,31 @@ print("OVER")
 
 ## Plot mappable reads density
 print("Generating mapped reads plot")
-var1 <-log10(c(all.dat$MG_reads,all.dat$MT_reads))
+var1 <-log10(c(all.dat$MG_reads,all.dat$MG_rpkm))
 var1[is.infinite(var1)]=NA
-var2 <- c(rep("MG",nrow(all.dat)),rep("MT",nrow(all.dat)))
-mapped_reads<-data.frame(var1,var2) 
+var2 <- c(rep("MG",nrow(all.dat)),rep("MG",nrow(all.dat)))
+MG_mapped_reads<-data.frame(var1,var2) 
 
-png(name_plot("IMP-reads_density.png"), width=350, height=700)
+png(name_plot("IMP-MG_reads_density.png"), width=350, height=700)
 par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
-beanplot(var1 ~ var2, data= mapped_reads,  side = "both",log="auto", 
+beanplot(var1 ~ var2, data= MG_mapped_reads,  side = "both",log="auto", 
 what=c(1,1,1,0), border = NA, col = list("blue", c("red", "white")),
 bw="nrd0", main="Mappable reads", ylab=expression(log[10]*~"count"))
-legend("bottomleft", fill =c("blue", "red"), legend = c("MG", "MT"))
-dev.off()
-
-## Plot rpkm density
-print("Generating rpkm plot")
-var1 <-log10(c(all.dat$MG_rpkm,all.dat$MT_rpkm))
-var1[is.infinite(var1)]=NA
-var2 <- c(rep("MG",nrow(all.dat)),rep("MT",nrow(all.dat)))
-rpkm<-data.frame(var1,var2) 
-
-png(name_plot("IMP-rpkm_density.png"), width=350, height=700)
-par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
-beanplot(var1 ~ var2, data= rpkm,  side = "both",log="auto", 
-what=c(1,1,1,0), border = NA, col = list("blue", c("red", "white")),
-bw="nrd0", main="RPKM", ylab=expression(log[10]*~"RPKM"))
-legend("bottomleft", fill =c("blue", "red"), legend = c("MG", "MT"))
+legend("bottomleft", fill =c("blue", "red"), legend = c("No of reads mapped", "RPKM normalized"))
 dev.off()
 
 ## Plot coverage density
-print("Generating coverage plot")
-var1 <-c(all.dat$MG_cov,all.dat$MT_cov)
-var2 <- c(rep("MG",nrow(all.dat)),rep("MT",nrow(all.dat)))
-coverage<-data.frame(var1,var2) 
+print("Generating MG coverage plot")
+var1 <-c(all.dat$MG_cov,all.dat$MG_depth)
+var2 <- c(rep("MG",nrow(all.dat)),rep("MG",nrow(all.dat)))
+MG_coverage<-data.frame(var1,var2) 
 
-png(name_plot("IMP-coverage_density.png"), width=350, height=700)
+png(name_plot("IMP-MG_coverage_density.png"), width=350, height=700)
 par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
-beanplot(var1 ~ var2, data= coverage,  side = "both",log="auto", 
+beanplot(var1 ~ var2, data= MG_coverage,  side = "both",log="auto", 
 what=c(1,1,1,0), border = NA, col = list("blue", c("red", "white")),
 bw="nrd0", main="Coverage", ylab="fraction")
-legend("bottomleft", fill =c("blue", "red"), legend = c("MG", "MT"))
-dev.off()
-
-## Plot depth density
-print("Generating depth density plot")
-var1 <-log10(c(all.dat$MG_depth,all.dat$MT_depth))
-var2 <- c(rep("MG",nrow(all.dat)),rep("MT",nrow(all.dat)))
-depth<-data.frame(var1,var2) 
-
-png(name_plot("IMP-depth_density.png"), width=350, height=700)
-par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
-beanplot(var1 ~ var2, data= depth,  side = "both",log="auto", 
-what=c(1,1,1,0), border = NA, col = list("blue", c("red", "white")),
-bw="nrd0", main="Depth", ylab=expression(log[10]*~"avg. depth"))
-legend("bottomleft", fill =c("blue", "red"), legend = c("MG", "MT"))
+legend("bottomleft", fill =c("blue", "red"), legend = c("Coverage", "depth"))
 dev.off()
 
 ## Plot vizbin scatter plot with length and MG coverage info
@@ -583,17 +377,6 @@ ggplot(vb_dat, aes(x=x,y=y)) +
 geom_point(colour="blue", aes(alpha=MG_cov, size=log10(length))) +
 guides(size=guide_legend(title=log10len),
        alpha=guide_legend(title=expression(bold(atop("Metagenomic", "coverage"))))
-      ) +
-theme_nothing()
-dev.off()
-
-## Plot vizbin scatter plot with length and MT coverage info
-print("Generating vizbin plot for metatranscriptomic coverage")
-png(name_plot("IMP-vizbin_length_MTcov.png"),width=700, height=700)
-ggplot(vb_dat, aes(x=x,y=y)) +
-geom_point(colour="red", aes(alpha=MT_cov, size=log10(length))) +
-guides(size=guide_legend(title=log10len),
-       alpha=guide_legend(title=expression(bold(atop("Metatranscriptomic", "coverage"))))
       ) +
 theme_nothing()
 dev.off()
@@ -609,50 +392,23 @@ guides(size=guide_legend(title=log10len),
 theme_nothing()
 dev.off()
 
-## Plot vizbin scatter plot with length and MT depth info
-print("Generating vizbin plot for metatranscriptomic depth")
-png(name_plot("IMP-vizbin_length_MTdepth.png"), width=700, height=700)
-ggplot(vb_dat, aes(x=x,y=y)) +
-geom_point(colour="red", aes(alpha=MT_depth, size=log10(length))) +
-guides(size=guide_legend(title=log10len),
-       alpha=guide_legend(title=expression(bold(atop("Metatranscriptomic", "depth"))))
-      ) +
-theme_nothing()
-dev.off()
-
 ####################################################################
 ## VARIANT STATISTICS AND VISUALIZATIONS
 ####################################################################
 ## Plot variant count
-var1 <-log10(c(all.dat$MG_var,all.dat$MT_var))
+var1 <-log10(c(all.dat$MG_var,all.dat$MG_dens))
 var1[is.infinite(var1)]=NA
-var2 <- c(rep("MG",nrow(all.dat)),rep("MT",nrow(all.dat)))
-variant_count<-data.frame(var1,var2) 
+var2 <- c(rep("MG",nrow(all.dat)),rep("MG",nrow(all.dat)))
+MG_variant_count<-data.frame(var1,var2) 
 
 print("Generating variant count plots")
 png(name_plot("IMP-var_count.png") ,width=350, height=700)
 
 par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
-beanplot(var1 ~ var2, data= variant_count,  side = "both",log="auto", 
+beanplot(var1 ~ var2, data= MG_variant_count,  side = "both",log="auto", 
 what=c(1,1,1,0), border = NA, col = list("blue", c("red", "white")),
-main="Variant count", ylab=expression(log[10]*~count))
-legend("bottomleft", fill =c("blue", "red"), legend = c("MG", "MT"))
-dev.off()
-
-## Plot variant density
-var1 <-c(all.dat$MG_var_dens,all.dat$MT_var_dens)
-var1[is.infinite(var1)]=NA
-var2 <- c(rep("MG",nrow(all.dat)),rep("MT",nrow(all.dat)))
-variant_density<-data.frame(var1,var2) 
-
-print("Generating variant density plots")
-png(name_plot("IMP-var_density.png") ,width=350, height=700)
-
-par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
-beanplot(var1 ~ var2, data= variant_density,  side = "both",log="auto", 
-what=c(1,1,1,0), border = NA, col = list("blue", c("red", "white")),
-main="Variant density", ylab="count / RPKM")
-legend("bottomleft", fill =c("blue", "red"), legend = c("MG", "MT"))
+main="MG variant (SNPs & INDELS)", ylab=expression(log[10]*~count))
+legend("bottomleft", fill =c("blue", "red"), legend = c("No. of variants", "Variant density"))
 dev.off()
 
 ## Plot vizbin scatter plot with length and MG variant info
@@ -670,38 +426,22 @@ scale_colour_gradient(high="black", low="cyan") +
 theme_nothing()
 dev.off()
 
-## Plot vizbin scatter plot with length and MT variant info
-# Create label
-MT_var_label <- expression(bold(frac(variants[MT]/kb, MT[rpkm])))
-
-print("Generating vizbin plot for metatranscriptomic variant density")
-png(name_plot("IMP-vizbin_length_MTvardens.png"), width=700, height=700)
-ggplot(vb_dat, aes(x=x,y=y)) +
-geom_point(aes(colour=MT_var_dens, size=log10(length), order=MT_var_dens), alpha=0.75) +
-scale_colour_gradient(high="black", low="magenta") +
-       guides(size=guide_legend(title=log10len),
-	      colour=guide_colourbar(title=MT_var_label)
-       ) +
-theme_nothing()
-dev.off()
-
 ####################################################################
 ## ANNOTATION STATISTICS AND VISUALIZATIONS
 ####################################################################
 ## Vizbin plot with length and raw number of genes
-
-#print("Generating vizbin plot for number of genes")
-#png(name_plot("IMP-vizbin_length_geneCount.png"), width=700, height=700)
-#ggplot(vb_dat, aes(x=x,y=y)) +
-#geom_point(aes(colour=genes, size=log10(length), order=genes), alpha=0.75) +
-#scale_colour_gradientn(colours=topo.colors(max(vb_dat$genes)),
-#		      guide="colourbar",
-#		      guide_legend(title="Gene count")
-#		      ) +
-#       guides(size=guide_legend(title=log10len)
-#       ) +
-#theme_nothing()
-#dev.off()
+print("Generating vizbin plot for number of genes")
+png(name_plot("IMP-vizbin_length_geneCount.png"), width=700, height=700)
+ggplot(vb_dat, aes(x=x,y=y)) +
+geom_point(aes(colour=genes, size=log10(length), order=genes), alpha=0.75) +
+scale_colour_gradientn(colours=topo.colors(max(vb_dat$genes)),
+		      guide="colourbar",
+		      guide_legend(title="Gene count")
+		      ) +
+       guides(size=guide_legend(title=log10len)
+       ) +
+theme_nothing()
+dev.off()
 
 ## Vizbin plot with length and gene density
 print("Generating vizbin plot for gene density")
@@ -721,123 +461,7 @@ dev.off()
 
 ## Also write an estimated number of complete genomes for the report
 
-####################################################################
-## RATIO STATISTICS AND VISUALIZATIONS
-####################################################################
-## Plot histogram for coverage ratio
-print("Generating metatranscriptomic-metagenomic coverage ratio histogram")
-png(name_plot("IMP-coverage_ratio_histogram.png"), width=700, height=700)
-ggplot(all.dat, aes(x=cov_ratio)) +
-geom_histogram(binwidth=0.5, position="identity", fill="red", alpha=0.75) +
-xlim(0,set_max_perc(all.dat$cov_ratio, 25)) +
-xlab("coverage ratio") +
-ggtitle("MT/MG coverage ratio histogram") +
-theme_bw()
-dev.off()
-
-## Plot histogram for depth ratio
-print("Generating metatranscriptomic-metagenomic depth ratio histogram")
-png(name_plot("IMP-depth_ratio_histogram.png"), width=700, height=700)
-ggplot(all.dat, aes(x=depth_ratio)) +
-geom_histogram(binwidth=0.5, position="identity", fill="blue", alpha=0.75) +
-xlim(0,set_max_perc(all.dat$depth_ratio, 0.025))+
-xlab("depth ratio") +
-ggtitle("MT/MG depth ratio histogram") +
-theme_bw()
-dev.off()
-
-## Plot histograms for rpkm ratio
-print("Generating metatranscriptomic-metagenomic rpkm ratio histogram")
-png(name_plot("IMP-rpkm_ratio_histogram.png"), width=700, height=700)
-ggplot(all.dat, aes(x=rpkm_ratio)) +
-geom_histogram(binwidth=0.5, position="identity", fill="green", alpha=0.75) +
-xlim(0,set_max_perc(all.dat$cov_ratio, 25))+
-xlab("rpkm ratio") +
-ggtitle("MT/MG rpkm ratio histogram") +
-theme_bw()
-dev.off()
-
-## Plot histograms for rpkm ratio
-print("Generating metatranscriptomic-metagenomic variance ratio histogram")
-png(name_plot("IMP-var_ratio_histogram.png"), width=700, height=700)
-ggplot(all.dat, aes(x=var_ratio)) +
-geom_histogram(binwidth=0.5, position="identity", fill="purple", alpha=0.75) +
-xlim(0,set_max_perc(all.dat$cov_ratio, 25))+
-xlab("var ratio") +
-ggtitle("MT/MG var ratio histogram") +
-theme_bw()
-dev.off()
-
-
-## Plot density plot of all different ratio levels
-M.ratio <- melt(all.dat, id.vars=("contig"), measure.vars=c("cov_ratio",
-							    "depth_ratio",
-							    "rpkm_ratio",
-							    "var_ratio"))
-colnames(M.ratio) <- c("contig","type","ratio")
-
-print("Generating metatranscriptomic-metagenomic ratio densities")
-png(name_plot("IMP-ratio_densities.png"), width=700, height=700)
-ggplot(M.ratio, aes(x=ratio, fill=type)) +
-geom_density(alpha=0.5) +
-scale_fill_manual(values=c("red", "blue", "green", "purple"),
-		  labels=c("coverage","depth","rpkm","variation")) +
-
- guides(fill=guide_legend(title="Ratio")) +
-xlim(0,set_max_perc(M.ratio$ratio, 0.025))+
-xlab("ratio") +
-ggtitle("MT/MG ratio densities") +
-theme_bw()
-dev.off()
-
-## Vizbin plot for coverage ratio
-print("Generating vizbin plot for coverage ratios")
-png(name_plot("IMP-vizbin_length_covRatio.png"), width=700, height=700)
-covRatio_label <- expression(bold(paste(log[10], frac(cov[MT], cov[MG]))))
-ggplot(vb_dat, aes(x=x,y=y)) +
-geom_point(aes(size=log10(length),
-	       colour=log_cov_ratio,
-	       order=log_cov_ratio), alpha=0.5) +
-scale_colour_gradientn(colours=rev(heat.colors(100))) +
-		       guides(size=guide_legend(title=log10len),
-		       colour=guide_colourbar(title=covRatio_label)
-		       )+
-theme_black()
-dev.off()
-
-## Vizbin plot for depth ratio
-print("Generating vizbin plot for depth ratios")
-png(name_plot("IMP-vizbin_length_depthRatio.png"), width=700, height=700)
-depthRatio_label <- expression(bold(paste(log[10], frac(depth[MT], depth[MG]))))
-ggplot(vb_dat, aes(x=x,y=y)) +
-geom_point(aes(size=log10(length),
-	       colour=log_depth_ratio,
-	       order=log_depth_ratio), alpha=0.5) +
-scale_colour_gradientn(colours=rev(heat.colors(1000))) +
-		   guides(size=guide_legend(title=log10len),
-		   colour=guide_colourbar(title=depthRatio_label)
-		   )+
-theme_black()
-dev.off()
-
-## Vizbin plot for rpkm ratio
-print("Generating vizbin plot for rpkm ratios")
-png(name_plot("IMP-vizbin_length_rpkmRatio.png"), width=700, height=700)
-rpkmRatio_label <- expression(bold(paste(log[10], frac(rpkm[MT], rpkm[MG]))))
-ggplot(vb_dat, aes(x=x,y=y)) +
-geom_point(aes(size=log10(length),
-	       colour=log_rpkm_ratio,
-	       order=log_rpkm_ratio),
-	   alpha=0.5) +
-scale_colour_gradientn(colours=rev(heat.colors(1000))) +
-		   guides(size=guide_legend(title=log10len),
-		   colour=guide_colourbar(title=rpkmRatio_label)
-		   )+
-
-theme_black()
-dev.off()
-
 ## Save the R workspace
-save.image(name_plot("results.Rdat"))
+save.image(name_plot("MG_results.Rdat"))
 
 

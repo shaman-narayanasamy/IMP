@@ -41,22 +41,6 @@ GC.dat_file	    <- args[12]
 coords_file	    <- args[13]
 annot_file	    <- args[14]
 
-# Only for testing purposes
-# out_dir	    <-   "/scratch/users/snarayanasamy/A02_20141212/MGMT/results/"
-# MG.read.count_file  <-  "/scratch/users/snarayanasamy/A02_20141212/MG/MG.read_counts.txt"
-# MT.read.count_file  <-  "/scratch/users/snarayanasamy/A02_20141212/MT/MT.read_counts.txt"
-# MG.map.summary_file <-  "/scratch/users/snarayanasamy/A02_20141212/MG/MG.assembly.merged.coverage_flagstat.txt"
-# MT.map.summary_file <-  "/scratch/users/snarayanasamy/A02_20141212/MT/MT.assembly.merged.coverage_flagstat.txt"
-# MG.cov_file	    <-   "/scratch/users/snarayanasamy/A02_20141212/MG/MG.assembly.merged.coverage_coverage.txt"
-# MT.cov_file	    <-   "/scratch/users/snarayanasamy/A02_20141212/MT/MT.assembly.merged.coverage_coverage.txt"
-# MG.depth_file	    <-   "/scratch/users/snarayanasamy/A02_20141212/MG/MG.assembly.merged.coverage_depth.txt"
-# MT.depth_file	    <-   "/scratch/users/snarayanasamy/A02_20141212/MT/MT.assembly.merged.coverage_depth.txt"
-# MG.var_file	    <-   "/scratch/users/snarayanasamy/A02_20141212/MG/MG.variants.isec.vcf.gz"
-# MT.var_file	    <-   "/scratch/users/snarayanasamy/A02_20141212/MT/MT.variants.isec.vcf.gz"
-# GC.dat_file	    <-   "/scratch/users/snarayanasamy/A02_20141212/MGMT/MGMT.assembly.merged.gc_content.txt"
-# coords_file	    <-   "/scratch/users/snarayanasamy/A02_20141212/MGMT/MGMT.vizbin.points_annot"
-# annot_file	    <-   "/scratch/users/snarayanasamy/A02_20141212/MGMT/annotation/annotation.filt.gff"
-
 ###################################################################################################
 ## Initialize functions for various calculations and normalizations
 ###################################################################################################
@@ -999,7 +983,7 @@ theme_black()
 dev.off()
 
 ## Save the R workspace
-save.image(name_plot("results.Rdat"))
+save.image(name_plot("MGMT_results.Rdat"))
 
 
 ## Beanplot function
