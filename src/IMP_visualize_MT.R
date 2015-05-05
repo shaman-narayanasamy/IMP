@@ -372,7 +372,7 @@ dev.off()
 
 ## Plot vizbin scatter plot with length and MT coverage info
 print("Generating vizbin plot for metagenomic coverage")
-png(name_plot("IMP-vizbin_length_MTcov.png"), width=700, height=700)
+png(name_plot("IMP-MT_vizbin_length_cov.png"), width=700, height=700)
 ggplot(vb_dat, aes(x=x,y=y)) +
 geom_point(colour="blue", aes(alpha=MT_cov, size=log10(length))) +
 guides(size=guide_legend(title=log10len),
@@ -383,7 +383,7 @@ dev.off()
 
 ## Plot vizbin scatter plot with length and MT depth info
 print("Generating vizbin plot for metagenomic depth")
-png(name_plot("IMP-vizbin_length_MTdepth.png"),width=700, height=700)
+png(name_plot("IMP-MT_vizbin_length_depth.png"),width=700, height=700)
 ggplot(vb_dat, aes(x=x,y=y)) +
 geom_point(colour="blue", aes(alpha=MT_depth, size=log10(length))) +
 guides(size=guide_legend(title=log10len),
@@ -416,7 +416,7 @@ dev.off()
 MT_var_label <- expression(bold(frac(variants[MT]/kb, MT[rpkm])))
 
 print("Generating vizbin plot for metagenomic variant density")
-png(name_plot("IMP-vizbin_length_MTvardens.png"), width=700, height=700)
+png(name_plot("IMP-MT_vizbin_length_vardens.png"), width=700, height=700)
 ggplot(vb_dat, aes(x=x,y=y)) +
 geom_point(aes(colour=MT_var_dens, size=log10(length), order=MT_var_dens), alpha=0.75) +
 scale_colour_gradient(high="black", low="cyan") +
