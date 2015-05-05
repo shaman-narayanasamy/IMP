@@ -372,7 +372,7 @@ dev.off()
 
 ## Plot vizbin scatter plot with length and MG coverage info
 print("Generating vizbin plot for metagenomic coverage")
-png(name_plot("IMP-vizbin_length_MGcov.png"), width=700, height=700)
+png(name_plot("IMP-MG_vizbin_length_cov.png"), width=700, height=700)
 ggplot(vb_dat, aes(x=x,y=y)) +
 geom_point(colour="blue", aes(alpha=MG_cov, size=log10(length))) +
 guides(size=guide_legend(title=log10len),
@@ -383,7 +383,7 @@ dev.off()
 
 ## Plot vizbin scatter plot with length and MG depth info
 print("Generating vizbin plot for metagenomic depth")
-png(name_plot("IMP-vizbin_length_MGdepth.png"),width=700, height=700)
+png(name_plot("IMP-MG_vizbin_length_depth.png"),width=700, height=700)
 ggplot(vb_dat, aes(x=x,y=y)) +
 geom_point(colour="blue", aes(alpha=MG_depth, size=log10(length))) +
 guides(size=guide_legend(title=log10len),
@@ -402,7 +402,7 @@ var2 <- c(rep("MG",nrow(all.dat)),rep("MG",nrow(all.dat)))
 MG_variant_count<-data.frame(var1,var2) 
 
 print("Generating variant count plots")
-png(name_plot("IMP-var_count.png") ,width=350, height=700)
+png(name_plot("IMP-MG_var_count.png") ,width=350, height=700)
 
 par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
 beanplot(var1 ~ var2, data= MG_variant_count,  side = "both",log="auto", 
@@ -416,7 +416,7 @@ dev.off()
 MG_var_label <- expression(bold(frac(variants[MG]/kb, MG[rpkm])))
 
 print("Generating vizbin plot for metagenomic variant density")
-png(name_plot("IMP-vizbin_length_MGvardens.png"), width=700, height=700)
+png(name_plot("IMP-MG_vizbin_length_vardens.png"), width=700, height=700)
 ggplot(vb_dat, aes(x=x,y=y)) +
 geom_point(aes(colour=MG_var_dens, size=log10(length), order=MG_var_dens), alpha=0.75) +
 scale_colour_gradient(high="black", low="cyan") +

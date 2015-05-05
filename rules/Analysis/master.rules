@@ -3,11 +3,17 @@ AN_OUT, AN_LOG = prepare_environment('Analysis')
 
 
 # include sub rules
-include:
-    "MGMT.rules"
+if MG and MT:
+    include:
+        "MGMT.rules"
+elif MG:
+    include:
+        "MG.rules"
+elif MT:
+    include:
+        "MT.rules"
 
-
-def analysis_output_files():
+def analysis_MGMT_output_files():
     all = expand("{dir}/{name}", name=[
                  "MT.read_counts.txt",
                  "MG.read_counts.txt",
@@ -45,6 +51,35 @@ def analysis_output_files():
     plots = analysis_plot_files_output()
     stats = analysis_stats_files_output()
     return all + plots + stats
+
+## Define MG output files
+def analysis_MG_output_files():
+    all = expand("{dir}/{name}", name=[
+                 "MG.read_counts.txt",
+                 #### Added this ####
+                 "MG.annotation.bed",
+                 "MG.gene_depth.hist",
+                 "MG.gene_depth.avg",
+                 "MG.gene.len",
+                 "MG.prokkaID2ec.txt",
+                 #####################
+                 "MG.variants.isec.vcf.gz",
+                 "MG.assembly.length.txt",
+                 "MG.assembly.gc_content.txt",
+                 "MG.assembly.contig_coverage.txt",
+                 "MG.assembly.contig_depth.txt",
+                 "MG.assembly.contig_flagstat.txt",
+                 "MG.vizbin.points",
+                 "MG.vizbin.filtered.fa",
+                 #### Added this ####
+                 #"results/MG.gene_kegg_krona.txt",
+                 #"results/MG.gene_kegg_krona.html",
+                 #####################
+                 "MG.vizbin.with-contig-names.points"], dir=AN_OUT)
+    plots = analysis_plot_files_output()
+    stats = analysis_stats_files_output()
+    return all + plots + stats
+
 
 # master command
 rule ANALYSIS:

@@ -267,7 +267,6 @@ rule ANALYSIS_VIZBIN:
         paste {AN_OUT}/MG.vizbin.contigs {output[0]} | sed -e 's/,/\t/g' > {output[2]}
         """
 
-
 def analysis_plot_files_output():
     return expand('{dir}/{name}', name=[
                   "IMP-reads_density.png",
