@@ -1,4 +1,3 @@
-
 rule ANALYSIS_ANNOTATE:
     log:
         AN_LOG
@@ -267,43 +266,7 @@ rule ANALYSIS_VIZBIN:
         paste {AN_OUT}/MG.vizbin.contigs {output[0]} | sed -e 's/,/\t/g' > {output[2]}
         """
 
-def analysis_plot_files_output():
-    return expand('{dir}/{name}', name=[
-                  "IMP-reads_density.png",
-                  "IMP-rpkm_density.png",
-                  "IMP-coverage_density.png",
-                  "IMP-depth_density.png",
-                  "IMP-var_count.png",
-                  "IMP-var_density.png",
-                  "IMP-vizbin_length.png",
-                  "IMP-vizbin_length_GC.png",
-                  "IMP-vizbin_length_MGcov.png",
-                  "IMP-vizbin_length_MGdepth.png",
-                  "IMP-vizbin_length_MGvardens.png",
-                  "IMP-vizbin_length_geneDensity.png",
-                  "IMP-vizbin_standard.png",
-                  "MG.read_stats.html",
-                  "MG.read_stats.txt",
-                  "MG_mapping_stats.html",
-                  "MG_mapping_stats.txt",
-                  "assembly_stats.html",
-                  "assembly_stats.txt"], dir='%s/results' % AN_OUT)
 
-def analysis_stats_files_output():
-    return expand([
-                 '{dir}/{stat_flag}/{rtype}/cycle_composition_{n}.{ext}',
-                 '{dir}/{stat_flag}/{rtype}/cycle_quality_{n}.{ext}',
-                 '{dir}/{stat_flag}/{rtype}/cycle_quality_box_{n}.{ext}',
-                 '{dir}/{stat_flag}/{rtype}/info.tab',
-                 '{dir}/{stat_flag}/{rtype}/lane_tile_quality_{n}.{ext}',
-                 '{dir}/{stat_flag}/{rtype}/quality_QQ.{ext}',
-                 '{dir}/{stat_flag}/{rtype}/reads_length.{ext}',
-                 '{dir}/{stat_flag}/{rtype}/reads_quality.{ext}'],
-                 n = ['1', '2'],
-                 ext = ['gnuplot', 'png', 'tab'],
-                 dir = P_OUT,
-                 stat_flag = ['stats', 'stats_after_preprocessing'],
-                 rtype = ['MG'])
 
 rule ANALYSIS_PLOT:
     log:
@@ -360,15 +323,7 @@ rule ANALYSIS_MG_QUALITY_STATS:
     input:
         expand('{dir}/{raw}', raw=['MG.R1.fq', 'MG.R2.fq'], dir=P_OUT)
     output:
-        expand(['{dir}/cycle_composition_{n}.{ext}',
-                '{dir}/cycle_quality_{n}.{ext}',
-                '{dir}/cycle_quality_box_{n}.{ext}',
-                '{dir}/info.tab',
-                '{dir}/lane_tile_quality_{n}.{ext}',
-                '{dir}/quality_QQ.{ext}',
-                '{dir}/reads_length.{ext}',
-                '{dir}/reads_quality.{ext}'
-                ], n=['1', '2'], ext=['gnuplot', 'png', 'tab'], dir='%s/stats/MG' % P_OUT)
+        analysis_stats_files_output('MG', 'stats')
     benchmark:
         "%s/benchmarks/PREPROCESSING_MG_QUALITY_STATS.json" % P_OUT
     log:
@@ -387,19 +342,11 @@ rule ANALYSIS_MG_PREPROCESSED_QUALITY_STATS:
             'MG.R1.uniq.trimmed.fq',
             'MG.R2.uniq.trimmed.fq'], dir=P_OUT)
     output:
-        expand(['{dir}/cycle_composition_{n}.{ext}',
-                '{dir}/cycle_quality_{n}.{ext}',
-                '{dir}/cycle_quality_box_{n}.{ext}',
-                '{dir}/info.tab', '{dir}/lane_tile_quality_{n}.{ext}',
-                '{dir}/quality_QQ.{ext}',
-                '{dir}/reads_length.{ext}',
-                '{dir}/reads_quality.{ext}'
-                ], n=['1', '2'], ext=['gnuplot', 'png', 'tab'], dir='%s/stats_after_preprocessing/MG' % P_OUT)
+        analysis_stats_files_output('MG', 'stats_after_preprocessing')
+    benchmark:
+        "%s/benchmarks/PREPROCESSING_MG_PREPROCESSED_QUALITY_STATS.json" % P_OUT
     shell:
         """
         ht2-stat --encode=sanger -q -P -t {THREADS} -o  {P_OUT}/stats_after_preprocessing/MG -i {input} >> {log} 2>&1
         ht2-stat-draw.pl --dir {P_OUT}/stats_after_preprocessing/MG >> {log} 2>&1
         """
-    benchmark:
-        "%s/benchmarks/PREPROCESSING_MG_PREPROCESSED_QUALITY_STATS.json" % P_OUT
-

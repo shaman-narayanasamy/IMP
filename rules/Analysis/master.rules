@@ -113,7 +113,7 @@ ANALYSIS_OUTPUT_FILES = {
 }
 
 
-def analysis_stats_files_output(rtype):
+def analysis_stats_files_output(rtype, flag):
     return expand([
         '{dir}/{stat_flag}/{rtype}/cycle_composition_{n}.{ext}',
         '{dir}/{stat_flag}/{rtype}/cycle_quality_{n}.{ext}',
@@ -126,7 +126,7 @@ def analysis_stats_files_output(rtype):
             n=['1', '2'],
             ext=['gnuplot', 'png', 'tab'],
             dir=P_OUT,
-            stat_flag=['stats', 'stats_after_preprocessing'],
+            stat_flag=flag,
              rtype=rtype)
 
 
@@ -143,13 +143,13 @@ def analysis_plot_files_output():
 def analysis_output_files():
     if MG and MT:
         addon = ANALYSIS_OUTPUT_FILES['mgmt'] + ANALYSIS_OUTPUT_FILES['mg'] + ANALYSIS_OUTPUT_FILES['mt']
-        stats = analysis_stats_files_output(['MG', 'MT'])
+        stats = analysis_stats_files_output(['MG', 'MT'], ['stats', 'stats_after_preprocessing'])
     elif MG:
         addon = ANALYSIS_OUTPUT_FILES['mg'] + ANALYSIS_OUTPUT_FILES['mg_only']
-        stats = analysis_stats_files_output(['MG'])
+        stats = analysis_stats_files_output(['MG'], ['stats', 'stats_after_preprocessing'])
     elif MT:
         addon = ANALYSIS_OUTPUT_FILES['mt'] + ANALYSIS_OUTPUT_FILES['mt_only']
-        stats = analysis_stats_files_output('MT')
+        stats = analysis_stats_files_output('MT', ['stats', 'stats_after_preprocessing'])
     all = expand('%s/{name}' % AN_OUT, name=addon)
 
     plots = analysis_plot_files_output()

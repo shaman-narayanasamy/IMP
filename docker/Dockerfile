@@ -126,7 +126,7 @@ RUN cd /home/imp/tmp \
 
 ## prokka
 RUN cd /home/imp/tmp \
-    && wget http://www.vicbioinformatics.com/prokka-1.11.tar.gz \
+    && wget https://webdav-r3lab.uni.lu/public/R3lab/prokka-1.11.tar.gz \
     && tar -xzf prokka-1.11.tar.gz \
     && cd prokka-1.11 \
     && cp bin/prokka* /usr/bin \
