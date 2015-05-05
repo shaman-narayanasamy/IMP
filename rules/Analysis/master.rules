@@ -1,6 +1,161 @@
 # output directory and log
 AN_OUT, AN_LOG = prepare_environment('Analysis')
 
+# DEFINE OUTPUT FILES DEPENDING GIVEN PARAMETERS
+
+PLOT_OUTPUT_FILES = {
+    'default': [
+        "IMP-vizbin_length.png",
+        "IMP-vizbin_length_GC.png",
+        "IMP-vizbin_length_geneDensity.png",
+        "IMP-vizbin_standard.png",
+        "assembly_stats.html",
+        "assembly_stats.txt"
+    ],
+    'mgmt': [
+        "IMP-reads_density.png",
+        "IMP-rpkm_density.png",
+        "IMP-coverage_density.png",
+        "IMP-depth_density.png",
+        "IMP-var_count.png",
+        "IMP-var_density.png",
+        "IMP-vizbin_length_MGcov.png",
+        "IMP-vizbin_length_MGdepth.png",
+        "IMP-vizbin_length_MGvardens.png",
+        "IMP-vizbin_length_MTcov.png",
+        "IMP-vizbin_length_MTdepth.png",
+        "IMP-vizbin_length_MTvardens.png",
+        "IMP-vizbin_length_covRatio.png",
+        "IMP-vizbin_length_depthRatio.png",
+        "IMP-vizbin_length_rpkmRatio.png",
+        "MG.read_stats.html",
+        "MG.read_stats.txt",
+        "MG_mapping_stats.html",
+        "MG_mapping_stats.txt",
+        "MT.read_stats.html",
+        "MT.read_stats.txt",
+        "MT_mapping_stats.html",
+        "MT_mapping_stats.txt",
+    ],
+    'mg': [
+        "IMP-MG_var_count.png",
+        "IMP-MG_coverage_density.png",
+        "IMP-MG_reads_density.png",
+        "IMP-MG_vizbin_length_cov.png",
+        "IMP-MG_vizbin_length_depth.png",
+        "IMP-MG_vizbin_length_vardens.png",
+        "MG.read_stats.html",
+        "MG.read_stats.txt",
+        "MG_mapping_stats.html",
+        "MG_mapping_stats.txt",
+    ],
+    'mt': [
+        "IMP-MT_var_count.png",
+        "IMP-MT_coverage_density.png",
+        "IMP-MT_reads_density.png",
+        "IMP-MT_vizbin_length_cov.png",
+        "IMP-MT_vizbin_length_depth.png",
+        "IMP-MT_vizbin_length_vardens.png",
+        "MT.read_stats.html",
+        "MT.read_stats.txt",
+        "MT_mapping_stats.html",
+        "MT_mapping_stats.txt",
+    ]
+}
+
+
+ANALYSIS_OUTPUT_FILES = {
+    'mgmt': [
+        "MGMT.assembly.length.txt",
+        "MGMT.assembly.gc_content.txt",
+        "MGMT.vizbin.points",
+        "MGMT.vizbin.filtered.fa",
+        "MGMT.vizbin.with-contig-names.points"
+    ],
+    'mg': [
+        "MG.read_counts.txt",
+        "MG.annotation.bed",
+        "MG.gene_depth.hist",
+        "MG.gene_depth.avg",
+        "MG.gene.len",
+        "MG.prokkaID2ec.txt",
+        "MG.variants.isec.vcf.gz",
+        "MG.assembly.contig_coverage.txt",
+        "MG.assembly.contig_depth.txt",
+        "MG.assembly.contig_flagstat.txt",
+    ],
+    'mt': [
+        "MT.read_counts.txt",
+        "MT.annotation.bed",
+        "MT.gene_depth.hist",
+        "MT.gene_depth.avg",
+        "MT.gene.len",
+        "MT.prokkaID2ec.txt",
+        "MT.variants.isec.vcf.gz",
+        "MT.assembly.contig_coverage.txt",
+        "MT.assembly.contig_depth.txt",
+        "MT.assembly.contig_flagstat.txt",
+    ],
+    'mg_only': [
+        "MG.assembly.length.txt",
+        "MG.assembly.gc_content.txt",
+        "MG.vizbin.points",
+        "MG.vizbin.filtered.fa",
+        "MG.vizbin.with-contig-names.points"
+    ],
+    'mt_only': [
+        "MT.assembly.length.txt",
+        "MT.assembly.gc_content.txt",
+        "MT.vizbin.points",
+        "MT.vizbin.filtered.fa",
+        "MT.vizbin.with-contig-names.points"
+    ]
+}
+
+
+def analysis_stats_files_output(rtype):
+    return expand([
+        '{dir}/{stat_flag}/{rtype}/cycle_composition_{n}.{ext}',
+        '{dir}/{stat_flag}/{rtype}/cycle_quality_{n}.{ext}',
+        '{dir}/{stat_flag}/{rtype}/cycle_quality_box_{n}.{ext}',
+        '{dir}/{stat_flag}/{rtype}/info.tab',
+        '{dir}/{stat_flag}/{rtype}/lane_tile_quality_{n}.{ext}',
+        '{dir}/{stat_flag}/{rtype}/quality_QQ.{ext}',
+        '{dir}/{stat_flag}/{rtype}/reads_length.{ext}',
+        '{dir}/{stat_flag}/{rtype}/reads_quality.{ext}'],
+            n=['1', '2'],
+            ext=['gnuplot', 'png', 'tab'],
+            dir=P_OUT,
+            stat_flag=['stats', 'stats_after_preprocessing'],
+             rtype=rtype)
+
+
+def analysis_plot_files_output():
+    if MG and MT:
+        addon = PLOT_OUTPUT_FILES['mgmt']
+    elif MG:
+        addon = PLOT_OUTPUT_FILES['mg']
+    elif MT:
+        addon = PLOT_OUTPUT_FILES['mt']
+    return expand('%s/results/{name}' % AN_OUT, name=PLOT_OUTPUT_FILES['default'] + addon)
+
+
+def analysis_output_files():
+    if MG and MT:
+        addon = ANALYSIS_OUTPUT_FILES['mgmt'] + ANALYSIS_OUTPUT_FILES['mg'] + ANALYSIS_OUTPUT_FILES['mt']
+        stats = analysis_stats_files_output(['MG', 'MT'])
+    elif MG:
+        addon = ANALYSIS_OUTPUT_FILES['mg'] + ANALYSIS_OUTPUT_FILES['mg_only']
+        stats = analysis_stats_files_output(['MG'])
+    elif MT:
+        addon = ANALYSIS_OUTPUT_FILES['mt'] + ANALYSIS_OUTPUT_FILES['mt_only']
+        stats = analysis_stats_files_output('MT')
+    all = expand('%s/{name}' % AN_OUT, name=addon)
+
+    plots = analysis_plot_files_output()
+
+    return all + plots + stats
+
 
 # include sub rules
 if MG and MT:
@@ -12,74 +167,6 @@ elif MG:
 elif MT:
     include:
         "MT.rules"
-
-def analysis_MGMT_output_files():
-    all = expand("{dir}/{name}", name=[
-                 "MT.read_counts.txt",
-                 "MG.read_counts.txt",
-                 #### Added this ####
-                 "MG.annotation.bed",
-                 "MG.gene_depth.hist",
-                 "MG.gene_depth.avg",
-                 "MG.gene.len",
-                 "MG.prokkaID2ec.txt",
-                 "MT.annotation.bed",
-                 "MT.gene_depth.hist",
-                 "MT.gene_depth.avg",
-                 "MT.gene.len",
-                 "MT.prokkaID2ec.txt",
-                 #####################
-                 "MG.variants.isec.vcf.gz",
-                 "MT.variants.isec.vcf.gz",
-                 "MGMT.assembly.length.txt",
-                 "MGMT.assembly.gc_content.txt",
-                 "MT.assembly.contig_coverage.txt",
-                 "MT.assembly.contig_depth.txt",
-                 "MT.assembly.contig_flagstat.txt",
-                 "MG.assembly.contig_coverage.txt",
-                 "MG.assembly.contig_depth.txt",
-                 "MG.assembly.contig_flagstat.txt",
-                 "MGMT.vizbin.points",
-                 "MGMT.vizbin.filtered.fa",
-                 #### Added this ####
-                 #"results/MT.gene_kegg_krona.txt",
-                 #"results/MT.gene_kegg_krona.html",
-                 #"results/MG.gene_kegg_krona.txt",
-                 #"results/MG.gene_kegg_krona.html",
-                 #####################
-                 "MGMT.vizbin.with-contig-names.points"], dir=AN_OUT)
-    plots = analysis_plot_files_output()
-    stats = analysis_stats_files_output()
-    return all + plots + stats
-
-## Define MG output files
-def analysis_MG_output_files():
-    all = expand("{dir}/{name}", name=[
-                 "MG.read_counts.txt",
-                 #### Added this ####
-                 "MG.annotation.bed",
-                 "MG.gene_depth.hist",
-                 "MG.gene_depth.avg",
-                 "MG.gene.len",
-                 "MG.prokkaID2ec.txt",
-                 #####################
-                 "MG.variants.isec.vcf.gz",
-                 "MG.assembly.length.txt",
-                 "MG.assembly.gc_content.txt",
-                 "MG.assembly.contig_coverage.txt",
-                 "MG.assembly.contig_depth.txt",
-                 "MG.assembly.contig_flagstat.txt",
-                 "MG.vizbin.points",
-                 "MG.vizbin.filtered.fa",
-                 #### Added this ####
-                 #"results/MG.gene_kegg_krona.txt",
-                 #"results/MG.gene_kegg_krona.html",
-                 #####################
-                 "MG.vizbin.with-contig-names.points"], dir=AN_OUT)
-    plots = analysis_plot_files_output()
-    stats = analysis_stats_files_output()
-    return all + plots + stats
-
 
 # master command
 rule ANALYSIS:
