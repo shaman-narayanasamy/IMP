@@ -8,10 +8,10 @@ rule ASSEMBLY_MG_ASSEMBLY_SE_CAT:
     benchmark:
         "%s/benchmarks/ASSEMBLY_MG_ASSEMBLY_SE_CAT.json" % A_OUT
     input:
-        '{dir}/MT.assembly.cat.fa'.format(dir=A_OUT),
+        '{dir}/MG.assembly.cat.fa'.format(dir=A_OUT),
         preprocessed_mg('SE')
     output:
-        '{dir}/MG.MT_assembly-MG_SE.fa'.format(dir=A_OUT),
+        '{dir}/MG_assembly-MG_SE.fa'.format(dir=A_OUT),
     shell:
         ""
         "cat {input[0]} <(cat {input[1]} | sed -n '1~4s/^@/>/p;2~4p') > {output}"
@@ -128,12 +128,12 @@ rule ASSEMBLY_MG_FAST_1:
     log:
         A_LOG
     benchmark:
-        "%s/benchmarks/ASSEMBLY_MT_ASSEMBLY_1.json" % A_OUT
+        "%s/benchmarks/ASSEMBLY_MG_ASSEMBLY_1.json" % A_OUT
     input:
         preprocessed_mg('R1'),
         preprocessed_mg('R2'),
         preprocessed_mg('SE'),
-        '{dir}/MT.assembly_1/final.contigs.fa'.format(dir=A_OUT)
+        '{dir}/MG.assembly_1/final.contigs.fa'.format(dir=A_OUT)
     output:
         '{dir}/MG.assembly_1/final.contigs.fa'.format(dir=A_OUT)
     params:
@@ -153,7 +153,7 @@ rule ASSEMBLY_MG_EXTRACT_UNMAPPED_FROM_FAST_1:
     log:
         A_LOG
     benchmark:
-        "%s/benchmarks/ASSEMBLY_MT_EXTRACT_UNMAPPED_FROM_ASSEMBLY_1.json" % A_OUT
+        "%s/benchmarks/ASSEMBLY_MG_EXTRACT_UNMAPPED_FROM_ASSEMBLY_1.json" % A_OUT
     input:
         preprocessed_mg('R1'),
         preprocessed_mg('R2'),
@@ -186,7 +186,7 @@ rule ASSEMBLY_MG_FAST_2:
     log:
         A_LOG
     benchmark:
-        "%s/benchmarks/ASSEMBLY_MT_ASSEMBLY_2.json" % A_OUT
+        "%s/benchmarks/ASSEMBLY_MG_ASSEMBLY_2.json" % A_OUT
     input:
         expand('{dir}/{name}', name=[
             'MG.R1.unmapped.fq',
