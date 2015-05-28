@@ -41,7 +41,8 @@ RUN mkdir -p /home/imp/tmp /home/imp/lib \
 
 # R with checkpoint libraries
 ADD dependencies.R /home/imp/lib/
-RUN echo "r <- getOption('repos'); r['CRAN'] <- 'http://cran.us.r-project.org'; options(repos = r);" > ~/.Rprofile \
+RUN mkdir /root/.checkpoint \
+    && echo "r <- getOption('repos'); r['CRAN'] <- 'http://cran.us.r-project.org'; options(repos = r);" > ~/.Rprofile \
     && Rscript -e "install.packages('checkpoint')" \
     && Rscript -e "library(checkpoint);checkpoint('2015-04-27', project='/home/imp/lib')" \
     && Rscript -e "source('http://bioconductor.org/biocLite.R');biocLite('genomeIntervals')"
@@ -126,7 +127,7 @@ RUN cd /home/imp/tmp \
 
 ## prokka
 RUN cd /home/imp/tmp \
-    && wget https://webdav-r3lab.uni.lu/public/R3lab/prokka-1.11.tar.gz \
+    && wget --no-check-certificate https://webdav-r3lab.uni.lu/public/R3lab/prokka-1.11.tar.gz \
     && tar -xzf prokka-1.11.tar.gz \
     && cd prokka-1.11 \
     && cp bin/prokka* /usr/bin \

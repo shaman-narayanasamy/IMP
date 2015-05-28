@@ -985,5 +985,3 @@ dev.off()
 ## Save the R workspace
 save.image(name_plot("MGMT_results.Rdat"))
 
-
-## Beanplot function
