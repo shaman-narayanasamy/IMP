@@ -519,8 +519,8 @@ rule ANALYSIS_KRONA_PLOT_MG:
         "%s/benchmarks/ANALYSIS_KRONA_PLOT.json" % AN_OUT
     input:
         "%s/MG.prokkaID2ec.txt" % AN_OUT,
-        "%s/ec2pwy.txt" % U_OUT,
-        "%s/pwy2hierarchy.txt" % U_OUT,
+        "%s/ec2pathway.txt" % {DBPATH},
+        "%s/pathway2hierarchy.txt" % {DBPATH},
         "%s/MG.gene_depth.avg" % AN_OUT,
         "%s/MG.gene.len" % AN_OUT
     output:
