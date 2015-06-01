@@ -3,11 +3,11 @@
 ###################################################################################################
 ## Load required packages
 ###################################################################################################
-require(genomeIntervals)
 
 require(checkpoint)
-checkpoint('2015-04-27')
+checkpoint('2015-04-27', scanForPackages=FALSE)
 
+require(genomeIntervals)
 require(ggplot2)
 require(gtools)
 require(data.table)
@@ -985,4 +985,3 @@ dev.off()
 
 ## Save the R workspace
 save.image(name_plot("MGMT_results.Rdat"))
-
