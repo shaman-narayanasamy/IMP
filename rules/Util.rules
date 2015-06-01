@@ -232,5 +232,9 @@ rule _DOWNLOAD_KEGG_INFORMATION:
         wget http://rest.kegg.jp/link/ec/pathway -O {DBPATH}/ec2pathway.txt.tmp
         grep "path:ec" {DBPATH}/ec2pathway.txt.tmp | sed -e 's/path:ec//g' | sed -e 's/ec://g' > {DBPATH}/ec2pathway.txt
         rm {DBPATH}/ec2pathway.txt.tmp
+
+        wget http://rest.kegg.jp/list/pathway -O {DBPATH}/pathway2hierarchy.txt.tmp
+        grep "path:ec" {DBPATH}/pathway2hierarchy.txt.tmp | sed -e 's/path:map//g'  > {DBPATH}/pathway2hierarchy.txt
+        rm {DBPATH}/pathway2hierarchy.txt.tmp
         """
 
