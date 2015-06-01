@@ -229,11 +229,11 @@ rule _DOWNLOAD_KEGG_INFORMATION:
         "%s/ec2pathway.txt" % DBPATH
     shell:
         """
-        wget --no-check-certificate "{config[kegg][db_url]}" -O {DBPATH}/ec2pathway.txt.tmp
+        wget --no-check-certificate {config[kegg][db_ec2pthy]} -O {DBPATH}/ec2pathway.txt.tmp
         grep "path:ec" {DBPATH}/ec2pathway.txt.tmp | sed -e 's/path:ec//g' | sed -e 's/ec://g' > {DBPATH}/ec2pathway.txt
         rm {DBPATH}/ec2pathway.txt.tmp
 
-        wget http://rest.kegg.jp/list/pathway -O {DBPATH}/pathway2hierarchy.txt.tmp
+        wget --no-check-certificate {config[kegg][db_hierarchy]} -O {DBPATH}/pathway2hierarchy.txt.tmp
         cat {DBPATH}/pathway2hierarchy.txt.tmp | sed -e 's/path:map//g'  > {DBPATH}/pathway2hierarchy.txt
         rm {DBPATH}/pathway2hierarchy.txt.tmp
         """
