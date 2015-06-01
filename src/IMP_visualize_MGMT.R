@@ -4,10 +4,12 @@
 ## Load required packages
 ###################################################################################################
 
+require(genomeIntervals)
+
 require(checkpoint)
 checkpoint('2015-04-27', scanForPackages=FALSE)
 
-require(genomeIntervals)
+
 require(ggplot2)
 require(gtools)
 require(data.table)
