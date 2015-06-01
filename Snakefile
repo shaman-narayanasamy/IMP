@@ -57,8 +57,8 @@ MEMCORE = os.environ.get("MEMCORE", config['memory_per_core_gb'])
 # temporary directory will be stored inside the OUTPUTDIR directory
 # unless a absolute path is set
 TMPDIR = os.environ.get("TMPDIR", config['tmp_dir'])
-if not os.path.isabs(TMP_DIR):
-    TMPDIR = os.path.join(OUTPUTDIR, TMP_DIR)
+if not os.path.isabs(TMPDIR):
+    TMPDIR = os.path.join(OUTPUTDIR, TMPDIR)
 
 
 def prepare_environment(stepname):
