@@ -3,7 +3,9 @@
 ###################################################################################################
 ## Load required packages
 ###################################################################################################
-library(checkpoint)
+require(genomeIntervals)
+
+require(checkpoint)
 checkpoint('2015-04-27')
 
 require(ggplot2)
@@ -12,7 +14,6 @@ require(data.table)
 require(reshape)
 require(grid)
 require(grDevices)
-require(genomeIntervals)
 require(stringr)
 require(xtable)
 require(beanplot)
