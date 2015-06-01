@@ -131,6 +131,7 @@ def analysis_stats_files_output(rtype, flag):
 
 
 def analysis_plot_files_output():
+    addon = []
     if MG and MT:
         addon = PLOT_OUTPUT_FILES['mgmt']
     elif MG:
