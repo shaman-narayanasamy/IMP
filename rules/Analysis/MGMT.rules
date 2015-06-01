@@ -11,6 +11,20 @@ rule ANALYSIS_ANNOTATE:
         "%s/annotation/annotation.filt.gff" % AN_OUT
     shell:
         """
+        # ## prokka by default will look databases where is located the binary.
+        # ## we have to softlink to put the binary somewhere and the databases somewhere else.
+        if [[ "{DBPATH}" = /* ]]
+        then
+            PP={DBPATH};
+        else
+            PP=$PWD/{DBPATH};
+        fi
+        DD=$(dirname $(which prokka))/../db
+        if [[ ! -L $DD ]]
+        then
+            echo "Softlinking $DD to $PP"
+            cd $(dirname $(which prokka))/.. && ln -s $PP db
+        fi
         prokka --force --outdir {AN_OUT}/annotation --cpus {THREADS} --metagenome --norrna {input[0]} >> {log} 2>&1
         # Prokka gives a weird gff file with all the sequences. We need to write some small code to produce a file that
         # cleans up the output

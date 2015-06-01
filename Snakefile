@@ -83,27 +83,6 @@ def prepare_environment(stepname):
     return out, os.path.join(out, '%s.log' % stepname)
 
 
-def symlink_prokka():
-    # ## prokka by default will look databases where is located the binary.
-    # ## we have to softlink to put the binary somewhere and the databases somewhere else.
-    cmd = """
-    if [[ "{DBPATH}" = /* ]]
-    then
-        PP={DBPATH};
-    else
-        PP=$PWD/{DBPATH};
-    fi
-    DD=$(dirname $(which prokka))/../db
-    if [[ ! -L $DD ]]
-    then
-        echo "Softlinking $DD to $PP"
-        cd $(dirname $(which prokka))/.. && ln -s $PP db
-    fi
-    """
-    shell(cmd)
-
-symlink_prokka()
-
 # INCLUDES RULES
 include:
     "rules/Util.rules"
