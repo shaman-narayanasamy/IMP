@@ -68,6 +68,9 @@
             "kingdom/Archaea/sprot.phr"
         ]
     },
+    "kegg": {
+        "db_url": "http://rest.kegg.jp/link/ec/pathway"
+    },
     "preload": {
         "test": "",
         "test2": ""
