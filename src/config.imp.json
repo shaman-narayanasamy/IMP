@@ -2,11 +2,11 @@
     "threads": 4,
     "memory_total_gb": 8,
     "memory_per_core_gb": 2,
-    "tmp_dir": "./build/tmp",
+    "tmp_dir": "tmp",
     "imp_src": "src",
     "raws": {
-      "Metagenomics": "TEST_DATA/MG.R1.5_percent.fq TEST_DATA/MG.R2.5_percent.fq",
-      "Metatranscriptomics": "TEST_DATA/MT.R1.5_percent.fq TEST_DATA/MT.R2.5_percent.fq"
+      "Metagenomics": "",
+      "Metatranscriptomics": ""
     },
     "sample": "test",
     "outputdir": "build",
