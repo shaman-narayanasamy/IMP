@@ -202,6 +202,23 @@ rule CHECK_TOOL_VERSION:
         echo "# KronaTools" >> {output}
 
         """
+#
+# rule _DOWNLOAD_KEGG_INFORMATION:
+#     log:
+#         U_LOG
+#     benchmark:
+#         "%s/benchmarks/DOWNLOAD_KEGG_INFORMATION.json" % U_OUT
+#     output:
+#         "%s/ec2pwy.txt" % U_OUT,
+#         "%s/pwy2hierarchy.txt" % U_OUT
+#     shell:
+#         """
+#         echo "[x] DOWNLOAD_KEGG_INFORMATION `date +"%Y/%m/%d %H:%M:%S"`" >> {log}
+#         echo "Preparing EC to KEGG ID mappings"
+#         python {SRCDIR}/make.ec.to.pwy.kegg.py -o {output[0]}
+#         echo "Preparing KEGG ID to pathway mappings"
+#         python {SRCDIR}/make.pwy.hierarchy.kegg.py -o {output[1]}
+#        """
 
 rule _DOWNLOAD_KEGG_INFORMATION:
     log:
@@ -209,13 +226,9 @@ rule _DOWNLOAD_KEGG_INFORMATION:
     benchmark:
         "%s/benchmarks/DOWNLOAD_KEGG_INFORMATION.json" % U_OUT
     output:
-        "%s/ec2pwy.txt" % U_OUT,
-        "%s/pwy2hierarchy.txt" % U_OUT
+        "%s/ec2pathway.txt" % DBPATH
     shell:
         """
-        echo "[x] DOWNLOAD_KEGG_INFORMATION `date +"%Y/%m/%d %H:%M:%S"`" >> {log}
-        echo "Preparing EC to KEGG ID mappings"
-        python {SRCDIR}/make.ec.to.pwy.kegg.py -o {output[0]}
-        echo "Preparing KEGG ID to pathway mappings"
-        python {SRCDIR}/make.pwy.hierarchy.kegg.py -o {output[1]}
+        wget http://rest.kegg.jp/link/ec/pathway -O {DBPATH}/ec2pathway.txt.tmp
+        grep "path:ec" {DBPATH}/ec2pathway.txt.tmp > {DBPATH}/ec2pathway.txt
         """

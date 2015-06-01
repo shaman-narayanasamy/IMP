@@ -196,7 +196,7 @@ RUN cd /home/imp/lib \
     && mv megahit* /usr/bin/. \
     && mv sdbg_builder_cpu /usr/bin/.
 
-
+RUN cd /home/imp/lib
 ######################
 # ship pipeline code #
 ######################
