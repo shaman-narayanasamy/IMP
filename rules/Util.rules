@@ -55,6 +55,7 @@ rule _DOWNLOAD_PROKKA_DATABASES:
         """
 
 
+
 rule _DOWNLOAD_TRIMMOMATIC_ADAPTERS:
     output:
         "{DBPATH}/adapters/adapters.done"
