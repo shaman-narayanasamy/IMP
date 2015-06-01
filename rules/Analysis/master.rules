@@ -141,6 +141,7 @@ def analysis_plot_files_output():
 
 
 def analysis_output_files():
+    addon = []
     if MG and MT:
         addon = ANALYSIS_OUTPUT_FILES['mgmt'] + ANALYSIS_OUTPUT_FILES['mg'] + ANALYSIS_OUTPUT_FILES['mt']
         stats = analysis_stats_files_output(['MG', 'MT'], ['stats', 'stats_after_preprocessing'])
