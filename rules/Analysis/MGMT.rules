@@ -531,7 +531,7 @@ rule ANALYSIS_KRONA_PLOT_MG:
         echo "[x] PLOT KRONA `date +"%Y/%m/%d %H:%M:%S"`" >> {log}
         echo {input}
         echo {output[0]}
-        python {SRCDIR}/genes.to.kronaTable.py -i {input[0]} -H {input[1]} -m {input[2]} -c {input[3]} -L {input[4]} -o {output[0]}
+        python {SRCDIR}/genes.to.kronaTable.py -i {input[0]} -m {input[1]} -H {input[2]} -c {input[3]} -L {input[4]} -o {output[0]}
         ktImportText -o {output[1]} {output[0]}
         """
 
