@@ -14,6 +14,11 @@
 ###################################
 
 from argparse import ArgumentParser
+import sys
+import csv
+import numpy as np
+
+
 parser = ArgumentParser()
 parser.add_argument(
     "-i", "--infile", type=str,
@@ -53,12 +58,6 @@ parser.add_argument(
     help="Provide file with lengths for genes to normalize coverage by")
 args = parser.parse_args()
 
-import sys
-import csv
-import numpy as np
-
-if not args.infile or not args.mapfile or not args.hierarchy:
-    sys.exit(parser.print_help())
 
 
 def ReadLengths(f):
@@ -171,7 +170,8 @@ def CalcHierarchy(mapping, annotations, coverage, operation, limit):
                 try:
                     gene_cov = coverage[gene]
                 except KeyError:
-                    sys.exit("ERROR: Could not find coverage for gene "+str(gene)+". Are you sure you have coverage information?\n")
+                    sys.exit("ERROR: Could not find coverage for gene "+str(gene)+". \
+                     Are you sure you have coverage information?\n")
                 covlist.append(gene_cov)
             ann_c[annotation] = np.mean(covlist)
         else:
@@ -184,12 +184,12 @@ def CalcHierarchy(mapping, annotations, coverage, operation, limit):
             parents = mapping[annotation]
         except KeyError:
             if args.verbose:
-                sys.stderr.write("WARNING: Could not find hierarchy parent for "+annotation+"\n")
+                sys.stderr.write("WARNING: Could not find hierarchy parent for " + annotation + "\n")
             continue
         for parent in parents:
             if limit and parent not in limit:
                 if args.verbose:
-                    sys.stderr.write("Skipping parent "+ parent+"\n")
+                    sys.stderr.write("Skipping parent " + parent + "\n")
                 continue
             try:
                 hier_c[parent].append(count)
@@ -198,63 +198,68 @@ def CalcHierarchy(mapping, annotations, coverage, operation, limit):
     (hier_sdev, hier_c) = Calculate(hier_c, operation)
     return (hier_sdev, hier_c)
 
-if args.limit:
-    limit = ReadLimits(args.limit)
-else:
-    limit = []
+if __name__ == '__main__':
+    if not args.infile or not args.mapfile or not args.hierarchy:
+        sys.exit(parser.print_help())
 
-lengths = {}
-if args.lengthnorm:
-    lengths = ReadLengths(args.lengthnorm)
-
-mapping = ReadMap(args.mapfile)
-annotations = ReadMap(args.infile)  # # Read annotations the same way as above, then get length of the list for counts
-coverage = ReadCoverage(args.coverage, lengths)
-(max_hier, hierarchy) = ReadHierarchy(args.hierarchy)
-
-(hier_sdev, hier_counts) = CalcHierarchy(mapping, annotations, coverage, args.operation, limit)
-
-if args.outfile:
-    hout = open(args.outfile, 'w')
-else:
-    hout = sys.stdout
-houtcsv = csv.writer(hout, delimiter='\t')
-
-if args.name:
-    name = args.name
-else:
-    name = (args.infile).split("/")[-1]
-
-out = [name]
-if args.singlecol:
-    out.insert(0, "X")
-else:
-    for i in range(1, max_hier+1):
-        out.append("Level" + str(i))
-houtcsv.writerow(out)
-
-if args.sdev:
-    sdevout = open(args.sdev, 'w')
-    sdevout.write("X.sdev\t"+name+"\n")
-
-for hier, count in hier_counts.iteritems():
-    out = [count]
-    try:
-        h = hierarchy[hier]
-    except KeyError:
-        h = ["Unknown"]
-    if args.singlecol:
-        out.insert(0, hier)
+    if args.limit:
+        limit = ReadLimits(args.limit)
     else:
-        out += hierarchy[hier]
+        limit = []
+
+    lengths = {}
+    if args.lengthnorm:
+        lengths = ReadLengths(args.lengthnorm)
+
+    mapping = ReadMap(args.mapfile)
+    annotations = ReadMap(args.infile)  # Read annotations the same way as above, then get length of the list for counts
+    coverage = ReadCoverage(args.coverage, lengths)
+    
+    (max_hier, hierarchy) = ReadHierarchy(args.hierarchy)
+
+    (hier_sdev, hier_counts) = CalcHierarchy(mapping, annotations, coverage, args.operation, limit)
+
+    if args.outfile:
+        hout = open(args.outfile, 'w')
+    else:
+        hout = sys.stdout
+    houtcsv = csv.writer(hout, delimiter='\t')
+
+    if args.name:
+        name = args.name
+    else:
+        name = (args.infile).split("/")[-1]
+
+    out = [name]
+    if args.singlecol:
+        out.insert(0, "X")
+    else:
+        for i in range(1, max_hier+1):
+            out.append("Level" + str(i))
+    houtcsv.writerow(out)
+
+    if args.sdev:
+        sdevout = open(args.sdev, 'w')
+        sdevout.write("X.sdev\t"+name+"\n")
+
+    for hier, count in hier_counts.iteritems():
+        out = [count]
+        try:
+            h = hierarchy[hier]
+        except KeyError:
+            h = ["Unknown"]
+        if args.singlecol:
+            out.insert(0, hier)
+        else:
+            out += hierarchy[hier]
+        try:
+            sdevout.write(hier+"\t"+str(hier_sdev[hier])+"\n")
+        except NameError:
+            pass
+        houtcsv.writerow(out)
+    hout.close()
+
     try:
-        sdevout.write(hier+"\t"+str(hier_sdev[hier])+"\n")
+        sdevout.close()
     except NameError:
         pass
-    houtcsv.writerow(out)
-hout.close()
-
-try:
-    sdevout.close()
-except NameError:
-    pass

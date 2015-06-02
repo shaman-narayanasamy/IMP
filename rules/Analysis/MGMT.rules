@@ -28,7 +28,7 @@ rule ANALYSIS_ANNOTATE:
             cd $CUR
         fi
 
-        prokka --force --outdir {AN_OUT}/annotation --cpus {THREADS} --metagenome --norrna {input[0]} --fast >> {log} 2>&1
+        prokka --force --outdir {AN_OUT}/annotation --cpus {THREADS} --metagenome --norrna {input[0]} >> {log} 2>&1
 
         # Prokka gives a weird gff file with all the sequences. We need to write some small code to produce a file that
         # cleans up the output
