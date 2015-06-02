@@ -214,7 +214,7 @@ if __name__ == '__main__':
     mapping = ReadMap(args.mapfile)
     annotations = ReadMap(args.infile)  # Read annotations the same way as above, then get length of the list for counts
     coverage = ReadCoverage(args.coverage, lengths)
-    
+
     (max_hier, hierarchy) = ReadHierarchy(args.hierarchy)
 
     (hier_sdev, hier_counts) = CalcHierarchy(mapping, annotations, coverage, args.operation, limit)
