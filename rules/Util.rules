@@ -234,7 +234,5 @@ rule _DOWNLOAD_KEGG_INFORMATION:
         grep "path:ec" {DBPATH}/ec2pathway.txt.tmp | sed -e 's/path:ec//g' | sed -e 's/ec://g' > {output[0]}
         rm {DBPATH}/ec2pathway.txt.tmp
 
-        wget --no-check-certificate {config[kegg][db_hierarchy]} -O {DBPATH}/pathway2hierarchy.txt.tmp
-        cat {DBPATH}/pathway2hierarchy.txt.tmp | sed -e 's/path:map//g'  > {output[1]}
-        rm {DBPATH}/pathway2hierarchy.txt.tmp
+        python src/make.pwy.hierarchy.kegg.py > {output[1]}
         """
