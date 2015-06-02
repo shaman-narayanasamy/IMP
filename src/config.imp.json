@@ -69,7 +69,7 @@
         ]
     },
     "kegg": {
-        "db_ec2pthy": "http://rest.kegg.jp/link/ec/pathway",
+        "db_ec2pthy": "http://rest.kegg.jp/link/pathway/ec",
         "db_hierarchy": "http://rest.kegg.jp/list/pathway"
     },
     "preload": {
