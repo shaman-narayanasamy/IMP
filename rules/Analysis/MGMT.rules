@@ -555,7 +555,7 @@ rule ANALYSIS_KRONA_PLOT_MT:
         echo {input}
         echo {output[0]}
         python {SRCDIR}/genes.to.kronaTable.py -i {input[0]} -m {input[1]} -H {input[2]} -c {input[3]} -L {input[4]} -o {output[0]}
-        ktImportText -o {output[1]} {output[0]}
+        ktImportText -o {output[1]} {output[0]} -a
         """
 
 rule ANALYSIS_MG_QUALITY_STATS:
@@ -651,6 +651,3 @@ rule ANALYSIS_MT_PREPROCESSED_QUALITY_STATS:
         ht2-stat --encode=sanger -q -P -t {THREADS} -o  {P_OUT}/stats_after_preprocessing/MT -i {input} >> {log} 2>&1
         ht2-stat-draw.pl --dir {P_OUT}/stats_after_preprocessing/MT >> {log} 2>&1
         """
-
-
-
