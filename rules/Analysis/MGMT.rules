@@ -535,6 +535,29 @@ rule ANALYSIS_KRONA_PLOT_MG:
         ktImportText -o {output[1]} {output[0]}
         """
 
+rule ANALYSIS_KRONA_PLOT_MT:
+    log:
+        AN_LOG
+    benchmark:
+        "%s/benchmarks/ANALYSIS_KRONA_PLOT.json" % AN_OUT
+    input:
+        "%s/MT.prokkaID2ec.txt" % AN_OUT,
+        "%s/ec2pathway.txt" % DBPATH,
+        "%s/pathway2hierarchy.txt" % DBPATH,
+        "%s/MT.gene_depth.avg" % AN_OUT,
+        "%s/MT.gene.len" % AN_OUT
+    output:
+        "%s/results/MT.gene_kegg_krona.txt" % AN_OUT,
+        "%s/results/MT.gene_kegg_krona.html" % AN_OUT
+    shell:
+        """
+        echo "[x] PLOT KRONA `date +"%Y/%m/%d %H:%M:%S"`" >> {log}
+        echo {input}
+        echo {output[0]}
+        python {SRCDIR}/genes.to.kronaTable.py -i {input[0]} -m {input[1]} -H {input[2]} -c {input[3]} -L {input[4]} -o {output[0]}
+        ktImportText -o {output[1]} {output[0]}
+        """
+
 rule ANALYSIS_MG_QUALITY_STATS:
     input:
         expand('{dir}/{raw}', raw=['MG.R1.fq', 'MG.R2.fq'], dir=P_OUT)
@@ -631,4 +654,3 @@ rule ANALYSIS_MT_PREPROCESSED_QUALITY_STATS:
 
 
 
-#rule ANALYSIS_KRONA_PLOT_MT:
