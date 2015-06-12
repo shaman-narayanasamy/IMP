@@ -450,33 +450,19 @@ rule ANALYSIS_VIZBIN:
     input:
         "%s/MGMT.assembly.merged.fa" % A_OUT,
     output:
-        "%s/MGMT.vizbin.points" % AN_OUT,
         "%s/MGMT.vizbin.filtered.fa" % AN_OUT,
         "%s/MGMT.vizbin.with-contig-names.points" % AN_OUT
     shell:
         """
+        perl src/fasta_filter_length.pl 1000 {input[0]} > {output[0]}
+        
         TMP_VIZBIN=$(mktemp --tmpdir={TMPDIR} -dt "VIZBIN_XXXXXX")
-        # tools used in this script: they must be in the PATH
-        VIZBIN={SRCDIR}/vizbin.py
 
-        echo "[x] VIZBIN `date +"%Y/%m/%d %H:%M:%S"`" >> {log}
-        python $VIZBIN {input} {AN_OUT}/MGMT.vizbin {config[vizbin][dimension]} \
-        -l {config[vizbin][length]} \
-        -s {config[vizbin][size]} \
-        -t {config[vizbin][theta]} \
-        -p {config[vizbin][perp]} \
-        -f {config[vizbin][minlen]} \
-        -o {output[1]} >> {log}
-
-        cp {AN_OUT}/MGMT.vizbin.{config[vizbin][dimension]}.dat $TMP_VIZBIN/data.dat
-        BACK=$PWD
-        cd $TMP_VIZBIN
-        bh_tsne >> $BACK/{log}
-        cd $BACK
-        cp $TMP_VIZBIN/points.txt {AN_OUT}/MGMT.vizbin.points
-        rm -rf $TMP_VIZBIN
-        grep '^>' {output[1]} | sed 's/>//g' > {AN_OUT}/MGMT.vizbin.contigs
-        paste {AN_OUT}/MGMT.vizbin.contigs {output[0]} | sed -e 's/,/\t/g' > {output[2]}
+        ## This is currently hardcoded. Should be changed
+        java -jar /home/imp/lib/VizBin/VizBin-dist.jar -i {output[0]} -o $TMP_VIZBIN/data.points
+        
+        paste <(grep "^>" {output[0]} | sed -e 's/>//') \
+        <(cat $TMP_VIZBIN/data.points | sed -e 's/,/\t/') > {output[1]}
         """
 
 rule ANALYSIS_PLOT:
