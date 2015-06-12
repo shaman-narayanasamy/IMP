@@ -171,6 +171,13 @@ RUN cd /home/imp/tmp \
 #    && git branch --set-upstream-to=origin/devel devel \
 #    && git pull \
 
+## We also need to copy the binary pbh_tsne. However, this binary is not available for download.
+## One option would be to upload the binary to our R3 website, like we do for some databases
+## And download it when building the container.
+## The binary should be downloaded into directory: /root/.vizbin/
+## For now, I copied the binary from my local machine and moved it to the directory:
+## mv lib/pbh_tsne /root/.vizbin/pbh_tsne
+
 ## Install KronaPlot
 RUN cd /home/imp/tmp \
     && wget "http://downloads.sourceforge.net/project/krona/KronaTools (Mac, Linux)/KronaTools-2.5.tar" \
