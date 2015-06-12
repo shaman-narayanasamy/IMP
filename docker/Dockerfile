@@ -164,6 +164,13 @@ RUN cd /home/imp/tmp \
     && cd /home/imp/tmp \
     && rm -rf VizBin
 
+## This command is to run vizbin
+#RUN cd /home/imp/lib \
+#    && git clone https://github.com/claczny/VizBin.git \
+#    && git checkout devel \
+#    && git branch --set-upstream-to=origin/devel devel \
+#    && git pull \
+
 ## Install KronaPlot
 RUN cd /home/imp/tmp \
     && wget "http://downloads.sourceforge.net/project/krona/KronaTools (Mac, Linux)/KronaTools-2.5.tar" \
