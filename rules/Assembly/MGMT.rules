@@ -386,7 +386,7 @@ rule ASSEMBLY_MT_MAPPING:
             'MT.reads.sorted.bam.bai'], dir=A_OUT),
     shell:
         """
-        SAMHEADER="@RG\\tID:{SAMPLE}\\tSM:MG"
+        SAMHEADER="@RG\\tID:{SAMPLE}\\tSM:MT"
         PREFIX={A_OUT}/MT.reads
         # index
         bwa index {input[3]}
