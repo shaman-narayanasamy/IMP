@@ -29,8 +29,7 @@ configfile:
 shell.executable("bash")
 
 # custom configuration file
-CUSTOM_CONFIG_PATH = "conf/userconfig.imp.json"
-
+CUSTOM_CONFIG_PATH = os.environ.get("CONFIGFILE", "conf/userconfig.imp.json")
 # merge 2 configurations files together
 if os.path.exists(CUSTOM_CONFIG_PATH):
     with open(CUSTOM_CONFIG_PATH, 'r') as rhandle:
@@ -41,6 +40,7 @@ if os.path.exists(CUSTOM_CONFIG_PATH):
 # some parameters
 SRCDIR = os.environ.get("SRCDIR", config['imp_src'])
 
+KOOPA = os.environ.get("KOOPA", None)
 # get parameters from the command line
 OUTPUTDIR = os.environ.get("OUTPUTDIR", config['outputdir'])
 MG = os.environ.get("MG", config['raws']['Metagenomics']).split()
@@ -111,4 +111,13 @@ rule MODULE_LOAD_TEST:
     shell:
         """
         IMPPRL="{config[preload][test]}"; if [[ -n $IMPPRL ]]; then $IMPPRL; fi
+        """
+
+if KOOPA:
+    print(KOOPA)
+
+rule T:
+    shell:
+        """
+        echo {MT}
         """
