@@ -190,7 +190,7 @@ RUN cd /home/imp/lib \
 
 ## Vizbin JAR
 RUN cd /home/imp/lib \
-    && wget https://webdav-r3lab.uni.lu/public/R3lab/IMP/VizBin-dist.jar -O VizBin-dist.jar
+    && wget -no-check-certificate https://webdav-r3lab.uni.lu/public/R3lab/IMP/VizBin-dist.jar -O VizBin-dist.jar
 
 RUN cd /home/imp/lib
 ######################
