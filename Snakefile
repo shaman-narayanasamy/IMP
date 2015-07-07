@@ -29,8 +29,7 @@ configfile:
 shell.executable("bash")
 
 # custom configuration file
-CUSTOM_CONFIG_PATH = "conf/userconfig.imp.json"
-
+CUSTOM_CONFIG_PATH = os.environ.get("CONFIGFILE", "conf/userconfig.imp.json")
 # merge 2 configurations files together
 if os.path.exists(CUSTOM_CONFIG_PATH):
     with open(CUSTOM_CONFIG_PATH, 'r') as rhandle:
