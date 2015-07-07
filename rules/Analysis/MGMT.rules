@@ -454,15 +454,22 @@ rule ANALYSIS_VIZBIN:
         "%s/MGMT.vizbin.with-contig-names.points" % AN_OUT
     shell:
         """
-        perl src/fasta_filter_length.pl 1000 {input[0]} > {output[0]}
-        
+        echo "[x] VIZBIN `date +"%Y/%m/%d %H:%M:%S"`" >> {log}
         TMP_VIZBIN=$(mktemp --tmpdir={TMPDIR} -dt "VIZBIN_XXXXXX")
+        perl src/fasta_filter_length.pl 1000 {input[0]} > $TMP_VIZBIN/{output[0]}
 
-        ## This is currently hardcoded. Should be changed
-        java -jar /home/imp/lib/VizBin/VizBin-dist.jar -i {output[0]} -o $TMP_VIZBIN/data.points
-        
+        java -jar {config[vizbin][jarfile]} \
+        -a {config[vizbin][dimension]} \
+        -c {config[vizbin][cutoff]} \
+        -i {output[1]} \
+        -o $TMP_VIZBIN/data.points \
+        -k {config[vizbin][kmer]} \
+        -p {config[vizbin][perp]} >> {log}
+
         paste <(grep "^>" {output[0]} | sed -e 's/>//') \
         <(cat $TMP_VIZBIN/data.points | sed -e 's/,/\t/') > {output[1]}
+
+        rm -rf $TMP_VIZBIN
         """
 
 rule ANALYSIS_PLOT:

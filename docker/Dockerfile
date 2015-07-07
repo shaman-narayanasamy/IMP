@@ -127,7 +127,7 @@ RUN cd /home/imp/tmp \
 
 ## prokka
 RUN cd /home/imp/tmp \
-    && wget --no-check-certificate https://webdav-r3lab.uni.lu/public/R3lab/prokka-1.11.tar.gz \
+    && wget --no-check-certificate https://webdav-r3lab.uni.lu/public/R3lab/IMP/prokka-1.11.tar.gz \
     && tar -xzf prokka-1.11.tar.gz \
     && cd prokka-1.11 \
     && cp bin/prokka* /usr/bin \
@@ -155,28 +155,6 @@ RUN cd /home/imp/tmp \
     && git checkout v2.22.0 \
     && make
 
-## bh_tsne
-RUN cd /home/imp/tmp \
-    && git clone https://github.com/claczny/VizBin.git \
-    && cd VizBin/src/backend/bh_tsne \
-    && g++ quadtree.cpp tsne.cpp -o bh_tsne -O3 -I./CBLAS/include -L./ -lcblas \
-    && mv bh_tsne /usr/bin/ \
-    && cd /home/imp/tmp \
-    && rm -rf VizBin
-
-## This command is to run vizbin
-#RUN cd /home/imp/lib \
-#    && git clone https://github.com/claczny/VizBin.git \
-#    && git checkout devel \
-#    && git branch --set-upstream-to=origin/devel devel \
-#    && git pull \
-
-## We also need to copy the binary pbh_tsne. However, this binary is not available for download.
-## One option would be to upload the binary to our R3 website, like we do for some databases
-## And download it when building the container.
-## The binary should be downloaded into directory: /root/.vizbin/
-## For now, I copied the binary from my local machine and moved it to the directory:
-## mv lib/pbh_tsne /root/.vizbin/pbh_tsne
 
 ## Install KronaPlot
 RUN cd /home/imp/tmp \
@@ -209,6 +187,10 @@ RUN cd /home/imp/lib \
     && make \
     && mv megahit* /usr/bin/. \
     && mv sdbg_builder_cpu /usr/bin/.
+
+## Vizbin JAR
+RUN cd /home/imp/lib \
+    && wget https://webdav-r3lab.uni.lu/public/R3lab/IMP/VizBin-dist.jar -O VizBin-dist.jar
 
 RUN cd /home/imp/lib
 ######################

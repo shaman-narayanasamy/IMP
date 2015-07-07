@@ -34,11 +34,12 @@
     },
     "vizbin": {
         "dimension": 50,
-        "length": 5,
+        "kmer": 5,
         "size": 4,
         "theta": 0.5,
-        "perp": 1,
-        "minlen": 1000
+        "perp": 30,
+        "cutoff": 1000,
+        "jarfile": "/home/imp/lib/VizBin-dist.jar"
     },
     "human_filtering": {
         "filter": "chr21",
