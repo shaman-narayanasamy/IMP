@@ -55,7 +55,7 @@ $ docker run \
 -v /Users/imp/data:/data \
 -v /Users/imp/build:/output \
 -e MG="/data/MG.R1.fq /data/MG.R2.fq" \
--e "MT=/data/MT.R1.fq MG=/data/MT.R2.fq" \
+-e MT="/data/MT.R1.fq MG=/data/MT.R2.fq" \
 imp:latest
 $ ls /Users/imp/build
 IMP.html
@@ -66,6 +66,14 @@ Analysis
 ...
 ```
 
+## Use a configuration file.
+Many parameters can be overridden in `IMP` via a config file. You may provide using it with the `-e` flag and using the `CONFIGFILE` environment variable.
+
+```bash
+docker run \
+-e CONFIGFILE="path/to/config/file.json"
+ ... other parameters ...
+```
 ## Build new container image
 
 ```bash
@@ -97,7 +105,7 @@ Any change to the source code will be applied immediatly inside the container.
 
 ## Log in inside the container
 
-If you want to entre the container and use `IMP` from there, you'll have to erase the docker entrypoint:
+If you want to enter the container and use `IMP` from there, you'll have to erase the docker entrypoint:
 
 ```bash
 docker run \
