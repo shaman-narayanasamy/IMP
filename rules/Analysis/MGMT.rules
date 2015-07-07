@@ -466,9 +466,11 @@ rule ANALYSIS_VIZBIN:
         -k {config[vizbin][kmer]} \
         -p {config[vizbin][perp]} >> {log}
 
-        paste <(grep "^>" {output[0]} | sed -e 's/>//') \
-        <(cat $TMP_VIZBIN/data.points | sed -e 's/,/\t/') > {output[1]}
-
+        if [ -f $TMP_VIZBIN/data.points ]
+            then
+                paste <(grep "^>" {output[0]} | sed -e 's/>//') \
+                <(cat $TMP_VIZBIN/data.points | sed -e 's/,/\t/') > {output[1]}
+            fi
         rm -rf $TMP_VIZBIN
         """
 
