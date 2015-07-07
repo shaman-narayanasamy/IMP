@@ -68,7 +68,6 @@ ANALYSIS_OUTPUT_FILES = {
     'mgmt': [
         "MGMT.assembly.length.txt",
         "MGMT.assembly.gc_content.txt",
-        "MGMT.vizbin.points",
         "MGMT.vizbin.filtered.fa",
         "MGMT.vizbin.with-contig-names.points"
     ],
