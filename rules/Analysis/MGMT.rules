@@ -456,12 +456,12 @@ rule ANALYSIS_VIZBIN:
         """
         echo "[x] VIZBIN `date +"%Y/%m/%d %H:%M:%S"`" >> {log}
         TMP_VIZBIN=$(mktemp --tmpdir={TMPDIR} -dt "VIZBIN_XXXXXX")
-        perl src/fasta_filter_length.pl 1000 {input[0]} > $TMP_VIZBIN/{output[0]}
+        perl src/fasta_filter_length.pl 1000 {input[0]} > {output[0]}
 
         java -jar {config[vizbin][jarfile]} \
         -a {config[vizbin][dimension]} \
         -c {config[vizbin][cutoff]} \
-        -i {output[1]} \
+        -i {output[0]} \
         -o $TMP_VIZBIN/data.points \
         -k {config[vizbin][kmer]} \
         -p {config[vizbin][perp]} >> {log}
