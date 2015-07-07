@@ -214,7 +214,7 @@ RUN echo "`snakemake --bash-completion`" >> ~/.bashrc \
 ######################
 ENV PATH /home/imp/lib/trinityrnaseq_r20140717:/home/imp/lib/Platypus_0.8.1:/home/imp/lib/megahit:$PATH
 
-VOLUME ["/data", "/config"]
+VOLUME ["/data", "/output"]
 WORKDIR /home/imp/integrated-metaomic-pipeline
 ENTRYPOINT ["snakemake"]
 CMD ["ALL"]

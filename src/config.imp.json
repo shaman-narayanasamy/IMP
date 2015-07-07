@@ -9,7 +9,7 @@
       "Metatranscriptomics": ""
     },
     "sample": "test",
-    "outputdir": "build",
+    "outputdir": "/output",
     "db_path": "db",
     "preprocessing_filtering": true,
     "trimmomatic": {

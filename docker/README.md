@@ -11,6 +11,8 @@ For more information about `docker` and how to install and use it, please refers
 * Run latest version of **IMP**. For the first run, it will download all dependencies. It can take some time.
 ```bash
 docker run imp:latest
+... downloading data ...
+Error: Snakefile "Snakefile" not present.
 ```
 
 ## Run IMP on your data
