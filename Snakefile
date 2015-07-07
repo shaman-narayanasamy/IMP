@@ -112,12 +112,3 @@ rule MODULE_LOAD_TEST:
         """
         IMPPRL="{config[preload][test]}"; if [[ -n $IMPPRL ]]; then $IMPPRL; fi
         """
-
-if KOOPA:
-    print(KOOPA)
-
-rule T:
-    shell:
-        """
-        echo {MT}
-        """
