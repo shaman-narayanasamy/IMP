@@ -14,3 +14,4 @@ build_bz2/
 run_A01.sh
 conf/userconfig.imp.json
 output/*
+stats.json
