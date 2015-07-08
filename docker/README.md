@@ -43,6 +43,8 @@ imp:latest
 
 * `imp:latest`: The name of the container to use (<name>:<version>)
 
+> You may use `sudo`.
+
 ### Example
 
 
