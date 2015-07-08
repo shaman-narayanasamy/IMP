@@ -24,7 +24,7 @@ docker run \
 -v $DATA_DIR:/data \
 -v $OUTPUT_DIR:/output \
 -e MG="/data/$MGR1 /data/$MGR2" \
--e "MT=/data/$MTR1 MG=/data/$MTR2" \
+-e MT="/data/$MTR1 /data/$MTR2" \
 imp:latest
 ```
 * `docker run`: Run a docker container
