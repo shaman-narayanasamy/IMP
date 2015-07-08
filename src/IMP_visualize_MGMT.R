@@ -905,38 +905,12 @@ ggtitle("MT/MG rpkm ratio histogram") +
 theme_bw()
 dev.off()
 
-## Plot histograms for rpkm ratio
-#print("Generating metatranscriptomic-metagenomic variance ratio histogram")
-#png(name_plot("IMP-var_ratio_histogram.png"), width=700, height=700)
-#ggplot(all.dat, aes(x=var_ratio)) +
-#geom_histogram(binwidth=0.5, position="identity", fill="purple", alpha=0.75) +
-#xlim(0,set_max_perc(all.dat$cov_ratio, 25))+
-#xlab("var ratio") +
-#ggtitle("MT/MG var ratio histogram") +
-#theme_bw()
-#dev.off()
-
-
 ## Plot density plot of all different ratio levels
 M.ratio <- melt(all.dat, id.vars=("contig"), measure.vars=c("cov_ratio",
 							    "depth_ratio",
 							    "rpkm_ratio",
 							    "var_ratio"))
 colnames(M.ratio) <- c("contig","type","ratio")
-
-#print("Generating metatranscriptomic-metagenomic ratio densities")
-#png(name_plot("IMP-ratio_densities.png"), width=700, height=700)
-#ggplot(M.ratio, aes(x=ratio, fill=type)) +
-#geom_density(alpha=0.5) +
-#scale_fill_manual(values=c("red", "blue", "green", "purple"),
-#		  labels=c("coverage","depth","rpkm","variation")) +
-#
-# guides(fill=guide_legend(title="Ratio")) +
-#xlim(0,set_max_perc(M.ratio$ratio, 0.025))+
-#xlab("ratio") +
-#ggtitle("MT/MG ratio densities") +
-#theme_bw()
-#dev.off()
 
 ## Vizbin plot for coverage ratio
 print("Generating vizbin plot for coverage ratios")
