@@ -79,9 +79,15 @@ ANALYSIS_OUTPUT_FILES = {
         "MG.gene.len",
         "MG.prokkaID2ec.txt",
         "MG.variants.isec.vcf.gz",
+        "MG.variants.samtools.vcf.gz",
+        "MG.variants.freebayes.vcf.gz",
+        "MG.variants.platypus.vcf.gz",
         "MG.assembly.contig_coverage.txt",
         "MG.assembly.contig_depth.txt",
         "MG.assembly.contig_flagstat.txt",
+        "results/MG.gene_kegg_krona.txt",
+        "results/MG.gene_kegg_krona.html"
+
     ],
     'mt': [
         "MT.read_counts.txt",
@@ -91,9 +97,15 @@ ANALYSIS_OUTPUT_FILES = {
         "MT.gene.len",
         "MT.prokkaID2ec.txt",
         "MT.variants.isec.vcf.gz",
+        "MT.variants.samtools.vcf.gz",
+        "MT.variants.freebayes.vcf.gz",
+        "MT.variants.platypus.vcf.gz",
         "MT.assembly.contig_coverage.txt",
         "MT.assembly.contig_depth.txt",
         "MT.assembly.contig_flagstat.txt",
+        "results/MT.gene_kegg_krona.txt",
+        "results/MT.gene_kegg_krona.html"
+
     ],
     'mg_only': [
         "MG.assembly.length.txt",

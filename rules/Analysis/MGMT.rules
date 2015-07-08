@@ -124,7 +124,10 @@ rule ANALYSIS_MG_VARIANT_CALLING:
         "%s/MGMT.assembly.merged.fa" % A_OUT,
         "%s/MG.reads.sorted.bam" % A_OUT,
     output:
-        "%s/MG.variants.isec.vcf.gz" % AN_OUT
+        "%s/MG.variants.isec.vcf.gz" % AN_OUT,
+        "%s/MG.variants.samtools.vcf.gz" % AN_OUT,
+        "%s/MG.variants.freebayes.vcf.gz" % AN_OUT,
+        "%s/MG.variants.platypus.vcf.gz" % AN_OUT
     shell:
         """
         echo "[x]  VARIANT CALLING `date +"%Y/%m/%d %H:%M:%S"`"
@@ -134,51 +137,48 @@ rule ANALYSIS_MG_VARIANT_CALLING:
             echo "Indexing bam: {input[1]}"
             samtools index {input[1]}
         fi
-
+       
         if [[ ! -f {input[0]}.fai ]]
         then
           echo "Fasta index doesn't exist, Creating one..."
           echo "Indexing fasta: {input[0]}"
           samtools faidx {input[0]}
         fi
-
+        
         #temporary directory and files
         VCF_MPU=$(mktemp --tmpdir={TMPDIR} -t "XXXXXX.mpu.vcf")
         VCF_FRB=$(mktemp --tmpdir={TMPDIR} -t "XXXXXX.frb.vcf")
         VCF_PLT=$(mktemp --tmpdir={TMPDIR} -t "XXXXXX.plt.vcf")
-
-        ### run_mpileup {input[0]} {input[1]} $VCF_MPU
+        
+        ### run_mpileup {input[0]} {input[1]} {output[1]}
         samtools mpileup -uf {input[0]} {input[1]} | bcftools view -vcg - > $VCF_MPU
-        bgzip -c $VCF_MPU > $VCF_MPU.gz
-        tabix -f -p vcf $VCF_MPU.gz
+        bgzip -c $VCF_MPU > {output[1]}
+        tabix -f -p vcf {output[1]}
 
-        ### run_freebayes {input[0]} {input[1]} $VCF_FRB
+        ### run_freebayes {input[0]} {input[1]} {output[2]}
         freebayes -f {input[0]} {input[1]} > $VCF_FRB
-        bgzip -c $VCF_FRB > $VCF_FRB.gz
-        tabix -f -p vcf $VCF_FRB.gz
+        bgzip -c $VCF_FRB > {output[2]}
+        tabix -f -p vcf {output[2]}
 
-        ### run_platypus {input[0]} {input[1]} $VCF_PLT
+        ### run_platypus {input[0]} {input[1]} {output[3]}
         Platypus.py callVariants --refFile={input[0]} --bamFiles={input[1]} --nCPU={THREADS} -o $VCF_PLT
-        bgzip -c $VCF_PLT > $VCF_PLT.gz
-        tabix -f -p vcf $VCF_PLT.gz
+        bgzip -c $VCF_PLT > {output[3]}
+        tabix -f -p vcf {output[3]}
 
-        ### "Merging outputs "
-
+        ### "Merging outputs from all the callers"
         ## Must remove colons from the contig names in upstream steps. Unable to merge the variants
         ## due to this problem
-        vcf-isec -f -a -n +2 $VCF_PLT.gz $VCF_FRB.gz $VCF_MPU.gz > {AN_OUT}/MG.variants.isec.vcf
+        vcf-isec -f -a -n +2 {output[1]} {output[2]} {output[3]} > {AN_OUT}/MG.variants.isec.vcf
 
         # Compress and index the output.
-        bgzip -c {AN_OUT}/MG.variants.isec.vcf > {AN_OUT}/MG.variants.isec.vcf.gz
-        tabix -f -p vcf {AN_OUT}/MG.variants.isec.vcf.gz
+        bgzip -c {AN_OUT}/MG.variants.isec.vcf > {output[0]}
+        tabix -f -p vcf {output[0]}
 
         # Clean up directory
         echo "Cleaning up directory"
         cat log.txt >> {log}
         rm -f {AN_OUT}/MG.variants.isec.vcf log.txt
         """
-
-
 rule ANALYSIS_MT_VARIANT_CALLING:
     log:
         AN_LOG
@@ -188,7 +188,10 @@ rule ANALYSIS_MT_VARIANT_CALLING:
         "%s/MGMT.assembly.merged.fa" % A_OUT,
         "%s/MT.reads.sorted.bam" % A_OUT,
     output:
-        "%s/MT.variants.isec.vcf.gz" % AN_OUT
+        "%s/MT.variants.isec.vcf.gz" % AN_OUT,
+        "%s/MT.variants.samtools.vcf.gz" % AN_OUT,
+        "%s/MT.variants.freebayes.vcf.gz" % AN_OUT,
+        "%s/MT.variants.platypus.vcf.gz" % AN_OUT
     shell:
         """
         echo "[x]  VARIANT CALLING `date +"%Y/%m/%d %H:%M:%S"`"
@@ -198,53 +201,48 @@ rule ANALYSIS_MT_VARIANT_CALLING:
             echo "Indexing bam: {input[1]}"
             samtools index {input[1]}
         fi
-
+       
         if [[ ! -f {input[0]}.fai ]]
         then
           echo "Fasta index doesn't exist, Creating one..."
           echo "Indexing fasta: {input[0]}"
           samtools faidx {input[0]}
         fi
-
+        
         #temporary directory and files
         VCF_MPU=$(mktemp --tmpdir={TMPDIR} -t "XXXXXX.mpu.vcf")
         VCF_FRB=$(mktemp --tmpdir={TMPDIR} -t "XXXXXX.frb.vcf")
         VCF_PLT=$(mktemp --tmpdir={TMPDIR} -t "XXXXXX.plt.vcf")
-
-        ### run_mpileup {input[0]} {input[1]} $VCF_MPU
+        
+        ### run_mpileup {input[0]} {input[1]} {output[1]}
         samtools mpileup -uf {input[0]} {input[1]} | bcftools view -vcg - > $VCF_MPU
-        wait
-        bgzip -c $VCF_MPU > $VCF_MPU.gz
-        tabix -f -p vcf $VCF_MPU.gz
+        bgzip -c $VCF_MPU > {output[1]}
+        tabix -f -p vcf {output[1]}
 
-        ### run_freebayes {input[0]} {input[1]} $VCF_FRB
+        ### run_freebayes {input[0]} {input[1]} {output[2]}
         freebayes -f {input[0]} {input[1]} > $VCF_FRB
-        bgzip -c $VCF_FRB > $VCF_FRB.gz
-        tabix -f -p vcf $VCF_FRB.gz
+        bgzip -c $VCF_FRB > {output[2]}
+        tabix -f -p vcf {output[2]}
 
-        ### run_platypus {input[0]} {input[1]} $VCF_PLT
+        ### run_platypus {input[0]} {input[1]} {output[3]}
         Platypus.py callVariants --refFile={input[0]} --bamFiles={input[1]} --nCPU={THREADS} -o $VCF_PLT
-        bgzip -c $VCF_PLT > $VCF_PLT.gz
-        tabix -f -p vcf $VCF_PLT.gz
+        bgzip -c $VCF_PLT > {output[3]}
+        tabix -f -p vcf {output[3]}
 
-
-
-        ### "Merging outputs "
-
+        ### "Merging outputs from all the callers"
         ## Must remove colons from the contig names in upstream steps. Unable to merge the variants
         ## due to this problem
-        vcf-isec -f -a -n +2 $VCF_PLT.gz $VCF_FRB.gz $VCF_MPU.gz > {AN_OUT}/MT.variants.isec.vcf
+        vcf-isec -f -a -n +2 {output[1]} {output[2]} {output[3]} > {AN_OUT}/MT.variants.isec.vcf
 
         # Compress and index the output.
-        bgzip -c {AN_OUT}/MT.variants.isec.vcf > {AN_OUT}/MT.variants.isec.vcf.gz
-        tabix -f -p vcf {AN_OUT}/MT.variants.isec.vcf.gz
+        bgzip -c {AN_OUT}/MT.variants.isec.vcf > {output[0]}
+        tabix -f -p vcf {output[0]}
 
         # Clean up directory
         echo "Cleaning up directory"
         cat log.txt >> {log}
         rm -f {AN_OUT}/MT.variants.isec.vcf log.txt
         """
-
 
 rule ANALYSIS_MGMT_CONTIG_LENGTH:
     log:

@@ -77,7 +77,7 @@ rule PREPROCESSING_MT_FILTER_RRNA:
         # shell("{EXE} {SCRIPTS[filter_rna]} -t {config[sortmerna][threads]} \
         # -d %s -p {config[sortmerna][scripts_path]} \
         # {input[0]} {input[1]} {input[2]} {output[0]} {output[1]} {output[2]}" % ref)
-        mem = MEMTOTAL * 1000 / 2
+        mem = int ( MEMTOTAL * 1000 / 2 )
         shell("""
         TMP_R12=$(mktemp --tmpdir={TMPDIR} -t "tmp_XXXXXX.R12")
         {config[sortmerna][scripts_path]}/merge-paired-reads.sh {input[0]} {input[1]} $TMP_R12.fq
