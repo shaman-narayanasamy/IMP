@@ -98,9 +98,9 @@ RUN cd /home/imp/tmp \
 
 ## htqc toolbox
 RUN cd /home/imp/tmp \
-    && wget http://downloads.sourceforge.net/project/htqc/htqc-1.91.1-Source.tar.gz \
-    && tar -xzf htqc-1.91.1-Source.tar.gz \
-    && cd htqc-1.91.1-Source \
+    && wget --no-check-certificate https://webdav-r3lab.uni.lu/public/R3lab/IMP/htqc-1.92.3-Source.tar.gz \
+    && tar -xzf htqc-1.92.3-Source.tar.gz \
+    && cd htqc-1.92.3-Source \
     && mkdir build \
     && cd build \
     && cmake .. \
