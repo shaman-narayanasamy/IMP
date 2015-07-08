@@ -29,7 +29,7 @@ imp:latest
 ```
 * `docker run`: Run a docker container
 
-* `-v $DATA_DIR:/data` : Where `$DATA_DIR` is the directory under your data is located.
+* `-v $DATA_DIR:/data` : Where `$DATA_DIR` is the directory under your data is located. (*All paths must be absolute**)
 
 >You need to provide the container your data. By default, **IMP** expect that you have metagenomic and metatransciptiomic data and will look into the container `/data` directory. You do it with the `-v` (for volume) flag.
 
