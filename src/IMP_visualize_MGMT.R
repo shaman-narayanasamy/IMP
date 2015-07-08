@@ -673,7 +673,7 @@ var1[is.infinite(var1)]=NA
 var2 <- c(rep("MG",nrow(all.dat)),rep("MT",nrow(all.dat)))
 mapped_reads<-data.frame(var1,var2)
 
-png(name_plot("IMP-reads_density.png"), width=350, height=700)
+png(name_plot("IMP-reads_density.png"), width=700, height=700)
 par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
 beanplot(var1 ~ var2, data= mapped_reads,  side = "both",log="auto",
 what=c(1,1,1,0), border = NA, col = list("blue", c("red", "white")),
@@ -688,7 +688,7 @@ var1[is.infinite(var1)]=NA
 var2 <- c(rep("MG",nrow(all.dat)),rep("MT",nrow(all.dat)))
 rpkm<-data.frame(var1,var2)
 
-png(name_plot("IMP-rpkm_density.png"), width=350, height=700)
+png(name_plot("IMP-rpkm_density.png"), width=700, height=700)
 par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
 beanplot(var1 ~ var2, data= rpkm,  side = "both",log="auto",
 what=c(1,1,1,0), border = NA, col = list("blue", c("red", "white")),
@@ -702,7 +702,7 @@ var1 <-c(all.dat$MG_cov,all.dat$MT_cov)
 var2 <- c(rep("MG",nrow(all.dat)),rep("MT",nrow(all.dat)))
 coverage<-data.frame(var1,var2)
 
-png(name_plot("IMP-coverage_density.png"), width=350, height=700)
+png(name_plot("IMP-coverage_density.png"), width=700, height=700)
 par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
 beanplot(var1 ~ var2, data= coverage,  side = "both",log="auto",
 what=c(1,1,1,0), border = NA, col = list("blue", c("red", "white")),
@@ -716,7 +716,7 @@ var1 <-log10(c(all.dat$MG_depth,all.dat$MT_depth))
 var2 <- c(rep("MG",nrow(all.dat)),rep("MT",nrow(all.dat)))
 depth<-data.frame(var1,var2)
 
-png(name_plot("IMP-depth_density.png"), width=350, height=700)
+png(name_plot("IMP-depth_density.png"), width=700, height=700)
 par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
 beanplot(var1 ~ var2, data= depth,  side = "both",log="auto",
 what=c(1,1,1,0), border = NA, col = list("blue", c("red", "white")),
@@ -778,7 +778,7 @@ var2 <- c(rep("MG",nrow(all.dat)),rep("MT",nrow(all.dat)))
 variant_count<-data.frame(var1,var2)
 
 print("Generating variant count plots")
-png(name_plot("IMP-var_count.png") ,width=350, height=700)
+png(name_plot("IMP-var_count.png") ,width=700, height=700)
 
 par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
 beanplot(var1 ~ var2, data= variant_count,  side = "both",log="auto",
@@ -794,7 +794,7 @@ var2 <- c(rep("MG",nrow(all.dat)),rep("MT",nrow(all.dat)))
 variant_density<-data.frame(var1,var2)
 
 print("Generating variant density plots")
-png(name_plot("IMP-var_density.png") ,width=350, height=700)
+png(name_plot("IMP-var_density.png") ,width=700, height=700)
 
 par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
 beanplot(var1 ~ var2, data= variant_density,  side = "both",log="auto",
@@ -906,15 +906,15 @@ theme_bw()
 dev.off()
 
 ## Plot histograms for rpkm ratio
-print("Generating metatranscriptomic-metagenomic variance ratio histogram")
-png(name_plot("IMP-var_ratio_histogram.png"), width=700, height=700)
-ggplot(all.dat, aes(x=var_ratio)) +
-geom_histogram(binwidth=0.5, position="identity", fill="purple", alpha=0.75) +
-xlim(0,set_max_perc(all.dat$cov_ratio, 25))+
-xlab("var ratio") +
-ggtitle("MT/MG var ratio histogram") +
-theme_bw()
-dev.off()
+#print("Generating metatranscriptomic-metagenomic variance ratio histogram")
+#png(name_plot("IMP-var_ratio_histogram.png"), width=700, height=700)
+#ggplot(all.dat, aes(x=var_ratio)) +
+#geom_histogram(binwidth=0.5, position="identity", fill="purple", alpha=0.75) +
+#xlim(0,set_max_perc(all.dat$cov_ratio, 25))+
+#xlab("var ratio") +
+#ggtitle("MT/MG var ratio histogram") +
+#theme_bw()
+#dev.off()
 
 
 ## Plot density plot of all different ratio levels
@@ -924,19 +924,19 @@ M.ratio <- melt(all.dat, id.vars=("contig"), measure.vars=c("cov_ratio",
 							    "var_ratio"))
 colnames(M.ratio) <- c("contig","type","ratio")
 
-print("Generating metatranscriptomic-metagenomic ratio densities")
-png(name_plot("IMP-ratio_densities.png"), width=700, height=700)
-ggplot(M.ratio, aes(x=ratio, fill=type)) +
-geom_density(alpha=0.5) +
-scale_fill_manual(values=c("red", "blue", "green", "purple"),
-		  labels=c("coverage","depth","rpkm","variation")) +
-
- guides(fill=guide_legend(title="Ratio")) +
-xlim(0,set_max_perc(M.ratio$ratio, 0.025))+
-xlab("ratio") +
-ggtitle("MT/MG ratio densities") +
-theme_bw()
-dev.off()
+#print("Generating metatranscriptomic-metagenomic ratio densities")
+#png(name_plot("IMP-ratio_densities.png"), width=700, height=700)
+#ggplot(M.ratio, aes(x=ratio, fill=type)) +
+#geom_density(alpha=0.5) +
+#scale_fill_manual(values=c("red", "blue", "green", "purple"),
+#		  labels=c("coverage","depth","rpkm","variation")) +
+#
+# guides(fill=guide_legend(title="Ratio")) +
+#xlim(0,set_max_perc(M.ratio$ratio, 0.025))+
+#xlab("ratio") +
+#ggtitle("MT/MG ratio densities") +
+#theme_bw()
+#dev.off()
 
 ## Vizbin plot for coverage ratio
 print("Generating vizbin plot for coverage ratios")
