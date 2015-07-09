@@ -1,0 +1,133 @@
+#!/usr/bin/env python3
+from lib.docopt import docopt
+from lib.path import Path
+import subprocess
+import os
+
+__doc__ = """Integrated Metaomic Pipeline.
+ ____  __  __  ____
+(_  _)(  \/  )(  _ \\
+ _)(_  )    (  )___/
+(____)(_/\/\_)(__)
+
+Usage:
+  IMP init <data> <output> [--name=<n>]
+  IMP run [VAR ...]
+  IMP -h | --help
+  IMP --version
+
+Options:
+  -h --help     Show this help and exit
+  --name=<n>    Name of the configuration file [default: IMP].
+
+Parameters:
+  data: the path where your data is stored
+  output: the path where IMP will write result files
+  MG an MT : the path to your data files
+"""
+
+DOCKER_COMPOSE_TMPL = """imp:
+    image: imp
+    env_file: {output}/.env
+    volumes:
+        - {data}:/data
+        - {code}:/home/imp/integrated-metaomic-pipeline
+        - {output}:/output
+    environment:
+        - IMP_NAME={name}
+
+"""
+
+IMP_CACHE = Path('.imp')
+IMP_CACHE.makedirs_p()
+IMP_CONFIG_CACHE = IMP_CACHE / 'configs'
+IMP_CONFIG_CACHE.touch()
+
+
+def get_config_cache():
+    cache = None
+    with open(IMP_CONFIG_CACHE, 'r') as rhandle:
+        cache = rhandle.read()
+    return cache
+
+
+def add_to_cache(pth):
+    with open(IMP_CONFIG_CACHE, 'a') as whandle:
+        whandle.write(pth + os.linesep)
+
+
+def write_to_cache(pth):
+    with open(IMP_CONFIG_CACHE, 'w') as whandle:
+        whandle.write(pth + os.linesep)
+
+
+def yes_or_no(question):
+    reply = str(input(question + ' (y/n): ')).lower().strip()
+    if reply[0] == 'y':
+        return True
+    if reply[0] == 'n':
+        return False
+    else:
+        return yes_or_no("Please enter ")
+
+
+def select(title, questions):
+
+    s = os.linesep + title
+    for idx, q in enumerate(questions):
+        s += os.linesep + '%s) %s.' % (idx + 1, q)
+    s += os.linesep + 'Choice: '
+    try:
+        reply = int(input(s))
+    except ValueError:
+        return select("Please type a number: ", questions)
+    except KeyboardInterrupt:
+        print(os.linesep, "Exiting ...")
+        exit(0)
+    if abs(reply) > len(questions) or reply <= 0:
+        return select("Please select one of the following: ", questions)
+    return questions[reply - 1]
+
+CURRENT_PATH = Path('.').abspath()
+
+if __name__ == '__main__':
+    args = docopt(__doc__, version="IMP 1.0", options_first=True)
+    # get config file from cache
+    config_files = get_config_cache().split()
+    # delete if some config files are removed
+    cfs = []
+    for cf in config_files:
+        if Path(cf).exists():
+            cfs.append(cf)
+    write_to_cache(os.linesep.join(cfs))
+    config_files = cfs
+
+    # init config
+    if args['init']:
+        data = Path(args['<data>']).abspath()
+        output = Path(args['<output>']).abspath()
+        name = args['--name']
+        docker_compose_path = Path(output / '%s.yml' % name)
+        env_file = Path(output / '.env').touch()
+        compose = DOCKER_COMPOSE_TMPL.format(data=data, output=output, code=CURRENT_PATH, name=name)
+        if docker_compose_path.exists() and not yes_or_no("Configuration already exist. Overwrite ?"):
+            print("Exiting ... ")
+            exit(0)
+        if docker_compose_path not in config_files:
+            add_to_cache(docker_compose_path)
+            docker_compose_path.parent.makedirs_p()
+        with open(docker_compose_path, 'w') as whandle:
+            whandle.write(compose)
+            print("Configuration written at {}".format(docker_compose_path))
+    # run IMP with docker compose
+    elif args['run']:
+        if not config_files:
+            print("You must init IMP first.")
+            print("Exiting ... ")
+            exit(0)
+        elif len(config_files) > 1:
+            cf = select("Multiple config file found", config_files)
+        else:
+            cf = config_files[0]
+        cmd = ['docker-compose', '-f', cf, 'run', 'imp'] + args['VAR']
+        subprocess.call(cmd)
