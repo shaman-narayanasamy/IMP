@@ -26,8 +26,7 @@ Parameters:
       <name>: the name of the configuration file [default:IMP]
     ** RUN **
         VAR: any command or flag will be forwarded to the underlying Snakemake.
-        Try '-l' to have a list of all commands available 
-
+        Try '-l' to have a list of all commands available.
 """
 
 DOCKER_COMPOSE_TMPL = """imp:
@@ -120,6 +119,8 @@ if __name__ == '__main__':
         name = args['<name>']
         if name is None:
             name = 'IMP'
+        if not output.exists():
+            output.mkdirs()
         docker_compose_path = Path(output / '%s.yml' % name)
         env_file = Path(output / '.env').touch()
         compose = DOCKER_COMPOSE_TMPL.format(data=data, output=output, code=CURRENT_PATH, name=name)
