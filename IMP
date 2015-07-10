@@ -20,10 +20,9 @@ Options:
   -h --help     Show this help and exit
 
 Parameters:
-  data: the path where your data is stored
-  output: the path where IMP will write result files
-  name: the name of the configuration file [default:IMP]
-  MG an MT : the path to your data files
+  <data>: the path where your data is stored
+  <output>: the path where IMP will write result files
+  <name>: the name of the configuration file [default:IMP]
 """
 
 DOCKER_COMPOSE_TMPL = """imp:
