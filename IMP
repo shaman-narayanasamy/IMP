@@ -90,10 +90,14 @@ def select(title, questions):
 
 CURRENT_PATH = Path('.').abspath()
 
-if __name__ == '__main__':
-    args = docopt(__doc__, version=subprocess.call(
+
+def get_version():
+    return subprocess.check_output(
         ['git', '--no-pager', 'log', '-n', '1', '--pretty=format:%H']
-    ), options_first=True)
+    )
+
+if __name__ == '__main__':
+    args = docopt(__doc__, version=get_version(), options_first=True)
     # get config file from cache
     config_files = get_config_cache().split()
     # delete if some config files are removed
