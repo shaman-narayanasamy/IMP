@@ -20,9 +20,14 @@ Options:
   -h --help     Show this help and exit
 
 Parameters:
-  <data>: the path where your data is stored
-  <output>: the path where IMP will write result files
-  <name>: the name of the configuration file [default:IMP]
+    ** INIT **
+      <data>: the path where your data is stored
+      <output>: the path where IMP will write result files
+      <name>: the name of the configuration file [default:IMP]
+    ** RUN **
+        VAR: any command or flag will be forwarded to the underlying Snakemake.
+        Try '-l' to have a list of all commands available 
+
 """
 
 DOCKER_COMPOSE_TMPL = """imp:
