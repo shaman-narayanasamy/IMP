@@ -13,18 +13,18 @@ __doc__ = """Integrated Metaomic Pipeline.
 (____)(_/\/\_)(__)
 
 Usage:
-  IMP -d DATA -o OUTPUT [--enter] [-n CONTAINER] [-e ENV] ... [COMMANDS ...]
+  IMP -m MG1 -m MG2 -t MT1 -t MT2 -o OUTPUT [--enter] [-n CONTAINER] [-e ENV] ... [COMMANDS ...]
   IMP (-h | --help)
   IMP --version
 
 Options:
-  -d DATA             Path to the data
-  -e ENV              Environment variable to pass to the container
-  --enter             Enter the container
-  -h --help           Show this help and exit
-  -n CONTAINER        Name of the container. Useful when you want to run a previous version of IMP.
-  -o OUTPUT           Path to the output directory
-
+  -e ENV            Environment variable to pass to the container
+  --enter           Enter the container
+  -h --help         Show this help and exit
+  -m MG             Path to the metagenomics paired files (must be 2 files).
+  -t MT             Path to the metatranscriptomic paired files (2 files).
+  -n CONTAINER      Name of the container. Useful when you want to run a previous version of IMP.
+  -o OUTPUT         Path to the output directory
 """
 
 
@@ -39,18 +39,29 @@ if __name__ == '__main__':
     CURRENT_PATH = Path(__file__).parent.abspath()
     print(args)
 
-    data = Path(args['-d']).abspath()
+    # find common path
+    mg_data = [Path(p).abspath() for p in args['-m']]
+    mt_data = [Path(p).abspath() for p in args['-t']]
+    common_path = Path(os.path.commonprefix(mg_data + mt_data)).dirname()
+    # update data paths
+    mg_data = [p.partition(common_path)[-1][1:] for p in mg_data]
+    mt_data = [p.partition(common_path)[-1][1:] for p in mt_data]
+
     output = Path(args['-o']).abspath()
     container_name = args['-n'] is not None and args['-n'] or 'imp:latest'
 
     # configure IMP mount point to the docker container
     mount_points = [
-        '-v %s:/data' % data,
+        '-v %s:/data' % common_path,
         '-v %s:/home/imp/integrated-metaomic-pipeline' % CURRENT_PATH,
         '-v %s:/output' % output
     ]
-    # environement variables
-    envs = ['-e {}="{}"'.format(*e.split('=')) for e in args['-e']]
+
+    # environement variables (add MG and MT data)
+    envs = ['-e {}="{}"'.format(*e.split('=')) for e in args['-e'] + [
+        "MG=%s" % ' '.join(mg_data),
+        "MT=%s" % ' '.join(mt_data)]
+    ]
 
     # CL
     cmd = ['docker', 'run'] + mount_points + envs
