@@ -37,7 +37,7 @@ if __name__ == '__main__':
     args = docopt(__doc__, version=get_version(), options_first=True)
 
     CURRENT_PATH = Path(__file__).parent.abspath()
-    print(args)
+    print("SHAMAN ROCKS")
 
     # find common path
     mg_data = [Path(p).abspath() for p in args['-m']]
