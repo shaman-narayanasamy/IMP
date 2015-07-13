@@ -58,9 +58,16 @@ if __name__ == '__main__':
     ]
 
     # environement variables (add MG and MT data)
-    envs = ['-e {}="{}"'.format(*e.split('=')) for e in args['-e'] + [
-        "MG=%s" % ' '.join(mg_data),
-        "MT=%s" % ' '.join(mt_data)]
+    envs = ['-e {}="{}"'.format(*e.split('=')) for e in args['-e']]
+
+    # prepare MG and MT data
+    mg = ['/data/' + d for d in mg_data]
+    mt = ['/data/' + d for d in mt_data]
+
+    # add to env
+    envs += [
+        '-e MG="%s"' % ' '.join(mg),
+        '-e MT="%s"' % ' '.join(mt)
     ]
 
     # CL
