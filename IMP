@@ -33,6 +33,16 @@ def get_version():
         ['git', '--no-pager', 'log', '-n', '1', '--pretty=format:%H']
     )
 
+
+def yes_or_no(question):
+    reply = str(input(question + ' (y/n): ')).lower().strip()
+    if reply[0] == 'y':
+        return True
+    if reply[0] == 'n':
+        return False
+    else:
+        return yes_or_no("Please enter ")
+
 if __name__ == '__main__':
     args = docopt(__doc__, version=get_version(), options_first=True)
 
@@ -47,6 +57,11 @@ if __name__ == '__main__':
     mt_data = [p.partition(common_path)[-1][1:] for p in mt_data]
 
     output = Path(args['-o']).abspath()
+    if not output.exists():
+        if yes_or_no("Output doesn't exist. Create ?"):
+            output.makedirs()
+        else:
+            exit(0)
     container_name = args['-n'] is not None and args['-n'] or 'imp:latest'
 
     # configure IMP mount point to the docker container
