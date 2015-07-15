@@ -51,6 +51,9 @@ if __name__ == '__main__':
     # find common path
     mg_data = [Path(p).abspath() for p in args['-m']]
     mt_data = [Path(p).abspath() for p in args['-t']]
+    # check paths
+    for pth in mg_data + mt_data:
+        print(pth)
     common_path = Path(os.path.commonprefix(mg_data + mt_data)).dirname()
     # update data paths
     mg_data = [p.partition(common_path)[-1][1:] for p in mg_data]
