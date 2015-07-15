@@ -63,7 +63,7 @@ if __name__ == '__main__':
 
     output = Path(args['-o']).abspath()
     if not output.exists():
-        if yes_or_no("Output doesn't exist. Create ?"):
+        if yes_or_no("Output '%s' doesn't exist. Create ?" % output):
             output.makedirs()
         else:
             exit(0)
