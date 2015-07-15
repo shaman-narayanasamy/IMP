@@ -53,7 +53,9 @@ if __name__ == '__main__':
     mt_data = [Path(p).abspath() for p in args['-t']]
     # check paths
     for pth in mg_data + mt_data:
-        print(pth)
+        if not pth.exists():
+            print("'%s' does not exist" % pth)
+            exit(1)
     common_path = Path(os.path.commonprefix(mg_data + mt_data)).dirname()
     # update data paths
     mg_data = [p.partition(common_path)[-1][1:] for p in mg_data]
