@@ -220,6 +220,18 @@ rule CHECK_TOOL_VERSION:
 #         python {SRCDIR}/make.pwy.hierarchy.kegg.py -o {output[1]}
 #        """
 
+rule _DOWNLOAD_TRIMMOMATIC_ADAPTERS:
+    output:
+        "{DBPATH}/adapters/adapters.done"
+    shell:
+        """
+        wget http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-Src-0.32.zip
+        unzip Trimmomatic-Src-0.32.zip
+        cp -r trimmomatic-0.32/adapters {DBPATH}
+        rm Trimmomatic-Src-0.32.zip && rm -rf trimmomatic-0.32
+        touch {output}
+        """
+
 rule _DOWNLOAD_KEGG_INFORMATION:
     log:
         U_LOG
