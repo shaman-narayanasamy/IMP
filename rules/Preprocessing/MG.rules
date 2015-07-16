@@ -89,7 +89,14 @@ rule PREPROCESSING_MG_FILTER_HG:
         <(samtools view -@ {THREADS} -u -f 12 -F 256 $TMP_FILE) | \
         samtools view -@ {THREADS} -bF 0x800 -  | samtools sort -o -@ {THREADS} -m {MEMCORE}G -n - $BUFFER | \
         bamToFastq -i stdin -fq {output[0]} -fq2 {output[1]}
+        if [[ -s {input[2]} ]]
+        then
         bwa mem -v 1 -t {THREADS} {input[3]} {input[2]} | samtools view -@ {THREADS} -bS - | \
         samtools view -@ {THREADS} -uf 4 - | bamToFastq -i stdin -fq {output[2]}
+        else
+        echo "{input[2]} is empty, skipping single end human sequence filtering, but creating it anyway..."
+        touch {output[2]}
+        fi
+
         rm -rf $BUFFER* $TMP_FILE
         """
