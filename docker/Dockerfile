@@ -55,14 +55,14 @@ RUN mkdir /root/.checkpoint \
 
 ## fastuniq
 RUN cd /home/imp/tmp \
-    && wget http://downloads.sourceforge.net/project/fastuniq/FastUniq-1.1.tar.gz \
+    && wget --no-check-certificate https://webdav-r3lab.uni.lu/public/R3lab/IMP/FastUniq-1.1.tar.gz \
     && tar -xzf FastUniq-1.1.tar.gz \
     && cd FastUniq/source \
     && make \
     && mv fastuniq /usr/bin/. \
     && cd ../.. && rm -rf FastUniq* \
 ## Trimmomatic
-    && wget http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-Src-0.32.zip \
+    && wget --no-check-certificate https://webdav-r3lab.uni.lu/public/R3lab/IMP/Trimmomatic-Src-0.32.zip \
     && unzip Trimmomatic-Src-0.32.zip \
     && cd trimmomatic-0.32 \
     && ant \
@@ -73,7 +73,7 @@ RUN cd /home/imp/tmp \
 
 ## idba ud
 RUN cd /home/imp/tmp \
-    && wget http://hku-idba.googlecode.com/files/idba-1.1.1.tar.gz \
+    && wget --no-check-certificate https://webdav-r3lab.uni.lu/public/R3lab/IMP/idba-1.1.1.tar.gz \
     && tar -xzf idba-1.1.1.tar.gz \
     && cd idba-1.1.1 \
     && sed -i -e 's/static const uint32_t kMaxShortSequence = 128/static const uint32_t kMaxShortSequence = 2048/' src/sequence/short_sequence.h \
@@ -84,12 +84,12 @@ RUN cd /home/imp/tmp \
     && mv bin/fq2fa /usr/bin \
     && cd .. && rm -rf idba* \
 ## cap3
-    && wget http://seq.cs.iastate.edu/CAP3/cap3.linux.x86_64.tar \
+    && wget --no-check-certificate https://webdav-r3lab.uni.lu/public/R3lab/IMP/cap3.linux.x86_64.tar \
     && tar -xf cap3.linux.x86_64.tar \
     && cp CAP3/cap3 /usr/bin \
     && rm -rf cap3* CAP3 \
 ## bwa
-    && wget http://downloads.sourceforge.net/project/bio-bwa/bwa-0.7.9a.tar.bz2 \
+    && wget --no-check-certificate https://webdav-r3lab.uni.lu/public/R3lab/IMP/bwa-0.7.9a.tar.bz2 \
     && tar -xjf bwa-0.7.9a.tar.bz2 \
     && cd bwa-0.7.9a \
     && make \
@@ -111,12 +111,12 @@ RUN cd /home/imp/tmp \
 ## freebayes
     && git clone --recursive git://github.com/ekg/freebayes.git \
     && cd freebayes \
-    && git checkout -b v0.9.16 v0.9.16 \
+    && git checkout -b v0.9.16 \
     && make \
     && make install \
     && cd .. && rm -rf freebayes \
 ## vcftools
-    && wget http://downloads.sourceforge.net/project/vcftools/vcftools_0.1.12b.tar.gz \
+    && wget --no-check-certificate https://webdav-r3lab.uni.lu/public/R3lab/IMP/vcftools_0.1.12b.tar.gz \
     && tar -xzf vcftools_0.1.12b.tar.gz \
     && cd vcftools_0.1.12b \
     && make \
@@ -134,7 +134,7 @@ RUN cd /home/imp/tmp \
     && cp binaries/linux/* /usr/bin \
     && cd .. && rm -rf prokka* \
 ## parallel
-    && wget ftp://ftp.gnu.org/gnu/parallel/parallel-20140422.tar.bz2 \
+    && wget --no-check-certificate https://webdav-r3lab.uni.lu/public/R3lab/IMP/parallel-20140422.tar.bz2 \
     && tar -xjf parallel-20140422.tar.bz2 \
     && cd parallel-20140422 \
     && ./configure \
@@ -142,7 +142,7 @@ RUN cd /home/imp/tmp \
     && make install \
     && cd .. && rm -rf parallel* \
 ## sortmerna
-    && wget https://github.com/biocore/sortmerna/archive/2.0.tar.gz -O sortmerna.2.0.tgz \
+    && wget --no-check-certificate https://webdav-r3lab.uni.lu/public/R3lab/IMP/sortmerna.2.0.tgz \
     && tar -xzf sortmerna.2.0.tgz \
     && cd sortmerna-2.0 \
     && sh build.sh \
@@ -158,7 +158,7 @@ RUN cd /home/imp/tmp \
 
 ## Install KronaPlot
 RUN cd /home/imp/tmp \
-    && wget "http://downloads.sourceforge.net/project/krona/KronaTools (Mac, Linux)/KronaTools-2.5.tar" \
+    && wget --no-check-certificate https://webdav-r3lab.uni.lu/public/R3lab/IMP/KronaTools-2.5.tar \
     && tar -xvf KronaTools-2.5.tar \
     && cd KronaTools-2.5 \
     && perl install.pl
@@ -166,7 +166,7 @@ RUN cd /home/imp/tmp \
 
 ## htslib
 RUN cd /home/imp/tmp \
-    && wget https://github.com/samtools/htslib/releases/download/1.2.1/htslib-1.2.1.tar.bz2 \
+    && wget --no-check-certificate https://webdav-r3lab.uni.lu/public/R3lab/IMP/htslib-1.2.1.tar.bz2 \
     && tar -jxvf htslib-1.2.1.tar.bz2 \
     && cd htslib-1.2.1 \
     && ./configure && make && make install \
@@ -174,7 +174,7 @@ RUN cd /home/imp/tmp \
 
 ## Platypus
 RUN cd /home/imp/lib \
-    && wget http://www.well.ox.ac.uk/bioinformatics/Software/Platypus-latest.tgz \
+    && wget --no-check-certificate https://webdav-r3lab.uni.lu/public/R3lab/IMP/Platypus-latest.tgz \
     && tar -xvzf Platypus-latest.tgz \
     && cd Platypus_0.8.1 \
     && bash buildPlatypus.sh

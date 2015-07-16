@@ -46,7 +46,7 @@
         "url": "http://hgdownload.cse.ucsc.edu/goldenPath/hg38/chromosomes/chr21.fa.gz"
     },
     "sortmerna": {
-        "pkg_url": "https://github.com/biocore/sortmerna/archive/2.0.tar.gz",
+        "pkg_url": "https://webdav-r3lab.uni.lu/public/R3lab/IMP/sortmerna.2.0.tgz",
         "scripts_path": "/home/imp/lib",
 
         "files": [
