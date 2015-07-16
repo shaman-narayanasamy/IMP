@@ -130,7 +130,7 @@ rule ANALYSIS_MG_VARIANT_CALLING:
         "%s/MG.variants.platypus.vcf.gz" % AN_OUT
     shell:
         """
-        echo "[x]  VARIANT CALLING `date +"%Y/%m/%d %H:%M:%S"`"
+        echo "[x] MG VARIANT CALLING `date +"%Y/%m/%d %H:%M:%S"`"
         if [[ ! -f {input[1]}.bai ]]
         then
             echo "Bam index doesn't exist, Creating one..."
@@ -151,24 +151,31 @@ rule ANALYSIS_MG_VARIANT_CALLING:
         VCF_PLT=$(mktemp --tmpdir={TMPDIR} -t "XXXXXX.plt.vcf")
         
         ### run_mpileup {input[0]} {input[1]} {output[1]}
-        samtools mpileup -uf {input[0]} {input[1]} | bcftools view -vcg - > $VCF_MPU
+        echo "Running samtools mpileup"
+        samtools mpileup -uf {input[0]} {input[1]} |\
+        bcftools view -vcg - |\
+        vcf-convert -r {input[0]} -v 4.2 > $VCF_MPU
         bgzip -c $VCF_MPU > {output[1]}
         tabix -f -p vcf {output[1]}
 
         ### run_freebayes {input[0]} {input[1]} {output[2]}
-        freebayes -f {input[0]} {input[1]} > $VCF_FRB
+        echo "Running freebayes"
+        freebayes -f {input[0]} {input[1]} |\
+        vcf-convert -r {input[0]} -v 4.2 > $VCF_FRB
         bgzip -c $VCF_FRB > {output[2]}
         tabix -f -p vcf {output[2]}
 
         ### run_platypus {input[0]} {input[1]} {output[3]}
-        Platypus.py callVariants --refFile={input[0]} --bamFiles={input[1]} --nCPU={THREADS} -o $VCF_PLT
+        echo "Running platypus"
+        Platypus.py callVariants --refFile={input[0]} \
+        --bamFiles={input[1]} --nCPU={THREADS} -o $VCF_PLT
         bgzip -c $VCF_PLT > {output[3]}
         tabix -f -p vcf {output[3]}
 
         ### "Merging outputs from all the callers"
         ## Must remove colons from the contig names in upstream steps. Unable to merge the variants
         ## due to this problem
-        vcf-isec -f -a -n +2 {output[1]} {output[2]} {output[3]} > {AN_OUT}/MG.variants.isec.vcf
+        vcf-isec -f -a -n +2 {output[1]} {output[2]} > {AN_OUT}/MG.variants.isec.vcf
 
         # Compress and index the output.
         bgzip -c {AN_OUT}/MG.variants.isec.vcf > {output[0]}
@@ -194,7 +201,7 @@ rule ANALYSIS_MT_VARIANT_CALLING:
         "%s/MT.variants.platypus.vcf.gz" % AN_OUT
     shell:
         """
-        echo "[x]  VARIANT CALLING `date +"%Y/%m/%d %H:%M:%S"`"
+        echo "[x] MT VARIANT CALLING `date +"%Y/%m/%d %H:%M:%S"`"
         if [[ ! -f {input[1]}.bai ]]
         then
             echo "Bam index doesn't exist, Creating one..."
@@ -215,24 +222,31 @@ rule ANALYSIS_MT_VARIANT_CALLING:
         VCF_PLT=$(mktemp --tmpdir={TMPDIR} -t "XXXXXX.plt.vcf")
         
         ### run_mpileup {input[0]} {input[1]} {output[1]}
-        samtools mpileup -uf {input[0]} {input[1]} | bcftools view -vcg - > $VCF_MPU
+        echo "Running samtools mpileup"
+        samtools mpileup -uf {input[0]} {input[1]} |\
+        bcftools view -vcg - |\
+        vcf-convert -r {input[0]} -v 4.2 > $VCF_MPU
         bgzip -c $VCF_MPU > {output[1]}
         tabix -f -p vcf {output[1]}
 
         ### run_freebayes {input[0]} {input[1]} {output[2]}
-        freebayes -f {input[0]} {input[1]} > $VCF_FRB
+        echo "Running freebayes"
+        freebayes -f {input[0]} {input[1]} |\
+        vcf-convert -r {input[0]} -v 4.2 > $VCF_FRB
         bgzip -c $VCF_FRB > {output[2]}
         tabix -f -p vcf {output[2]}
 
         ### run_platypus {input[0]} {input[1]} {output[3]}
-        Platypus.py callVariants --refFile={input[0]} --bamFiles={input[1]} --nCPU={THREADS} -o $VCF_PLT
+        echo "Running platypus"
+        Platypus.py callVariants --refFile={input[0]} \
+        --bamFiles={input[1]} --nCPU={THREADS} -o $VCF_PLT
         bgzip -c $VCF_PLT > {output[3]}
         tabix -f -p vcf {output[3]}
 
         ### "Merging outputs from all the callers"
         ## Must remove colons from the contig names in upstream steps. Unable to merge the variants
         ## due to this problem
-        vcf-isec -f -a -n +2 {output[1]} {output[2]} {output[3]} > {AN_OUT}/MT.variants.isec.vcf
+        vcf-isec -f -a -n +2 {output[1]} {output[2]} > {AN_OUT}/MT.variants.isec.vcf
 
         # Compress and index the output.
         bgzip -c {AN_OUT}/MT.variants.isec.vcf > {output[0]}
