@@ -91,11 +91,11 @@ if __name__ == '__main__':
 
     # CL
     cmd = ['docker', 'run'] + mount_points + envs
+    # add container name and commands to pass to snakemake
+    cmd += [container_name] + args['COMMANDS']
     # if --enter flag is specified, change the command
     if args['--enter']:
         cmd += ['-it /bin/bash']
-    # add container name and commands to pass to snakemake
-    cmd += [container_name] + args['COMMANDS']
     # parse CL correctly
     cmd = shlex.split(' '.join(cmd))
     print("Executing", '"', ' '.join(cmd), '"')
