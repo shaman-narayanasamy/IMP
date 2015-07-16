@@ -216,5 +216,4 @@ ENV PATH /home/imp/lib/trinityrnaseq_r20140717:/home/imp/lib/Platypus_0.8.1:/hom
 
 VOLUME ["/data", "/output"]
 WORKDIR /home/imp/integrated-metaomic-pipeline
-ENTRYPOINT ["snakemake"]
-CMD ["ALL"]
+CMD ["snakemake", "ALL"]
