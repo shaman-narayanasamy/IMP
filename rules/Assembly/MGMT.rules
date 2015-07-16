@@ -21,6 +21,9 @@ rule ASSEMBLY_MT_MEGAHIT_1:
         outdir = "{dir}/MT.assembly_1".format(dir=A_OUT)
     shell:
         """
+        if [ -d "{params.outdir}" ]; then
+            rm -rf {params.outdir}
+        fi
         MAX_READ_LEN=$(cat {input} | sed -n '1~4s/^@/>/p;2~4p' |\
         awk '$0 ~ \">\" {{c=0\"\t\"; }} $0 !~ \">\" {{c+=length($0); max=(max>c)?max:c;}} END {{print max}}')
         echo "Max read length: $MAX_READ_LEN"
@@ -80,6 +83,10 @@ rule ASSEMBLY_MT_MEGAHIT_2:
         outdir = "{dir}/MT.assembly_2".format(dir=A_OUT)
     shell:
         """
+        if [ -d "{params.outdir}" ]; then
+            rm -rf {params.outdir}
+        fi
+
         MAX_READ_LEN=$(cat {input} | sed -n '1~4s/^@/>/p;2~4p' | \
         awk '$0 ~ \">\" {{c=0\"\t\"; }} $0 !~ \">\" {{c+=length($0); max=(max>c)?max:c;}} END {{print max}}')
         echo "Max read length: $MAX_READ_LEN"
@@ -424,6 +431,9 @@ rule ASSEMBLY_MGMT_FAST_1:
         outdir = "{dir}/MGMT.assembly_1".format(dir=A_OUT)
     shell:
         """
+        if [ -d "{params.outdir}" ]; then
+            rm -rf {params.outdir}
+        fi
         MAX_READ_LEN=$(cat {input} | sed -n '1~4s/^@/>/p;2~4p' |\
         awk '$0 ~ \">\" {{c=0\"\t\"; }} $0 !~ \">\" {{c+=length($0); max=(max>c)?max:c;}} END {{print max}}')
         echo "Max read length: $MAX_READ_LEN"
@@ -482,6 +492,9 @@ rule ASSEMBLY_MGMT_FAST_2:
         outdir = "{dir}/MGMT.assembly_2".format(dir=A_OUT)
     shell:
         """
+        if [ -d "{params.outdir}" ]; then
+            rm -rf {params.outdir}
+        fi
         MAX_READ_LEN=$(cat {input} | sed -n '1~4s/^@/>/p;2~4p' | \
         awk '$0 ~ \">\" {{c=0\"\t\"; }} $0 !~ \">\" {{c+=length($0); max=(max>c)?max:c;}} END {{print max}}')
         MEMBYTES=$(({MEMTOTAL}*1000*1000*1000))
