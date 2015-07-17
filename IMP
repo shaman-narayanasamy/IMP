@@ -92,14 +92,14 @@ if __name__ == '__main__':
 
     # CL
     cmd = ['docker', 'run'] + mount_points + envs
+    # rm the container by default
+    if not args['--norm']:
+        cmd += ['--rm']
     # if --enter flag is specified, add attach tty and set mode to interactive
     if args['--enter']:
         cmd += ['-it']
     # add container name and commands to pass to snakemake
     cmd += [container_name] + args['COMMANDS']
-    # rm the container by default
-    if not args['--norm']:
-        cmd += ['--rm']
     # if --enter flag is specified, change the command
     if args['--enter']:
         cmd += ['/bin/bash']
