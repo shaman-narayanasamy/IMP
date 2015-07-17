@@ -16,6 +16,7 @@ __doc__ = """Integrated Metaomic Pipeline.
 
 Usage:
   IMP -m MG1 -m MG2 -t MT1 -t MT2 -o OUTPUT [--enter] [--norm] [-n CONTAINER] [-d DBPATH] [-e ENV] ... [COMMANDS ...]
+  IMP (-m MG1 -m MG2 | -t MT1 -t MT2) -o OUTPUT [--enter] [--norm] [-n CONTAINER] [-d DBPATH] [-e ENV] ... [COMMANDS ...]
   IMP --init [-d DBPATH]
   IMP (-h | --help)
   IMP --version
@@ -117,11 +118,10 @@ def run(args):
     mg = ['/data/' + d for d in mg_data]
     mt = ['/data/' + d for d in mt_data]
 
-    # add to env
-    envs += [
-        '-e MG="%s"' % ' '.join(mg),
-        '-e MT="%s"' % ' '.join(mt)
-    ]
+    if mg:
+        envs += ['-e MG="%s"' % ' '.join(mg)]
+    if mt:
+        envs += ['-e MT="%s"' % ' '.join(mt)]
 
     # CL
     cmd = ['docker', 'run'] + mount_points + envs
