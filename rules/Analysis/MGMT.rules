@@ -577,7 +577,7 @@ rule ANALYSIS_MG_QUALITY_STATS:
                 '{dir}/quality_QQ.{ext}',
                 '{dir}/reads_length.{ext}',
                 '{dir}/reads_quality.{ext}'
-                ], n=['1', '2'], ext=['gnuplot', 'png', 'tab'], dir='%s/stats/MG' % P_OUT)
+                ], n=['1', '2'], ext=['gnuplot', 'pdf', 'tab'], dir='%s/stats/MG' % P_OUT)
     benchmark:
         "%s/benchmarks/PREPROCESSING_MG_QUALITY_STATS.json" % P_OUT
     log:
@@ -600,12 +600,12 @@ rule ANALYSIS_MG_PREPROCESSED_QUALITY_STATS:
     output:
         expand(['{dir}/cycle_composition_{n}.{ext}',
                 '{dir}/cycle_quality_{n}.{ext}',
-                '{dir}/cycle_quality_box_{n}.{ext}',
+                '{dir}/cycle_quality_{n}.box.{ext}',
                 '{dir}/info.tab', '{dir}/lane_tile_quality_{n}.{ext}',
                 '{dir}/quality_QQ.{ext}',
                 '{dir}/reads_length.{ext}',
                 '{dir}/reads_quality.{ext}'
-                ], n=['1', '2'], ext=['gnuplot', 'png', 'tab'], dir='%s/stats_after_preprocessing/MG' % P_OUT)
+                ], n=['1', '2'], ext=['gnuplot', 'pdf', 'tab'], dir='%s/stats_after_preprocessing/MG' % P_OUT)
     shell:
         """
         ht2-stat --encode=sanger -q -P -t {THREADS} -o  {P_OUT}/stats_after_preprocessing/MG -i {input} >> {log} 2>&1
@@ -630,7 +630,7 @@ rule ANALYSIS_MT_QUALITY_STATS:
                 '{dir}/quality_QQ.{ext}',
                 '{dir}/reads_length.{ext}',
                 '{dir}/reads_quality.{ext}'
-                ], n=['1', '2'], ext=['gnuplot', 'png', 'tab'], dir='%s/stats/MT' % P_OUT)
+                ], n=['1', '2'], ext=['gnuplot', 'pdf', 'tab'], dir='%s/stats/MT' % P_OUT)
     shell:
         """
         ht2-stat --encode=sanger -q -P -t {THREADS} -o  {P_OUT}/stats/MT -i {input} >> {log} 2>&1
@@ -656,7 +656,7 @@ rule ANALYSIS_MT_PREPROCESSED_QUALITY_STATS:
                 '{dir}/quality_QQ.{ext}',
                 '{dir}/reads_length.{ext}',
                 '{dir}/reads_quality.{ext}'
-                ], n=['1', '2'], ext=['gnuplot', 'png', 'tab'], dir='%s/stats_after_preprocessing/MT' % P_OUT)
+                ], n=['1', '2'], ext=['gnuplot', 'pdf', 'tab'], dir='%s/stats_after_preprocessing/MT' % P_OUT)
     shell:
         """
         ht2-stat --encode=sanger -q -P -t {THREADS} -o  {P_OUT}/stats_after_preprocessing/MT -i {input} >> {log} 2>&1
