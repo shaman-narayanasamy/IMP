@@ -585,6 +585,8 @@ rule ANALYSIS_MG_QUALITY_STATS:
     shell:
         """
         ht2-stat --encode=sanger -q -P -t {THREADS} -o  {P_OUT}/stats/MG -i {input} >> {log} 2>&1
+        # must touch the file with no data otherwise it fails
+        find {P_OUT}/stats/MG -name "*.box.gnuplot" -exec sh -c 'for x; do if [ ! -f "$x.tab" ]; then touch $x.tab; fi; done' _ {} +
         ht2-stat-draw.pl --dir {P_OUT}/stats/MG >> {log} 2>&1
         """
 

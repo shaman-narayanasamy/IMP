@@ -23,7 +23,7 @@ RUN apt-get update \
     && apt-get install -yq libboost-filesystem1.54-dev libboost-program-options1.54-dev libboost-regex1.54-dev libboost-system1.54-dev libboost-thread1.54-dev libboost-system1.54-dev \
     && apt-get install -yq bioperl=1.6.923-1 tabix=0.2.6-2 zlib1g zlib1g-dev samtools gnuplot python3 \
     && apt-get install -yq r-base r-base-dev \
-    && apt-get install -yq libncurses5 libncurses5-dev sudo libatlas-base-dev python2.7 gfortran python-dev \
+    && apt-get install -yq libncurses5 libncurses5-dev sudo libatlas-base-dev python2.7 gfortran python-dev libchart-clicker-perl \
     && update-alternatives --set java /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/java
 
 
@@ -109,7 +109,7 @@ RUN cd /home/imp/tmp \
     && cd ../.. && rm -rf htqc* \
     && cd .. && rm -rf cufflinks* \
 ## freebayes
-    && git clone --recursive git://github.com/ekg/freebayes.git \
+    && git clone --recursive https://git-r3lab.uni.lu/R3/freebayes.git \
     && cd freebayes \
     && git checkout -b v0.9.16 \
     && make \
@@ -150,7 +150,7 @@ RUN cd /home/imp/tmp \
     && mv scripts/*.sh /home/imp/lib/. \
     && cd .. && rm -rf sortmerna* \
 ## bedtools2
-    && git clone https://github.com/arq5x/bedtools2.git \
+    && git clone https://git-r3lab.uni.lu/R3/bedtools2.git \
     && cd bedtools2 \
     && git checkout v2.22.0 \
     && make
@@ -181,7 +181,7 @@ RUN cd /home/imp/lib \
 
 ## Megahit
 RUN cd /home/imp/lib \
-    && git clone https://github.com/voutcn/megahit.git \
+    && git clone https://git-r3lab.uni.lu/R3/megahit.git \
     && cd megahit \
     && git checkout v0.2.1 \
     && make \
