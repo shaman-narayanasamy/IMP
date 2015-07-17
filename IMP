@@ -5,7 +5,6 @@ import subprocess
 import os
 import json
 import shlex
-import snakemake
 from copy import deepcopy
 import tempfile
 
