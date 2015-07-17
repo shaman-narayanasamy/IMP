@@ -73,7 +73,7 @@ def init(args):
     cmd = [
         'docker', 'run', '--rm',
         '-v %s:/home/imp/integrated-metaomic-pipeline' % CURRENT_PATH,
-        '-v %s:/databases' % db_path, container_name, 'snakemake -s %s/init.rule' % CURRENT_PATH
+        '-v %s:/databases' % db_path, container_name, 'snakemake -s /home/imp/integrated-metaomic-pipeline/init.rule'
     ]
     print("Executing", '"', ' '.join(cmd), '"')
     subprocess.call(cmd)
