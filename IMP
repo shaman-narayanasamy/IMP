@@ -76,7 +76,7 @@ def init(args):
         '-v %s:/databases' % db_path, container_name, 'snakemake -s /home/imp/integrated-metaomic-pipeline/init.rule'
     ]
     print("Executing", '"', ' '.join(cmd), '"')
-    subprocess.call(shlex.split(' '.join(cmd))
+    subprocess.call(shlex.split(' '.join(cmd)))
 
 
 def run(args):
