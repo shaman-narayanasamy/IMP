@@ -42,8 +42,8 @@
         "jarfile": "/home/imp/lib/VizBin-dist.jar"
     },
     "human_filtering": {
-        "filter": "chr21",
-        "url": "http://hgdownload.cse.ucsc.edu/goldenPath/hg38/chromosomes/chr21.fa.gz"
+        "filter": "hg38",
+        "url": "http://hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz"
     },
     "sortmerna": {
         "pkg_url": "https://webdav-r3lab.uni.lu/public/R3lab/IMP/sortmerna.2.0.tgz",
