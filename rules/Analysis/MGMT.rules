@@ -586,7 +586,7 @@ rule ANALYSIS_MG_QUALITY_STATS:
         """
         ht2-stat --encode=sanger -q -P -t {THREADS} -o  {P_OUT}/stats/MG -i {input} >> {log} 2>&1
         # must touch the file with no data otherwise it fails
-        find {P_OUT}/stats/MG -name "*.box.gnuplot" -exec sh -c 'for x; do if [ ! -f "$x.tab" ]; then touch $x.tab; fi; done' _ {} +
+        find {P_OUT}/stats/MG -name "*.gnuplot" | sed 's/gnuplot/tab/' | xargs touch
         ht2-stat-draw.pl --dir {P_OUT}/stats/MG >> {log} 2>&1
         """
 
@@ -609,6 +609,7 @@ rule ANALYSIS_MG_PREPROCESSED_QUALITY_STATS:
     shell:
         """
         ht2-stat --encode=sanger -q -P -t {THREADS} -o  {P_OUT}/stats_after_preprocessing/MG -i {input} >> {log} 2>&1
+        find {P_OUT}/stats_after_preprocessing/MG -name "*.gnuplot" | sed 's/gnuplot/tab/' | xargs touch
         ht2-stat-draw.pl --dir {P_OUT}/stats_after_preprocessing/MG >> {log} 2>&1
         """
     benchmark:
@@ -633,6 +634,7 @@ rule ANALYSIS_MT_QUALITY_STATS:
     shell:
         """
         ht2-stat --encode=sanger -q -P -t {THREADS} -o  {P_OUT}/stats/MT -i {input} >> {log} 2>&1
+        find {P_OUT}/stats/MT -name "*.gnuplot" | sed 's/gnuplot/tab/' | xargs touch
         ht2-stat-draw.pl --dir {P_OUT}/stats/MT >> {log} 2>&1
         """
 
@@ -658,5 +660,6 @@ rule ANALYSIS_MT_PREPROCESSED_QUALITY_STATS:
     shell:
         """
         ht2-stat --encode=sanger -q -P -t {THREADS} -o  {P_OUT}/stats_after_preprocessing/MT -i {input} >> {log} 2>&1
+        find {P_OUT}/stats_after_preprocessing/MT -name "*.gnuplot" | sed 's/gnuplot/tab/' | xargs touch
         ht2-stat-draw.pl --dir {P_OUT}/stats_after_preprocessing/MT >> {log} 2>&1
         """
