@@ -1,0 +1,118 @@
+include:
+    "config"
+
+rule ALL:
+    input:
+        expand("{path}/{filter}.{ext}", path=DBPATH + "/human", filter=config["human_filtering"]["filter"], ext=['fa']),
+        expand("{path}/{files}.fasta", files=config["sortmerna"]["files"], path=DBPATH + "/sortmerna"),
+        expand("{path}/{db}", path=DBPATH, db=config["prokka"]["databases"]),
+        "%s/adapters/adapters.done" % DBPATH,
+        expand(
+            "{path}/idx/{files}.{ext}",
+            files=config["sortmerna"]["files"],
+            path=DBPATH + "/sortmerna",
+            ext=['bursttrie_0.dat', 'kmer_0.dat', 'pos_0.dat', 'stats'])
+
+rule _DOWNLOAD_HUMAN_DB:
+    output:
+        expand("{path}/{filter}.{ext}", path=DBPATH + "/human", filter=config["human_filtering"]["filter"], ext=['fa'])
+    params:
+        filter = config["human_filtering"]["filter"], outdir = DBPATH + "/human"
+    shell:
+        """
+        TMPD=$(mktemp -d -t --tmpdir={TMPDIR} "XXXXXX")
+        wget {config[human_filtering][url]} --no-check-certificate -O $TMPD/{params.filter}.fa.gz
+        gunzip $TMPD/{params.filter}.fa.gz
+        mkdir -p {params.outdir}
+        mv $TMPD/{params.filter}.fa {params.outdir}
+        rm -rf $TMPD
+        """
+print(TMPDIR)
+
+rule _DOWNLOAD_SORTMERNA_DATABASES:
+    output:
+        expand("{path}/{files}.fasta", files=config["sortmerna"]["files"], path=DBPATH + "/sortmerna")
+    shell:
+        """
+        TMPD=$(mktemp -d -t --tmpdir={tmp} "XXXXXX")
+        wget {pkg_url} --no-check-certificate -O $TMPD/sortmerna.tgz
+        tar -xzf  $TMPD/sortmerna.tgz --strip-components=1 -C $TMPD
+        mkdir -p {path}
+        mv $TMPD/rRNA_databases/*.fasta {path}/.
+        rm -rf $TMPD
+        """.format(
+            pkg_url=config["sortmerna"]["pkg_url"],
+            path=DBPATH + "/sortmerna",
+            tmp=TMPDIR
+        )
+
+rule _DOWNLOAD_PROKKA_DATABASES:
+    output:
+        expand("{path}/{db}", path=DBPATH, db=config["prokka"]["databases"])
+    shell:
+        """
+        ### prokka by default will look databases where is located the binary.
+        ### we have to softlink to put the binary somewhere and the databases somewhere else.
+        if [[ "{DBPATH}" = /* ]]
+        then
+            PP={DBPATH};
+        else
+            PP=$PWD/{DBPATH};
+        fi
+        cd $(dirname $(which prokka))/.. && ln -s $PP db
+        echo "Softlinking $(dirname $(which prokka))/../db to $PP"
+        TMPDIR=$(mktemp -d -t "XXXXXX")
+        wget {config[prokka][pkg_url]} --no-check-certificate -O $TMPDIR/prokka.tgz
+        tar -xzf $TMPDIR/prokka.tgz --strip-components=1 -C $TMPDIR
+        mkdir -p {DBPATH}
+        cp -r $TMPDIR/db/* {DBPATH}/.
+        rm -rf $TMPDIR
+        prokka --setupdb
+        """
+
+
+rule INDEX_SORTMERNA_DB:
+    input:
+        expand("{path}/{files}.fasta", files=config["sortmerna"]["files"], path=DBPATH + "/sortmerna")
+    output:
+        expand(
+            "{path}/idx/{files}.{ext}",
+            files=config["sortmerna"]["files"],
+            path=DBPATH + "/sortmerna",
+            ext=['bursttrie_0.dat', 'kmer_0.dat', 'pos_0.dat', 'stats'])
+    run:
+        fastaindexed = expand(
+            "{path}/idx/{files}",
+            files=config["sortmerna"]["files"],
+            path=DBPATH + "/sortmerna")
+        ref = ':'.join('%s,%s' % (a, b) for a, b in zip(input, fastaindexed))
+        shell("mkdir -p {DBPATH}/sortmerna")
+        shell("indexdb_rna --ref {ref}")
+
+
+rule INDEX_FASTA_FILE:
+    input:
+        "{fasta}"
+    output:
+        "{fasta}.amb",
+        "{fasta}.bwt",
+        "{fasta}.pac",
+        "{fasta}.sa",
+        "{fasta}.ann"
+    shell:
+        """
+        bwa index {wildcards.fasta} > {log} 2>&1
+        """
+
+
+rule _DOWNLOAD_TRIMMOMATIC_ADAPTERS:
+    output:
+        "{DBPATH}/adapters/adapters.done"
+    shell:
+        """
+        wget --no-check-certificate {config[trimmomatic][pkg_url]} -O Trimmomatic-Src-0.32.zip
+        unzip Trimmomatic-Src-0.32.zip
+        cp -r trimmomatic-0.32/adapters {DBPATH}
+        rm Trimmomatic-Src-0.32.zip && rm -rf trimmomatic-0.32
+        touch {output}
+        """
