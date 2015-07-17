@@ -1,6 +1,8 @@
 include:
     "config"
 
+print(config)
+exit
 rule ALL:
     input:
         expand("{path}/{filter}.{ext}", path=DBPATH + "/human", filter=config["human_filtering"]["filter"], ext=['fa']),
@@ -27,7 +29,7 @@ rule _DOWNLOAD_HUMAN_DB:
         mv $TMPD/{params.filter}.fa {params.outdir}
         rm -rf $TMPD
         """
-print(TMPDIR)
+
 
 rule _DOWNLOAD_SORTMERNA_DATABASES:
     output:
