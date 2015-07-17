@@ -23,7 +23,7 @@ RUN apt-get update \
     && apt-get install -yq libboost-filesystem1.54-dev libboost-program-options1.54-dev libboost-regex1.54-dev libboost-system1.54-dev libboost-thread1.54-dev libboost-system1.54-dev \
     && apt-get install -yq bioperl=1.6.923-1 tabix=0.2.6-2 zlib1g zlib1g-dev samtools gnuplot python3 \
     && apt-get install -yq r-base r-base-dev \
-    && apt-get install -yq libncurses5 libncurses5-dev sudo libatlas-base-dev python2.7 gfortran python-dev libchart-clicker-perl \
+    && apt-get install -yq libncurses5 libncurses5-dev sudo libatlas-base-dev python2.7 gfortran python-dev \
     && update-alternatives --set java /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/java
 
 
