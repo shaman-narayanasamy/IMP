@@ -565,19 +565,25 @@ rule ANALYSIS_KRONA_PLOT_MT:
         ktImportText -o {output[1]} {output[0]} -a
         """
 
+
+def stat_files(dir):
+    return expand([
+        '{dir}/cycle_composition_{n}.{ext}',
+        '{dir}/cycle_quality_{n}.{ext}',
+        '{dir}/cycle_quality_{n}.box.{ext}',
+        '{dir}/info.tab',
+        '{dir}/lane_tile_quality_{n}.{ext}',
+        '{dir}/quality_QQ.{ext}',
+        '{dir}/reads_length.{ext}',
+        '{dir}/reads_quality.{ext}'
+        ], n=['1', '2'], ext=['gnuplot', 'pdf', 'tab'], dir=dir % P_OUT)
+
+
 rule ANALYSIS_MG_QUALITY_STATS:
     input:
         expand('{dir}/{raw}', raw=['MG.R1.fq', 'MG.R2.fq'], dir=P_OUT)
     output:
-        expand(['{dir}/cycle_composition_{n}.{ext}',
-                '{dir}/cycle_quality_{n}.{ext}',
-                '{dir}/cycle_quality_box_{n}.{ext}',
-                '{dir}/info.tab',
-                '{dir}/lane_tile_quality_{n}.{ext}',
-                '{dir}/quality_QQ.{ext}',
-                '{dir}/reads_length.{ext}',
-                '{dir}/reads_quality.{ext}'
-                ], n=['1', '2'], ext=['gnuplot', 'pdf', 'tab'], dir='%s/stats/MG' % P_OUT)
+        stat_files('%s/stats/MG')
     benchmark:
         "%s/benchmarks/PREPROCESSING_MG_QUALITY_STATS.json" % P_OUT
     log:
@@ -598,14 +604,7 @@ rule ANALYSIS_MG_PREPROCESSED_QUALITY_STATS:
             'MG.R1.uniq.trimmed.fq',
             'MG.R2.uniq.trimmed.fq'], dir=P_OUT)
     output:
-        expand(['{dir}/cycle_composition_{n}.{ext}',
-                '{dir}/cycle_quality_{n}.{ext}',
-                '{dir}/cycle_quality_{n}.box.{ext}',
-                '{dir}/info.tab', '{dir}/lane_tile_quality_{n}.{ext}',
-                '{dir}/quality_QQ.{ext}',
-                '{dir}/reads_length.{ext}',
-                '{dir}/reads_quality.{ext}'
-                ], n=['1', '2'], ext=['gnuplot', 'pdf', 'tab'], dir='%s/stats_after_preprocessing/MG' % P_OUT)
+        stat_files('%s/stats_after_preprocessing/MG')
     shell:
         """
         ht2-stat --encode=sanger -q -P -t {THREADS} -o  {P_OUT}/stats_after_preprocessing/MG -i {input} >> {log} 2>&1
@@ -623,14 +622,7 @@ rule ANALYSIS_MT_QUALITY_STATS:
     input:
         expand('{dir}/{raw}', raw=['MT.R1.fq', 'MT.R2.fq'], dir=P_OUT)
     output:
-        expand(['{dir}/cycle_composition_{n}.{ext}',
-                '{dir}/cycle_quality_{n}.{ext}',
-                '{dir}/cycle_quality_box_{n}.{ext}',
-                '{dir}/info.tab', '{dir}/lane_tile_quality_{n}.{ext}',
-                '{dir}/quality_QQ.{ext}',
-                '{dir}/reads_length.{ext}',
-                '{dir}/reads_quality.{ext}'
-                ], n=['1', '2'], ext=['gnuplot', 'pdf', 'tab'], dir='%s/stats/MT' % P_OUT)
+        stat_files('%s/stats/MT')
     shell:
         """
         ht2-stat --encode=sanger -q -P -t {THREADS} -o  {P_OUT}/stats/MT -i {input} >> {log} 2>&1
@@ -649,14 +641,7 @@ rule ANALYSIS_MT_PREPROCESSED_QUALITY_STATS:
             'MT.R2.trimmed.fq',
             ], dir=P_OUT)
     output:
-        expand(['{dir}/cycle_composition_{n}.{ext}',
-                '{dir}/cycle_quality_{n}.{ext}',
-                '{dir}/cycle_quality_box_{n}.{ext}',
-                '{dir}/info.tab', '{dir}/lane_tile_quality_{n}.{ext}',
-                '{dir}/quality_QQ.{ext}',
-                '{dir}/reads_length.{ext}',
-                '{dir}/reads_quality.{ext}'
-                ], n=['1', '2'], ext=['gnuplot', 'pdf', 'tab'], dir='%s/stats_after_preprocessing/MT' % P_OUT)
+        stat_files('%s/stats_after_preprocessing/MT')
     shell:
         """
         ht2-stat --encode=sanger -q -P -t {THREADS} -o  {P_OUT}/stats_after_preprocessing/MT -i {input} >> {log} 2>&1
