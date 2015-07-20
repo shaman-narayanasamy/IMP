@@ -143,23 +143,6 @@ ANALYSIS_OUTPUT_FILES = {
 }
 
 
-def analysis_stats_files_output(rtype, flag):
-    return expand([
-        '{dir}/{stat_flag}/{rtype}/cycle_composition_{n}.{ext}',
-        '{dir}/{stat_flag}/{rtype}/cycle_quality_{n}.{ext}',
-        '{dir}/{stat_flag}/{rtype}/cycle_quality_{n}.box.{ext}',
-        '{dir}/{stat_flag}/{rtype}/info.tab',
-        '{dir}/{stat_flag}/{rtype}/lane_tile_quality_{n}.{ext}',
-        '{dir}/{stat_flag}/{rtype}/quality_QQ.{ext}',
-        '{dir}/{stat_flag}/{rtype}/reads_length.{ext}',
-        '{dir}/{stat_flag}/{rtype}/reads_quality.{ext}'],
-            n=['1', '2'],
-            ext=['gnuplot', 'pdf', 'tab'],
-            dir=P_OUT,
-            stat_flag=flag,
-             rtype=rtype)
-
-
 def analysis_plot_files_output():
     addon = []
     if MG and MT:
@@ -169,6 +152,7 @@ def analysis_plot_files_output():
     elif MT:
         addon = PLOT_OUTPUT_FILES['mt']
     return expand('%s/results/{name}' % AN_OUT, name=PLOT_OUTPUT_FILES['default'] + addon)
+
 
 def analysis_output_files():
     addon = []
