@@ -86,8 +86,17 @@ ANALYSIS_OUTPUT_FILES = {
         "MG.assembly.contig_depth.txt",
         "MG.assembly.contig_flagstat.txt",
         "results/MG.gene_kegg_krona.txt",
-        "results/MG.gene_kegg_krona.html"
-
+        "results/MG.gene_kegg_krona.html",
+        expand('{dir}/stats/MG/MG.R1.fq_fastqc.html', dir=AN_OUT),
+        expand('{dir}/stats/MG/MG.R2.fq_fastqc.html', dir=AN_OUT),
+        expand('{dir}/stats/MG/MG.R1.fq_fastqc.zip', dir=AN_OUT),
+        expand('{dir}/stats/MG/MG.R2.fq_fastqc.zip', dir=AN_OUT),
+        preprocessed_mg('R1', dir=AN_OUT + '/stats/MG') + '_fastqc.zip',
+        preprocessed_mg('R2', dir=AN_OUT + '/stats/MG') + '_fastqc.zip',
+        preprocessed_mg('SE', dir=AN_OUT + '/stats/MG') + '_fastqc.zip',
+        preprocessed_mg('R1', dir=AN_OUT + '/stats/MG') + '_fastqc.html',
+        preprocessed_mg('R2', dir=AN_OUT + '/stats/MG') + '_fastqc.html',
+        preprocessed_mg('SE', dir=AN_OUT + '/stats/MG') + '_fastqc.html'
     ],
     'mt': [
         "MT.read_counts.txt",
@@ -104,8 +113,17 @@ ANALYSIS_OUTPUT_FILES = {
         "MT.assembly.contig_depth.txt",
         "MT.assembly.contig_flagstat.txt",
         "results/MT.gene_kegg_krona.txt",
-        "results/MT.gene_kegg_krona.html"
-
+        "results/MT.gene_kegg_krona.html",
+        expand('{dir}/stats/MT/MT.R1.fq_fastqc.html', dir=AN_OUT),
+        expand('{dir}/stats/MT/MT.R2.fq_fastqc.html', dir=AN_OUT),
+        expand('{dir}/stats/MT/MT.R1.fq_fastqc.zip', dir=AN_OUT),
+        expand('{dir}/stats/MT/MT.R2.fq_fastqc.zip', dir=AN_OUT),
+        preprocessed_mt('R1', dir=AN_OUT + '/stats/MT') + '_fastqc.zip',
+        preprocessed_mt('R2', dir=AN_OUT + '/stats/MT') + '_fastqc.zip',
+        preprocessed_mt('SE', dir=AN_OUT + '/stats/MT') + '_fastqc.zip',
+        preprocessed_mt('R1', dir=AN_OUT + '/stats/MT') + '_fastqc.html',
+        preprocessed_mt('R2', dir=AN_OUT + '/stats/MT') + '_fastqc.html',
+        preprocessed_mt('SE', dir=AN_OUT + '/stats/MT') + '_fastqc.html'
     ],
     'mg_only': [
         "MG.assembly.length.txt",
@@ -120,7 +138,8 @@ ANALYSIS_OUTPUT_FILES = {
         "MT.vizbin.points",
         "MT.vizbin.filtered.fa",
         "MT.vizbin.with-contig-names.points"
-    ]
+    ],
+
 }
 
 
@@ -151,24 +170,17 @@ def analysis_plot_files_output():
         addon = PLOT_OUTPUT_FILES['mt']
     return expand('%s/results/{name}' % AN_OUT, name=PLOT_OUTPUT_FILES['default'] + addon)
 
-
 def analysis_output_files():
     addon = []
-    stats = []
     if MG and MT:
         addon = ANALYSIS_OUTPUT_FILES['mgmt'] + ANALYSIS_OUTPUT_FILES['mg'] + ANALYSIS_OUTPUT_FILES['mt']
-        stats = analysis_stats_files_output(['MG', 'MT'], ['stats', 'stats_after_preprocessing'])
     elif MG:
         addon = ANALYSIS_OUTPUT_FILES['mg'] + ANALYSIS_OUTPUT_FILES['mg_only']
-        stats = analysis_stats_files_output(['MG'], ['stats', 'stats_after_preprocessing'])
     elif MT:
         addon = ANALYSIS_OUTPUT_FILES['mt'] + ANALYSIS_OUTPUT_FILES['mt_only']
-        stats = analysis_stats_files_output('MT', ['stats', 'stats_after_preprocessing'])
     all = expand('%s/{name}' % AN_OUT, name=addon)
-
     plots = analysis_plot_files_output()
-
-    return all + plots + stats
+    return all + plots
 
 
 # include sub rules

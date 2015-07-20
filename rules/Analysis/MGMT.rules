@@ -565,18 +565,6 @@ rule ANALYSIS_KRONA_PLOT_MT:
         ktImportText -o {output[1]} {output[0]} -a
         """
 
-def stat_files(dir):
-    return expand([
-        '{dir}/cycle_composition_{n}.{ext}',
-        '{dir}/cycle_quality_{n}.{ext}',
-        '{dir}/cycle_quality_{n}.box.{ext}',
-        '{dir}/info.tab',
-        '{dir}/lane_tile_quality_{n}.{ext}',
-        '{dir}/quality_QQ.{ext}',
-        '{dir}/reads_length.{ext}',
-        '{dir}/reads_quality.{ext}'
-        ], n=['1', '2'], ext=['gnuplot', 'pdf', 'tab'], dir=dir % P_OUT)
-
 rule ANALYSIS_MG_QUALITY_STATS:
     input:
         expand('{dir}/{raw}', raw=['MG.R1.fq', 'MG.R2.fq'], dir=P_OUT)
@@ -603,7 +591,10 @@ rule ANALYSIS_MG_PREPROCESSED_QUALITY_STATS:
     output:
         preprocessed_mg('R1', dir=AN_OUT + '/stats/MG') + '_fastqc.zip',
         preprocessed_mg('R2', dir=AN_OUT + '/stats/MG') + '_fastqc.zip',
-        preprocessed_mg('SE', dir=AN_OUT + '/stats/MG') + '_fastqc.zip'
+        preprocessed_mg('SE', dir=AN_OUT + '/stats/MG') + '_fastqc.zip',
+        preprocessed_mg('R1', dir=AN_OUT + '/stats/MG') + '_fastqc.html',
+        preprocessed_mg('R2', dir=AN_OUT + '/stats/MG') + '_fastqc.html',
+        preprocessed_mg('SE', dir=AN_OUT + '/stats/MG') + '_fastqc.html'
     benchmark:
         "%s/benchmarks/PREPROCESSING_MG_QUALITY_STATS.json" % AN_OUT
     log:
@@ -639,7 +630,10 @@ rule ANALYSIS_MT_PREPROCESSED_QUALITY_STATS:
     output:
         preprocessed_mt('R1', dir=AN_OUT + '/stats/MT') + '_fastqc.zip',
         preprocessed_mt('R2', dir=AN_OUT + '/stats/MT') + '_fastqc.zip',
-        preprocessed_mt('SE', dir=AN_OUT + '/stats/MT') + '_fastqc.zip'
+        preprocessed_mt('SE', dir=AN_OUT + '/stats/MT') + '_fastqc.zip',
+        preprocessed_mt('R1', dir=AN_OUT + '/stats/MT') + '_fastqc.html',
+        preprocessed_mt('R2', dir=AN_OUT + '/stats/MT') + '_fastqc.html',
+        preprocessed_mt('SE', dir=AN_OUT + '/stats/MT') + '_fastqc.html'
     benchmark:
         "%s/benchmarks/PREPROCESSING_MT_QUALITY_STATS.json" % AN_OUT
     log:
