@@ -565,7 +565,6 @@ rule ANALYSIS_KRONA_PLOT_MT:
         ktImportText -o {output[1]} {output[0]} -a
         """
 
-
 def stat_files(dir):
     return expand([
         '{dir}/cycle_composition_{n}.{ext}',
@@ -578,73 +577,75 @@ def stat_files(dir):
         '{dir}/reads_quality.{ext}'
         ], n=['1', '2'], ext=['gnuplot', 'pdf', 'tab'], dir=dir % P_OUT)
 
-
 rule ANALYSIS_MG_QUALITY_STATS:
     input:
         expand('{dir}/{raw}', raw=['MG.R1.fq', 'MG.R2.fq'], dir=P_OUT)
     output:
-        stat_files('%s/stats/MG')
+        expand('{dir}/stats/MG/MG.R1.fq_fastqc.html', dir=AN_OUT),
+        expand('{dir}/stats/MG/MG.R2.fq_fastqc.html', dir=AN_OUT),
+        expand('{dir}/stats/MG/MG.R1.fq_fastqc.zip', dir=AN_OUT),
+        expand('{dir}/stats/MG/MG.R2.fq_fastqc.zip', dir=AN_OUT)
     benchmark:
-        "%s/benchmarks/PREPROCESSING_MG_QUALITY_STATS.json" % P_OUT
+        "%s/benchmarks/PREPROCESSING_MG_QUALITY_STATS_FQC.json" % AN_OUT
     log:
-        P_LOG
+        AN_LOG
     shell:
         """
-        ht2-stat --encode=sanger -q -P -t {THREADS} -o  {P_OUT}/stats/MG -i {input} >> {log} 2>&1
-        # must touch the file with no data otherwise it fails
-        find {P_OUT}/stats/MG -name "*.gnuplot" | sed 's/gnuplot/tab/' | xargs touch
-        ht2-stat-draw.pl --dir {P_OUT}/stats/MG >> {log} 2>&1
+        mkdir -p {AN_OUT}/stats/MG
+        fastqc -o {AN_OUT}/stats/MG -f fastq {input[0]} {input[1]} -t {THREADS} -d {TMPDIR}
         """
 
 rule ANALYSIS_MG_PREPROCESSED_QUALITY_STATS:
-    log:
-        P_LOG
     input:
-        expand('{dir}/{trim}', trim=[
-            'MG.R1.uniq.trimmed.fq',
-            'MG.R2.uniq.trimmed.fq'], dir=P_OUT)
+        preprocessed_mg('R1'),
+        preprocessed_mg('R2'),
+        preprocessed_mg('SE')
     output:
-        stat_files('%s/stats_after_preprocessing/MG')
+        preprocessed_mg('R1', dir=AN_OUT + '/stats/MG') + '_fastqc.zip',
+        preprocessed_mg('R2', dir=AN_OUT + '/stats/MG') + '_fastqc.zip',
+        preprocessed_mg('SE', dir=AN_OUT + '/stats/MG') + '_fastqc.zip'
+    benchmark:
+        "%s/benchmarks/PREPROCESSING_MG_QUALITY_STATS.json" % AN_OUT
+    log:
+        AN_LOG
     shell:
         """
-        ht2-stat --encode=sanger -q -P -t {THREADS} -o  {P_OUT}/stats_after_preprocessing/MG -i {input} >> {log} 2>&1
-        find {P_OUT}/stats_after_preprocessing/MG -name "*.gnuplot" | sed 's/gnuplot/tab/' | xargs touch
-        ht2-stat-draw.pl --dir {P_OUT}/stats_after_preprocessing/MG >> {log} 2>&1
+        mkdir -p {AN_OUT}/stats/MG
+        fastqc -o {AN_OUT}/stats/MG -f fastq {input} -t {THREADS} -d {TMPDIR}
         """
-    benchmark:
-        "%s/benchmarks/PREPROCESSING_MG_PREPROCESSED_QUALITY_STATS.json" % P_OUT
 
 rule ANALYSIS_MT_QUALITY_STATS:
-    log:
-        P_LOG
-    benchmark:
-        "%s/benchmarks/PREPROCESSING_MT_QUALITY_STATS.json" % P_OUT
     input:
         expand('{dir}/{raw}', raw=['MT.R1.fq', 'MT.R2.fq'], dir=P_OUT)
     output:
-        stat_files('%s/stats/MT')
-    shell:
-        """
-        ht2-stat --encode=sanger -q -P -t {THREADS} -o  {P_OUT}/stats/MT -i {input} >> {log} 2>&1
-        find {P_OUT}/stats/MT -name "*.gnuplot" | sed 's/gnuplot/tab/' | xargs touch
-        ht2-stat-draw.pl --dir {P_OUT}/stats/MT >> {log} 2>&1
-        """
-
-rule ANALYSIS_MT_PREPROCESSED_QUALITY_STATS:
-    log:
-        P_LOG
+        expand('{dir}/stats/MT/MT.R1.fq_fastqc.html', dir=AN_OUT),
+        expand('{dir}/stats/MT/MT.R2.fq_fastqc.html', dir=AN_OUT),
+        expand('{dir}/stats/MT/MT.R1.fq_fastqc.zip', dir=AN_OUT),
+        expand('{dir}/stats/MT/MT.R2.fq_fastqc.zip', dir=AN_OUT)
     benchmark:
-        "%s/benchmarks/PREPROCESSING_MT_PREPROCESSED_QUALITY_STATS.json" % P_OUT
-    input:
-        expand('{dir}/{trim}', trim=[
-            'MT.R1.trimmed.fq',
-            'MT.R2.trimmed.fq',
-            ], dir=P_OUT)
-    output:
-        stat_files('%s/stats_after_preprocessing/MT')
+        "%s/benchmarks/PREPROCESSING_MT_QUALITY_STATS.json" % AN_OUT
+    log:
+        AN_LOG
     shell:
         """
-        ht2-stat --encode=sanger -q -P -t {THREADS} -o  {P_OUT}/stats_after_preprocessing/MT -i {input} >> {log} 2>&1
-        find {P_OUT}/stats_after_preprocessing/MT -name "*.gnuplot" | sed 's/gnuplot/tab/' | xargs touch
-        ht2-stat-draw.pl --dir {P_OUT}/stats_after_preprocessing/MT >> {log} 2>&1
+        mkdir -p {AN_OUT}/stats/MT
+        fastqc -o {AN_OUT}/stats/MT -f fastq {input[0]} {input[1]} -t {THREADS} -d {TMPDIR}
+        """
+rule ANALYSIS_MT_PREPROCESSED_QUALITY_STATS:
+    input:
+        preprocessed_mt('R1'),
+        preprocessed_mt('R2'),
+        preprocessed_mt('SE')
+    output:
+        preprocessed_mt('R1', dir=AN_OUT + '/stats/MT') + '_fastqc.zip',
+        preprocessed_mt('R2', dir=AN_OUT + '/stats/MT') + '_fastqc.zip',
+        preprocessed_mt('SE', dir=AN_OUT + '/stats/MT') + '_fastqc.zip'
+    benchmark:
+        "%s/benchmarks/PREPROCESSING_MT_QUALITY_STATS.json" % AN_OUT
+    log:
+        AN_LOG
+    shell:
+        """
+        mkdir -p {AN_OUT}/stats/MT
+        fastqc -o {AN_OUT}/stats/MT -f fastq {input} -t {THREADS} -d {TMPDIR}
         """
