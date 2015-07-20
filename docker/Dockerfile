@@ -111,9 +111,9 @@ RUN cd /home/imp/lib \
     && cd picard/ \
     && ant -lib lib/ant package-commands \
 
-## FastQC 
+## FastQC
     && cd /home/imp/lib/fastqc \
-    && wget http://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.3.zip \
+    && wget --no-check-certificate https://webdav-r3lab.uni.lu/public/R3lab/IMP/fastqc_v0.11.3.zip \
     && unzip fastqc_v0.11.3.zip \
     && cd FastQC \
     && chmod 775 fastqc
