@@ -23,7 +23,7 @@ def preprocessed_mg(target, dir=P_OUT):
         # with human filtering ON
         return '{dir}/MG.{target}.uniq.trimmed.{f}.fq'.format(
             f=config['human_filtering']['filter'],
-            dir=P_OUT,
+            dir=dir,
             target=target)
     # with human filtering OFF
     return '{dir}/MG.{target}.uniq.trimmed.fq'.format(dir=dir, target=target)
@@ -34,7 +34,7 @@ def preprocessed_mt(target,  dir=P_OUT):
         # with human filtering ON
         return '{dir}/MT.{target}.trimmed.rna_filtered.{f}.fq'.format(
             f=config['human_filtering']['filter'],
-            dir=P_OUT,
+            dir=dir,
             target=target)
     # with human filtering OFF
     return '{dir}/MT.{target}.trimmed.rna_filtered.fq'.format(dir=dir, target=target)
