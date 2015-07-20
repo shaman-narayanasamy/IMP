@@ -96,19 +96,30 @@ RUN cd /home/imp/tmp \
     && mv bwa /usr/bin \
     && cd .. && rm -rf bwa*
 
-## htqc toolbox
-RUN cd /home/imp/tmp \
-    && wget --no-check-certificate https://webdav-r3lab.uni.lu/public/R3lab/IMP/htqc-1.92.3-Source.tar.gz \
-    && tar -xzf htqc-1.92.3-Source.tar.gz \
-    && cd htqc-1.92.3-Source \
-    && mkdir build \
-    && cd build \
-    && cmake .. \
-    && make \
-    && make install \
-    && cd ../.. && rm -rf htqc* \
-    && cd .. && rm -rf cufflinks* \
+## htsjdk - dependency of picard tools and FastQC (below)
+RUN cd /home/imp/lib \
+    && mkdir fastqc \
+    && cd fastqc \
+    && git clone https://github.com/samtools/htsjdk.git \
+    && cd htsjdk/ \
+    && ant htsjdk-jar \
+
+## Picard tools - dependency of fastqc (below)
+    && cd /home/imp/lib/fastqc \
+    && git clone https://github.com/broadinstitute/picard.git \
+    && mv /home/imp/lib/fastqc/htsjdk  /home/imp/lib/fastqc/picard/ \
+    && cd picard/ \
+    && ant -lib lib/ant package-commands \
+
+## FastQC 
+    && cd /home/imp/lib/fastqc \
+    && wget http://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.3.zip \
+    && unzip fastqc_v0.11.3.zip \
+    && cd FastQC \
+    && chmod 775 fastqc
+
 ## freebayes
+RUN cd /home/imp/tmp \
     && git clone --recursive https://git-r3lab.uni.lu/R3/freebayes.git \
     && cd freebayes \
     && git checkout -b v0.9.16 \
@@ -212,7 +223,7 @@ RUN echo "`snakemake --bash-completion`" >> ~/.bashrc \
 ######################
 # runtime parameters #
 ######################
-ENV PATH /home/imp/lib/trinityrnaseq_r20140717:/home/imp/lib/Platypus_0.8.1:/home/imp/lib/megahit:$PATH
+ENV PATH /home/imp/lib/trinityrnaseq_r20140717:/home/imp/lib/Platypus_0.8.1:/home/imp/lib/megahit:/home/imp/lib/fastqc/FastQC:$PATH
 
 VOLUME ["/data", "/output", "/databases", "/code"]
 WORKDIR /code
