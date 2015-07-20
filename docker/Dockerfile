@@ -224,7 +224,7 @@ RUN echo "`snakemake --bash-completion`" >> ~/.bashrc \
 # runtime parameters #
 ######################
 ENV PATH /home/imp/lib/trinityrnaseq_r20140717:/home/imp/lib/Platypus_0.8.1:/home/imp/lib/megahit:/home/imp/lib/fastqc/FastQC:$PATH
-
+ENV LD_LIBRARY_PATH /usr/local/lib/:/home/imp/lib/Platypus_0.8.1
 VOLUME ["/data", "/output", "/databases", "/code"]
 WORKDIR /code
 CMD ["snakemake", "ALL"]
