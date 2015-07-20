@@ -7,6 +7,7 @@ import json
 import shlex
 from copy import deepcopy
 import tempfile
+import sys
 
 __doc__ = """Integrated Metaomic Pipeline.
  ____  __  __  ____
@@ -15,7 +16,7 @@ __doc__ = """Integrated Metaomic Pipeline.
 (____)(_/\/\_)(__)
 
 Usage:
-  IMP -m MG1 -m MG2 -t MT1 -t MT2 -o OUTPUT [--enter] [--norm] [-n CONTAINER] [-d DBPATH] [-e ENV] ... [COMMANDS ...]
+  IMP [-m MG1 -m MG2] [-t MT1 -t MT2] -o OUTPUT [--enter] [--norm] [-n CONTAINER] [-d DBPATH] [-e ENV] ... [COMMANDS ...]
   IMP --init [-d DBPATH]
   IMP (-h | --help)
   IMP --version
@@ -141,9 +142,24 @@ def run(args):
     subprocess.call(cmd)
 
 
+def validate(args):
+    mg = args['-m']
+    if mg and len(mg) != 2:
+        print('Metagenomic data should be 2 paired files', file=sys.stderr)
+        return False
+    mt = args['-t']
+    if mt and len(mt) != 2:
+        print('Metatranscriptomic data should be 2 paired files', file=sys.stderr)
+        return False
+    if not mg and not mt:
+        print('You should provide at metagenomic and/or metatranscriptomic data', file=sys.stderr)
+        return False
+    return True
+
 if __name__ == '__main__':
     args = docopt(__doc__, version=get_version(), options_first=True)
-
+    if not validate(args):
+        exit(1)
     if args['--init']:
         init(args)
     else:
