@@ -18,7 +18,7 @@ def preprocessing_output_files():
     return [preprocessed_mt('R1'), preprocessed_mt('R2'), preprocessed_mt('SE')] + [preprocessed_mg('R1'), preprocessed_mg('R2'), preprocessed_mg('SE')]
 
 
-def preprocessed_mg(target):
+def preprocessed_mg(target, dir=P_OUT):
     if config['preprocessing_filtering']:
         # with human filtering ON
         return '{dir}/MG.{target}.uniq.trimmed.{f}.fq'.format(
@@ -26,10 +26,10 @@ def preprocessed_mg(target):
             dir=P_OUT,
             target=target)
     # with human filtering OFF
-    return '{dir}/MG.{target}.uniq.trimmed.fq'.format(dir=P_OUT, target=target)
+    return '{dir}/MG.{target}.uniq.trimmed.fq'.format(dir=dir, target=target)
 
 
-def preprocessed_mt(target):
+def preprocessed_mt(target,  dir=P_OUT):
     if config['preprocessing_filtering']:
         # with human filtering ON
         return '{dir}/MT.{target}.trimmed.rna_filtered.{f}.fq'.format(
@@ -37,7 +37,7 @@ def preprocessed_mt(target):
             dir=P_OUT,
             target=target)
     # with human filtering OFF
-    return '{dir}/MT.{target}.trimmed.rna_filtered.fq'.format(dir=P_OUT, target=target)
+    return '{dir}/MT.{target}.trimmed.rna_filtered.fq'.format(dir=dir, target=target)
 
 
 def prepare_input_files(input, rtype):
