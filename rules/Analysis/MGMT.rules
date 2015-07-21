@@ -621,7 +621,7 @@ rule RENAME_STAT_OUTPUT:
         "stats/MT/MT.R2_preprocessed_fastqc.html",
         "stats/MT/MT.SE_preprocessed_fastqc.html"
     run:
-        for _file, index in enumerate(input):
+        for index, _file in enumerate(input):
             shell("mv %s %s" % (_file, output[index]))
 
 
