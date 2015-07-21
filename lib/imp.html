@@ -51,7 +51,8 @@
 
           <ul id="tabnav" class="nav nav-tabs navbar-nav navbar-fixed-top navbar-inverse" role="tablist">
             <a class="navbar-brand" href="#"> IMP <small>Integrated Metaomic Pipeline </small></a>
-            <li><a href="#preprocessing" aria-controls="preprocessing" role="tab" data-toggle="tab">Preprocessing</a></li>
+            <li><a href="#raw" aria-controls="raw" role="tab" data-toggle="tab">Raw</a></li>
+            <li><a href="#preprocess" aria-controls="preprocess" role="tab" data-toggle="tab">Preprocess</a></li>
             <li><a href="#assembly" aria-controls="assembly" role="tab" data-toggle="tab">Assembly</a></li>
             <li><a href="#mapping" aria-controls="mapping" role="tab" data-toggle="tab">Mapping</a></li>
             <li><a id="annottab" href="#annotation" aria-controls="annotation" role="tab" data-toggle="tab">Annotation</a></li>
@@ -68,12 +69,35 @@
 
 
 
+            <div role="tabpanel" class="tab-pane fade" id="raw">
+              <section id="raw-section" class="row">
+                <h2><small>Raw </small></h2>
+                <div class="row">
+                        <iframe id="MG-R1-raw-stat" src="Analysis/stats/MG/MG.R1.fq_fastqc.html" style="position: absolute; width: 100%;height: 100%; border: none"></iframe>
+                </div>
 
+              </section>
+            </div>
 
 
           <!-- STATISTICS -->
-          <div role="tabpanel" class="tab-pane fade active" id="preprocessing">
+          <div role="tabpanel" class="tab-pane fade active" id="preprocess">
             <section id="files-statistics" class="row">
+
+
+
+                <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-default">Left</button>
+                    </div>
+                  <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-default">Middle</button>
+                  </div>
+                  <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-default">Right</button>
+                  </div>
+                </div>
+
                 <iframe id="MG-R1-raw-stat" src="Analysis/stats/MG/MG.R1.fq_fastqc.html"></iframe>
                 <iframe id="MG-R2-raw-stat"></iframe>
                 <iframe id="MG-R1-preprocessed-stat"></iframe>
