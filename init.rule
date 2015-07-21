@@ -1,8 +1,7 @@
 include:
     "config"
 
-print(config)
-exit
+
 rule ALL:
     input:
         expand("{path}/{filter}.{ext}", path=DBPATH + "/human", filter=config["human_filtering"]["filter"], ext=['fa']),
@@ -123,10 +122,6 @@ rule _DOWNLOAD_TRIMMOMATIC_ADAPTERS:
 
 
 rule _DOWNLOAD_KEGG_INFORMATION:
-    log:
-        U_LOG
-    benchmark:
-        "%s/benchmarks/DOWNLOAD_KEGG_INFORMATION.json" % U_OUT
     output:
         "%s/ec2pathway.txt" % DBPATH,
         "%s/pathway2hierarchy.txt" % DBPATH
