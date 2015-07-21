@@ -164,7 +164,7 @@ def analysis_output_files():
         addon = ANALYSIS_OUTPUT_FILES['mt'] + ANALYSIS_OUTPUT_FILES['mt_only']
     all = expand('%s/{name}' % AN_OUT, name=addon)
     plots = analysis_plot_files_output()
-    return all + plots
+    return all + plots + ["%s/REPORT.html" % OUTPUTDIR]
 
 
 # include sub rules

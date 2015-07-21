@@ -104,6 +104,8 @@ rule DIAGRAMMS:
 rule REPORT:
     input:
         ["lib/imp.html", "lib/d3.min.js", "lib/jquery-2.1.1.min.js", "lib/imp.js"] + expand(["{dir}/workflow.png", "{dir}/workflow.pdf"], dir=OUTPUTDIR)
+    output:
+        "%s/REPORT.html" % OUTPUTDIR
     params:
         outdir = "%s" % OUTPUTDIR
     message:
@@ -112,16 +114,10 @@ rule REPORT:
         with open('%s/data.js' % OUTPUTDIR, 'w') as whandle:
             towrite = json.dumps(config)
             whandle.write("IMP_CONFIG = %s;" % towrite)
-            if os.path.exists('stats.json'):
-                with open('stats.json', 'r') as rhandle:
-                    towrite = json.load(rhandle)
-                    whandle.write("\nIMP_STATS = %s;" % towrite )
-        shell("cp {input[0]} {params.outdir}/IMP.html")
+        shell("cp {input[0]} {params.outdir}/REPORT.html")
         shell("cp {input[1]} {params.outdir}")
         shell("cp {input[2]} {params.outdir}")
         shell("cp {input[3]} {params.outdir}")
-        if os.path.exists('imp.log'):
-            shell("mv imp.log {params.outdir}")
 
 
 rule REPORT2:
