@@ -71,9 +71,17 @@
 
             <div role="tabpanel" class="tab-pane fade" id="raw">
               <section id="raw-section" class="row">
-                <h2><small>Raw </small></h2>
+                <h2><small>Raw data statistics</small></h2>
+                <div class="btn-group btn-group-justified" role="group">
+                    <label class="btn btn-primary active" role="group">
+                        <input id="but-raw-r1" type="radio" class="btn btn-default" checked>R1
+                    </label>
+                  <label class="btn-group btn-group-justified" role="group">
+                      <input id="but-raw-r2" type="radio" class="btn btn-default" checked>R2
+                  </label>
+                </div>
                 <div class="row">
-                        <iframe id="MG-R1-raw-stat" src="Analysis/stats/MG/MG.R1.fq_fastqc.html" style="position: absolute; width: 100%;height: 100%; border: none"></iframe>
+                    <iframe id="MG-R1-raw-stat" src="Analysis/stats/MG/MG.R1.fq_fastqc.html" style="position: absolute; width: 100%;height: 100%; border: none"></iframe>
                 </div>
 
               </section>
