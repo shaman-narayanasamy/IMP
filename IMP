@@ -158,9 +158,9 @@ def validate(args):
 
 if __name__ == '__main__':
     args = docopt(__doc__, version=get_version(), options_first=True)
-    if not validate(args):
-        exit(1)
     if args['--init']:
         init(args)
     else:
+        if not validate(args):
+            exit(1)
         run(args)
