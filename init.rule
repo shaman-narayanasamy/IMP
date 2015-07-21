@@ -13,7 +13,9 @@ rule ALL:
             "{path}/idx/{files}.{ext}",
             files=config["sortmerna"]["files"],
             path=DBPATH + "/sortmerna",
-            ext=['bursttrie_0.dat', 'kmer_0.dat', 'pos_0.dat', 'stats'])
+            ext=['bursttrie_0.dat', 'kmer_0.dat', 'pos_0.dat', 'stats']),
+        "%s/ec2pathway.txt" % DBPATH,
+        "%s/pathway2hierarchy.txt" % DBPATH
 
 rule _DOWNLOAD_HUMAN_DB:
     output:
@@ -117,4 +119,22 @@ rule _DOWNLOAD_TRIMMOMATIC_ADAPTERS:
         cp -r trimmomatic-0.32/adapters {DBPATH}
         rm Trimmomatic-Src-0.32.zip && rm -rf trimmomatic-0.32
         touch {output}
+        """
+
+
+rule _DOWNLOAD_KEGG_INFORMATION:
+    log:
+        U_LOG
+    benchmark:
+        "%s/benchmarks/DOWNLOAD_KEGG_INFORMATION.json" % U_OUT
+    output:
+        "%s/ec2pathway.txt" % DBPATH,
+        "%s/pathway2hierarchy.txt" % DBPATH
+    shell:
+        """
+        wget --no-check-certificate {config[kegg][db_ec2pthy]} -O {DBPATH}/ec2pathway.txt.tmp
+        grep "path:ec" {DBPATH}/ec2pathway.txt.tmp | sed -e 's/path:ec//g' | sed -e 's/ec://g' > {output[0]}
+        rm {DBPATH}/ec2pathway.txt.tmp
+
+        python src/make.pwy.hierarchy.kegg.py > {output[1]}
         """
