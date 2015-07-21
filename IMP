@@ -16,7 +16,7 @@ __doc__ = """Integrated Metaomic Pipeline.
 (____)(_/\/\_)(__)
 
 Usage:
-  IMP [-m MG1 -m MG2] [-t MT1 -t MT2] -o OUTPUT [--enter] [--norm] [-n CONTAINER] [-d DBPATH] [-e ENV] ... [COMMANDS ...]
+  IMP [-m MG1 -m MG2] [-t MT1 -t MT2] -o OUTPUT [--enter] [--norm] [--ask] [-n CONTAINER] [-c CONFIGFILE] [-d DBPATH] [-e ENV] ... [COMMANDS ...]
   IMP --init [-d DBPATH]
   IMP (-h | --help)
   IMP --version
@@ -26,6 +26,8 @@ Options:
   --enter           Enter the container
   --init            Initialize IMP databases (Take a while)
   --norm            Don't delete the container after use. Useful for debugging.
+  --ask             Ask to create directory if it doesn't exist.
+  -c CONFIG         Pass a user defined config file.
   -h --help         Show this help and exit
   -m MG             Path to the metagenomics paired files (must be 2 files).
   -t MT             Path to the metatranscriptomic paired files (2 files).
@@ -97,10 +99,9 @@ def run(args):
 
     output = Path(args['-o']).abspath()
     if not output.exists():
-        if yes_or_no("Output '%s' doesn't exist. Create ?" % output):
-            output.makedirs()
-        else:
+        if args['--ask'] and not yes_or_no("Output '%s' doesn't exist. Create ?" % output):
             exit(0)
+        output.makedirs()
     container_name = args['-n'] is not None and args['-n'] or 'imp:latest'
     db_path = Path(args['-d']).abspath()
     # configure IMP mount point to the docker container
@@ -111,7 +112,7 @@ def run(args):
         '-v %s:/databases' % db_path,
     ]
 
-    # environement variables (add MG and MT data)
+    # environement variables: add MG and MT data and config if specified
     envs = ['-e {}="{}"'.format(*e.split('=')) for e in args['-e']]
 
     # prepare MG and MT data
@@ -122,6 +123,9 @@ def run(args):
         envs += ['-e MG="%s"' % ' '.join(mg)]
     if mt:
         envs += ['-e MT="%s"' % ' '.join(mt)]
+
+    if args['-c']:
+        envs += ['-e CONFIGFILE=%s' % args['-c']]
 
     # CL
     cmd = ['docker', 'run'] + mount_points + envs
@@ -158,9 +162,9 @@ def validate(args):
 
 if __name__ == '__main__':
     args = docopt(__doc__, version=get_version(), options_first=True)
-    if not validate(args):
-        exit(1)
     if args['--init']:
         init(args)
     else:
+        if not validate(args):
+            exit(1)
         run(args)

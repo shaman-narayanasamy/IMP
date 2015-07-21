@@ -74,10 +74,16 @@
                 <h2><small>Raw data statistics</small></h2>
                 <div id="but-raw" class="btn-group" data-toggle="buttons" name="raw-data">
                     <label class="btn btn-primary active">
-                        <input id="but-raw-r1" type="radio" value="Analysis/stats/MG/MG.R1.fq_fastqc.html" class="btn btn-default" name="raw-data" checked>R1
+                        <input id="but-raw-mgr1" type="radio" value="Analysis/stats/MG/MG.R1.fq_fastqc.html" class="btn btn-default" name="raw-data" checked>MG R1
                     </label>
                   <label class="btn btn-primary">
-                      <input id="but-raw-r2" type="radio" value="Analysis/stats/MG/MG.R2.fq_fastqc.html" class="btn btn-default" name="raw-data">R2
+                      <input id="but-raw-mgr2" type="radio" value="Analysis/stats/MG/MG.R2.fq_fastqc.html" class="btn btn-default" name="raw-data">MG R2
+                  </label>
+                  <label class="btn btn-primary">
+                      <input id="but-raw-mtr1" type="radio" value="Analysis/stats/MT/MT.R1.fq_fastqc.html" class="btn btn-default" name="raw-data">MT R1
+                  </label>
+                  <label class="btn btn-primary">
+                      <input id="but-raw-mtr2" type="radio" value="Analysis/stats/MT/MT.R2.fq_fastqc.html" class="btn btn-default" name="raw-data">MT R2
                   </label>
                 </div>
                 <div class="row">
@@ -90,44 +96,33 @@
 
           <!-- STATISTICS -->
           <div role="tabpanel" class="tab-pane fade active" id="preprocess">
-            <section id="files-statistics" class="row">
-
-
-
-                <div class="btn-group btn-group-justified" role="group" aria-label="...">
-                    <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-default">Left</button>
-                    </div>
-                  <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-default">Middle</button>
-                  </div>
-                  <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-default">Right</button>
-                  </div>
+            <section id="preprocess-section" class="row">
+                <h2><small>Preprocessed data statistics</small></h2>
+                <div id="but-preprocess" class="btn-group" data-toggle="buttons" name="preprocess-data">
+                    <label class="btn btn-primary active">
+                        <input id="but-preprocess-mgr1" type="radio" value="Analysis/stats/MG/MG.R1_preprocessed_fastqc.html" class="btn btn-default" name="preprocess-data" checked>MG R1
+                    </label>
+                  <label class="btn btn-primary">
+                      <input id="but-preprocess-mgr2" type="radio" value="Analysis/stats/MG/MG.R2_preprocessed_fastqc.html" class="btn btn-default" name="preprocess-data">MG R2
+                  </label>
+                  <label class="btn btn-primary">
+                      <input id="but-preprocess-mgse" type="radio" value="Analysis/stats/MG/MG.SE_preprocessed_fastqc.html" class="btn btn-default" name="preprocess-data">MG SE
+                  </label>
+                  <label class="btn btn-primary">
+                      <input id="but-preprocess-mtr1" type="radio" value="Analysis/stats/MT/MT.R1_preprocessed_fastqc.html" class="btn btn-default" name="preprocess-data">MT R1
+                  </label>
+                  <label class="btn btn-primary">
+                      <input id="but-preprocess-mtr2" type="radio" value="Analysis/stats/MT/MT.R2_preprocessed_fastqc.html" class="btn btn-default" name="preprocess-data">MT R2
+                  </label>
+                  <label class="btn btn-primary">
+                      <input id="but-preprocess-mtse" type="radio" value="Analysis/stats/MT/MT.R2_preprocessed_fastqc.html" class="btn btn-default" name="preprocess-data">MT SE
+                  </label>
+                </div>
+                <div class="row">
+                    <iframe id="ifr-preprocess-stat" src="Analysis/stats/MG/MG.R1_preprocessed_fastqc.html" style="position: absolute; width: 100%;height: 100%; border: none"></iframe>
                 </div>
 
-                <iframe id="MG-R1-raw-stat" src="Analysis/stats/MG/MG.R1.fq_fastqc.html"></iframe>
-                <iframe id="MG-R2-raw-stat"></iframe>
-                <iframe id="MG-R1-preprocessed-stat"></iframe>
-                <iframe id="MG-R2-preprocessed-stat"></iframe>
-                <iframe id="MG-SE-preprocessed-stat"></iframe>
-
-
-
-              <div class="row">
-                <h3><small>Metatranscriptomics files</small></h3>
-                <div class="col-sm-1 col-md-1"></div>
-                <div class="col-sm-4 col-md-4">
-                  <h4><small>Raw</small></h4>
-                    <iframe id="MT-raw-stat"></iframe>
-                </div>
-                <div class="col-sm-1 col-md-1"></div>
-                <div class="col-sm-4 col-md-4">
-                  <h4><small>Preprocessed</small></h4>
-                    <iframe id="MT-preprocessed-stat"></iframe>
-                </div>
-                <div class="col-sm-1 col-md-1"></div>
-              </div>
+                "stats/MG/MG.R1_preprocessed_fastqc.zip",
             </section>
             <!-- FILTERING -->
             <section id="filtering-section" class="row">
