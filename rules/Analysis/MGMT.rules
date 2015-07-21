@@ -620,18 +620,18 @@ rule RENAME_STAT_OUTPUT:
         preprocessed_mg('R2', dir=AN_OUT + '/stats/MG') + '_fastqc.html',
         preprocessed_mg('SE', dir=AN_OUT + '/stats/MG') + '_fastqc.html'
     output:
-        "{AN_OUT}/stats/MT/MT.R1_preprocessed_fastqc.zip",
-        "{AN_OUT}/stats/MT/MT.R2_preprocessed_fastqc.zip",
-        "{AN_OUT}/stats/MT/MT.SE_preprocessed_fastqc.zip",
-        "{AN_OUT}/stats/MT/MT.R1_preprocessed_fastqc.html",
-        "{AN_OUT}/stats/MT/MT.R2_preprocessed_fastqc.html",
-        "{AN_OUT}/stats/MT/MT.SE_preprocessed_fastqc.html",
-        "{AN_OUT}/stats/MG/MG.R1_preprocessed_fastqc.zip",
-        "{AN_OUT}/stats/MG/MG.R2_preprocessed_fastqc.zip",
-        "{AN_OUT}/stats/MG/MG.SE_preprocessed_fastqc.zip",
-        "{AN_OUT}/stats/MG/MG.R1_preprocessed_fastqc.html",
-        "{AN_OUT}/stats/MG/MG.R2_preprocessed_fastqc.html",
-        "{AN_OUT}/stats/MG/MG.SE_preprocessed_fastqc.html"
+        "%s/stats/MT/MT.R1_preprocessed_fastqc.zip" % AN_OUT,
+        "%s/stats/MT/MT.R2_preprocessed_fastqc.zip" % AN_OUT,
+        "%s/stats/MT/MT.SE_preprocessed_fastqc.zip" % AN_OUT,
+        "%s/stats/MT/MT.R1_preprocessed_fastqc.html" % AN_OUT,
+        "%s/stats/MT/MT.R2_preprocessed_fastqc.html" % AN_OUT,
+        "%s/stats/MT/MT.SE_preprocessed_fastqc.html" % AN_OUT,
+        "%s/stats/MG/MG.R1_preprocessed_fastqc.zip" % AN_OUT,
+        "%s/stats/MG/MG.R2_preprocessed_fastqc.zip" % AN_OUT,
+        "%s/stats/MG/MG.SE_preprocessed_fastqc.zip" % AN_OUT,
+        "%s/stats/MG/MG.R1_preprocessed_fastqc.html" % AN_OUT,
+        "%s/stats/MG/MG.R2_preprocessed_fastqc.html" % AN_OUT,
+        "%s/stats/MG/MG.SE_preprocessed_fastqc.html" % AN_OUT
     run:
         for index, _file in enumerate(input):
             shell("mv %s %s" % (_file, output[index]))
