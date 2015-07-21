@@ -55,7 +55,8 @@
             <li><a href="#preprocess" aria-controls="preprocess" role="tab" data-toggle="tab">Preprocess</a></li>
             <li><a href="#assembly" aria-controls="assembly" role="tab" data-toggle="tab">Assembly</a></li>
             <li><a href="#mapping" aria-controls="mapping" role="tab" data-toggle="tab">Mapping</a></li>
-            <li><a id="annottab" href="#annotation" aria-controls="annotation" role="tab" data-toggle="tab">Annotation</a></li>
+            <li><a id="annottabmg" href="#annotationmg" aria-controls="annotationmg" role="tab" data-toggle="tab">MG Annotation</a></li>
+            <li><a id="annottabmt" href="#annotationmt" aria-controls="annotationmt" role="tab" data-toggle="tab">MT Annotation</a></li>
             <li><a href="#variants" aria-controls="variants" role="tab" data-toggle="tab">Variants</a></li>
             <li><a href="#ratio" aria-controls="ratio" role="tab" data-toggle="tab">Ratio</a></li>
             <li><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Workflow overview</a></li>
@@ -122,7 +123,6 @@
                     <iframe id="ifr-preprocess-stat" src="Analysis/stats/MG/MG.R1_preprocessed_fastqc.html" style="position: absolute; width: 100%;height: 100%; border: none"></iframe>
                 </div>
 
-                "stats/MG/MG.R1_preprocessed_fastqc.zip",
             </section>
             <!-- FILTERING -->
             <section id="filtering-section" class="row">
@@ -165,21 +165,25 @@
         </div>
 
         <!-- ANNOTATION -->
-        <div role="tabpanel" class="tab-pane fade" id="annotation">
+        <div role="tabpanel" class="tab-pane fade" id="annotationmg">
           <section id="annotation-section" class="row">
               <div class="row">
                   <div class="page-header">
                       <h1>MG annotation <small>Kronaplot</small></h1>
                   </div>
-                  <iframe id="MG-kronaplot"></iframe>
+                  <iframe id="MG-kronaplot" src="Analysis/results/MG.gene_kegg_krona.html" style="position: absolute; width: 100%;height: 100%; border: none"></iframe>
               </div>
+
+          </section>
+        </div>
+        <div role="tabpanel" class="tab-pane fade" id="annotationmt">
+          <section id="annotation-section" class="row">
               <div class="row">
                   <div class="page-header">
                       <h1>MT annotation <small>Kronaplot</small></h1>
                   </div>
-                  <iframe id="MT-kronaplot"></iframe>
+                   <iframe id="MT-kronaplot" src="Analysis/results/MT.gene_kegg_krona.html" style="position: absolute; width: 100%;height: 100%; border: none"></iframe>
               </div>
-
           </section>
         </div>
 
