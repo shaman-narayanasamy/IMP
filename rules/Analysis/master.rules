@@ -91,12 +91,12 @@ ANALYSIS_OUTPUT_FILES = {
         'stats/MG/MG.R2.fq_fastqc.html',
         'stats/MG/MG.R1.fq_fastqc.zip',
         'stats/MG/MG.R2.fq_fastqc.zip',
-        preprocessed_mg('R1', dir='stats/MG') + '_fastqc.zip',
-        preprocessed_mg('R2', dir='stats/MG') + '_fastqc.zip',
-        preprocessed_mg('SE', dir='stats/MG') + '_fastqc.zip',
-        preprocessed_mg('R1', dir='stats/MG') + '_fastqc.html',
-        preprocessed_mg('R2', dir='stats/MG') + '_fastqc.html',
-        preprocessed_mg('SE', dir='stats/MG') + '_fastqc.html'
+        "stats/MG/MG.R1_preprocessed_fastqc.zip",
+        "stats/MG/MG.R2_preprocessed_fastqc.zip",
+        "stats/MG/MG.SE_preprocessed_fastqc.zip",
+        "stats/MG/MG.R1_preprocessed_fastqc.html",
+        "stats/MG/MG.R2_preprocessed_fastqc.html",
+        "stats/MG/MG.SE_preprocessed_fastqc.html"
     ],
     'mt': [
         "MT.read_counts.txt",
@@ -118,12 +118,12 @@ ANALYSIS_OUTPUT_FILES = {
         "stats/MT/MT.R2.fq_fastqc.html",
         "stats/MT/MT.R1.fq_fastqc.zip",
         "stats/MT/MT.R2.fq_fastqc.zip",
-        preprocessed_mt('R1', dir='stats/MT') + '_fastqc.zip',
-        preprocessed_mt('R2', dir='stats/MT') + '_fastqc.zip',
-        preprocessed_mt('SE', dir='stats/MT') + '_fastqc.zip',
-        preprocessed_mt('R1', dir='stats/MT') + '_fastqc.html',
-        preprocessed_mt('R2', dir='stats/MT') + '_fastqc.html',
-        preprocessed_mt('SE', dir='stats/MT') + '_fastqc.html'
+        "stats/MT/MT.R1_preprocessed_fastqc.zip",
+        "stats/MT/MT.R2_preprocessed_fastqc.zip",
+        "stats/MT/MT.SE_preprocessed_fastqc.zip",
+        "stats/MT/MT.R1_preprocessed_fastqc.html",
+        "stats/MT/MT.R2_preprocessed_fastqc.html",
+        "stats/MT/MT.SE_preprocessed_fastqc.html"
     ],
     'mg_only': [
         "MG.assembly.length.txt",

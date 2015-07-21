@@ -605,6 +605,26 @@ rule ANALYSIS_MG_PREPROCESSED_QUALITY_STATS:
         fastqc -o {AN_OUT}/stats/MG -f fastq {input} -t {THREADS} -d {TMPDIR}
         """
 
+rule RENAME_STAT_OUTPUT:
+    input:
+        preprocessed_mt('R1', dir=AN_OUT + '/stats/MT') + '_fastqc.zip',
+        preprocessed_mt('R2', dir=AN_OUT + '/stats/MT') + '_fastqc.zip',
+        preprocessed_mt('SE', dir=AN_OUT + '/stats/MT') + '_fastqc.zip',
+        preprocessed_mt('R1', dir=AN_OUT + '/stats/MT') + '_fastqc.html',
+        preprocessed_mt('R2', dir=AN_OUT + '/stats/MT') + '_fastqc.html',
+        preprocessed_mt('SE', dir=AN_OUT + '/stats/MT') + '_fastqc.html'
+    output:
+        "stats/MT/MT.R1_preprocessed_fastqc.zip",
+        "stats/MT/MT.R2_preprocessed_fastqc.zip",
+        "stats/MT/MT.SE_preprocessed_fastqc.zip",
+        "stats/MT/MT.R1_preprocessed_fastqc.html",
+        "stats/MT/MT.R2_preprocessed_fastqc.html",
+        "stats/MT/MT.SE_preprocessed_fastqc.html"
+    run:
+        for _file, index in enumerate(input):
+            shell("mv %s %s" % (_file, output[index]))
+
+
 rule ANALYSIS_MT_QUALITY_STATS:
     input:
         expand('{dir}/{raw}', raw=['MT.R1.fq', 'MT.R2.fq'], dir=P_OUT)
