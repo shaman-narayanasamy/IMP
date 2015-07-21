@@ -98,20 +98,31 @@
           <div role="tabpanel" class="tab-pane fade active" id="preprocess">
             <section id="preprocess-section" class="row">
                 <h2><small>Preprocessed data statistics</small></h2>
-                <div id="but-preprocess" class="btn-group" data-toggle="buttons" name="raw-data">
+                <div id="but-preprocess" class="btn-group" data-toggle="buttons" name="preprocess-data">
                     <label class="btn btn-primary active">
-                        <input id="but-preprocess-r1" type="radio" value="Analysis/stats/MG/MG.R1_preprocess_fastqc.html" class="btn btn-default" name="preprocess-data" checked>R1
+                        <input id="but-preprocess-mgr1" type="radio" value="Analysis/stats/MG/MG.R1_preprocessed_fastqc.html" class="btn btn-default" name="preprocess-data" checked>MG R1
                     </label>
                   <label class="btn btn-primary">
-                      <input id="but-preprocess-r2" type="radio" value="Analysis/stats/MG/MG.R2_preprocess_fastqc.html" class="btn btn-default" name="preprocess-data">R2
+                      <input id="but-preprocess-mgr2" type="radio" value="Analysis/stats/MG/MG.R2_preprocessed_fastqc.html" class="btn btn-default" name="preprocess-data">MG R2
                   </label>
                   <label class="btn btn-primary">
-                      <input id="but-preprocess-se" type="radio" value="Analysis/stats/MG/MG.SE_preprocess_fastqc.html" class="btn btn-default" name="preprocess-data">SE
+                      <input id="but-preprocess-mgse" type="radio" value="Analysis/stats/MG/MG.SE_preprocessed_fastqc.html" class="btn btn-default" name="preprocess-data">MG SE
+                  </label>
+                  <label class="btn btn-primary">
+                      <input id="but-preprocess-mtr1" type="radio" value="Analysis/stats/MT/MT.R1_preprocessed_fastqc.html" class="btn btn-default" name="preprocess-data">MT R1
+                  </label>
+                  <label class="btn btn-primary">
+                      <input id="but-preprocess-mtr2" type="radio" value="Analysis/stats/MT/MT.R2_preprocessed_fastqc.html" class="btn btn-default" name="preprocess-data">MT R2
+                  </label>
+                  <label class="btn btn-primary">
+                      <input id="but-preprocess-mtse" type="radio" value="Analysis/stats/MT/MT.R2_preprocessed_fastqc.html" class="btn btn-default" name="preprocess-data">MT SE
                   </label>
                 </div>
                 <div class="row">
-                    <iframe id="ifr-raw-stat" src="Analysis/stats/MG/MG.R1.fq_fastqc.html" style="position: absolute; width: 100%;height: 100%; border: none"></iframe>
+                    <iframe id="ifr-preprocess-stat" src="Analysis/stats/MG/MG.R1_preprocessed_fastqc.html" style="position: absolute; width: 100%;height: 100%; border: none"></iframe>
                 </div>
+
+                "stats/MG/MG.R1_preprocessed_fastqc.zip",
             </section>
             <!-- FILTERING -->
             <section id="filtering-section" class="row">
