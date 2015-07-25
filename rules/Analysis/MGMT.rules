@@ -501,8 +501,8 @@ rule ANALYSIS_PLOT:
                'MT.assembly.contig_coverage.txt',
                'MG.assembly.contig_depth.txt',
                'MT.assembly.contig_depth.txt',
-               'MG.variants.isec.vcf.gz',
-               'MT.variants.isec.vcf.gz',
+               'MG.variants.samtools.vcf.gz',
+               'MT.variants.samtools.vcf.gz',
                'MGMT.assembly.gc_content.txt',
                "MGMT.vizbin.with-contig-names.points",
                "annotation/annotation.filt.gff"], dir=AN_OUT)
