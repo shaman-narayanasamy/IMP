@@ -775,7 +775,7 @@ dev.off()
 var1 <-log10(c(all.dat$MG_var,all.dat$MT_var))
 var1[is.infinite(var1)]=NA
 var2 <- c(rep("MG",nrow(all.dat)),rep("MT",nrow(all.dat)))
-variant_count<-data.frame(var1,var2)
+variant_count <- data.frame(var1,var2)
 
 print("Generating variant count plots")
 png(name_plot("IMP-var_count.png") ,width=700, height=700)
@@ -783,7 +783,7 @@ png(name_plot("IMP-var_count.png") ,width=700, height=700)
 par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
 beanplot(var1 ~ var2, data= variant_count,  side = "both",log="auto",
 what=c(1,1,1,0), border = NA, col = list("blue", c("red", "white")),
-main="Variant count", ylab=expression(log[10]*~count))
+main="Variant count", ylab=expression(log[10]*~count), bw="nrd")
 legend("bottomleft", fill =c("blue", "red"), legend = c("MG", "MT"))
 dev.off()
 
@@ -799,7 +799,7 @@ png(name_plot("IMP-var_density.png") ,width=700, height=700)
 par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
 beanplot(var1 ~ var2, data= variant_density,  side = "both",log="auto",
 what=c(1,1,1,0), border = NA, col = list("blue", c("red", "white")),
-main="Variant density", ylab="count / RPKM")
+main="Variant density", ylab="count / RPKM", bw="nrd")
 legend("bottomleft", fill =c("blue", "red"), legend = c("MG", "MT"))
 dev.off()
 
