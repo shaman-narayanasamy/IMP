@@ -7,6 +7,7 @@ include:
 include:
     "MG.rules"
 
+
 def assembly_output_files():
     return expand('{dir}/{name}', name=[
         'MG.reads.sorted.bam',
@@ -33,10 +34,3 @@ rule ASSEMBLY_MG_ALL:
         "%s/MG.assembly.merged.fa" % A_OUT
     shell:
         "echo 'MG Assembly Done'"
-
-#rule ASSEMBLY_MG_FAST:
-#    input:
-#        "%s/MG.assembly.merged.fa" % A_OUT
-#    shell:
-#        "echo 'MG fast assembly done'"
-#

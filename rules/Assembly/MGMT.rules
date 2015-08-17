@@ -3,7 +3,7 @@
 ###################################################################################################
 
 #########################
-## ## MT MEGAHIT ASSEMBLY
+# ## MT MEGAHIT ASSEMBLY
 #########################
 
 rule ASSEMBLY_MT_MEGAHIT_1:
@@ -110,108 +110,6 @@ rule ASSEMBLY_MT_CAT_MEGAHIT:
         """
         cat {input[0]} {input[1]} | awk '/^>/{{print ">contig_MT_" ++i; next}}{{print}}' > {output}
         """
-#########################
-## ## MT TRINITY ASSEMBLY
-#########################
-#
-#rule ASSEMBLY_MT_TRINITY_TRINITY_1:
-#    log:
-#        A_LOG
-#    benchmark:
-#        "%s/benchmarks/ASSEMBLY_MT_TRINITY_1.json" % A_OUT
-#    input:
-#        preprocessed_mt('R1'),
-#        preprocessed_mt('R2'),
-#        preprocessed_mt('SE')
-#    output:
-#        '{dir}/MT.assembly_1/final.contigs.fa'.format(dir=A_OUT)
-#    params:
-#        outdir = "{dir}/MT.assembly_1".format(dir=A_OUT)
-#    shell:
-#        """
-#        Trinity --seqType fq\
-#        --left {input[0]} --right {input[1]} --single {input[2]}\
-#        --output {output[0]}\
-#        --JM {MEMTOTAL}G --CPU {THREADS}\
-#        --inchworm_cpu {THREADS} --bflyHeapSpaceMax {MEMTOTAL}G\
-#        --bflyCPU {THREADS} --bflyCalculateCPU\
-#        --normalize_max_read_cov 25  --full_cleanup\
-#        """
-#
-#
-#rule ASSEMBLY_MT_EXTRACT_UNMAPPED_FROM_TRINITY_1:
-#    log:
-#        A_LOG
-#    benchmark:
-#        "%s/benchmarks/ASSEMBLY_MT_EXTRACT_UNMAPPED_FROM_TRINITY_1.json" % A_OUT
-#    input:
-#        preprocessed_mt('R1'),
-#        preprocessed_mt('R2'),
-#        preprocessed_mt('SE'),
-#        '{dir}/MT.assembly_1/final.contigs.fa'.format(dir=A_OUT),
-#        expand('{dir}/MT.assembly_1/final.contigs.fa.{ext}', dir=A_OUT, ext=['amb', 'bwt', 'pac', 'sa', 'ann'])
-#    output:
-#        expand('{dir}/{name}', name=[
-#            'MT.R1.unmapped.fq',
-#            'MT.R2.unmapped.fq',
-#            'MT.SE.unmapped.fq'], dir=A_OUT)
-#    shell:
-#        """
-#        TMP_FILE=$(mktemp --tmpdir={TMPDIR} -t "alignment_XXXXXX.bam")
-#        BUFFER=$(mktemp --tmpdir={TMPDIR} -t "alignment_buffer_XXXXXX.bam")
-#        bwa mem -v 1 -t {THREADS} {input[3]} {input[0]} {input[1]} | samtools view -@ {THREADS} -bS - > $TMP_FILE
-#        samtools merge -@ {THREADS} -u - \
-#        <(samtools view -@ {THREADS} -u  -f 4 -F 264 $TMP_FILE) \
-#        <(samtools view -@ {THREADS} -u -f 8 -F 260 $TMP_FILE) \
-#        <(samtools view -@ {THREADS} -u -f 12 -F 256 $TMP_FILE) | \
-#        samtools view -@ {THREADS} -bF 0x800 -  | samtools sort -o -@ {THREADS} -m {MEMCORE}G -n - $BUFFER | \
-#        bamToFastq -i stdin -fq {output[0]} -fq2 {output[1]}
-#        bwa mem -v 1 -t {THREADS} {input[3]} {input[2]} | \
-#        samtools view -@ {THREADS} -bS - | samtools view -@ {THREADS} -uf 4 - | \
-#        bamToFastq -i stdin -fq {output[2]}
-#        rm -rf $BUFFER* $TMP_FILE
-#        """
-#
-#rule ASSEMBLY_MT_TRINITY_2:
-#    log:
-#        A_LOG
-#    benchmark:
-#        "%s/benchmarks/ASSEMBLY_MT_TRINITY_2.json" % A_OUT
-#    input:
-#        expand('{dir}/{name}', name=[
-#            'MT.R1.unmapped.fq',
-#            'MT.R2.unmapped.fq',
-#            'MT.SE.unmapped.fq'], dir=A_OUT)
-#    output:
-#        '{dir}/MT.assembly_2/final.contigs.fa'.format(dir=A_OUT)
-#    params:
-#        outdir = "{dir}/MT.assembly_2".format(dir=A_OUT)
-#    shell:
-#        """
-#        Trinity --seqType fq\
-#        --left {input[0]} --right {input[1]} --single {input[2]}\
-#        --output {output[0]}\
-#        --JM {MEMTOTAL}G --CPU {THREADS}\
-#        --inchworm_cpu {THREADS} --bflyHeapSpaceMax {MEMTOTAL}G\
-#        --bflyCPU {THREADS} --bflyCalculateCPU\
-#        --normalize_max_read_cov 25  --full_cleanup\
-#        """
-#
-#rule ASSEMBLY_MT_CAT_TRINITY:
-#    log:
-#        A_LOG
-#    benchmark:
-#        "%s/benchmarks/ASSEMBLY_MT_CAT_TRINITY.json" % A_OUT
-#    input:
-#        '{dir}/MT.assembly_1/final.contigs.fa'.format(dir=A_OUT),
-#        '{dir}/MT.assembly_2/final.contigs.fa'.format(dir=A_OUT)
-#    output:
-#        '{dir}/MT.assembly.cat.fa'.format(dir=A_OUT)
-#    shell:
-#        """
-#        cat {input[0]} {input[1]} | awk '/^>/{{print ">contig_MT_" ++i; next}}{{print}}' > {output}
-#        """
-#
 ##################
 # ## MGMT SECTION - ASSEMBLY
 ##################

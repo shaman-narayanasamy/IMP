@@ -1,10 +1,13 @@
 include:
     "config"
 
-
 rule ALL:
     input:
-        expand("{path}/{filter}.{ext}", path=DBPATH + "/human", filter=config["human_filtering"]["filter"], ext=['fa']),
+        expand(
+            "{path}/{filter}.{ext}", path=DBPATH + "/human",
+            filter=config["human_filtering"]["filter"],
+            ext=['fa', 'fa.amb', 'fa.ann', 'fa.bwt', 'fa.pac', 'fa.sa']
+        ),
         expand("{path}/{files}.fasta", files=config["sortmerna"]["files"], path=DBPATH + "/sortmerna"),
         expand("{path}/{db}", path=DBPATH, db=config["prokka"]["databases"]),
         "%s/adapters/adapters.done" % DBPATH,

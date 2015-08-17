@@ -15,7 +15,14 @@ def preprocessing_output_files():
     """
     Dynamically generate output files names based on parameters
     """
-    return [preprocessed_mt('R1'), preprocessed_mt('R2'), preprocessed_mt('SE')] + [preprocessed_mg('R1'), preprocessed_mg('R2'), preprocessed_mg('SE')]
+    return [
+        preprocessed_mt('R1'),
+        preprocessed_mt('R2'),
+        preprocessed_mt('SE'),
+        preprocessed_mg('R1'),
+        preprocessed_mg('R2'),
+        preprocessed_mg('SE')
+    ]
 
 
 def preprocessed_mg(target, dir=P_OUT):
