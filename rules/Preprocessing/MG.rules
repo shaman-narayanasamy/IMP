@@ -40,9 +40,7 @@ rule PREPROCESSING_MG_TRIM:
     shell:
         """
         java -jar {config[trimmomatic][jarfile]} PE -threads {THREADS} {input[0]} {input[1]} {output} \
-        ILLUMINACLIP:{DBPATH}/adapters/{config[trimmomatic][adapter]}-PE.fa:\
-        {config[trimmomatic][seed_mismatch]}:{config[trimmomatic][palindrome_clip_threshold]}:\
-        {config[trimmomatic][simple_clip_threshold]} \
+        ILLUMINACLIP:{DBPATH}/adapters/{config[trimmomatic][adapter]}-PE.fa:{config[trimmomatic][seed_mismatch]}:{config[trimmomatic][palindrome_clip_threshold]}:{config[trimmomatic][simple_clip_threshold]} \
         LEADING:{config[trimmomatic][leading]} \
         TRAILING:{config[trimmomatic][trailing]} \
         SLIDINGWINDOW:{config[trimmomatic][window_size]}:{config[trimmomatic][window_quality]} \

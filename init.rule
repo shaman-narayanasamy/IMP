@@ -107,7 +107,7 @@ rule INDEX_FASTA_FILE:
         "{fasta}.ann"
     shell:
         """
-        bwa index {wildcards.fasta} > {log} 2>&1
+        bwa index {wildcards.fasta}
         """
 
 

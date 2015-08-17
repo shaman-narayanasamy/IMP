@@ -17,7 +17,7 @@ __doc__ = """Integrated Metaomic Pipeline.
 
 Usage:
   IMP [-m MG1 -m MG2] [-t MT1 -t MT2] -o OUTPUT [--enter] [--norm] [--ask] [-n CONTAINER] [-c CONFIGFILE] [-d DBPATH] [-e ENV] ... [COMMANDS ...]
-  IMP --init [-d DBPATH]
+  IMP --init [-d DBPATH] [-n CONTAINER]
   IMP (-h | --help)
   IMP --version
 
