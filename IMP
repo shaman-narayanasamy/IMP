@@ -72,7 +72,7 @@ def yes_or_no(question):
 def format_command(cmd, dir):
     # get group id and username of the user
     username = getpass.getuser()
-    return ' /bin/bash -c "{c} ; useradd {u} && chown -R {u} {d} && chmod 755 {d}"'.format(c=cmd, u=username, d=dir)
+    return ' /bin/bash -c "{c} ; useradd {u} && chown -R {u} {d} && chmod -R 755 {d}"'.format(c=cmd, u=username, d=dir)
 
 
 def init(args):
