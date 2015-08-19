@@ -148,8 +148,11 @@ def run(args):
     # if --enter flag is specified, change the command
     if args['--enter']:
         cmd += ['/bin/bash']
-
-    cmd = ' '.join(cmd) + format_command(' '.join(args['COMMANDS']), '/output')
+        cmd = ' '.join(cmd)
+    else:
+        if not args['COMMANDS']:
+            args['COMMANDS'] = 'snakemake ALL'
+        cmd = ' '.join(cmd) + format_command(' '.join(args['COMMANDS']), '/output')
 
     print("Executing", '"', cmd, '"')
     subprocess.call(cmd, shell=True)
