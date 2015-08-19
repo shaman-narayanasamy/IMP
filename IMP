@@ -151,7 +151,7 @@ def run(args):
         cmd = ' '.join(cmd)
     else:
         if not args['COMMANDS']:
-            args['COMMANDS'] = 'snakemake ALL'
+            args['COMMANDS'] = ['snakemake', 'ALL']
         cmd = ' '.join(cmd) + format_command(' '.join(args['COMMANDS']), '/output')
 
     print("Executing", '"', cmd, '"')
