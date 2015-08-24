@@ -29,7 +29,7 @@ rule PREPROCESSING_MG_TRIM:
     log:
         P_LOG
     input:
-        expand('{dir}/{uniq}', uniq=['MG.R1.fq', 'MG.R2.fq'], dir=P_OUT),
+        expand('{dir}/{uniq}', uniq=['MG.R1.uniq.fq', 'MG.R2.uniq.fq'], dir=P_OUT),
         DBPATH + "/adapters/adapters.done"
     output:
         expand('{dir}/{trim}', trim=[
