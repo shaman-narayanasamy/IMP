@@ -69,7 +69,8 @@ ANALYSIS_OUTPUT_FILES = {
         "MGMT.assembly.length.txt",
         "MGMT.assembly.gc_content.txt",
         "MGMT.vizbin.filtered.fa",
-        "MGMT.vizbin.with-contig-names.points"
+        "MGMT.vizbin.with-contig-names.points",
+        "results/quast/summary/report.html"
     ],
     'mg': [
         "MG.read_counts.txt",
@@ -130,14 +131,16 @@ ANALYSIS_OUTPUT_FILES = {
         "MG.assembly.gc_content.txt",
         "MG.vizbin.points",
         "MG.vizbin.filtered.fa",
-        "MG.vizbin.with-contig-names.points"
+        "MG.vizbin.with-contig-names.points",
+        "results/quast/summary/report.html"
     ],
     'mt_only': [
         "MT.assembly.length.txt",
         "MT.assembly.gc_content.txt",
         "MT.vizbin.points",
         "MT.vizbin.filtered.fa",
-        "MT.vizbin.with-contig-names.points"
+        "MT.vizbin.with-contig-names.points",
+        "results/quast/summary/report.html"
     ],
 
 }

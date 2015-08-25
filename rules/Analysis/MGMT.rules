@@ -675,3 +675,18 @@ rule ANALYSIS_MT_PREPROCESSED_QUALITY_STATS:
         mkdir -p {AN_OUT}/stats/MT
         fastqc -o {AN_OUT}/stats/MT -f fastq {input} -t {THREADS} -d {TMPDIR}
         """
+
+rule ANALYSIS_QUAST:
+    input:
+        '{dir}/MGMT.assembly.merged.fa'.format(dir=A_OUT)
+    output:
+        "%s/results/quast/summary/report.html" % AN_OUT
+    benchmark:
+        "%s/benchmarks/ANALYSIS_QUAST.json" % AN_OUT
+    log:
+        AN_LOG
+    shell:
+        """
+        metaquast -t {THREADS} -o {AN_OUT}/results/quast {input[0]}
+        """
+

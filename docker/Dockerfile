@@ -204,6 +204,15 @@ RUN cd /home/imp/lib \
     && wget --no-check-certificate https://webdav-r3lab.uni.lu/public/R3lab/IMP/VizBin-dist.jar -O VizBin-dist.jar
 
 RUN cd /home/imp/lib
+
+## Quast/metaQuast
+RUN cd /home/imp/lib \
+    && git clone https://github.com/ablab/quast.git \
+    && cd quast \
+    && git checkout release_3.1 \
+    && ./metaquast.py --test-no-ref \
+    && ln -s $PWD/metaquast.py /usr/bin/metaquast
+
 ######################
 # ship pipeline code #
 ######################
