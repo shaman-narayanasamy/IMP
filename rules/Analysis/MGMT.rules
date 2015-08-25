@@ -680,7 +680,7 @@ rule ANALYSIS_QUAST:
     input:
         '{dir}/MGMT.assembly.merged.fa'.format(dir=A_OUT)
     output:
-        "%s/results/quast/summary/report.html" % AN_OUT
+        "%s/results/quast/summary/report.html" % AN_OUT,
     benchmark:
         "%s/benchmarks/ANALYSIS_QUAST.json" % AN_OUT
     log:

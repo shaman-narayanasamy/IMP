@@ -211,7 +211,9 @@ RUN cd /home/imp/lib \
     && cd quast \
     && git checkout release_3.1 \
     && ./metaquast.py --test-no-ref \
-    && ln -s $PWD/metaquast.py /usr/bin/metaquast
+    && ln -s $PWD/metaquast.py /usr/bin/metaquast \
+    && apt-get update \
+    && apt-get install python-matplotlib -y
 
 ######################
 # ship pipeline code #
