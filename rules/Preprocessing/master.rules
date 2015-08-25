@@ -28,12 +28,12 @@ def preprocessing_output_files():
 def preprocessed_mg(target, dir=P_OUT):
     if config['preprocessing_filtering']:
         # with human filtering ON
-        return '{dir}/MG.{target}.uniq.trimmed.{f}.fq'.format(
+        return '{dir}/MG.{target}.trimmed.{f}.fq'.format(
             f=config['human_filtering']['filter'],
             dir=dir,
             target=target)
     # with human filtering OFF
-    return '{dir}/MG.{target}.uniq.trimmed.fq'.format(dir=dir, target=target)
+    return '{dir}/MG.{target}.trimmed.fq'.format(dir=dir, target=target)
 
 
 def preprocessed_mt(target,  dir=P_OUT):
