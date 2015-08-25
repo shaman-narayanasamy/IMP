@@ -24,6 +24,7 @@ RUN apt-get update \
     && apt-get install -yq bioperl=1.6.923-1 tabix=0.2.6-2 zlib1g zlib1g-dev samtools gnuplot python3 \
     && apt-get install -yq r-base r-base-dev \
     && apt-get install -yq libncurses5 libncurses5-dev sudo libatlas-base-dev python2.7 gfortran python-dev \
+    && apt-get install -yq python-matplotlib \
     && update-alternatives --set java /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/java
 
 
