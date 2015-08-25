@@ -136,18 +136,18 @@
           <div role="tabpanel" class="tab-pane fade" id="assembly">
             <section id="assembly-section" class="row">
                 <div id="but-assembly" class="row btn-group" data-toggle="buttons" name="assembly-data">
-                    <label class="btn btn-primary active">
-                        <input id="but-assembly1" type="radio" value="Analysis/results/quast/summary/report.html" class="btn btn-default" name="assembly-data" checked>Quast
+                    <label class="btn btn-primary">
+                        <input id="but-assembly1" type="radio" value="Analysis/results/IMP-vizbin_length.png" class="btn btn-default" name="assembly-data">Vizbin length
                     </label>
                     <label class="btn btn-primary">
-                        <input id="but-assembly2" type="radio" value="Analysis/results/IMP-vizbin_length.png" class="btn btn-default" name="assembly-data">Vizbin length
+                        <input id="but-assembly2" type="radio" value="Analysis/results/IMP-vizbin_length_GC.png" class="btn btn-default" name="assembly-data">Vizbin GC
                     </label>
-                        <label class="btn btn-primary">
-                            <input id="but-assembly3" type="radio" value="Analysis/results/IMP-vizbin_length_GC.png" class="btn btn-default" name="assembly-data">Vizbin GC
-                        </label>
+                    <label class="btn btn-primary active">
+                        <input id="but-assembly3" type="radio" value="Analysis/results/quast/summary/report.html" class="btn btn-default" name="assembly-data" checked>Quast
+                    </label>
                 </div>
                 <div class="row">
-                    <div id='assembly-wrapper' class='row'><iframe style='position: absolute; width: 100%;height: 100%; border: none' src='Analysis/results/quast/summary/report.html'></iframe></div>
+                    <div id='assembly-wrapper' class='row'><img class='img-responsive' src='Analysis/results/IMP-vizbin_length.png'/></div>
                 </div>
 
 
