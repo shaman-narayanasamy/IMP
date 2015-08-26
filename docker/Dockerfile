@@ -102,7 +102,7 @@ RUN cd /home/imp/lib \
     && mkdir fastqc \
     && cd fastqc \
     && wget https://github.com/samtools/htsjdk/archive/1.138.tar.gz -O htsjdk.tgz \
-    && tar -xzf htsjdk.tgz &&
+    && tar -xzf htsjdk.tgz \
     && cd htsjdk/ \
     && ant htsjdk-jar \
 
