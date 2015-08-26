@@ -42,7 +42,6 @@ rule REPORT:
             "lib/bootstrap.min.css",
             "lib/bootstrap.min.js",
             "lib/imp.js",
-
         ] +
         expand(["{dir}/workflow.png", "{dir}/workflow.pdf"], dir=OUTPUTDIR)
     output:
@@ -56,7 +55,12 @@ rule REPORT:
             towrite = json.dumps(config)
             whandle.write("IMP_CONFIG = %s;" % towrite)
         shell("cp {input[0]} {params.outdir}/REPORT.html")
-        shell("cp {input[1:]} {params.outdir}")
+        shell("cp -f {input[1]} {params.outdir}")
+        shell("cp -f {input[2]} {params.outdir}")
+        shell("cp -f {input[3]} {params.outdir}")
+        shell("cp -f {input[4]} {params.outdir}")
+        shell("cp -f {input[5]} {params.outdir}")
+        shell("cp -f {input[6]} {params.outdir}")
 
 
 rule REPORT2:
