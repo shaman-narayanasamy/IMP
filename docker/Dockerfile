@@ -101,7 +101,9 @@ RUN cd /home/imp/tmp \
 RUN cd /home/imp/lib \
     && mkdir fastqc \
     && cd fastqc \
-    && git clone https://github.com/samtools/htsjdk.git \
+    && git config --global http.postBuffer 2M \
+    && git config --global http.maxRequestBuffer 100M \
+    && GIT_CURL_VERBOSE=1 git clone https://github.com/samtools/htsjdk.git \
     && cd htsjdk/ \
     && ant htsjdk-jar \
 

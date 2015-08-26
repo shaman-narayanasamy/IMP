@@ -3,12 +3,20 @@ U_OUT, U_LOG = prepare_environment('Util')
 
 rule _DOWNLOAD_LIBRARY_FILES:
     output:
-        "lib/d3.min.js", "lib/d3pie.min.js", "lib/jquery-2.1.1.min.js"
+        "lib/d3.min.js",
+        "lib/d3pie.min.js",
+        "lib/jquery-2.1.1.min.js",
+        "lib/jquery.cookie.min.js",
+        "lib/bootstrap.min.css",
+        "lib/bootstrap.min.js",
     shell:
         """
         wget https://raw.githubusercontent.com/mbostock/d3/master/d3.min.js -O lib/d3.min.js
         wget https://raw.githubusercontent.com/benkeen/d3pie/0.1.3/d3pie/d3pie.min.js -O lib/d3pie.min.js
         wget http://code.jquery.com/jquery-2.1.1.min.js -O lib/jquery-2.1.1.min.js
+        wget https://raw.githubusercontent.com/js-cookie/js-cookie/v2.0.3/src/js.cookie.js -O lib/jquery.cookie.min.js
+        wget https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css -O lib/bootstrap.min.css
+        wget https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js -O lib/bootstrap.min.js
         """
 
 rule DIAGRAMMS:
@@ -26,7 +34,17 @@ rule DIAGRAMMS:
 
 rule REPORT:
     input:
-        ["lib/imp.html", "lib/d3.min.js", "lib/jquery-2.1.1.min.js", "lib/imp.js"] + expand(["{dir}/workflow.png", "{dir}/workflow.pdf"], dir=OUTPUTDIR)
+        [
+            "lib/imp.html",
+            "lib/d3.min.js",
+            "lib/jquery-2.1.1.min.js",
+            "lib/jquery.cookie.js",
+            "lib/bootstrap.min.css",
+            "lib/bootstrap.min.js",
+            "lib/imp.js",
+
+        ] +
+        expand(["{dir}/workflow.png", "{dir}/workflow.pdf"], dir=OUTPUTDIR)
     output:
         "%s/REPORT.html" % OUTPUTDIR
     params:
@@ -38,9 +56,7 @@ rule REPORT:
             towrite = json.dumps(config)
             whandle.write("IMP_CONFIG = %s;" % towrite)
         shell("cp {input[0]} {params.outdir}/REPORT.html")
-        shell("cp {input[1]} {params.outdir}")
-        shell("cp {input[2]} {params.outdir}")
-        shell("cp {input[3]} {params.outdir}")
+        shell("cp {input[1:]} {params.outdir}")
 
 
 rule REPORT2:
