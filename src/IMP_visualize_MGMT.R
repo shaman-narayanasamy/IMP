@@ -110,7 +110,7 @@ coding_density=function(total_len_genes, length){
 ## Calculate N50
 get_n50=function(lengths){
     x=lengths
-    x[cumsum(x, na.rm = TRUE) > sum(x, na.rm = TRUE)/2][1]
+    x[cumsum(x, na.rm = TRUE) > sum(x)/2][1]
 }
 
 
