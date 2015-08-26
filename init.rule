@@ -34,6 +34,13 @@ rule _DOWNLOAD_HUMAN_DB:
         rm -rf $TMPD
         """
 
+rule _INIT_QUAST:
+    output:
+        ""
+    shell:
+        """
+        metaquast --test-no-ref
+        """
 
 rule _DOWNLOAD_SORTMERNA_DATABASES:
     output:

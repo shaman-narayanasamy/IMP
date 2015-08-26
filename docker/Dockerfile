@@ -154,17 +154,22 @@ RUN cd /home/imp/tmp \
     && ./configure \
     && make \
     && make install \
-    && cd .. && rm -rf parallel* \
+    && cd .. && rm -rf parallel*
+
 ## sortmerna
+RUN cd /home/imp/tmp \
     && wget --no-check-certificate https://webdav-r3lab.uni.lu/public/R3lab/IMP/sortmerna.2.0.tgz \
     && tar -xzf sortmerna.2.0.tgz \
     && cd sortmerna-2.0 \
     && sh build.sh \
     && mv sortmerna indexdb_rna /usr/bin/. \
     && mv scripts/*.sh /home/imp/lib/. \
-    && cd .. && rm -rf sortmerna* \
+    && cd .. && rm -rf sortmerna*
 ## bedtools2
-    && git clone https://git-r3lab.uni.lu/R3/bedtools2.git \
+RUN cd /home/imp/tmp \
+    && git config --global http.postBuffer 2M \
+    && git config --global http.maxRequestBuffer 100M \
+    && GIT_CURL_VERBOSE=1 git clone https://git-r3lab.uni.lu/R3/bedtools2.git \
     && cd bedtools2 \
     && git checkout v2.22.0 \
     && make
@@ -210,10 +215,12 @@ RUN cd /home/imp/lib
 
 ## Quast/metaQuast
 RUN cd /home/imp/lib \
-    && git clone https://github.com/ablab/quast.git \
-    && cd quast \
-    && git checkout release_3.1 \
-    && ./metaquast.py --test-no-ref \
+    && git config --global http.postBuffer 2M \
+    && git config --global http.maxRequestBuffer 100M \
+    && git config --global core.compression 0 \
+    && wget https://github.com/ablab/quast/archive/release_3.1.zip -O quast.zip \
+    && unzip quast.zip \
+    && cd quast-release_3.1 \
     && ln -s $PWD/metaquast.py /usr/bin/metaquast
 
 ######################
