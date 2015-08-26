@@ -389,18 +389,17 @@ rule ANALYSIS_MT_CONTIG_COVERAGE:
 
 def mg_fqfiles():
     raw = expand('{dir}/{raw}', raw=['MG.R1.fq', 'MG.R2.fq'], dir=P_OUT)
-    uniq = expand('{dir}/{uniq}', uniq=['MG.R1.uniq.fq', 'MG.R2.uniq.fq'], dir=P_OUT)
     trim = expand('{dir}/{trim}', trim=[
-        'MG.R1.uniq.trimmed.fq',
-        'MG.R2.uniq.trimmed.fq',
-        'MG.SE.uniq.trimmed.fq'], dir=P_OUT)
+        'MG.R1.trimmed.fq',
+        'MG.R2.trimmed.fq',
+        'MG.SE.trimmed.fq'], dir=P_OUT)
     filter = expand('{dir}/{filter}', filter=expand([
-        'MG.R1.uniq.trimmed.{f}.fq',
-        'MG.R2.uniq.trimmed.{f}.fq',
-        'MG.SE.uniq.trimmed.{f}.fq'], f=config['human_filtering']['filter']), dir=P_OUT)
+        'MG.R1.trimmed.{f}.fq',
+        'MG.R2.trimmed.{f}.fq',
+        'MG.SE.trimmed.{f}.fq'], f=config['human_filtering']['filter']), dir=P_OUT)
     if config['preprocessing_filtering']:
-        return raw + uniq + trim + filter
-    return raw + uniq + trim
+        return raw + trim + filter
+    return raw + trim
 
 
 def mt_fqfiles():
@@ -689,4 +688,3 @@ rule ANALYSIS_QUAST:
         """
         metaquast -t {THREADS} -o {AN_OUT}/results/quast {input[0]}
         """
-
