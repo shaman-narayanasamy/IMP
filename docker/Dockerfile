@@ -101,9 +101,8 @@ RUN cd /home/imp/tmp \
 RUN cd /home/imp/lib \
     && mkdir fastqc \
     && cd fastqc \
-    && git config --global http.postBuffer 2M \
-    && git config --global http.maxRequestBuffer 100M \
-    && GIT_CURL_VERBOSE=1 git clone https://github.com/samtools/htsjdk.git \
+    && wget https://github.com/samtools/htsjdk/archive/1.138.tar.gz -O htsjdk.tgz \
+    && tar -xzf htsjdk.tgz &&
     && cd htsjdk/ \
     && ant htsjdk-jar \
 
@@ -167,11 +166,9 @@ RUN cd /home/imp/tmp \
     && cd .. && rm -rf sortmerna*
 ## bedtools2
 RUN cd /home/imp/tmp \
-    && git config --global http.postBuffer 2M \
-    && git config --global http.maxRequestBuffer 100M \
-    && GIT_CURL_VERBOSE=1 git clone https://git-r3lab.uni.lu/R3/bedtools2.git \
+    && wget https://github.com/arq5x/bedtools2/releases/tag/v2.24.0 -O bedtools.tgz \
+    && tar -xzf beddtools.tgz \
     && cd bedtools2 \
-    && git checkout v2.22.0 \
     && make
 
 
