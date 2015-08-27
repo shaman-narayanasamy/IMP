@@ -219,14 +219,14 @@
 
               <div id="but-ratio" class="row btn-group" data-toggle="buttons" name="ratio-data">
                   <label class="btn btn-primary active">
-                      <input id="but-ratio1" type="radio" value="Analysis/results/" class="btn btn-default" name="ratio-data" checked>Depth
+                      <input id="but-ratio1" type="radio" value="Analysis/results/IMP-vizbin_length_depthRatio.png" class="btn btn-default" name="ratio-data" checked>Depth
                   </label>
                   <label class="btn btn-primary">
                       <input id="but-ratio2" type="radio" value="Analysis/results/IMP-vizbin_length_rpkmRatio.png" class="btn btn-default" name="ratio-data">Length
                   </label>
               </div>
               <div class="row">
-                  <div id='ratio-wrapper' class='row'><img class='img-responsive' src='Analysis/results/IMP-vizbin_length_depthRatio.png'/></div>
+                  <img id='ratio-wrapper' class='img-responsive' src='Analysis/results/IMP-vizbin_length_depthRatio.png'/>
               </div>
 
           </section>
@@ -248,11 +248,11 @@
                    <input id="but-variant3" type="radio" value="Analysis/results/IMP-vizbin_length_MGvardens.png" class="btn btn-default" name="variant-data">MG density
                </label>
                <label class="btn btn-primary">
-                   <input id="but-variant4" type="radio" value="Analysis/results/IMP-vizbin_length_MTvardens.pn" class="btn btn-default" name="variant-data">MT density
+                   <input id="but-variant4" type="radio" value="Analysis/results/IMP-vizbin_length_MTvardens.png" class="btn btn-default" name="variant-data">MT density
                </label>
            </div>
            <div class="row">
-               <div id='variant-wrapper' class='row'><img class='img-responsive' src='Analysis/results/IMP-var_count.png'/></div>
+               <img id='variant-wrapper' class='img-responsive' src='Analysis/results/IMP-var_count.png'/>
            </div
 
 
@@ -296,10 +296,17 @@
           <section id="log-section"  class="row">
             <h2><small>Log </small></h2>
             <div>
-              <p>The log file register all commands that have been run by IMP.</p>
+              <p>The log files register all commands that have been run by IMP.</p>
             </div>
             <div>
-              <p>The log is accessible here: <a href="imp.log">imp.log</a>.</p>
+              <p>The log are accessible in here IMP steps:
+                <ul>
+                    <li><a href="Preprocessing/Preprocessing.log">Preprocessing</a></li>
+                    <li><a href="Assembly/Assembly.log">Assembly</a></li>
+                    <li><a href="Analysis/Analysis.log">Analysis</a></li>
+                    <li><a href="Util/Util.log">Util</a></li>
+                </ul>
+            </p>
             </div>
           </section>
         </div>
