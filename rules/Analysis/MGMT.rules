@@ -504,7 +504,8 @@ rule ANALYSIS_PLOT:
                'MT.variants.samtools.vcf.gz',
                'MGMT.assembly.gc_content.txt',
                "MGMT.vizbin.with-contig-names.points",
-               "annotation/annotation.filt.gff"], dir=AN_OUT)
+               "annotation/annotation.filt.gff",
+               "results/quast/combined_quast_output/contigs_reports/nucmer_output/aux/MGMT.assembly.merged.coords"], dir=AN_OUT)
     output:
         analysis_plot_files_output()
     params:
@@ -680,6 +681,7 @@ rule ANALYSIS_QUAST:
         '{dir}/MGMT.assembly.merged.fa'.format(dir=A_OUT)
     output:
         "%s/results/quast/summary/report.html" % AN_OUT,
+        "%s/results/quast/summary/combined_quast_output/contigs_reports/nucmer_output/aux/MGMT.assembly.merged.coords_edited" % AN_OUT
     benchmark:
         "%s/benchmarks/ANALYSIS_QUAST.json" % AN_OUT
     log:
@@ -687,4 +689,6 @@ rule ANALYSIS_QUAST:
     shell:
         """
         metaquast -t {THREADS} -o {AN_OUT}/results/quast {input[0]}
+        sed -e 's/|//g' {AN_OUT}/results/quast/combined_quast_output/contigs_reports/nucmer_output/aux/MGMT.assembly.merged.coords \
+        | sed -e 's/*\s/\t/g' | tail -n +3 >  {AN_OUT}/results/quast/combined_quast_output/contigs_reports/nucmer_output/aux/MGMT.assembly.merged.coords_edited
         """
