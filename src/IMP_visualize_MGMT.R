@@ -26,6 +26,8 @@ require(psych)
 # User should input the three different files
 # Uncomment when ready
 
+print("START: Reading arguments")
+
 args		    <- commandArgs(trailingOnly = TRUE)
 out_dir		    <- args[1] # Output directory
 MG.read.count_file  <- args[2]
@@ -43,31 +45,20 @@ coords_file	    <- args[13]
 annot_file	    <- args[14]
 nucmer_file	    <- args[15]
 
-out_dir		    <- "../R_test_new/"
-MG.read.count_file <- "../output2/Analysis/MG.read_counts.txt"
-MT.read.count_file <- "../output2/Analysis/MT.read_counts.txt"
-MG.map.summary_file<- "../output2/Analysis/MG.assembly.contig_flagstat.txt"
-MT.map.summary_file<- "../output2/Analysis/MT.assembly.contig_flagstat.txt"
-MG.cov_file	   <- "../output2/Analysis/MG.assembly.contig_coverage.txt"
-MT.cov_file	   <- "../output2/Analysis/MT.assembly.contig_coverage.txt"
-MG.depth_file	   <- "../output2/Analysis/MG.assembly.contig_depth.txt"
-MT.depth_file	   <- "../output2/Analysis/MT.assembly.contig_depth.txt"
-MG.var_file	   <- "../output2/Analysis/MG.variants.samtools.vcf.gz"
-MT.var_file	   <- "../output2/Analysis/MT.variants.samtools.vcf.gz"
-GC.dat_file	   <- "../output2/Analysis/MGMT.assembly.gc_content.txt"
-coords_file	   <- "../output2/Analysis/MGMT.vizbin.with-contig-names.points"
-annot_file	   <- "../output2/Analysis/annotation/annotation.filt.gff"
-nucmer_file	   <- "../output2/Analysis/results/quast/combined_quast_output/contigs_reports/nucmer_output/aux/MGMT.assembly.merged.coords_edited"
+print("DONE: Reading arguments")
 
 ###################################################################################################
 ## Initialize functions for various calculations and normalizations
 ###################################################################################################
-print("Initializing functions")
+print("START: Reading functions")
 source("IMP_plot_functions.R")
+print("DONE: Reading functions")
 
 ###################################################################################################
 ## Read in the necessary input files
 ###################################################################################################
+print("START: Reading data")
+
 ## Read counts MG
 print("Read in MG read count file")
 MG.read.count <- read.table(MG.read.count_file)
@@ -197,7 +188,7 @@ annot.3 <- cbind(rownames(annot.3), annot.3, rowSums(annot.3[,c(2:ncol(annot.3))
 rownames(annot.3) <- NULL
 colnames(annot.3)[c(1, ncol(annot.3))] <- c("contig", "all_annotations")
 
-annot.4 <- merge(annot.2, annot.3, by="contig")
+annot_final <- merge(annot.2, annot.3, by="contig")
 
 # vizbin points, the contig names are usually not included in this file,
 # concatenate it before reading in
@@ -210,25 +201,27 @@ nucmer_res <- read.table(nucmer_file, header=F)
 colnames(nucmer_res) <- c("ref_start", "ref_end", "query_start", "query_end", "ref_align_len",
 			  "query_align_len", "identity", "ref_id", "contig")
 
+print("DONE: Reading data")
 ###################################################################################################
 ## Merge the data sets without the vizbin coordinates
 ###################################################################################################
-print("Merging data")
+print("START: Merging data")
+
 all.dat <- merge(MG.cov, MT.cov, by=c("contig", "length"), all=T)
 all.dat <- merge(all.dat, GC.dat, by=c("contig"), all=T, incomparables=NA)
 all.dat <- merge(all.dat, MG.depth, by=c("contig"), all=T, incomparables=NA)
 all.dat <- merge(all.dat, MT.depth, by=c("contig"), all=T, incomparables=NA)
 all.dat <- merge(all.dat, MG.var, by=c("contig"), all=T, incomparables=NA)
 all.dat <- merge(all.dat, MT.var, by=c("contig"), all=T, incomparables=NA)
-all.dat <- merge(all.dat, annot.4, by=c("contig"), all=T, incomparables=NA)
+all.dat <- merge(all.dat, annot_final, by=c("contig"), all=T, incomparables=NA)
 all.dat <- merge(all.dat, nucmer_res, by=c("contig"), all=T, incomparables=NA)
 
+print("DONE: Merging data")
 ###################################################################################################
 ## Perform calculations and append it to the full table
 ###################################################################################################
 # Calculate and merge data
-print("Perform calculations")
-save.image(name_plot("results.Rdat"))
+print("START: Performing calculations")
 
 # Compute gene density
 print("Computing gene density")
@@ -271,9 +264,13 @@ all.dat$log_var_ratio <- log10(all.dat$var_ratio)
 print("Computing query coverage of contigs against reference genomes")
 all.dat$query_cov <- all.dat$query_align_len / all.dat$length * 100
 all.dat$query_cov[na.omit(all.dat$query_cov > 100)] = 100
+
+print("DONE: Performing calculations")
 ###################################################################################################
 ## Organize filtering statistics and create table
 ###################################################################################################
+print("START: Organizing preprocessing stats")
+
 ## Organize MG filtering procedures
 print("Printing metagenomic filtering statistics")
 # Obtain file names without path
@@ -328,6 +325,7 @@ write.table(MG.read.count.final, name_plot("MG.read_stats.txt"),
 
 ####################################################################
 ## Organize MT filtering procedures
+####################################################################
 
 print("Printing metatranscriptomic filtering statistics")
 # Obtain file names without path
@@ -383,42 +381,23 @@ write.table(MT.read.count.final, name_plot("MT.read_stats.txt"),
 	    sep="\t", quote=F,
 	    row.names=F)
 
-###################################################################################################
-## Calculate assembly statistics and create table
-###################################################################################################
-## Prepare table for assembly statistics
-print("Printing assembly statistics")
-assembly.stats <- cbind(c("All contigs", "Contigs >= 500", "Contigs >= 1000"),
-		   rbind(
-      get_stats(all.dat),
-      get_stats(all.dat[all.dat$length>=500,]),
-      get_stats(all.dat[all.dat$length>=1000,])
-      ))
-
-colnames(assembly.stats)<-c("Contig_set",
-			"No_of_contigs",
-			"N50",
-			"Max_size",
-			"Mean_size",
-			"Median_size",
-			"Total_length")
-
-assembly.stats <- as.data.frame(assembly.stats)
-assembly.stats[,2:6] <- sapply(assembly.stats[2:6], as.character)
-assembly.stats[,2:6] <- sapply(assembly.stats[2:6], as.numeric)
+print("DONE: Organizing preprocessing stats")
 
 ###################################################################################################
 ## Incorporate coordinates from vizbin
 ###################################################################################################
-print("Incorporating vizbin coordinates")
+print("START: Incorporating VizBin data")
+
 vb_dat <- merge(all.dat, coords, by=c("contig"), all=F, incomparables=NA)
 vb_dat <- vb_dat[!is.na(vb_dat$x),]
 
-#write.table(vb_dat, "final.contig.merged_min1000_info_raw.txt", sep="\t", quote=F, row.names=F)
+print("Processing VizBin data")
 # Handle missing and infinite values
 vb_dat[is.na(vb_dat)] <- 0
 
 # Remove outliers and infinite values
+print("Handling outliers")
+
 vb_dat$MG_var_dens <- outliers(vb_dat$MG_var_dens,2)
 vb_dat$MT_var_dens <- outliers(vb_dat$MT_var_dens,2)
 vb_dat$MG_depth <- outliers(vb_dat$MG_depth,2)
@@ -434,25 +413,12 @@ vb_dat$log_depth_ratio <- outliers(vb_dat$log_depth_ratio,2)
 vb_dat$log_rpkm_ratio <- outliers(vb_dat$log_rpkm_ratio,2)
 vb_dat$log_var_ratio <- outliers(vb_dat$log_var_ratio,2)
 
-#write.table(vb_dat, "final.contig.merged_min1000_info_processed.txt", sep="\t", quote=F, row.names=F)
-
+print("DONE: Incorporating VizBin data")
 ####################################################################
 ## ASSEMBLY STATISTICS AND VISUALIZATIONS
 ####################################################################
-print("Begin visualizing data")
+print("START: Visualizing")
 ## Output filtering statistics table (text and tsv)
-
-## Output assembly statistics table (text and tsv)
-print("Print assembly statistics table")
-sink(name_plot("assembly_stats.html"))
-print(xtable(assembly.stats, html.table.attributes=""), type = "html")
-sink()
-
-write.table(assembly.stats, name_plot("assembly_stats.txt"),
-	    sep="\t", quote=F,
-	    row.names=F)
-
-#print(assembly.stats_plot)
 
 ## Output mapping stats table
 print("Print metagenomic mapping statistics table")
@@ -502,7 +468,22 @@ guides(size=guide_legend(title=log10len)) +
 theme_nothing()
 dev.off()
 
-print("OVER")
+## Vizbin plot for quast results
+print("Generating vizbin plot for quast results")
+nref <- length(unique(vb_dat$ref_id))
+png(name_plot("IMP-vizbin_quast.png"), width=700, height=700)
+ggplot(vb_dat, aes(x=x,y=y)) +
+geom_point(aes(size=query_cov,
+	       colour=ref_id,
+	       order=length,
+	       alpha=identity)) +
+		   guides(size=guide_legend(title="Query coverage"),
+		   colour=guide_legend(title="Reference"),
+		   alpha=guide_legend(title="% identity")
+		   )+
+theme_gray()
+dev.off()
+
 ####################################################################
 ## MAPPING STATISTICS AND VISUALIZATIONS
 ####################################################################
@@ -679,18 +660,18 @@ dev.off()
 ####################################################################
 ## Vizbin plot with length and raw number of genes
 
-#print("Generating vizbin plot for number of genes")
-#png(name_plot("IMP-vizbin_length_geneCount.png"), width=700, height=700)
-#ggplot(vb_dat, aes(x=x,y=y)) +
-#geom_point(aes(colour=genes, size=log10(length), order=genes), alpha=0.75) +
-#scale_colour_gradientn(colours=topo.colors(max(vb_dat$genes)),
-#		      guide="colourbar",
-#		      guide_legend(title="Gene count")
-#		      ) +
-#       guides(size=guide_legend(title=log10len)
-#       ) +
-#theme_nothing()
-#dev.off()
+print("Generating vizbin plot for number of genes")
+png(name_plot("IMP-vizbin_length_geneCount.png"), width=700, height=700)
+ggplot(vb_dat, aes(x=x,y=y)) +
+geom_point(aes(colour=genes, size=log10(length), order=genes), alpha=0.75) +
+scale_colour_gradientn(colours=topo.colors(max(vb_dat$genes)),
+		      guide="colourbar",
+		      guide_legend(title="Gene count")
+		      ) +
+       guides(size=guide_legend(title=log10len)
+       ) +
+theme_nothing()
+dev.off()
 
 ## Vizbin plot with length and gene density
 print("Generating vizbin plot for gene density")
@@ -706,52 +687,10 @@ scale_colour_gradientn(colours=topo.colors(500),
 theme_nothing()
 dev.off()
 
-## Vizbin plot with length and taxanomic markers
-
-## Also write an estimated number of complete genomes for the report
-
 ####################################################################
-## RATIO STATISTICS AND VISUALIZATIONS
+## RATIO STATISTICS AND VISUALIZATION
 ####################################################################
-## Plot histogram for coverage ratio
-print("Generating metatranscriptomic-metagenomic coverage ratio histogram")
-png(name_plot("IMP-coverage_ratio_histogram.png"), width=700, height=700)
-ggplot(all.dat, aes(x=cov_ratio)) +
-geom_histogram(binwidth=0.5, position="identity", fill="red", alpha=0.75) +
-xlim(0,set_max_perc(all.dat$cov_ratio, 25)) +
-xlab("coverage ratio") +
-ggtitle("MT/MG coverage ratio histogram") +
-theme_bw()
-dev.off()
-
-## Plot histogram for depth ratio
-print("Generating metatranscriptomic-metagenomic depth ratio histogram")
-png(name_plot("IMP-depth_ratio_histogram.png"), width=700, height=700)
-ggplot(all.dat, aes(x=depth_ratio)) +
-geom_histogram(binwidth=0.5, position="identity", fill="blue", alpha=0.75) +
-xlim(0,set_max_perc(all.dat$depth_ratio, 0.025))+
-xlab("depth ratio") +
-ggtitle("MT/MG depth ratio histogram") +
-theme_bw()
-dev.off()
-
-## Plot histograms for rpkm ratio
-print("Generating metatranscriptomic-metagenomic rpkm ratio histogram")
-png(name_plot("IMP-rpkm_ratio_histogram.png"), width=700, height=700)
-ggplot(all.dat, aes(x=rpkm_ratio)) +
-geom_histogram(binwidth=0.5, position="identity", fill="green", alpha=0.75) +
-xlim(0,set_max_perc(all.dat$cov_ratio, 25))+
-xlab("rpkm ratio") +
-ggtitle("MT/MG rpkm ratio histogram") +
-theme_bw()
-dev.off()
-
-## Plot density plot of all different ratio levels
-M.ratio <- melt(all.dat, id.vars=("contig"), measure.vars=c("cov_ratio",
-							    "depth_ratio",
-							    "rpkm_ratio",
-							    "var_ratio"))
-colnames(M.ratio) <- c("contig","type","ratio")
+print("Generate statistics and visualizations")
 
 ## Vizbin plot for coverage ratio
 print("Generating vizbin plot for coverage ratios")
@@ -799,22 +738,13 @@ scale_colour_gradientn(colours=rev(heat.colors(1000))) +
 theme_black()
 dev.off()
 
-## Vizbin plot for quast results
-print("Generating vizbin plot for quast results")
-nref <- length(unique(vb_dat$ref_id))
-png(name_plot("IMP-vizbin_quast.png"), width=700, height=700)
-ggplot(vb_dat, aes(x=x,y=y)) +
-geom_point(aes(size=query_cov,
-	       colour=ref_id,
-	       order=length,
-	       alpha=identity)) +
-		   guides(size=guide_legend(title="Query coverage"),
-		   colour=guide_legend(title="Reference"),
-		   alpha=guide_legend(title="% identity")
-		   )+
-theme_gray()
-dev.off()
+print("DONE: Visualizing")
 
+####################################################################
 ## Save the R workspace
+####################################################################
+
+print("START: Saving R image: MGMT_results.Rdat")
 save.image(name_plot("MGMT_results.Rdat"))
+print("DONE: Saving R image: MGMT_results.Rdat")
 
