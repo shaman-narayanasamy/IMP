@@ -9,7 +9,6 @@ require(genomeIntervals)
 require(checkpoint)
 checkpoint('2015-04-27', scanForPackages=FALSE)
 
-
 require(ggplot2)
 require(gtools)
 require(data.table)
@@ -20,7 +19,6 @@ require(stringr)
 require(xtable)
 require(beanplot)
 require(psych)
-
 
 ###################################################################################################
 ## Read in arguments
@@ -45,184 +43,27 @@ coords_file	    <- args[13]
 annot_file	    <- args[14]
 nucmer_file	    <- args[15]
 
+out_dir		    <- "../R_test_new/"
+MG.read.count_file <- "../output2/Analysis/MG.read_counts.txt"
+MT.read.count_file <- "../output2/Analysis/MT.read_counts.txt"
+MG.map.summary_file<- "../output2/Analysis/MG.assembly.contig_flagstat.txt"
+MT.map.summary_file<- "../output2/Analysis/MT.assembly.contig_flagstat.txt"
+MG.cov_file	   <- "../output2/Analysis/MG.assembly.contig_coverage.txt"
+MT.cov_file	   <- "../output2/Analysis/MT.assembly.contig_coverage.txt"
+MG.depth_file	   <- "../output2/Analysis/MG.assembly.contig_depth.txt"
+MT.depth_file	   <- "../output2/Analysis/MT.assembly.contig_depth.txt"
+MG.var_file	   <- "../output2/Analysis/MG.variants.samtools.vcf.gz"
+MT.var_file	   <- "../output2/Analysis/MT.variants.samtools.vcf.gz"
+GC.dat_file	   <- "../output2/Analysis/MGMT.assembly.gc_content.txt"
+coords_file	   <- "../output2/Analysis/MGMT.vizbin.with-contig-names.points"
+annot_file	   <- "../output2/Analysis/annotation/annotation.filt.gff"
+nucmer_file	   <- "../output2/Analysis/results/quast/combined_quast_output/contigs_reports/nucmer_output/aux/MGMT.assembly.merged.coords_edited"
 
 ###################################################################################################
 ## Initialize functions for various calculations and normalizations
 ###################################################################################################
 print("Initializing functions")
 source("IMP_plot_functions.R")
-
-### calculate coverage using the "traditional" method
-#get_coverage=function(reads_mapped, length, read_len){
-#    M <- reads_mapped
-#    L <- length
-#    R <- read_len
-#
-#    # coverage*contig length/read length
-#    C <- (M*L)/R
-#    return(C)
-#}
-#
-#####################################################################
-### Contig based "RPKM" values, similar to used in
-### Muller et al. (2014, Nat. Comm.), ## only here it
-### is applied to
-### every contig
-#contig_rpkm=function(reads_mapped, length){
-#    N <- sum(reads_mapped, na.rm = TRUE)
-#    R <- reads_mapped
-#    L <- length
-#
-#    # reads mapped/([length of contig]/1000)/([total reads]/10^6)
-#    R/(L/1000)/(N/10^6)
-#}
-#
-#####################################################################
-### Calculate variant density:
-### i)  Traditional variats per kilo base
-### ii) Normalized by contig rpkm (Muller et al., 2014)
-#var_density=function(variants, length, reads_mapped){
-#    V <- variants
-#    L <- length
-#    rpkmC <- contig_rpkm(reads_mapped, L)
-#
-#    D <- (V/L)/1000/rpkmC
-#    return(D)
-#}
-#
-#####################################################################
-### Calculate gene density
-#gene_density=function(total_genes, length){
-#    G <- total_genes
-#    L <- length
-#
-#    C <- (G)/(L/1000)
-#    return(C)
-#}
-#####################################################################
-### Calculate coding density
-#coding_density=function(total_len_genes, length){
-#    G <- total_len_genes
-#    L <- length
-#
-#    C <- (G/1000)/(L/1000)
-#    return(C)
-#}
-#
-#####################################################################
-### Calculate N50
-#get_n50=function(lengths){
-#    x=lengths
-#    x[cumsum(x) > sum(x)/2][1]
-#}
-#
-#
-#####################################################################
-### Get assembly statistics
-#get_stats=function(dat){
-#    contigs <- nrow(dat)
-#    N50 <- get_n50(dat$length)
-#    max_len <- max(dat$length)
-#    mean_len <- mean(dat$length)
-#    med_len <- median(dat$length)
-#    total_length <- sum(dat$length, na.rm = TRUE)
-#    return(c(contigs,N50,max_len,mean_len,med_len,total_length))
-#}
-#
-#
-#####################################################################
-### Function to scale data between 0 and 1 (for plotting)
-#range01 <- function(x){(x-min(x))/(max(x)-min(x))}
-#
-#####################################################################
-### Filter out outliers and set them as floor/ceiling value (min/max)
-#outliers=function(z, dist){
-#    z[is.infinite(z)] <- max(z[is.finite(z)])
-#    z[which(z > mean(z) + dist*sd(z))] = round(mean(z) + dist*sd(z))
-#    z[which(z < mean(z) - dist*sd(z))] = round(mean(z) - dist*sd(z))
-#    return(z)
-#}
-#
-#####################################################################
-### Function to name files
-#name_plot=function(name){
-#    filename <- paste(out_dir, name, sep='/')
-#    return(filename)
-#}
-#
-#####################################################################
-## Function to obtain number of character (char) occurences
-## within string
-#countCharOccurrences <- function(char, s) {
-#    s2 <- gsub(char,"",s)
-#    return (nchar(s) - nchar(s2))
-#}
-#
-#####################################################################
-## Function to output filename without the path
-#get_file_name <- function(file_path){
-#    n <- countCharOccurrences('/', as.character(file_path))
-#    filename <- str_split_fixed(file_path, "/", n+1)[n+1]
-#    return(filename)
-#}
-#
-#####################################################################
-## Function to obtain filtering information (contained in file names)
-#filtering <- function(file){
-#    n <- countCharOccurrences("\\.", as.character(file))
-#    filter <- str_split_fixed(file, "\\.", n+1)[n]
-#    return(filter)
-#}
-#
-### Function for white background theme with no axes
-#theme_nothing <- function(base_size = 12, base_family = "Helvetica")
-#  {
-#  theme_bw(base_size = base_size, base_family = base_family) %+replace%
-#      theme(
-#            rect             = element_blank(),
-#            line             = element_blank(),
-#            axis.ticks.margin = unit(0, "lines"),
-#	    axis.text.x=element_blank(),
-#	    axis.text.y=element_blank(),
-#            axis.ticks=element_blank(),
-#            axis.title.x=element_blank(),
-#            axis.title.y=element_blank()
-#           )
-#}
-#
-### Function for black background theme with no axes
-#theme_black <- function(base_size = 12, base_family = "Helvetica")
-#  {
-#  theme_bw(base_size = base_size, base_family = base_family) %+replace%
-#      theme(
-#	    panel.background = element_rect(fill="black", colour="black"),
-#            line             = element_blank(),
-#            axis.ticks.margin = unit(0, "lines"),
-#	    axis.text.x=element_blank(),
-#	    axis.text.y=element_blank(),
-#            axis.ticks=element_blank(),
-#            axis.title.x=element_blank(),
-#            axis.title.y=element_blank()
-#           )
-#}
-#
-### Set maximum value for plots based on standard deviation
-#set_max_sd=function(x, dist){
-#    max_val <- mean(x, na.rm=T) + dist*sd(x, na.rm=T)
-#    return(max_val)
-#}
-#
-### Set maximum value for plots based on percentage
-#set_max_perc=function(x, percentage){
-#    max_val <- max(x[is.finite(x)], na.rm=T)*(percentage/100)
-#}
-#
-### Special string for length
-#log10len <- expression(bold(atop("Contig length", paste("(",log[10], bp, ")"))))
-#
-### Metagenomic and metatranscriptomic labels
-#mgmt_labs <- c("metagenomic","metatranscriptomic")
-
 
 ###################################################################################################
 ## Read in the necessary input files
@@ -367,9 +208,7 @@ coords <- read.table(coords_file, colClasses=c("factor", "numeric", "numeric"),
 print("Reading in nucmer results")
 nucmer_res <- read.table(nucmer_file, header=F)
 colnames(nucmer_res) <- c("ref_start", "ref_end", "query_start", "query_end", "ref_align_len",
-			  "query_align_len", "%id", "ref_id", "contig")
-
-
+			  "query_align_len", "identity", "ref_id", "contig")
 
 ###################################################################################################
 ## Merge the data sets without the vizbin coordinates
@@ -390,54 +229,6 @@ all.dat <- merge(all.dat, nucmer_res, by=c("contig"), all=T, incomparables=NA)
 # Calculate and merge data
 print("Perform calculations")
 save.image(name_plot("results.Rdat"))
-## Get new column numbers
-#newcols <- ncol(all.dat) + 1
-#all.dat <- cbind(all.dat,
-#      gene_density(all.dat$no_of_genes, all.dat$length),
-#      coding_density(all.dat$total_gene_length, all.dat$length),
-#      contig_rpkm(all.dat$MG_reads, all.dat$length),
-#      contig_rpkm(all.dat$MT_reads, all.dat$length),
-#      var_density(all.dat$MG_var, all.dat$length, all.dat$MG_reads),
-#      var_density(all.dat$MT_var, all.dat$length, all.dat$MT_reads),
-#      all.dat$MT_cov/all.dat$MG_cov,
-#      all.dat$MT_depth/all.dat$MG_depth
-#)
-#colnames(all.dat)[newcols:ncol(all.dat)] <- c(
-#			      "gene_dens",
-#			      "coding_dens",
-#			      "MG_rpkm",
-#			      "MT_rpkm",
-#			      "MG_var_dens",
-#			      "MT_var_dens",
-#			      "cov_ratio",
-#			      "depth_ratio"
-#			      )
-## Get new column numbers
-#newcols <- ncol(all.dat) + 1
-#
-## Calculate ratio values
-#all.dat <- cbind(all.dat,
-#		 all.dat$MT_rpkm/all.dat$MG_rpkm,
-#		 all.dat$MT_var_dens/all.dat$MG_var_dens)
-#colnames(all.dat)[c(newcols, ncol(all.dat))] <- c("rpkm_ratio",
-#					     "var_ratio")
-## Calculate log ratio values
-## Get new column numbers
-#newcols <- ncol(all.dat) + 1
-#
-#
-#all.dat <- cbind(all.dat,
-#		 log10(all.dat$cov_ratio),
-#		 log10(all.dat$depth_ratio),
-#		 log10(all.dat$rpkm_ratio),
-#		 log10(all.dat$var_ratio)
-#		 )
-#
-#colnames(all.dat)[c(newcols:ncol(all.dat))] <- c("log_cov_ratio",
-#					    "log_depth_ratio",
-#					    "log_rpkm_ratio",
-#					    "log_var_ratio")
-#
 
 # Compute gene density
 print("Computing gene density")
@@ -472,14 +263,14 @@ all.dat$var_ratio <- all.dat$MT_var_dens / all.dat$MG_var_dens
 # Compute log transformation of ratio values
 print("Log transforming some of the data")
 all.dat$log_cov_ratio <- log10(all.dat$cov_ratio)
-all.dat$log_cov_ratio <- log10(all.dat$depth_ratio)
+all.dat$log_depth_ratio <- log10(all.dat$depth_ratio)
 all.dat$log_rpkm_ratio <- log10(all.dat$rpkm_ratio)
 all.dat$log_var_ratio <- log10(all.dat$var_ratio)
 
 # Compute query coverage against reference genomes
 print("Computing query coverage of contigs against reference genomes")
 all.dat$query_cov <- all.dat$query_align_len / all.dat$length * 100
-all.dat$query_cov <- all.dat$query.cov[all.dat$query_cov > 100]
+all.dat$query_cov[na.omit(all.dat$query_cov > 100)] = 100
 ###################################################################################################
 ## Organize filtering statistics and create table
 ###################################################################################################
@@ -1005,9 +796,25 @@ scale_colour_gradientn(colours=rev(heat.colors(1000))) +
 		   guides(size=guide_legend(title=log10len),
 		   colour=guide_colourbar(title=rpkmRatio_label)
 		   )+
-
 theme_black()
+dev.off()
+
+## Vizbin plot for quast results
+print("Generating vizbin plot for quast results")
+nref <- length(unique(vb_dat$ref_id))
+png(name_plot("IMP-vizbin_quast.png"), width=700, height=700)
+ggplot(vb_dat, aes(x=x,y=y)) +
+geom_point(aes(size=query_cov,
+	       colour=ref_id,
+	       order=length,
+	       alpha=identity)) +
+		   guides(size=guide_legend(title="Query coverage"),
+		   colour=guide_legend(title="Reference"),
+		   alpha=guide_legend(title="% identity")
+		   )+
+theme_gray()
 dev.off()
 
 ## Save the R workspace
 save.image(name_plot("MGMT_results.Rdat"))
+

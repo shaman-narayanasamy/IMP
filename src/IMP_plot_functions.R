@@ -161,6 +161,23 @@ theme_black <- function(base_size = 12, base_family = "Helvetica")
            )
 }
 
+## Function for gray background theme with no axes
+theme_gray <- function(base_size = 12, base_family = "Helvetica")
+  {
+  theme_bw(base_size = base_size, base_family = base_family) %+replace%
+      theme(
+	    panel.background = element_rect(fill="gray25", colour="gray25"),
+            line             = element_blank(),
+            axis.ticks.margin = unit(0, "lines"),
+	    axis.text.x=element_blank(),
+	    axis.text.y=element_blank(),
+            axis.ticks=element_blank(),
+            axis.title.x=element_blank(),
+            axis.title.y=element_blank()
+           )
+}
+
+
 ## Set maximum value for plots based on standard deviation
 set_max_sd=function(x, dist){
     max_val <- mean(x, na.rm=T) + dist*sd(x, na.rm=T)
