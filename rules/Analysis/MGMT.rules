@@ -699,5 +699,5 @@ rule ANALYSIS_QUAST:
         """
         metaquast -t {THREADS} -o {AN_OUT}/results/quast {input[0]}
         sed -e 's/|//g' {AN_OUT}/results/quast/combined_quast_output/contigs_reports/nucmer_output/aux/MGMT.assembly.merged.coords \
-        | sed -e 's/*\s/\t/g' | tail -n +3 >  {AN_OUT}/results/quast/combined_quast_output/contigs_reports/nucmer_output/aux/MGMT.assembly.merged.coords_edited
+        | sed -e 's/*\s/\t/g' | tail -n +3 > {output[1]}
         """
