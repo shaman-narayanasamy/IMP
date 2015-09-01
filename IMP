@@ -17,7 +17,7 @@ __doc__ = """Integrated Metaomic Pipeline.
 (____)(_/\/\_)(__)
 
 Usage:
-  IMP [-m MG1 -m MG2] [-t MT1 -t MT2] -o OUTPUT [--enter] [--norm] [--ask] [-n CONTAINER] [-c CONFIGFILE] [-d DBPATH] [-e ENV] ... [COMMANDS ...]
+  IMP [-m MG1 -m MG2] [-t MT1 -t MT2] -o OUTPUT [--enter] [--norm] [--ask] [-n CONTAINER] [-v VERSION] [-c CONFIGFILE] [-d DBPATH] [-e ENV] ... [COMMANDS ...]
   IMP --init [-d DBPATH] [-n CONTAINER]
   IMP (-h | --help)
   IMP --version
@@ -33,10 +33,12 @@ Options:
   -m MG             Path to the metagenomics paired files (must be 2 files).
   -t MT             Path to the metatranscriptomic paired files (2 files).
   -d DBPATH         Path to the databases [default: db]
-  -n CONTAINER      Name of the container. Useful when you want to run a previous version of IMP.
+  -n CONTAINER      Name of the container. Useful when you want to run your own built container.
+  -v VERSION      Name of the container. Useful when you want to run your own built container.
   -o OUTPUT         Path to the output directory
 """
 
+LATEST = '1.0'
 
 def get_version():
     return subprocess.check_output(
@@ -75,10 +77,18 @@ def format_command(cmd, dir):
     return ' /bin/bash -c "{c} ; useradd {u} && chown -R {u} {d} && chmod -R u+Xrw,g+rw,o+r {d}"'.format(c=cmd, u=username, d=dir)
 
 
+def get_container_name(args):
+    version = args['-v'] is not None and args['-v'] or LATEST
+    container_name = args['-n'] is not None and args['-n'] or 'docker-r3lab.uni.lu/imp/imp'
+    container_name = '%s:%s' % (container_name, version)
+    return container_name
+
+
 def init(args):
     CURRENT_PATH = Path(__file__).parent.abspath()
     # start docker container to index files and setup prokka
-    container_name = args['-n'] is not None and args['-n'] or 'imp:latest'
+    version = args['-v'] is not None and args['-v'] or 'latest'
+    container_name = get_container_name(args)
     db_path = Path(args['-d']).abspath()
     cmd = [
         'docker', 'run', '--rm',
@@ -110,7 +120,7 @@ def run(args):
         if args['--ask'] and not yes_or_no("Output '%s' doesn't exist. Create ?" % output):
             exit(0)
         output.makedirs()
-    container_name = args['-n'] is not None and args['-n'] or 'imp:latest'
+    container_name = get_container_name(args)
     db_path = Path(args['-d']).abspath()
     # configure IMP mount point to the docker container
     mount_points = [
