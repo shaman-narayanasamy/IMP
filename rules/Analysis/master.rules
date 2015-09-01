@@ -8,9 +8,7 @@ PLOT_OUTPUT_FILES = {
         "IMP-vizbin_length.png",
         "IMP-vizbin_length_GC.png",
         "IMP-vizbin_length_geneDensity.png",
-        "IMP-vizbin_standard.png",
-        "assembly_stats.html",
-        "assembly_stats.txt"
+        "IMP-vizbin_standard.png"
     ],
     'mgmt': [
         "IMP-reads_density.png",
@@ -71,7 +69,7 @@ ANALYSIS_OUTPUT_FILES = {
         "MGMT.vizbin.filtered.fa",
         "MGMT.vizbin.with-contig-names.points",
         "results/quast/summary/report.html",
-        "%s/results/quast/summary/combined_quast_output/contigs_reports/nucmer_output/aux/MGMT.assembly.merged.coords_edited"
+        "results/quast/summary/combined_quast_output/contigs_reports/nucmer_output/aux/MGMT.assembly.merged.coords_edited"
     ],
     'mg': [
         "MG.read_counts.txt",
@@ -134,7 +132,7 @@ ANALYSIS_OUTPUT_FILES = {
         "MG.vizbin.filtered.fa",
         "MG.vizbin.with-contig-names.points",
         "results/quast/summary/report.html",
-        "%s/results/quast/summary/combined_quast_output/contigs_reports/nucmer_output/aux/MGMT.assembly.merged.coords_edited"
+        "results/quast/summary/combined_quast_output/contigs_reports/nucmer_output/aux/MGMT.assembly.merged.coords_edited"
     ],
     'mt_only': [
         "MT.assembly.length.txt",
@@ -143,7 +141,7 @@ ANALYSIS_OUTPUT_FILES = {
         "MT.vizbin.filtered.fa",
         "MT.vizbin.with-contig-names.points",
         "results/quast/summary/report.html",
-        "%s/results/quast/summary/combined_quast_output/contigs_reports/nucmer_output/aux/MGMT.assembly.merged.coords_edited"
+        "results/quast/summary/combined_quast_output/contigs_reports/nucmer_output/aux/MGMT.assembly.merged.coords_edited"
     ],
 
 }

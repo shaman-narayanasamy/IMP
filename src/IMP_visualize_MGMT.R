@@ -51,7 +51,7 @@ print("DONE: Reading arguments")
 ## Initialize functions for various calculations and normalizations
 ###################################################################################################
 print("START: Reading functions")
-source("IMP_plot_functions.R")
+source("src/IMP_plot_functions.R")
 print("DONE: Reading functions")
 
 ###################################################################################################
@@ -663,8 +663,8 @@ dev.off()
 print("Generating vizbin plot for number of genes")
 png(name_plot("IMP-vizbin_length_geneCount.png"), width=700, height=700)
 ggplot(vb_dat, aes(x=x,y=y)) +
-geom_point(aes(colour=genes, size=log10(length), order=genes), alpha=0.75) +
-scale_colour_gradientn(colours=topo.colors(max(vb_dat$genes)),
+geom_point(aes(colour=no_of_genes, size=log10(length), order=no_of_genes), alpha=0.75) +
+scale_colour_gradientn(colours=topo.colors(max(vb_dat$no_of_genes)),
 		      guide="colourbar",
 		      guide_legend(title="Gene count")
 		      ) +
