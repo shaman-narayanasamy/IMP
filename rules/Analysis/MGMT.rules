@@ -505,7 +505,7 @@ rule ANALYSIS_PLOT:
                'MGMT.assembly.gc_content.txt',
                "MGMT.vizbin.with-contig-names.points",
                "annotation/annotation.filt.gff",
-               "results/quast/combined_quast_output/contigs_reports/nucmer_output/aux/MGMT.assembly.merged.coords_edited"], dir=AN_OUT)
+               "results/quast/summary/combined_quast_output/contigs_reports/nucmer_output/aux/MGMT.assembly.merged.coords_edited"], dir=AN_OUT)
     output:
         analysis_plot_files_output()
     params:
@@ -706,7 +706,7 @@ rule ANALYSIS_QUAST:
         AN_LOG
     shell:
         """
-        metaquast -t {THREADS} -o {AN_OUT}/results/quast {input[0]}
+        metaquast -t {THREADS} -o {AN_OUT}/results/quast {input[0]} --max-ref-number 75
         sed -e 's/|//g' {AN_OUT}/results/quast/combined_quast_output/contigs_reports/nucmer_output/aux/MGMT.assembly.merged.coords \
         | sed -e 's/*\s/\t/g' | tail -n +3 > {output[1]}
         """
