@@ -681,8 +681,17 @@ rule ANALYSIS_MT_PREPROCESSED_QUALITY_STATS:
         AN_LOG
     shell:
         """
-        mkdir -p {AN_OUT}/stats/MT
-        fastqc -o {AN_OUT}/stats/MT -f fastq {input} -t {THREADS} -d {TMPDIR}
+        mkdir -p {AN_OUT}/stats/MG
+        if [[ -s {input[2]} ]]
+        then
+        fastqc -o {AN_OUT}/stats/MG -f fastq {input} -t {THREADS} -d {TMPDIR}
+        else
+        echo "{input[2]} is empty, FastQC will not run for that file"
+        fastqc -o {AN_OUT}/stats/MG -f fastq {input[0]} {input[1]} -t {THREADS} -d {TMPDIR}
+        echo "Creating empty files for {input[2]}..."
+        touch {output[2]}
+        echo "No single end reads were generated" > {output[5]}
+        fi
         """
 
 rule ANALYSIS_QUAST:
