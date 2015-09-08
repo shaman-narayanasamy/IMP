@@ -186,6 +186,7 @@ rule ANALYSIS_MG_VARIANT_CALLING:
         cat log.txt >> {log}
         rm -f {AN_OUT}/MG.variants.isec.vcf log.txt
         """
+
 rule ANALYSIS_MT_VARIANT_CALLING:
     log:
         AN_LOG
@@ -663,6 +664,7 @@ rule ANALYSIS_MT_QUALITY_STATS:
         mkdir -p {AN_OUT}/stats/MT
         fastqc -o {AN_OUT}/stats/MT -f fastq {input[0]} {input[1]} -t {THREADS} -d {TMPDIR}
         """
+
 rule ANALYSIS_MT_PREPROCESSED_QUALITY_STATS:
     input:
         preprocessed_mt('R1'),
@@ -681,13 +683,13 @@ rule ANALYSIS_MT_PREPROCESSED_QUALITY_STATS:
         AN_LOG
     shell:
         """
-        mkdir -p {AN_OUT}/stats/MG
+        mkdir -p {AN_OUT}/stats/MT
         if [[ -s {input[2]} ]]
         then
-        fastqc -o {AN_OUT}/stats/MG -f fastq {input} -t {THREADS} -d {TMPDIR}
+        fastqc -o {AN_OUT}/stats/MT -f fastq {input} -t {THREADS} -d {TMPDIR}
         else
         echo "{input[2]} is empty, FastQC will not run for that file"
-        fastqc -o {AN_OUT}/stats/MG -f fastq {input[0]} {input[1]} -t {THREADS} -d {TMPDIR}
+        fastqc -o {AN_OUT}/stats/MT -f fastq {input[0]} {input[1]} -t {THREADS} -d {TMPDIR}
         echo "Creating empty files for {input[2]}..."
         touch {output[2]}
         echo "No single end reads were generated" > {output[5]}
