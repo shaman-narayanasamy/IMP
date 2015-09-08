@@ -38,7 +38,7 @@ Options:
   -o OUTPUT         Path to the output directory
 """
 
-LATEST = '1.0'
+LATEST = '1.1'
 
 def get_version():
     return subprocess.check_output(

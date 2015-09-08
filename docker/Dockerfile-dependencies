@@ -19,15 +19,33 @@ RUN echo "deb http://ftp.halifax.rwth-aachen.de/ubuntu trusty main restricted un
     && gpg -a --export E084DAB9 | apt-key add - \
     && apt-get update \
     && apt-get -yq upgrade \
-    && apt-get install -yq make cmake wget build-essential unzip openjdk-7-jdk ant git tig vim \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN  apt-get update \
+    && apt-get install -yq make cmake wget build-essential unzip ant git tig vim \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN  apt-get update \
+    && apt-get install -yq openjdk-7-jdk \
     && rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update \
-    && apt-get install -yq bioperl=1.6.923-1 tabix=0.2.6-2 zlib1g zlib1g-dev samtools gnuplot python3 \
+    && apt-get install -yq bioperl=1.6.923-1 \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update \
+    && apt-get install -yq tabix=0.2.6-2 zlib1g zlib1g-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update \
+    && apt-get install -yq samtools gnuplot python3 \
     && rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update \
     && apt-get install -yq python-numpy python-scipy python-matplotlib python-sklearn \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update \
     && apt-get install -yq r-base r-base-dev \
     && apt-get install -yq libncurses5 libncurses5-dev sudo libatlas-base-dev python2.7 gfortran python-dev \
     && apt-get install -yq python-matplotlib \

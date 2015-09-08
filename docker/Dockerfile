@@ -2,7 +2,7 @@
 #
 # VERSION       0.1
 
-FROM docker-r3lab.uni.lu/imp/imp-deps:1.0
+FROM docker-r3lab.uni.lu/imp/imp-deps:1.1
 MAINTAINER yohan.jarosz@uni.lu
 
 
