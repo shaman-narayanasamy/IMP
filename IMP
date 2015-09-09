@@ -10,6 +10,7 @@ from copy import deepcopy
 import tempfile
 import sys
 
+
 __doc__ = """Integrated Metaomic Pipeline.
  ____  __  __  ____
 (_  _)(  \/  )(  _ \\
@@ -18,7 +19,7 @@ __doc__ = """Integrated Metaomic Pipeline.
 
 Usage:
   IMP [-m MG1 -m MG2] [-t MT1 -t MT2] -o OUTPUT [--enter] [--norm] [--ask] [-n CONTAINER] [-v VERSION] [-c CONFIGFILE] [-d DBPATH] [-e ENV] ... [COMMANDS ...]
-  IMP --init [-d DBPATH] [-n CONTAINER]
+  IMP --init [-d DBPATH] [-n CONTAINER] [-v VERSION]
   IMP (-h | --help)
   IMP --version
 
@@ -38,13 +39,23 @@ Options:
   -o OUTPUT         Path to the output directory
 """
 
-LATEST = '1.1'
+# 'docker images docker-r3lab.uni.lu/imp/imp | grep 1.2'
+LATEST_TAG = '1.1'
+DOCKER_IMAGE_NAME = 'docker-r3lab.uni.lu/imp/imp'
+IMP_DOCKER_TAR_REPOSITORY = 'https://webdav-r3lab.uni.lu/public/R3lab/IMP/dist/imp-%s.tar.gz' % LATEST_TAG
+
+def is_imp_installed():
+    try:
+        imp_image = subprocess.Popen(['docker', 'images', DOCKER_IMAGE_NAME], stdout=subprocess.PIPE)
+        is_installed = subprocess.check_output(['grep', LATEST_TAG], stdin=imp_image.stdout)
+    except subprocess.CalledProcessError:
+        return False
+    return True
 
 def get_version():
     return subprocess.check_output(
         ['git', '--no-pager', 'log', '-n', '1', '--pretty=format:%H']
     )
-
 
 def dict_merge(a, b):
     """
@@ -78,10 +89,19 @@ def format_command(cmd, dir):
 
 
 def get_container_name(args):
-    version = args['-v'] is not None and args['-v'] or LATEST
+    version = args['-v'] is not None and args['-v'] or LATEST_TAG
     container_name = args['-n'] is not None and args['-n'] or 'docker-r3lab.uni.lu/imp/imp'
     container_name = '%s:%s' % (container_name, version)
     return container_name
+
+def install_imp():
+    fname='imp-tarball.tmp.tgz'
+    print("[x] Downloading IMP TARBALL at '%s'" % IMP_DOCKER_TAR_REPOSITORY)
+    subprocess.check_output(['wget', '--no-check-certificate', IMP_DOCKER_TAR_REPOSITORY, '-O', fname])
+    print("[x] Loading IMP TARBALL into docker")
+    subprocess.check_output(['docker', 'load', '-i', fname])
+    print("[x] Removing IMP TARBALL.")
+    os.remove(fname)
 
 
 def init(args):
@@ -184,6 +204,9 @@ def validate(args):
 
 if __name__ == '__main__':
     args = docopt(__doc__, version=get_version(), options_first=True)
+    if not is_imp_installed():
+        install_imp()
+
     if args['--init']:
         init(args)
     else:
