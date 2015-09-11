@@ -134,6 +134,16 @@ theme_nothing <- function(base_size = 12, base_family = "Helvetica")
   {
   theme_bw(base_size = base_size, base_family = base_family) %+replace%
       theme(
+	    panel.border = element_rect(fill="NA", colour="NA"),
+            legend.text = element_text(size=base_size*1.5, hjust=1.2, vjust=1), 
+            legend.title = element_text(size=base_size*2,face="bold",hjust=0),
+	    legend.key = element_rect(fill="NA", colour="white"),
+	    legend.key.width = unit(1.2, "cm"),
+	    legend.key.height = unit(1, "cm"),
+	    legend.position = "right",
+	    legend.direction = "vertical",
+	    legend.box = "vertical",
+            line = element_blank(),
             rect             = element_blank(),
             line             = element_blank(),
             axis.ticks.margin = unit(0, "lines"),
@@ -151,7 +161,16 @@ theme_black <- function(base_size = 12, base_family = "Helvetica")
   theme_bw(base_size = base_size, base_family = base_family) %+replace%
       theme(
 	    panel.background = element_rect(fill="black", colour="black"),
-            line             = element_blank(),
+	    panel.border = element_rect(fill="NA", colour="NA"),
+            legend.text = element_text(size=base_size*1.5), 
+            legend.title = element_text(size=base_size*2,face="bold",hjust=0),
+	    legend.key = element_rect(fill="NA", colour="white"),
+	    legend.key.height = unit(1, "cm"),
+	    legend.key.width = unit(1.2, "cm"),
+	    legend.position = "right",
+	    legend.direction = "vertical",
+	    legend.box = "vertical",
+            line = element_blank(),
             axis.ticks.margin = unit(0, "lines"),
 	    axis.text.x=element_blank(),
 	    axis.text.y=element_blank(),
@@ -177,7 +196,25 @@ theme_gray <- function(base_size = 12, base_family = "Helvetica")
            )
 }
 
-
+## Function for beanplot
+MGMT.beanplot <- function(MG.dat, MT.dat, ylabel = expression(log[10]*~"count")) {
+	var1 <-log10(c(MG.dat, MT.dat))
+	var1[is.infinite(var1)]=NA
+	var2 <- c(rep("MG", length(MG.dat)), rep("MT", length(MT.dat)))
+	var <- data.frame(var1, var2)
+	
+	par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
+	beanplot(var1 ~ var2, 
+		 data= var,  
+		 side = "both",
+		 log = "auto",
+	what=c(1,1,1,0), 
+	border = NA, 
+	col = list("blue", c("red", "white")),
+	bw = "nrd0", 
+	ylab = ylabel)
+	legend("bottomleft", fill = c("blue", "red"), legend = c("MG", "MT"))
+}
 ## Set maximum value for plots based on standard deviation
 set_max_sd=function(x, dist){
     max_val <- mean(x, na.rm=T) + dist*sd(x, na.rm=T)
@@ -195,4 +232,8 @@ log10len <- expression(bold(atop("Contig length", paste("(",log[10], bp, ")"))))
 ## Metagenomic and metatranscriptomic labels
 mgmt_labs <- c("metagenomic","metatranscriptomic")
 
+## Set plot height and width
+
+plotWidth = 1200
+plotHeight = 1000
 

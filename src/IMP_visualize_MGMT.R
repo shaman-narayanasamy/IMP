@@ -11,6 +11,7 @@ checkpoint('2015-04-27', scanForPackages=FALSE)
 
 require(ggplot2)
 require(gtools)
+require(gtable)
 require(data.table)
 require(reshape)
 require(grid)
@@ -442,187 +443,117 @@ write.table(MT.map.summary, name_plot("MT_mapping_stats.txt"),
 
 ## Plot standard vizbin scatter plot (non included)
 print("Generating standard vizbin plot")
-png(name_plot("IMP-vizbin_standard.png"), width=700, height=700)
-ggplot(vb_dat, aes(x=x,y=y)) +
+vb.std <- ggplot(vb_dat, aes(x=x,y=y)) +
 geom_point() +
 ggtitle("Standard VizBin") +
 theme_nothing()
-dev.off()
 
 ## Plot vizbin scatter plot with length info
 print("Generating vizbin plot with contig length information")
-png(name_plot("IMP-vizbin_length.png"), width=700, height=700)
-ggplot(vb_dat, aes(x=x,y=y)) +
+vb.len <- ggplot(vb_dat, aes(x=x,y=y)) +
 geom_point(aes(size=log10(length))) +
-guides(size=guide_legend(title=log10len)) +
+guides(size=guide_legend(title=log10len, order=1)) +
 theme_nothing()
-dev.off()
 
 ## Plot vizbin scatter plot with length and GC content
 print("Generating vizbin plot for GC content")
-png(name_plot("IMP-vizbin_length_GC.png"), width=700, height=700)
-ggplot(vb_dat, aes(x=x,y=y)) +
+vb.gc <- ggplot(vb_dat, aes(x=x,y=y)) +
 geom_point(aes(size=log10(length), colour=GC, order=GC),alpha=0.5) +
 scale_colour_gradientn(colours=rainbow(7), guide="colourbar", guide_legend(title="% G+C")) +
-guides(size=guide_legend(title=log10len)) +
+guides(size=guide_legend(title=log10len, order=1)) +
 theme_nothing()
-dev.off()
 
 ## Vizbin plot for quast results
 print("Generating vizbin plot for quast results")
 nref <- length(unique(vb_dat$ref_id))
-png(name_plot("IMP-vizbin_quast.png"), width=700, height=700)
-ggplot(vb_dat, aes(x=x,y=y)) +
+vb.quast <- ggplot(vb_dat, aes(x=x,y=y)) +
 geom_point(aes(size=query_cov,
 	       colour=ref_id,
 	       order=length,
 	       alpha=identity)) +
-		   guides(size=guide_legend(title="Query coverage"),
-		   colour=guide_legend(title="Reference"),
-		   alpha=guide_legend(title="% identity")
+		   guides(size=guide_legend(title="Query coverage", order=1),
+		   colour=guide_legend(title="Reference", order=2),
+		   alpha=guide_legend(title="% identity", order=3)
 		   )+
 theme_gray()
-dev.off()
-
 ####################################################################
 ## MAPPING STATISTICS AND VISUALIZATIONS
 ####################################################################
 
 ## Plot mappable reads density
-print("Generating mapped reads plot")
-var1 <-log10(c(all.dat$MG_reads,all.dat$MT_reads))
-var1[is.infinite(var1)]=NA
-var2 <- c(rep("MG",nrow(all.dat)),rep("MT",nrow(all.dat)))
-mapped_reads<-data.frame(var1,var2)
+print("Generating mapped reads density plot")
 
-png(name_plot("IMP-reads_density.png"), width=700, height=700)
-par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
-beanplot(var1 ~ var2, data= mapped_reads,  side = "both",log="auto",
-what=c(1,1,1,0), border = NA, col = list("blue", c("red", "white")),
-bw="nrd0", main="Mappable reads", ylab=expression(log[10]*~"count"))
-legend("bottomleft", fill =c("blue", "red"), legend = c("MG", "MT"))
+png(name_plot("IMP-reads_density.png"), width=plotWidth, height=plotHeight)
+MGMT.beanplot(all.dat$MG_reads, all.dat$MT_reads)
 dev.off()
 
-## Plot rpkm density
-print("Generating rpkm plot")
-var1 <-log10(c(all.dat$MG_rpkm,all.dat$MT_rpkm))
-var1[is.infinite(var1)]=NA
-var2 <- c(rep("MG",nrow(all.dat)),rep("MT",nrow(all.dat)))
-rpkm<-data.frame(var1,var2)
-
-png(name_plot("IMP-rpkm_density.png"), width=700, height=700)
-par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
-beanplot(var1 ~ var2, data= rpkm,  side = "both",log="auto",
-what=c(1,1,1,0), border = NA, col = list("blue", c("red", "white")),
-bw="nrd0", main="RPKM", ylab=expression(log[10]*~"RPKM"))
-legend("bottomleft", fill =c("blue", "red"), legend = c("MG", "MT"))
+## Plot RPKM density
+print("Generating RPKM density plot")
+png(name_plot("IMP-rpkm_density.png"), width=plotWidth, height=plotHeight)
+MGMT.beanplot(all.dat$MG_rpkm, all.dat$MT_rpkm, ylabel = expression(log[10]*~"RPKM"))
 dev.off()
 
 ## Plot coverage density
-print("Generating coverage plot")
-var1 <-c(all.dat$MG_cov,all.dat$MT_cov)
-var2 <- c(rep("MG",nrow(all.dat)),rep("MT",nrow(all.dat)))
-coverage<-data.frame(var1,var2)
-
-png(name_plot("IMP-coverage_density.png"), width=700, height=700)
-par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
-beanplot(var1 ~ var2, data= coverage,  side = "both",log="auto",
-what=c(1,1,1,0), border = NA, col = list("blue", c("red", "white")),
-bw="nrd0", main="Coverage", ylab="fraction")
-legend("bottomleft", fill =c("blue", "red"), legend = c("MG", "MT"))
+print("Generating coverage density plot")
+png(name_plot("IMP-coverage_density.png"), width=plotWidth, height=plotHeight)
+MGMT.beanplot(all.dat$MG_cov, all.dat$MT_cov, ylabel = "fraction")
 dev.off()
 
 ## Plot depth density
 print("Generating depth density plot")
-var1 <-log10(c(all.dat$MG_depth,all.dat$MT_depth))
-var2 <- c(rep("MG",nrow(all.dat)),rep("MT",nrow(all.dat)))
-depth<-data.frame(var1,var2)
-
-png(name_plot("IMP-depth_density.png"), width=700, height=700)
-par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
-beanplot(var1 ~ var2, data= depth,  side = "both",log="auto",
-what=c(1,1,1,0), border = NA, col = list("blue", c("red", "white")),
-bw="nrd0", main="Depth", ylab=expression(log[10]*~"avg. depth"))
-legend("bottomleft", fill =c("blue", "red"), legend = c("MG", "MT"))
+png(name_plot("IMP-depth_density.png"), width=plotWidth, height=plotHeight)
+MGMT.beanplot(all.dat$MG_depth, all.dat$MT_depth, ylabel = expression(log[10]*~"avg. depth"))
 dev.off()
 
 ## Plot vizbin scatter plot with length and MG coverage info
 print("Generating vizbin plot for metagenomic coverage")
-png(name_plot("IMP-vizbin_length_MGcov.png"), width=700, height=700)
-ggplot(vb_dat, aes(x=x,y=y)) +
+vb.MGcov <- ggplot(vb_dat, aes(x=x,y=y)) +
 geom_point(colour="blue", aes(alpha=MG_cov, size=log10(length))) +
-guides(size=guide_legend(title=log10len),
-       alpha=guide_legend(title=expression(bold(atop("Metagenomic", "coverage"))))
+guides(size=guide_legend(title=log10len, order=1),
+       alpha=guide_legend(title=expression(bold(atop("MG", "coverage"))), order=2)
       ) +
 theme_nothing()
-dev.off()
 
 ## Plot vizbin scatter plot with length and MT coverage info
 print("Generating vizbin plot for metatranscriptomic coverage")
-png(name_plot("IMP-vizbin_length_MTcov.png"),width=700, height=700)
-ggplot(vb_dat, aes(x=x,y=y)) +
+vb.MTcov <- ggplot(vb_dat, aes(x=x,y=y)) +
 geom_point(colour="red", aes(alpha=MT_cov, size=log10(length))) +
-guides(size=guide_legend(title=log10len),
-       alpha=guide_legend(title=expression(bold(atop("Metatranscriptomic", "coverage"))))
+guides(size=guide_legend(title=log10len, order=1),
+       alpha=guide_legend(title=expression(bold(atop("MT", "coverage"))), order=2)
       ) +
 theme_nothing()
-dev.off()
 
 ## Plot vizbin scatter plot with length and MG depth info
 print("Generating vizbin plot for metagenomic depth")
-png(name_plot("IMP-vizbin_length_MGdepth.png"),width=700, height=700)
-ggplot(vb_dat, aes(x=x,y=y)) +
+vb.MGdep <- ggplot(vb_dat, aes(x=x,y=y)) +
 geom_point(colour="blue", aes(alpha=MG_depth, size=log10(length))) +
-guides(size=guide_legend(title=log10len),
-       alpha=guide_legend(title=expression(bold(atop("Metagenomic", "depth"))))
+guides(size=guide_legend(title=log10len, order=1),
+       alpha=guide_legend(title=expression(bold(atop("MG", "depth"))), order=2)
       ) +
 theme_nothing()
-dev.off()
 
 ## Plot vizbin scatter plot with length and MT depth info
 print("Generating vizbin plot for metatranscriptomic depth")
-png(name_plot("IMP-vizbin_length_MTdepth.png"), width=700, height=700)
-ggplot(vb_dat, aes(x=x,y=y)) +
+vb.MTdep <- ggplot(vb_dat, aes(x=x,y=y)) +
 geom_point(colour="red", aes(alpha=MT_depth, size=log10(length))) +
-guides(size=guide_legend(title=log10len),
-       alpha=guide_legend(title=expression(bold(atop("Metatranscriptomic", "depth"))))
+guides(size=guide_legend(title=log10len, order=1),
+       alpha=guide_legend(title=expression(bold(atop("MT", "depth"))), order=2)
       ) +
 theme_nothing()
-dev.off()
 
 ####################################################################
 ## VARIANT STATISTICS AND VISUALIZATIONS
 ####################################################################
 ## Plot variant count
-var1 <-log10(c(all.dat$MG_var,all.dat$MT_var))
-var1[is.infinite(var1)]=NA
-var2 <- c(rep("MG",nrow(all.dat)),rep("MT",nrow(all.dat)))
-variant_count <- data.frame(var1,var2)
-
-print("Generating variant count plots")
-png(name_plot("IMP-var_count.png") ,width=700, height=700)
-
-par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
-beanplot(var1 ~ var2, data= variant_count,  side = "both",log="auto",
-what=c(1,1,1,0), border = NA, col = list("blue", c("red", "white")),
-main="Variant count", ylab=expression(log[10]*~count), bw="nrd")
-legend("bottomleft", fill =c("blue", "red"), legend = c("MG", "MT"))
+print("Generating variant count density plot")
+png(name_plot("IMP-var_count.png"), width=plotWidth, height=plotHeight)
+MGMT.beanplot(all.dat$MG_var, all.dat$MT_var)
 dev.off()
 
 ## Plot variant density
-var1 <-c(all.dat$MG_var_dens,all.dat$MT_var_dens)
-var1[is.infinite(var1)]=NA
-var2 <- c(rep("MG",nrow(all.dat)),rep("MT",nrow(all.dat)))
-variant_density<-data.frame(var1,var2)
-
-print("Generating variant density plots")
-png(name_plot("IMP-var_density.png") ,width=700, height=700)
-
-par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
-beanplot(var1 ~ var2, data= variant_density,  side = "both",log="auto",
-what=c(1,1,1,0), border = NA, col = list("blue", c("red", "white")),
-main="Variant density", ylab="count / RPKM", bw="nrd")
-legend("bottomleft", fill =c("blue", "red"), legend = c("MG", "MT"))
+print("Generating variant density density plot")
+png(name_plot("IMP-var_density.png"), width=plotWidth, height=plotHeight)
+MGMT.beanplot(all.dat$MG_var_dens, all.dat$MT_var_dens, ylabel = "count / RPKM")
 dev.off()
 
 ## Plot vizbin scatter plot with length and MG variant info
@@ -630,30 +561,26 @@ dev.off()
 MG_var_label <- expression(bold(frac(variants[MG]/kb, MG[rpkm])))
 
 print("Generating vizbin plot for metagenomic variant density")
-png(name_plot("IMP-vizbin_length_MGvardens.png"), width=700, height=700)
-ggplot(vb_dat, aes(x=x,y=y)) +
+vb.MGvarden <- ggplot(vb_dat, aes(x=x,y=y)) +
 geom_point(aes(colour=MG_var_dens, size=log10(length), order=MG_var_dens), alpha=0.75) +
 scale_colour_gradient(high="black", low="cyan") +
-       guides(size=guide_legend(title=log10len),
-	      colour=guide_colourbar(title=MG_var_label)
+       guides(size=guide_legend(title=log10len, order=1),
+	      colour=guide_colourbar(title=MG_var_label, order=2)
        ) +
 theme_nothing()
-dev.off()
 
 ## Plot vizbin scatter plot with length and MT variant info
 # Create label
 MT_var_label <- expression(bold(frac(variants[MT]/kb, MT[rpkm])))
 
 print("Generating vizbin plot for metatranscriptomic variant density")
-png(name_plot("IMP-vizbin_length_MTvardens.png"), width=700, height=700)
-ggplot(vb_dat, aes(x=x,y=y)) +
+vb.MTvarden <- ggplot(vb_dat, aes(x=x,y=y)) +
 geom_point(aes(colour=MT_var_dens, size=log10(length), order=MT_var_dens), alpha=0.75) +
 scale_colour_gradient(high="black", low="magenta") +
-       guides(size=guide_legend(title=log10len),
-	      colour=guide_colourbar(title=MT_var_label)
+       guides(size=guide_legend(title=log10len, order=1),
+	      colour=guide_colourbar(title=MT_var_label, order=2)
        ) +
 theme_nothing()
-dev.off()
 
 ####################################################################
 ## ANNOTATION STATISTICS AND VISUALIZATIONS
@@ -661,81 +588,142 @@ dev.off()
 ## Vizbin plot with length and raw number of genes
 
 print("Generating vizbin plot for number of genes")
-png(name_plot("IMP-vizbin_length_geneCount.png"), width=700, height=700)
-ggplot(vb_dat, aes(x=x,y=y)) +
+vb.genes <- ggplot(vb_dat, aes(x=x,y=y)) +
 geom_point(aes(colour=no_of_genes, size=log10(length), order=no_of_genes), alpha=0.75) +
 scale_colour_gradientn(colours=topo.colors(max(vb_dat$no_of_genes)),
 		      guide="colourbar",
 		      guide_legend(title="Gene count")
 		      ) +
-       guides(size=guide_legend(title=log10len)
+       guides(size=guide_legend(title=log10len, order=1)
        ) +
 theme_nothing()
-dev.off()
 
 ## Vizbin plot with length and gene density
 print("Generating vizbin plot for gene density")
-png(name_plot("IMP-vizbin_length_geneDensity.png"), width=700, height=700)
-ggplot(vb_dat, aes(x=x,y=y)) +
+vb.geneDens <- ggplot(vb_dat, aes(x=x,y=y)) +
 geom_point(aes(colour=gene_dens, size=log10(length), order=gene_dens), alpha=0.75) +
 scale_colour_gradientn(colours=topo.colors(500),
 		      guide="colourbar",
 		      guide_legend(title="Gene density\n (genes/1kb)")
 		      ) +
-       guides(size=guide_legend(title=log10len)
+       guides(size=guide_legend(title=log10len, order=1)
        ) +
 theme_nothing()
-dev.off()
 
 ####################################################################
 ## RATIO STATISTICS AND VISUALIZATION
 ####################################################################
-print("Generate statistics and visualizations")
-
 ## Vizbin plot for coverage ratio
 print("Generating vizbin plot for coverage ratios")
-png(name_plot("IMP-vizbin_length_covRatio.png"), width=700, height=700)
 covRatio_label <- expression(bold(paste(log[10], frac(cov[MT], cov[MG]))))
-ggplot(vb_dat, aes(x=x,y=y)) +
+vb.covRatio <- ggplot(vb_dat, aes(x=x,y=y)) +
 geom_point(aes(size=log10(length),
 	       colour=log_cov_ratio,
 	       order=log_cov_ratio), alpha=0.5) +
 scale_colour_gradientn(colours=rev(heat.colors(100))) +
-		       guides(size=guide_legend(title=log10len),
-		       colour=guide_colourbar(title=covRatio_label)
+		       guides(size=guide_legend(title=log10len, order=1),
+		       colour=guide_colourbar(title=covRatio_label, order=2)
 		       )+
 theme_black()
-dev.off()
 
 ## Vizbin plot for depth ratio
 print("Generating vizbin plot for depth ratios")
-png(name_plot("IMP-vizbin_length_depthRatio.png"), width=700, height=700)
 depthRatio_label <- expression(bold(paste(log[10], frac(depth[MT], depth[MG]))))
-ggplot(vb_dat, aes(x=x,y=y)) +
+vb.depRatio <- ggplot(vb_dat, aes(x=x,y=y)) +
 geom_point(aes(size=log10(length),
 	       colour=log_depth_ratio,
 	       order=log_depth_ratio), alpha=0.5) +
 scale_colour_gradientn(colours=rev(heat.colors(1000))) +
-		   guides(size=guide_legend(title=log10len),
-		   colour=guide_colourbar(title=depthRatio_label)
+	       guides(size=guide_legend(title=log10len, order=1),
+               colour=guide_colourbar(title=depthRatio_label, order=2)
 		   )+
 theme_black()
-dev.off()
 
 ## Vizbin plot for rpkm ratio
-print("Generating vizbin plot for rpkm ratios")
-png(name_plot("IMP-vizbin_length_rpkmRatio.png"), width=700, height=700)
+print("Generating vizbin plot for RPKM ratios")
 rpkmRatio_label <- expression(bold(paste(log[10], frac(rpkm[MT], rpkm[MG]))))
-ggplot(vb_dat, aes(x=x,y=y)) +
+vb.rpkmRatio <- ggplot(vb_dat, aes(x=x,y=y)) +
 geom_point(aes(size=log10(length),
 	       colour=log_rpkm_ratio,
 	       order=log_rpkm_ratio),
 	   alpha=0.5) +
 scale_colour_gradientn(colours=rev(heat.colors(1000))) +
-		   guides(size=guide_legend(title=log10len),
-		   colour=guide_colourbar(title=rpkmRatio_label)
+		   guides(size=guide_legend(title=log10len, order=1),
+		   colour=guide_colourbar(title=rpkmRatio_label, order=2)
 		   )+
 theme_black()
+
+####################################################################
+## VISUALIZATION OF VIZBIN PLOTS
+####################################################################
+
+save.image(name_plot("MGMT_results.Rdat"))
+
+## Plot all VizBin plots
+gA <- ggplotGrob(vb.MGcov)
+gB <- ggplotGrob(vb.MTcov)
+
+gB$widhts <- gA$widths
+grid.newpage()
+
+png(name_plot("IMP-vizbin_standard.png"), width=plotWidth, height=plotHeight)
+vb.std
+dev.off()
+
+png(name_plot("IMP-vizbin_length.png"), width=plotWidth, height=plotHeight)
+vb.len
+dev.off()
+
+png(name_plot("IMP-vizbin_length_GC.png"), width=plotWidth, height=plotHeight)
+vb.gc
+dev.off()
+
+png(name_plot("IMP-vizbin_quast.png"), width=plotWidth, height=plotHeight)
+vb.quast
+dev.off()
+
+png(name_plot("IMP-vizbin_length_MGcov.png"), width=plotWidth, height=plotHeight)
+vb.MGcov
+dev.off()
+
+png(name_plot("IMP-vizbin_length_MTcov.png"),width=plotWidth, height=plotHeight)
+vb.MTcov
+dev.off()
+
+png(name_plot("IMP-vizbin_length_MGdepth.png"),width=plotWidth, height=plotHeight)
+vb.MGdep
+dev.off()
+
+png(name_plot("IMP-vizbin_length_MTdepth.png"), width=plotWidth, height=plotHeight)
+vb.MTdep
+dev.off()
+
+png(name_plot("IMP-vizbin_length_MGvardens.png"), width=plotWidth, height=plotHeight)
+vb.MGvarden
+dev.off()
+
+png(name_plot("IMP-vizbin_length_MTvardens.png"), width=plotWidth, height=plotHeight)
+vb.MTvarden
+dev.off()
+
+png(name_plot("IMP-vizbin_length_geneCount.png"), width=plotWidth, height=plotHeight)
+vb.genes
+dev.off()
+
+png(name_plot("IMP-vizbin_length_geneDensity.png"), width=plotWidth, height=plotHeight)
+vb.geneDens
+dev.off()
+
+png(name_plot("IMP-vizbin_length_covRatio.png"), width=plotWidth, height=plotHeight)
+vb.covRatio
+dev.off()
+
+png(name_plot("IMP-vizbin_length_depthRatio.png"), width=plotWidth, height=plotHeight)
+vb.depRatio
+dev.off()
+
+png(name_plot("IMP-vizbin_length_rpkmRatio.png"), width=plotWidth, height=plotHeight)
+vb.rpkmRatio
 dev.off()
 
 print("DONE: Visualizing")
