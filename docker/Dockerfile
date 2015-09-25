@@ -158,13 +158,21 @@ RUN cd /home/imp/lib \
     && bash buildPlatypus.sh
 
 ## Megahit
+#RUN cd /home/imp/lib \
+#    && git clone https://git-r3lab.uni.lu/R3/megahit.git \
+#    && cd megahit \
+#    && git checkout v0.2.1 \
+#    && make \
+#    && mv megahit* /usr/bin/. \
+#    && mv sdbg_builder_cpu /usr/bin/.
+
 RUN cd /home/imp/lib \
-    && git clone https://git-r3lab.uni.lu/R3/megahit.git \
+    && git clone https://github.com/voutcn/megahit.git \
     && cd megahit \
-    && git checkout v0.2.1 \
     && make \
     && mv megahit* /usr/bin/. \
     && mv sdbg_builder_cpu /usr/bin/.
+
 
 ## Vizbin JAR
 RUN cd /home/imp/lib \

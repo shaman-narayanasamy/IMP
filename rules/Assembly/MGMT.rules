@@ -137,6 +137,8 @@ rule ASSEMBLY_MGMT_ASSEMBLY_1:
     input:
         preprocessed_mg('R1'),
         preprocessed_mg('R2'),
+        preprocessed_mt('R2'),
+        preprocessed_mt('R2'),
         expand('{dir}/{name}', name=[
             'MGMT.MT_assembly-MG_SE.fa'], dir=A_OUT)
     output:
@@ -144,9 +146,11 @@ rule ASSEMBLY_MGMT_ASSEMBLY_1:
     shell:
         """
         TMPD=$(mktemp -d -t --tmpdir={TMPDIR} "XXXXXX")
-        fq2fa --merge {input[0]} {input[1]} $TMPD/merged.fa
+        fq2fa --merge {input[0]} {input[1]} $TMPD/merged_MG.fa
+        fq2fa --merge {input[2]} {input[3]} $TMPD/merged_MT.fa
+        cat $TMPD/merged_MG.fa $TMPD/merged_MT.fa > $TMPD/merged.fa
         idba_ud -r $TMPD/merged.fa \
-        -l {input[2]} -o $TMPD \
+        -l {input[4]} -o $TMPD \
         --mink {config[idba_ud][mink]} --maxk {config[idba_ud][maxk]} \
         --step {config[idba_ud][step]} --num_threads {THREADS} \
         --similar {config[idba_ud][perid]} --pre_correction
@@ -322,6 +326,9 @@ rule ASSEMBLY_MGMT_FAST_1:
         preprocessed_mg('R1'),
         preprocessed_mg('R2'),
         preprocessed_mg('SE'),
+	preprocessed_mt('R1'),
+        preprocessed_mt('R2'),
+        preprocessed_mt('SE'),
         '{dir}/MT.assembly_1/final.contigs.fa'.format(dir=A_OUT)
     output:
         '{dir}/MGMT.assembly_1/final.contigs.fa'.format(dir=A_OUT)
@@ -332,9 +339,6 @@ rule ASSEMBLY_MGMT_FAST_1:
         if [ -d "{params.outdir}" ]; then
             rm -rf {params.outdir}
         fi
-        MAX_READ_LEN=$(cat {input} | sed -n '1~4s/^@/>/p;2~4p' |\
-        awk '$0 ~ \">\" {{c=0\"\t\"; }} $0 !~ \">\" {{c+=length($0); max=(max>c)?max:c;}} END {{print max}}')
-        echo "Max read length: $MAX_READ_LEN"
         MEMBYTES=$(({MEMTOTAL}*1000*1000*1000))
         echo "Available memory in bytes: $MEMBYTES"
         megahit -o {params.outdir} --cpu-only -m $MEMBYTES --mem-flag 1\
