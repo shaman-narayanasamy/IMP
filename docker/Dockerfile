@@ -167,12 +167,11 @@ RUN cd /home/imp/lib \
 #    && mv sdbg_builder_cpu /usr/bin/.
 
 RUN cd /home/imp/lib \
+    && rm -rf megahit \
     && git clone https://github.com/voutcn/megahit.git \
     && cd megahit \
     && make \
-    && mv megahit* /usr/bin/. \
-    && mv sdbg_builder_cpu /usr/bin/.
-
+    && mv megahit* /usr/bin/.
 
 ## Vizbin JAR
 RUN cd /home/imp/lib \

@@ -29,8 +29,8 @@
     },
     "idba_ud": {
         "mink": 25,
-        "maxk": 95,
-        "step": 5,
+        "maxk": 99,
+        "step": 4,
         "perid": 0.98
     },
     "vizbin": {
