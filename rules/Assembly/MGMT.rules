@@ -163,7 +163,7 @@ rule ASSEMBLY_MGMT_EXTRACT_MG_UNMAPPED_FROM_ASSEMBLY_1:
         preprocessed_mg('R2'),
         preprocessed_mg('SE'),
         '{dir}/MGMT.assembly_1.fa'.format(dir=A_OUT),
-        expand('{dir}/MGMT.assembly_1.fa.{ext}', dir=A_OUT, ext=['amb', 'bwt', 'pac', 'sa', 'ann'])
+        expand('{dir}/MGMT.assembly_1/final_contigs.fa.{ext}', dir=A_OUT, ext=['amb', 'bwt', 'pac', 'sa', 'ann'])
     output:
         expand('{dir}/{name}', name=[
             'MGMT.assembly_1_MG.R1.fq',
