@@ -134,7 +134,8 @@ rule ASSEMBLY_MGMT_ASSEMBLY_1:
         '{dir}/MT.assembly_1/final.contigs.fa'.format(dir=A_OUT),
         '{dir}/MT.assembly_2/final.contigs.fa'.format(dir=A_OUT)
     output:
-        '{dir}/MGMT.assembly_1/final.contigs.fa'.format(dir=A_OUT)
+        '{dir}/MGMT.assembly_1/final.contigs.fa'.format(dir=A_OUT),
+        '{dir}/MGMT.assembly_1.fa'.format(dir=A_OUT)
     params:
         outdir = "{dir}/MGMT.assembly_1".format(dir=A_OUT)
     shell:
@@ -151,6 +152,7 @@ rule ASSEMBLY_MGMT_ASSEMBLY_1:
         --k-step {config[idba_ud][step]} \
         -t {THREADS} --cpu-only \
         --mem-flag 1 >> {log} 2>&1
+        cp {output[0]} {output[1]}
         """
 
 rule ASSEMBLY_MGMT_EXTRACT_MG_UNMAPPED_FROM_ASSEMBLY_1:
@@ -163,7 +165,7 @@ rule ASSEMBLY_MGMT_EXTRACT_MG_UNMAPPED_FROM_ASSEMBLY_1:
         preprocessed_mg('R2'),
         preprocessed_mg('SE'),
         '{dir}/MGMT.assembly_1.fa'.format(dir=A_OUT),
-        expand('{dir}/MGMT.assembly_1/final_contigs.fa.{ext}', dir=A_OUT, ext=['amb', 'bwt', 'pac', 'sa', 'ann'])
+        expand('{dir}/MGMT.assembly_1.fa.{ext}', dir=A_OUT, ext=['amb', 'bwt', 'pac', 'sa', 'ann'])
     output:
         expand('{dir}/{name}', name=[
             'MGMT.assembly_1_MG.R1.fq',
@@ -230,7 +232,8 @@ rule ASSEMBLY_MGMT_ASSEMBLY_2:
             'MGMT.assembly_1_MG.R2.fq',
             'MGMT.assembly_1_MG.SE.fq'], dir=A_OUT)
     output:
-        '{dir}/MGMT.assembly_2/final.contigs.fa'.format(dir=A_OUT)
+        '{dir}/MGMT.assembly_2/final.contigs.fa'.format(dir=A_OUT),
+        '{dir}/MGMT.assembly_2.fa'.format(dir=A_OUT)
     params:
         outdir = "{dir}/MGMT.assembly_2".format(dir=A_OUT)
     shell:
@@ -247,6 +250,7 @@ rule ASSEMBLY_MGMT_ASSEMBLY_2:
         --k-step {config[idba_ud][step]} \
         -t {THREADS} --cpu-only \
         --mem-flag 1 >> {log} 2>&1
+        cp {output[0]} {output[1]}
         """
 
 rule ASSEMBLY_MGMT_MERGE_ASSEMBLY:
