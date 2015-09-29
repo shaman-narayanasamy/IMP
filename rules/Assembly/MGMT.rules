@@ -36,7 +36,6 @@ rule ASSEMBLY_MT_MEGAHIT_1:
         --mem-flag 1 >> {log} 2>&1
         """
 
-
 rule ASSEMBLY_MT_EXTRACT_UNMAPPED_FROM_MEGAHIT_1:
     log:
         A_LOG
@@ -115,6 +114,7 @@ rule ASSEMBLY_MT_CAT_MEGAHIT:
         """
         cat {input[0]} {input[1]} | awk '/^>/{{print ">contig_MT_" ++i; next}}{{print}}' > {output}
         """
+
 ##################
 # ## MGMT SECTION - ASSEMBLY
 ##################
@@ -163,11 +163,11 @@ rule ASSEMBLY_MGMT_ASSEMBLY_1:
         rm -rf $TMPD
         """
 
-rule ASSEMBLY_MGMT_EXTRACT_UNMAPPED_FROM_ASSEMBLY_1:
+rule ASSEMBLY_MGMT_EXTRACT_MG_UNMAPPED_FROM_ASSEMBLY_1:
     log:
         A_LOG
     benchmark:
-        "%s/benchmarks/ASSEMBLY_MGMT_EXTRACT_UNMAPPED_FROM_ASSEMBLY_1.json" % A_OUT
+        "%s/benchmarks/ASSEMBLY_MGMT_EXTRACT_MG_UNMAPPED_FROM_ASSEMBLY_1.json" % A_OUT
     input:
         preprocessed_mg('R1'),
         preprocessed_mg('R2'),
@@ -176,9 +176,41 @@ rule ASSEMBLY_MGMT_EXTRACT_UNMAPPED_FROM_ASSEMBLY_1:
         expand('{dir}/MGMT.assembly_1.fa.{ext}', dir=A_OUT, ext=['amb', 'bwt', 'pac', 'sa', 'ann'])
     output:
         expand('{dir}/{name}', name=[
-            'MGMT.assembly_1.R1.fq',
-            'MGMT.assembly_1.R2.fq',
-            'MGMT.assembly_1.SE.fq'], dir=A_OUT)
+            'MGMT.assembly_1_MG.R1.fq',
+            'MGMT.assembly_1_MG.R2.fq',
+            'MGMT.assembly_1_MG.SE.fq'], dir=A_OUT)
+    shell:
+        """
+        TMP_FILE=$(mktemp --tmpdir={TMPDIR} -t "alignment_XXXXXX.bam")
+        BUFFER=$(mktemp --tmpdir={TMPDIR} -t "alignment_XXXXXX.bam")
+        bwa mem -v 1 -t {THREADS} {input[3]} {input[0]} {input[1]} | samtools view -@ {THREADS} -bS - > $TMP_FILE
+        samtools merge -@ {THREADS} -u - \
+        <(samtools view -@ {THREADS} -u  -f 4 -F 264 $TMP_FILE) \
+        <(samtools view -@ {THREADS} -u -f 8 -F 260 $TMP_FILE) \
+        <(samtools view -@ {THREADS} -u -f 12 -F 256 $TMP_FILE) | \
+        samtools view -@ {THREADS} -bF 0x800 -  | samtools sort -o -@ {THREADS} -m {MEMCORE}G -n - BUFFER | \
+        bamToFastq -i stdin -fq {output[0]} -fq2 {output[1]}
+        bwa mem -v 1 -t {THREADS} {input[3]} {input[2]} | samtools view -@ {THREADS} -bS - | \
+        samtools view -@ {THREADS} -uf 4 - | bamToFastq -i stdin -fq {output[2]}
+        rm -rf $BUFFER* $TMP_FILE
+        """
+
+rule ASSEMBLY_MGMT_EXTRACT_MT_UNMAPPED_FROM_ASSEMBLY_1:
+    log:
+        A_LOG
+    benchmark:
+        "%s/benchmarks/ASSEMBLY_MGMT_EXTRACT_MT_UNMAPPED_FROM_ASSEMBLY_1.json" % A_OUT
+    input:
+        preprocessed_mt('R1'),
+        preprocessed_mt('R2'),
+        preprocessed_mt('SE'),
+        '{dir}/MGMT.assembly_1.fa'.format(dir=A_OUT),
+        expand('{dir}/MGMT.assembly_1.fa.{ext}', dir=A_OUT, ext=['amb', 'bwt', 'pac', 'sa', 'ann'])
+    output:
+        expand('{dir}/{name}', name=[
+            'MGMT.assembly_1_MT.R1.fq',
+            'MGMT.assembly_1_MT.R2.fq',
+            'MGMT.assembly_1_MT.SE.fq'], dir=A_OUT)
     shell:
         """
         TMP_FILE=$(mktemp --tmpdir={TMPDIR} -t "alignment_XXXXXX.bam")
@@ -202,20 +234,30 @@ rule ASSEMBLY_MGMT_ASSEMBLY_2:
         "%s/benchmarks/ASSEMBLY_MGMT_ASSEMBLY_2.json" % A_OUT
     input:
         expand('{dir}/{name}', name=[
-            'MGMT.assembly_1.R1.fq',
-            'MGMT.assembly_1.R2.fq',
-            'MGMT.assembly_1.SE.fq'], dir=A_OUT)
+            'MGMT.assembly_1_MG.R1.fq',
+            'MGMT.assembly_1_MG.R2.fq',
+            'MGMT.assembly_1_MG.SE.fq',
+            'MGMT.assembly_1_MT.R1.fq',
+            'MGMT.assembly_1_MT.R2.fq',
+            'MGMT.assembly_1_MT.SE.fq'], dir=A_OUT)
     output:
         '{dir}/MGMT.assembly_2.fa'.format(dir=A_OUT),
     shell:
         """
         TMPD=$(mktemp -d -t --tmpdir={TMPDIR} "XXXXXX")
-        fq2fa --merge {input[0]} {input[1]} $TMPD/merged.fa
+        fq2fa --merge {input[0]} {input[1]} $TMPD/merged_MG.fa
+        fq2fa --merge {input[2]} {input[3]} $TMPD/merged_MT.fa
+        cat <(cat {input[2]} | sed -n '1~4s/^@/>/p;2~4p') <(cat {input[5]} | \
+        sed -n '1~4s/^@/>/p;2~4p') > $TMPD/merged_MGMT.SE.fa
+
+        cat $TMPD/merged_MG.fa $TMPD/merged_MT.fa > $TMPD/merged.fa
+
         idba_ud -r $TMPD/merged.fa \
-        -l {input[2]} -o $TMPD \
+        -l $TMPD/merged_MGMT.SE.fa -o $TMPD \
         --mink {config[idba_ud][mink]} --maxk {config[idba_ud][maxk]} \
         --step {config[idba_ud][step]} --num_threads {THREADS} \
         --similar {config[idba_ud][perid]} --pre_correction
+
         mv $TMPD/contig.fa {output}
         rm -rf $TMPD
         """
@@ -234,7 +276,10 @@ rule ASSEMBLY_MGMT_MERGE_ASSEMBLY:
         """
         NAME={A_OUT}/MGMT.assembly
         cat {input} > $NAME.cat.fa
-        cap3 -g 5 -p 98 -o 100 $NAME.cat.fa
+
+        # Options should be after input file!
+        cap3 $NAME.cat.fa -p 98 -o 100
+
         # Concatenate assembled contigs, singletons and rename the contigs
         cat $NAME.cat.fa.cap.contigs $NAME.cat.fa.cap.singlets | \
         awk '/^>/{{print \">contig_\" ++i; next}}{{print}}' > $NAME.merged.fa
