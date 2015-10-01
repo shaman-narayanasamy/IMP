@@ -12,6 +12,7 @@
     "outputdir": "/output",
     "db_path": "/databases",
     "preprocessing_filtering": true,
+    "assembler": "idba",
     "trimmomatic": {
         "pkg_url": "https://webdav-r3lab.uni.lu/public/R3lab/IMP/Trimmomatic-Src-0.32.zip",
         "adapter": "TruSeq3",

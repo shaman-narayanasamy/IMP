@@ -18,7 +18,7 @@ __doc__ = """Integrated Metaomic Pipeline.
 (____)(_/\/\_)(__)
 
 Usage:
-  IMP [-m MG1 -m MG2] [-t MT1 -t MT2] -o OUTPUT [--enter] [--norm] [--ask] [-n CONTAINER] [-v VERSION] [-c CONFIGFILE] [-d DBPATH] [-e ENV] ... [COMMANDS ...]
+  IMP [-m MG1 -m MG2] [-t MT1 -t MT2] -o OUTPUT [--enter] [--norm] [--ask] [-n CONTAINER] [-v VERSION] [-c CONFIGFILE] [-d DBPATH] [-a ASSEMBLER] [-e ENV] ... [COMMANDS ...]
   IMP --init [-d DBPATH] [-n CONTAINER] [-v VERSION]
   IMP (-h | --help)
   IMP --version
@@ -35,8 +35,9 @@ Options:
   -t MT             Path to the metatranscriptomic paired files (2 files).
   -d DBPATH         Path to the databases [default: db]
   -n CONTAINER      Name of the container. Useful when you want to run your own built container.
-  -v VERSION      Name of the container. Useful when you want to run your own built container.
+  -v VERSION        Name of the container. Useful when you want to run your own built container.
   -o OUTPUT         Path to the output directory
+  -a ASSEMBLER      Name of the assembler. Only idba and megahit are supported.
 """
 
 # 'docker images docker-r3lab.uni.lu/imp/imp | grep 1.2'
@@ -51,6 +52,7 @@ def is_imp_installed():
     except subprocess.CalledProcessError:
         return False
     return True
+
 
 def get_version():
     return subprocess.check_output(
@@ -164,7 +166,8 @@ def run(args):
 
     if args['-c']:
         envs += ['-e CONFIGFILE=%s' % args['-c']]
-
+    if args['-a']:
+        envs += ['-e IMP_ASSEMBLER=%s' % args['-a']]
     # CL
     cmd = ['docker', 'run'] + mount_points + envs
     # rm the container by default

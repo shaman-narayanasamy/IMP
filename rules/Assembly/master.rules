@@ -7,6 +7,10 @@ include:
 include:
     "MG.rules"
 
+include:
+    "%s.rules" % IMP_ASSEMBLER
+
+
 
 def assembly_output_files():
     return expand('{dir}/{name}', name=[
