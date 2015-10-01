@@ -37,7 +37,7 @@ Options:
   -n CONTAINER      Name of the container. Useful when you want to run your own built container.
   -v VERSION        Name of the container. Useful when you want to run your own built container.
   -o OUTPUT         Path to the output directory
-  -a ASSEMBLER      Name of the assembler. Only idba and megahit are supported.
+  -a ASSEMBLER      Name of the assembler for MGMT. Only idba and megahit are supported.
 """
 
 # 'docker images docker-r3lab.uni.lu/imp/imp | grep 1.2'

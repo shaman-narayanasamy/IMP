@@ -1,0 +1,53 @@
+rule ASSEMBLY_MGMT_ASSEMBLY_IDBA_1:
+    log:
+        A_LOG
+    benchmark:
+        "%s/benchmarks/ASSEMBLY_MT_ASSEMBLY_1.json" % A_OUT
+    input:
+        preprocessed_mg('R1'),
+        preprocessed_mg('R2'),
+        preprocessed_mg('SE'),
+	    preprocessed_mt('R1'),
+        preprocessed_mt('R2'),
+        preprocessed_mt('SE'),
+        '{dir}/MT.assembly_1/final.contigs.fa'.format(dir=A_OUT),
+        '{dir}/MT.assembly_2/final.contigs.fa'.format(dir=A_OUT)
+    output:
+        '{dir}/MGMT.assembly_1/final.contigs.fa'.format(dir=A_OUT),
+        '{dir}/MGMT.assembly_1.fa'.format(dir=A_OUT)
+    params:
+        outdir = "{dir}/MGMT.assembly_1".format(dir=A_OUT)
+    shell:
+        """
+        if [ -d "{params.outdir}" ]; then
+            rm -rf {params.outdir}
+        fi
+
+        """
+
+
+rule ASSEMBLY_MGMT_ASSEMBLY_IDBA_2:
+    log:
+        A_LOG
+    benchmark:
+        "%s/benchmarks/ASSEMBLY_MT_ASSEMBLY_2.json" % A_OUT
+    input:
+        expand('{dir}/{name}', name=[
+            'MGMT.assembly_1_MT.R1.fq',
+            'MGMT.assembly_1_MT.R2.fq',
+            'MGMT.assembly_1_MT.SE.fq',
+            'MGMT.assembly_1_MG.R1.fq',
+            'MGMT.assembly_1_MG.R2.fq',
+            'MGMT.assembly_1_MG.SE.fq'], dir=A_OUT)
+    output:
+        '{dir}/MGMT.assembly_2/final.contigs.fa'.format(dir=A_OUT),
+        '{dir}/MGMT.assembly_2.fa'.format(dir=A_OUT)
+    params:
+        outdir = "{dir}/MGMT.assembly_2".format(dir=A_OUT)
+    shell:
+        """
+        if [ -d "{params.outdir}" ]; then
+            rm -rf {params.outdir}
+        fi
+
+        """
