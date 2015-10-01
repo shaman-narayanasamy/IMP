@@ -8,7 +8,7 @@ include:
     "MG.rules"
 
 include:
-    "%s.rules" % IMP_ASSEMBLER
+    "mgmt.%s.rules" % IMP_ASSEMBLER
 
 
 
