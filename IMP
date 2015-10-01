@@ -40,7 +40,7 @@ Options:
 """
 
 # 'docker images docker-r3lab.uni.lu/imp/imp | grep 1.2'
-LATEST_TAG = '1.1'
+LATEST_TAG = '1.1.1'
 DOCKER_IMAGE_NAME = 'docker-r3lab.uni.lu/imp/imp'
 IMP_DOCKER_TAR_REPOSITORY = 'https://webdav-r3lab.uni.lu/public/R3lab/IMP/dist/imp-%s.tar.gz' % LATEST_TAG
 
