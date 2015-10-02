@@ -20,9 +20,12 @@ rule ASSEMBLY_MT_MEGAHIT_1:
         outdir = "{dir}/MT.assembly_1".format(dir=A_OUT)
     shell:
         """
+        echo "Performing first MT assembly step using MEGAHIT"
+
 	if [ -d "{params.outdir}" ]; then
             rm -rf {params.outdir}
         fi
+
         megahit -1 {input[0]} \
         -2 {input[1]} \
         -r {input[2]} \
@@ -35,11 +38,11 @@ rule ASSEMBLY_MT_MEGAHIT_1:
         --mem-flag 1 >> {log} 2>&1
         """
 
-rule ASSEMBLY_MT_EXTRACT_UNMAPPED_FROM_MEGAHIT_1:
+rule ASSEMBLY_MT_EXTRACT_UNMAPPED:
     log:
         A_LOG
     benchmark:
-        "%s/benchmarks/ASSEMBLY_MT_EXTRACT_UNMAPPED_FROM_MEGAHIT_1.json" % A_OUT
+        "%s/benchmarks/ASSEMBLY_MT_EXTRACT_UNMAPPED.json" % A_OUT
     input:
         preprocessed_mt('R1'),
         preprocessed_mt('R2'),
@@ -84,9 +87,12 @@ rule ASSEMBLY_MT_MEGAHIT_2:
         outdir = "{dir}/MT.assembly_2".format(dir=A_OUT)
     shell:
         """
+        echo "Performing second MT assembly step using MEGAHIT"
+
 	if [ -d "{params.outdir}" ]; then
             rm -rf {params.outdir}
         fi
+
         megahit -1 {input[0]} \
         -2 {input[1]} \
         -r {input[2]} \
@@ -99,31 +105,15 @@ rule ASSEMBLY_MT_MEGAHIT_2:
         --mem-flag 1 >> {log} 2>&1
         """
 
-rule ASSEMBLY_MT_CAT_MEGAHIT:
+##################
+# ## HYBRID SECTION - ASSEMBLY
+##################
+
+rule ASSEMBLY_HYBRID_EXTRACT_MG_UNMAPPED:
     log:
         A_LOG
     benchmark:
-        "%s/benchmarks/ASSEMBLY_MT_CAT_MEGAHIT.json" % A_OUT
-    input:
-        '{dir}/MT.assembly_1/final.contigs.fa'.format(dir=A_OUT),
-        '{dir}/MT.assembly_2/final.contigs.fa'.format(dir=A_OUT)
-    output:
-        '{dir}/MT.assembly.cat.fa'.format(dir=A_OUT)
-    shell:
-        """
-        cat {input[0]} {input[1]} | awk '/^>/{{print ">contig_MT_" ++i; next}}{{print}}' > {output}
-        """
-
-##################
-# ## MGMT SECTION - ASSEMBLY
-##################
-
-
-rule ASSEMBLY_MGMT_EXTRACT_MG_UNMAPPED_FROM_ASSEMBLY_1:
-    log:
-        A_LOG
-    benchmark:
-        "%s/benchmarks/ASSEMBLY_MGMT_EXTRACT_MG_UNMAPPED_FROM_ASSEMBLY_1.json" % A_OUT
+        "%s/benchmarks/ASSEMBLY_HYBRID_EXTRACT_MG_UNMAPPED.json" % A_OUT
     input:
         preprocessed_mg('R1'),
         preprocessed_mg('R2'),
@@ -151,11 +141,11 @@ rule ASSEMBLY_MGMT_EXTRACT_MG_UNMAPPED_FROM_ASSEMBLY_1:
         rm -rf $BUFFER* $TMP_FILE
         """
 
-rule ASSEMBLY_MGMT_EXTRACT_MT_UNMAPPED_FROM_ASSEMBLY_1:
+rule ASSEMBLY_HYBRID_EXTRACT_MT_UNMAPPED:
     log:
         A_LOG
     benchmark:
-        "%s/benchmarks/ASSEMBLY_MGMT_EXTRACT_MT_UNMAPPED_FROM_ASSEMBLY_1.json" % A_OUT
+        "%s/benchmarks/ASSEMBLY_HYBRID_EXTRACT_MT_UNMAPPED.json" % A_OUT
     input:
         preprocessed_mt('R1'),
         preprocessed_mt('R2'),
@@ -183,11 +173,11 @@ rule ASSEMBLY_MGMT_EXTRACT_MT_UNMAPPED_FROM_ASSEMBLY_1:
         rm -rf $BUFFER* $TMP_FILE
         """
 
-rule ASSEMBLY_MGMT_MERGE_ASSEMBLY:
+rule ASSEMBLY_HYBRID_COLLAPSE:
     log:
         A_LOG
     benchmark:
-        "%s/benchmarks/ASSEMBLY_MGMT_MERGE_ASSEMBLY.json" % A_OUT
+        "%s/benchmarks/ASSEMBLY_HYBRID_COLLAPSE.json" % A_OUT
     input:
         '{dir}/MGMT.assembly_1.fa'.format(dir=A_OUT),
         '{dir}/MGMT.assembly_2.fa'.format(dir=A_OUT)
@@ -210,11 +200,11 @@ rule ASSEMBLY_MGMT_MERGE_ASSEMBLY:
 # ## MGMT SECTION - MAPPING
 ##################
 
-rule ASSEMBLY_MG_MAPPING:
+rule ASSEMBLY_HYBRID_MAP_MG:
     log:
         A_LOG
     benchmark:
-        "%s/benchmarks/ASSEMBLY_MG_MAPPING.json" % A_OUT
+        "%s/benchmarks/ASSEMBLY_HYBRID_MAP_MG.json" % A_OUT
     input:
         preprocessed_mg('R1'),
         preprocessed_mg('R2'),
@@ -246,11 +236,11 @@ rule ASSEMBLY_MG_MAPPING:
         samtools index $PREFIX.sorted.bam
         """
 
-rule ASSEMBLY_MT_MAPPING:
+rule ASSEMBLY_HYBRID_MAP_MT:
     log:
         A_LOG
     benchmark:
-        "%s/benchmarks/ASSEMBLY_MGMT_MAPPING.json" % A_OUT
+        "%s/benchmarks/ASSEMBLY_HYBRID_MAP_MT.json" % A_OUT
     input:
         preprocessed_mt('R1'),
         preprocessed_mt('R2'),
