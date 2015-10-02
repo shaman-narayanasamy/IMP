@@ -1,4 +1,3 @@
-
 rule ANALYSIS_ANNOTATE:
     log:
         AN_LOG
@@ -39,11 +38,11 @@ rule ANALYSIS_ANNOTATE:
         head -n $LN {AN_OUT}/annotation/*.gff | grep -v "^#" | sort | uniq | grep -v "^==" > {output}
         """
 
-rule ANALYSIS_MG_GENE_COVERAGE:
+rule ANALYSIS_MG_CALL_GENE_DEPTH:
     log:
         AN_LOG
     benchmark:
-        "%s/benchmarks/ANALYSIS_MG_GENE_COVERAGE.json" % AN_OUT
+        "%s/benchmarks/ANALYSIS_MG_CALL_GENE_DEPTH.json" % AN_OUT
     input:
         "%s/annotation/annotation.filt.gff" % AN_OUT,
         "%s/MG.reads.sorted.bam" % A_OUT
@@ -76,12 +75,11 @@ rule ANALYSIS_MG_GENE_COVERAGE:
         grep "eC_number=" {input[0]} | cut -f9 | cut -f1,2 -d ';'| sed 's/ID=//g'| sed 's/;eC_number=/\t/g' > {output[4]}
         """
 
-
-rule ANALYSIS_MT_GENE_COVERAGE:
+rule ANALYSIS_MT_CALL_GENE_DEPTH:
     log:
         AN_LOG
     benchmark:
-        "%s/benchmarks/ANALYSIS_MT_GENE_COVERAGE.json" % AN_OUT
+        "%s/benchmarks/ANALYSIS_MT_CALL_GENE_DEPTH.json" % AN_OUT
     input:
         "%s/annotation/annotation.filt.gff" % AN_OUT,
         "%s/MT.reads.sorted.bam" % A_OUT
@@ -114,12 +112,11 @@ rule ANALYSIS_MT_GENE_COVERAGE:
         grep "eC_number=" {input[0]} | cut -f9 | cut -f1,2 -d ';'| sed 's/ID=//g'| sed 's/;eC_number=/\t/g' > {output[4]}
         """
 
-
-rule ANALYSIS_MG_VARIANT_CALLING:
+rule ANALYSIS_MG_CALL_VARIANT:
     log:
         AN_LOG
     benchmark:
-        "%s/benchmarks/ANALYSIS_MG_VARIANT_CALLING.json" % AN_OUT
+        "%s/benchmarks/ANALYSIS_MG_CALL_VARIANT.json" % AN_OUT
     input:
         "%s/MGMT.assembly.merged.fa" % A_OUT,
         "%s/MG.reads.sorted.bam" % A_OUT,
@@ -187,11 +184,11 @@ rule ANALYSIS_MG_VARIANT_CALLING:
         rm -f {AN_OUT}/MG.variants.isec.vcf log.txt
         """
 
-rule ANALYSIS_MT_VARIANT_CALLING:
+rule ANALYSIS_MT_CALL_VARIANT:
     log:
         AN_LOG
     benchmark:
-        "%s/benchmarks/ANALYSIS_MT_VARIANT_CALLING.json" % AN_OUT
+        "%s/benchmarks/ANALYSIS_MT_CALL_VARIANT.json" % AN_OUT
     input:
         "%s/MGMT.assembly.merged.fa" % A_OUT,
         "%s/MT.reads.sorted.bam" % A_OUT,
@@ -259,7 +256,7 @@ rule ANALYSIS_MT_VARIANT_CALLING:
         rm -f {AN_OUT}/MT.variants.isec.vcf log.txt
         """
 
-rule ANALYSIS_MGMT_CONTIG_LENGTH:
+rule ANALYSIS_HYBRID_CONTIG_LENGTH:
     log:
         AN_LOG
     benchmark:
@@ -286,12 +283,11 @@ rule ANALYSIS_MGMT_CONTIG_LENGTH:
         rm $TMP_GC
         """
 
-
-rule ANALYSIS_MG_CONTIG_COVERAGE:
+rule ANALYSIS_MG_CALL_CONTIG_DEPTH:
     log:
         AN_LOG
     benchmark:
-        "%s/benchmarks/ANALYSIS_MG_CONTIG_COVERAGE.json" % AN_OUT
+        "%s/benchmarks/ANALYSIS_MG_CALL_CONTIG_DEPTH.json" % AN_OUT
     input:
         "%s/MG.reads.sorted.bam" % A_OUT,
         "%s/MGMT.assembly.merged.fa" % A_OUT,
@@ -337,11 +333,11 @@ rule ANALYSIS_MG_CONTIG_COVERAGE:
         samtools flagstat {input[0]} | cut -f1 -d ' ' > {output[2]}
         """
 
-rule ANALYSIS_MT_CONTIG_COVERAGE:
+rule ANALYSIS_MT_CALL_CONTIG_DEPTH:
     log:
         AN_LOG
     benchmark:
-        "%s/benchmarks/ANALYSIS_MT_CONTIG_COVERAGE.json" % AN_OUT
+        "%s/benchmarks/ANALYSIS_MT_CALL_CONTIG_DEPTH.json" % AN_OUT
     input:
         "%s/MT.reads.sorted.bam" % A_OUT,
         "%s/MGMT.assembly.merged.fa" % A_OUT,
@@ -387,7 +383,6 @@ rule ANALYSIS_MT_CONTIG_COVERAGE:
         samtools flagstat {input[0]} | cut -f1 -d ' ' > {output[2]}
         """
 
-
 def mg_fqfiles():
     raw = expand('{dir}/{raw}', raw=['MG.R1.fq', 'MG.R2.fq'], dir=P_OUT)
     trim = expand('{dir}/{trim}', trim=[
@@ -401,7 +396,6 @@ def mg_fqfiles():
     if config['preprocessing_filtering']:
         return raw + trim + filter
     return raw + trim
-
 
 def mt_fqfiles():
     raw = expand('{dir}/{raw}', raw=['MT.R1.fq', 'MT.R2.fq'], dir=P_OUT)
@@ -420,7 +414,6 @@ def mt_fqfiles():
     if config['preprocessing_filtering']:
         return raw + trim + rna_filter + h_filter
     return raw + trim + rna_filter
-
 
 rule ANALYSIS_MG_READ_COUNT:
     log:
@@ -486,11 +479,11 @@ rule ANALYSIS_VIZBIN:
         rm -rf $TMP_VIZBIN
         """
 
-rule ANALYSIS_PLOT:
+rule ANALYSIS_VISUALIZE:
     log:
         AN_LOG
     benchmark:
-        "%s/benchmarks/ANALYSIS_PLOT.json" % AN_OUT
+        "%s/benchmarks/ANALYSIS_VISUALIZE.json" % AN_OUT
     input:
         expand('{dir}/{name}', name=[
                'MG.read_counts.txt',
@@ -520,11 +513,11 @@ rule ANALYSIS_PLOT:
         Rscript $PLOT_SCRIPT {AN_OUT}/results {input}
         """
 
-rule ANALYSIS_KRONA_PLOT_MG:
+rule ANALYSIS_MG_KRONA:
     log:
         AN_LOG
     benchmark:
-        "%s/benchmarks/ANALYSIS_KRONA_PLOT.json" % AN_OUT
+        "%s/benchmarks/ANALYSIS_MG_KRONA.json" % AN_OUT
     input:
         "%s/MG.prokkaID2ec.txt" % AN_OUT,
         "%s/ec2pathway.txt" % DBPATH,
@@ -543,11 +536,11 @@ rule ANALYSIS_KRONA_PLOT_MG:
         ktImportText -o {output[1]} {output[0]} -a
         """
 
-rule ANALYSIS_KRONA_PLOT_MT:
+rule ANALYSIS_MT_KRONA:
     log:
         AN_LOG
     benchmark:
-        "%s/benchmarks/ANALYSIS_KRONA_PLOT.json" % AN_OUT
+        "%s/benchmarks/ANALYSIS_MT_KRONA.json" % AN_OUT
     input:
         "%s/MT.prokkaID2ec.txt" % AN_OUT,
         "%s/ec2pathway.txt" % DBPATH,
@@ -566,7 +559,7 @@ rule ANALYSIS_KRONA_PLOT_MT:
         ktImportText -o {output[1]} {output[0]} -a
         """
 
-rule ANALYSIS_MG_QUALITY_STATS:
+rule ANALYSIS_MG_FASTQC:
     input:
         expand('{dir}/{raw}', raw=['MG.R1.fq', 'MG.R2.fq'], dir=P_OUT)
     output:
@@ -575,7 +568,7 @@ rule ANALYSIS_MG_QUALITY_STATS:
         expand('{dir}/stats/MG/MG.R1.fq_fastqc.zip', dir=AN_OUT),
         expand('{dir}/stats/MG/MG.R2.fq_fastqc.zip', dir=AN_OUT)
     benchmark:
-        "%s/benchmarks/PREPROCESSING_MG_QUALITY_STATS_FQC.json" % AN_OUT
+        "%s/benchmarks/PREPROCESSING_MG_FASTQC.json" % AN_OUT
     log:
         AN_LOG
     shell:
@@ -584,7 +577,7 @@ rule ANALYSIS_MG_QUALITY_STATS:
         fastqc -o {AN_OUT}/stats/MG -f fastq {input[0]} {input[1]} -t {THREADS} -d {TMPDIR}
         """
 
-rule ANALYSIS_MG_PREPROCESSED_QUALITY_STATS:
+rule ANALYSIS_MG_PREPROCESSED_FASTQC:
     input:
         preprocessed_mg('R1'),
         preprocessed_mg('R2'),
@@ -597,7 +590,7 @@ rule ANALYSIS_MG_PREPROCESSED_QUALITY_STATS:
         preprocessed_mg('R2', dir=AN_OUT + '/stats/MG') + '_fastqc.html',
         preprocessed_mg('SE', dir=AN_OUT + '/stats/MG') + '_fastqc.html'
     benchmark:
-        "%s/benchmarks/PREPROCESSING_MG_QUALITY_STATS.json" % AN_OUT
+        "%s/benchmarks/PREPROCESSING_MG_FASTQC.json" % AN_OUT
     log:
         AN_LOG
     shell:
@@ -646,8 +639,7 @@ rule RENAME_STAT_OUTPUT:
         for index, _file in enumerate(input):
             shell("mv %s %s" % (_file, output[index]))
 
-
-rule ANALYSIS_MT_QUALITY_STATS:
+rule ANALYSIS_MT_FASTQC:
     input:
         expand('{dir}/{raw}', raw=['MT.R1.fq', 'MT.R2.fq'], dir=P_OUT)
     output:
@@ -656,7 +648,7 @@ rule ANALYSIS_MT_QUALITY_STATS:
         expand('{dir}/stats/MT/MT.R1.fq_fastqc.zip', dir=AN_OUT),
         expand('{dir}/stats/MT/MT.R2.fq_fastqc.zip', dir=AN_OUT)
     benchmark:
-        "%s/benchmarks/PREPROCESSING_MT_QUALITY_STATS.json" % AN_OUT
+        "%s/benchmarks/PREPROCESSING_MT_FASTQC.json" % AN_OUT
     log:
         AN_LOG
     shell:
@@ -665,7 +657,7 @@ rule ANALYSIS_MT_QUALITY_STATS:
         fastqc -o {AN_OUT}/stats/MT -f fastq {input[0]} {input[1]} -t {THREADS} -d {TMPDIR}
         """
 
-rule ANALYSIS_MT_PREPROCESSED_QUALITY_STATS:
+rule ANALYSIS_MT_PREPROCESSED_FASTQC:
     input:
         preprocessed_mt('R1'),
         preprocessed_mt('R2'),
@@ -678,7 +670,7 @@ rule ANALYSIS_MT_PREPROCESSED_QUALITY_STATS:
         preprocessed_mt('R2', dir=AN_OUT + '/stats/MT') + '_fastqc.html',
         preprocessed_mt('SE', dir=AN_OUT + '/stats/MT') + '_fastqc.html'
     benchmark:
-        "%s/benchmarks/PREPROCESSING_MT_QUALITY_STATS.json" % AN_OUT
+        "%s/benchmarks/PREPROCESSING_MT_FASTQC.json" % AN_OUT
     log:
         AN_LOG
     shell:
