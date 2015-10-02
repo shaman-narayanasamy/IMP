@@ -266,6 +266,7 @@ print("Computing query coverage of contigs against reference genomes")
 all.dat$query_cov <- all.dat$query_align_len / all.dat$length * 100
 all.dat$query_cov[na.omit(all.dat$query_cov > 100)] = 100
 
+save.image(name_plot("MGMT_results.Rdat"))
 print("DONE: Performing calculations")
 ###################################################################################################
 ## Organize filtering statistics and create table
@@ -414,6 +415,7 @@ vb_dat$log_depth_ratio <- outliers(vb_dat$log_depth_ratio,2)
 vb_dat$log_rpkm_ratio <- outliers(vb_dat$log_rpkm_ratio,2)
 vb_dat$log_var_ratio <- outliers(vb_dat$log_var_ratio,2)
 
+save.image(name_plot("MGMT_results.Rdat"))
 print("DONE: Incorporating VizBin data")
 ####################################################################
 ## ASSEMBLY STATISTICS AND VISUALIZATIONS
@@ -657,7 +659,6 @@ theme_black()
 ## VISUALIZATION OF VIZBIN PLOTS
 ####################################################################
 
-save.image(name_plot("MGMT_results.Rdat"))
 
 ## Plot all VizBin plots
 gA <- ggplotGrob(vb.MGcov)
