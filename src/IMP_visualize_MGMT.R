@@ -155,7 +155,7 @@ colnames(GC.dat) <- c("contig", "GC")
 
 ## gff annotation file
 print("Read in gff3 annotation file")
-annot <- readGff3(annot_file)
+annot <- readGff3(annot_file, isRightOpen = FALSE)
 
 # extract only interesting information
 print("Processing gff3 annotation file")
