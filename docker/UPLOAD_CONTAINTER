@@ -1,0 +1,5 @@
+## Uploading container onto  r3lab webdav
+# Mount drive
+sudo mount.davfs https://webdav-r3lab.uni.lu/public/R3lab/IMP /mnt/
+
+# Copy the files as you would on a regular drive
