@@ -15,3 +15,5 @@ run_A01.sh
 conf/userconfig.imp.json
 output/*
 stats.json
+
+docker/UPLOAD_CONTAINTER

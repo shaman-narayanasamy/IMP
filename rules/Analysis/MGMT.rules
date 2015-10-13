@@ -29,8 +29,8 @@ rule ANALYSIS_ANNOTATE:
 
         prokka --force --outdir {AN_OUT}/annotation --cpus {THREADS} --metagenome {input[0]} >> {log} 2>&1
 
-        # Prokka gives a weird gff file with all the sequences. We need to write some small code to produce a file that
-        # cleans up the output
+        # Prokka gives a gff file with a long header and with all the contigs at the bottom.  The command below removes the
+        # And keeps only the gff table.
 
         LN=`grep -Hn "^>" {AN_OUT}/annotation/PROKKA_*.gff | head -n1 | cut -f2 -d ":"`
         LN1=1
