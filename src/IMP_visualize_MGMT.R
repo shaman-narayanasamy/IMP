@@ -172,27 +172,33 @@ annot.1 <- as.data.frame(
 colnames(annot.1) <- c("contig", "start", "end", "database")
 
 # Remove rows with no start and stop positions
-annot.1 <- annot.1[-is.na(annot.1$start),]
-annot.1 <- annot.1[-is.na(annot.1$end),]
+if (nrow(annot.1[is.na(annot.1$start),]) != 0) {
+   annot.1 <- annot.1[-is.na(annot.1$start),]
+} else if (nrow(annot.1[is.na(annot.1$end),]) != 0) {
+   annot.1 <- annot.1[-is.na(annot.1$end),]
+} else {
+  print("Genes are OK!")
+}
 
 # Replace non-annotated gens with NA
 annot.1$database[annot.1$database==""]=NA
-
 annot.1[,2:3] <- sapply(annot.1[2:3], as.character)
 annot.1[,2:3] <- sapply(annot.1[2:3], as.numeric)
+
+
 
 # calculate no. of gene length
 print("Calculating no. of genes per contig")
 annot.2 <- as.data.frame(table(annot.1$contig))
 colnames(annot.2)[1:ncol(annot.2)] <- c("contig","no_of_genes")
 
-save.image()
 # calculate gene lengths
 print("Calculating length of genes from gff3 file")
 annot.1 <- as.data.frame(cbind(annot.1, annot.1$end - annot.1$start + 1))
 colnames(annot.1)[ncol(annot.1)] <- "gene_length"
 
 # aggregate table and calculate total gene lengths within contig
+save.image(name_plot("MGMT_results.Rdat"))
 print("Calculating coding density of contigs")
 # Create temporary table
 total_gene_length <- aggregate(gene_length~contig, data=annot.1, FUN=sum)
