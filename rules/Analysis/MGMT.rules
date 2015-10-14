@@ -121,7 +121,7 @@ rule ANALYSIS_MG_CALL_VARIANT:
         "%s/MGMT.assembly.merged.fa" % A_OUT,
         "%s/MG.reads.sorted.bam" % A_OUT,
     output:
-        "%s/MG.variants.isec.vcf.gz" % AN_OUT,
+        #"%s/MG.variants.isec.vcf.gz" % AN_OUT,
         "%s/MG.variants.samtools.vcf.gz" % AN_OUT,
         "%s/MG.variants.freebayes.vcf.gz" % AN_OUT,
         "%s/MG.variants.platypus.vcf.gz" % AN_OUT
@@ -169,14 +169,14 @@ rule ANALYSIS_MG_CALL_VARIANT:
         bgzip -c $VCF_PLT > {output[3]}
         tabix -f -p vcf {output[3]}
 
-        ### "Merging outputs from all the callers"
-        ## Must remove colons from the contig names in upstream steps. Unable to merge the variants
-        ## due to this problem
-        vcf-isec -f -a -n +2 {output[1]} {output[2]} > {AN_OUT}/MG.variants.isec.vcf
+        #### "Merging outputs from all the callers"
+        ### Must remove colons from the contig names in upstream steps. Unable to merge the variants
+        ### due to this problem
+        #vcf-isec -f -a -n +2 {output[1]} {output[2]} > {AN_OUT}/MG.variants.isec.vcf
 
-        # Compress and index the output.
-        bgzip -c {AN_OUT}/MG.variants.isec.vcf > {output[0]}
-        tabix -f -p vcf {output[0]}
+        ## Compress and index the output.
+        #bgzip -c {AN_OUT}/MG.variants.isec.vcf > {output[0]}
+        #tabix -f -p vcf {output[0]}
 
         # Clean up directory
         echo "Cleaning up directory"
@@ -193,7 +193,7 @@ rule ANALYSIS_MT_CALL_VARIANT:
         "%s/MGMT.assembly.merged.fa" % A_OUT,
         "%s/MT.reads.sorted.bam" % A_OUT,
     output:
-        "%s/MT.variants.isec.vcf.gz" % AN_OUT,
+        #"%s/MT.variants.isec.vcf.gz" % AN_OUT,
         "%s/MT.variants.samtools.vcf.gz" % AN_OUT,
         "%s/MT.variants.freebayes.vcf.gz" % AN_OUT,
         "%s/MT.variants.platypus.vcf.gz" % AN_OUT
@@ -244,11 +244,11 @@ rule ANALYSIS_MT_CALL_VARIANT:
         ### "Merging outputs from all the callers"
         ## Must remove colons from the contig names in upstream steps. Unable to merge the variants
         ## due to this problem
-        vcf-isec -f -a -n +2 {output[1]} {output[2]} > {AN_OUT}/MT.variants.isec.vcf
+        #vcf-isec -f -a -n +2 {output[1]} {output[2]} > {AN_OUT}/MT.variants.isec.vcf
 
-        # Compress and index the output.
-        bgzip -c {AN_OUT}/MT.variants.isec.vcf > {output[0]}
-        tabix -f -p vcf {output[0]}
+        ## Compress and index the output.
+        #bgzip -c {AN_OUT}/MT.variants.isec.vcf > {output[0]}
+        #tabix -f -p vcf {output[0]}
 
         # Clean up directory
         echo "Cleaning up directory"
