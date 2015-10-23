@@ -25,8 +25,6 @@ RUN cd /home/imp/tmp \
     && cd trimmomatic-0.32 \
     && ant \
     && cp dist/jar/trimmomatic-0.32.jar /home/imp/lib/. \
-    #&& mkdir -p /usr/db/trimmomatic \
-    #&& cp adapters/* /usr/db/trimmomatic/. \
     && cd .. && rm -rf *rimmomatic*
 
 ## idba ud
@@ -157,14 +155,6 @@ RUN cd /home/imp/lib \
     && cd Platypus_0.8.1 \
     && bash buildPlatypus.sh
 
-## Megahit
-#RUN cd /home/imp/lib \
-#    && git clone https://git-r3lab.uni.lu/R3/megahit.git \
-#    && cd megahit \
-#    && git checkout v0.2.1 \
-#    && make \
-#    && mv megahit* /usr/bin/. \
-#    && mv sdbg_builder_cpu /usr/bin/.
 
 RUN cd /home/imp/lib \
     && rm -rf megahit \
@@ -188,13 +178,6 @@ RUN cd /home/imp/lib \
     && unzip quast.zip \
     && cd quast-release_3.1 \
     && ln -s $PWD/metaquast.py /usr/bin/metaquast
-
-######################
-# ship pipeline code #
-######################
-# (commented for now)
-#RUN cd /home/imp \
-#    && git clone https://git-r3lab.uni.lu/shaman.narayanasamy/IMP.git
 
 ######################
 # set up environment #
