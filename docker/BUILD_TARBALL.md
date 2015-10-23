@@ -10,7 +10,7 @@ Increment the version number in that file.
 
 > The version number can be anything: e.g '1.1.2' or 'my-feature'
 
-Edit the `IMP` script and put the `LATEST_TAG` variable to the same version.
+Edit the `IMP` script and put the `IMP_VERSION` variable to the same version.
 
 ## Build the docker images locally
 
