@@ -10,6 +10,9 @@ from copy import deepcopy
 import tempfile
 import sys
 
+IMP_VERSION = '1.1.1'
+IMP_DEFAULT_TAR_REPOSITORY = 'https://webdav-r3lab.uni.lu/public/R3lab/IMP/dist/imp-%s.tar.gz' % IMP_VERSION
+IMP_IMAGE_NAME = 'docker-r3lab.uni.lu/imp/imp'
 
 __doc__ = """Integrated Metaomic Pipeline.
  ____  __  __  ____
@@ -18,138 +21,172 @@ __doc__ = """Integrated Metaomic Pipeline.
 (____)(_/\/\_)(__)
 
 Usage:
-  IMP [-m MG1 -m MG2] [-t MT1 -t MT2] -o OUTPUT [--enter] [--norm] [--ask] [-n CONTAINER] [-v VERSION] [-c CONFIGFILE] [-d DBPATH] [-a ASSEMBLER] [-e ENV] ... [COMMANDS ...]
-  IMP --init [-d DBPATH] [-n CONTAINER] [-v VERSION]
+  IMP [-m MG1 -m MG2] [-t MT1 -t MT2] -o OUTPUT [--enter] [--norm] [-r REPO] [-n CONTAINER] [-v VERSION] [-c CONFIGFILE] [-d DBPATH] [-a ASSEMBLER] [-e ENV] ... [COMMANDS ...]
+  IMP --init [-d DBPATH] [-n CONTAINER] [-v VERSION] [-r REPO]
   IMP (-h | --help)
   IMP --version
 
 Options:
   -e ENV            Environment variable to pass to the container
   --enter           Enter the container
-  --init            Initialize IMP databases (Take a while)
+  --init            Initialize IMP databases (Take a while).
   --norm            Don't delete the container after use. Useful for debugging.
   --ask             Ask to create directory if it doesn't exist.
-  -c CONFIG         Pass a user defined config file.
+  -c CONFIG         Pass a user defined config file. Default: conf/userconfig.imp.json
   -h --help         Show this help and exit
   -m MG             Path to the metagenomics paired files (must be 2 files).
   -t MT             Path to the metatranscriptomic paired files (2 files).
   -d DBPATH         Path to the databases [default: db]
-  -n CONTAINER      Name of the container. Useful when you want to run your own built container.
-  -v VERSION        Name of the container. Useful when you want to run your own built container.
+  -n CONTAINER      Name of the container. Useful when you want to run your own built container. [default: {name}]
+  -v VERSION        Name of the container. Useful when you want to run your own built container. [default: {version}]
   -o OUTPUT         Path to the output directory
+  -r REPO           Repository to install IMP Tarball from (it can be a local file). [default: {repo}]
   -a ASSEMBLER      Name of the assembler for MGMT. Only idba and megahit are supported.
-"""
 
-# 'docker images docker-r3lab.uni.lu/imp/imp | grep 1.2'
-LATEST_TAG = '1.1.1'
-DOCKER_IMAGE_NAME = 'docker-r3lab.uni.lu/imp/imp'
-IMP_DOCKER_TAR_REPOSITORY = 'https://webdav-r3lab.uni.lu/public/R3lab/IMP/dist/imp-%s.tar.gz' % LATEST_TAG
+Typical use:
+    # simple run with default options
+    ./IMP -m input/mg.r1 -m input/mg.r2 -t input/mt.r1 -t input/mt.r2 -o output
 
-def is_imp_installed():
+""".format(
+    name=IMP_IMAGE_NAME,
+    version=IMP_VERSION,
+    repo=IMP_DEFAULT_TAR_REPOSITORY
+)
+
+
+def check_installation():
+    """
+    Check if dependencies are installed.
+    """
+    # docker
     try:
-        imp_image = subprocess.Popen(['docker', 'images', DOCKER_IMAGE_NAME], stdout=subprocess.PIPE)
-        is_installed = subprocess.check_output(['grep', LATEST_TAG], stdin=imp_image.stdout)
+        subprocess.check_output(['which', 'docker'])
+    except subprocess.CalledProcessError:
+        raise Exception("Docker must be installed. Please see https://docs.docker.com/installation.")
+    # git
+    try:
+        subprocess.check_output(['which', 'git'])
+    except subprocess.CalledProcessError:
+        raise Exception("Git must be installed. Please see http://www.git-scm.com.")
+    # python3
+    if sys.version_info < (3, 0, 0):
+        raise Exception("Python 3 or later must be installed. Please see https://www.python.org/downloads.")
+
+
+def check_imp_installed(name, version, repo):
+    """
+    Check if IMP is installed. Install it if not.
+    """
+    if not is_imp_installed(name, version):
+        install_imp(repo)
+
+
+def is_imp_installed(name, version):
+    """
+    Check if IMP is installed
+    """
+    try:
+        imp_image = subprocess.Popen(['docker', 'images', name], stdout=subprocess.PIPE)
+        is_installed = subprocess.check_output(['grep', version], stdin=imp_image.stdout)
     except subprocess.CalledProcessError:
         return False
     return True
 
 
-def get_version():
+def install_imp(repo):
+    """
+    Install IMP.
+    """
+    fname = 'imp-tarball.tmp.tgz'
+    if repo[:4].startswith('http'):
+        # download
+        print("[x] Downloading IMP TARBALL at '%s'" % repo)
+        subprocess.check_output(['wget', '--no-check-certificate', repo, '-O', fname])
+    else:
+        # copy
+        print("[x] Copying IMP TARBALL '%s'" % repo)
+        subprocess.check_output(['cp', repo, fname])
+    # load
+    print("[x] Loading IMP TARBALL into docker")
+    subprocess.check_output(['docker', 'load', '-i', fname])
+    print("[x] Removing IMP TARBALL.")
+    # clean
+    os.remove(fname)
+
+
+def get_git_version():
+    """
+    Get the current git hash.
+    """
     return subprocess.check_output(
         ['git', '--no-pager', 'log', '-n', '1', '--pretty=format:%H']
     )
 
-def dict_merge(a, b):
+
+def map_user(command, directory):
     """
-    Deep merge 2 dicts together
+    User inside the docker container and outside the container are not the same.
+    We change it on each run.
     """
-    if not isinstance(b, dict):
-        return b
-    result = deepcopy(a)
-    for k, v in b.items():
-        if k in result and isinstance(result[k], dict):
-            result[k] = dict_merge(result[k], v)
-        else:
-            result[k] = deepcopy(v)
-    return result
-
-
-def yes_or_no(question):
-    reply = str(input(question + ' (y/n): ')).lower().strip()
-    if reply[0] == 'y':
-        return True
-    if reply[0] == 'n':
-        return False
-    else:
-        return yes_or_no("Please enter ")
-
-
-def format_command(cmd, dir):
     # get group id and username of the user
     username = getpass.getuser()
-    return ' /bin/bash -c "{c} ; useradd {u} && chown -R {u} {d} && chmod -R u+Xrw,g+rw,o+r {d}"'.format(c=cmd, u=username, d=dir)
-
-
-def get_container_name(args):
-    version = args['-v'] is not None and args['-v'] or LATEST_TAG
-    container_name = args['-n'] is not None and args['-n'] or 'docker-r3lab.uni.lu/imp/imp'
-    container_name = '%s:%s' % (container_name, version)
-    return container_name
-
-def install_imp():
-    fname='imp-tarball.tmp.tgz'
-    print("[x] Downloading IMP TARBALL at '%s'" % IMP_DOCKER_TAR_REPOSITORY)
-    subprocess.check_output(['wget', '--no-check-certificate', IMP_DOCKER_TAR_REPOSITORY, '-O', fname])
-    print("[x] Loading IMP TARBALL into docker")
-    subprocess.check_output(['docker', 'load', '-i', fname])
-    print("[x] Removing IMP TARBALL.")
-    os.remove(fname)
+    return ' /bin/bash -c "{c} ; useradd {u} && chown -R {u} {d} && chmod -R u+Xrw,g+rw,o+r {d}"'.format(
+        c=command, u=username, d=directory
+    )
 
 
 def init(args):
+    """
+    Start the docker container to index files and setup prokka.
+    Must be run at least once.
+    """
     CURRENT_PATH = Path(__file__).parent.abspath()
-    # start docker container to index files and setup prokka
-    version = args['-v'] is not None and args['-v'] or 'latest'
-    container_name = get_container_name(args)
-    db_path = Path(args['-d']).abspath()
-    cmd = [
-        'docker', 'run', '--rm',
-        '-v %s:/code' % CURRENT_PATH,
-        '-v %s:/databases' % db_path, container_name
-    ]
-    cmd = ' '.join(cmd) + format_command('snakemake -s /code/rules/init', '/databases')
+    version = args['-v']
+    container_name = args['-n']
+    database_path = Path(args['-d']).abspath()
+
+    docker_cmd = 'docker run --rm -v {p}:/code -v {d}:/databases {n}:{v}'.format(
+        p=CURRENT_PATH,
+        d=database_path,
+        n=args['-n'],
+        v=args['-v']
+    )
+    cmd = docker_cmd + map_user('snakemake -s /code/rules/init', '/databases')
     print("Executing", '"', cmd, '"')
     subprocess.call(cmd, shell=True)
 
 
 def run(args):
     CURRENT_PATH = Path(__file__).parent.abspath()
-    # find common path
+
+    # find minimum common path
     mg_data = [Path(p).abspath() for p in args['-m']]
     mt_data = [Path(p).abspath() for p in args['-t']]
-    # check paths
+    # check if paths exists
     for pth in mg_data + mt_data:
         if not pth.exists():
             print("'%s' does not exist" % pth)
             exit(1)
     common_path = Path(os.path.commonprefix(mg_data + mt_data)).dirname()
+
     # update data paths
     mg_data = [p.partition(common_path)[-1][1:] for p in mg_data]
     mt_data = [p.partition(common_path)[-1][1:] for p in mt_data]
 
+    # output directory
     output = Path(args['-o']).abspath()
+
     if not output.exists():
-        if args['--ask'] and not yes_or_no("Output '%s' doesn't exist. Create ?" % output):
-            exit(0)
         output.makedirs()
-    container_name = get_container_name(args)
-    db_path = Path(args['-d']).abspath()
+
+    database_path = Path(args['-d']).abspath()
+
     # configure IMP mount point to the docker container
     mount_points = [
         '-v %s:/data' % common_path,
         '-v %s:/code' % CURRENT_PATH,
         '-v %s:/output' % output,
-        '-v %s:/databases' % db_path,
+        '-v %s:/databases' % database_path,
     ]
 
     # environement variables: add MG and MT data and config if specified
@@ -168,16 +205,21 @@ def run(args):
         envs += ['-e CONFIGFILE=%s' % args['-c']]
     if args['-a']:
         envs += ['-e IMP_ASSEMBLER=%s' % args['-a']]
+
     # CL
     cmd = ['docker', 'run'] + mount_points + envs
+
     # rm the container by default
     if not args['--norm']:
         cmd += ['--rm']
-    # if --enter flag is specified, add attach tty and set mode to interactive
+
+    # if --enter flag is specified, attach tty and set mode to interactive
     if args['--enter']:
         cmd += ['-it']
+
     # add container name and commands to pass to snakemake
-    cmd += [container_name]
+    cmd += ['%s:%s' % (args['-n'], args['-v'])]
+
     # if --enter flag is specified, change the command
     if args['--enter']:
         cmd += ['/bin/bash']
@@ -185,7 +227,7 @@ def run(args):
     else:
         if not args['COMMANDS']:
             args['COMMANDS'] = ['snakemake', 'ALL']
-        cmd = ' '.join(cmd) + format_command(' '.join(args['COMMANDS']), '/output')
+        cmd = ' '.join(cmd) + map_user(' '.join(args['COMMANDS']), '/output')
 
     print("Executing", '"', cmd, '"')
     subprocess.call(cmd, shell=True)
@@ -206,13 +248,15 @@ def validate(args):
     return True
 
 if __name__ == '__main__':
-    args = docopt(__doc__, version=get_version(), options_first=True)
-    if not is_imp_installed():
-        install_imp()
+    check_installation()
+    args = docopt(__doc__, version=get_git_version(), options_first=True)
+    check_imp_installed(args['-n'], args['-v'], args['-r'])
 
     if args['--init']:
         init(args)
-    else:
-        if not validate(args):
-            exit(1)
-        run(args)
+        exit(0)
+
+    if not validate(args):
+        exit(1)
+
+    run(args)
