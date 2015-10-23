@@ -117,7 +117,7 @@ def init(args):
         '-v %s:/code' % CURRENT_PATH,
         '-v %s:/databases' % db_path, container_name
     ]
-    cmd = ' '.join(cmd) + format_command('snakemake -s /code/init.rule', '/databases')
+    cmd = ' '.join(cmd) + format_command('snakemake -s /code/rules/init', '/databases')
     print("Executing", '"', cmd, '"')
     subprocess.call(cmd, shell=True)
 

@@ -1,5 +1,5 @@
 include:
-    "config"
+    "rules/config"
 
 
 def prepare_environment(stepname):
