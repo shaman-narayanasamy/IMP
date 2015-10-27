@@ -121,7 +121,6 @@ rule ANALYSIS_MG_CALL_VARIANT:
         "%s/MGMT.assembly.merged.fa" % A_OUT,
         "%s/MG.reads.sorted.bam" % A_OUT,
     output:
-        #"%s/MG.variants.isec.vcf.gz" % AN_OUT,
         "%s/MG.variants.samtools.vcf.gz" % AN_OUT,
         "%s/MG.variants.freebayes.vcf.gz" % AN_OUT,
         "%s/MG.variants.platypus.vcf.gz" % AN_OUT
@@ -147,32 +146,32 @@ rule ANALYSIS_MG_CALL_VARIANT:
         VCF_FRB=$(mktemp --tmpdir={TMPDIR} -t "XXXXXX.frb.vcf")
         VCF_PLT=$(mktemp --tmpdir={TMPDIR} -t "XXXXXX.plt.vcf")
 
-        ### run_mpileup {input[0]} {input[1]} {output[1]}
+        ### run_mpileup {input[0]} {input[1]} {output[0]}
         echo "Running samtools mpileup"
         samtools mpileup -uf {input[0]} {input[1]} |\
         bcftools view -vcg - |\
         vcf-convert -r {input[0]} -v 4.2 > $VCF_MPU
-        bgzip -c $VCF_MPU > {output[1]}
-        tabix -f -p vcf {output[1]}
+        bgzip -c $VCF_MPU > {output[0]}
+        tabix -f -p vcf {output[0]}
 
-        ### run_freebayes {input[0]} {input[1]} {output[2]}
+        ### run_freebayes {input[0]} {input[1]} {output[1]}
         echo "Running freebayes"
         freebayes -f {input[0]} {input[1]} |\
         vcf-convert -r {input[0]} -v 4.2 > $VCF_FRB
-        bgzip -c $VCF_FRB > {output[2]}
-        tabix -f -p vcf {output[2]}
+        bgzip -c $VCF_FRB > {output[1]}
+        tabix -f -p vcf {output[1]}
 
-        ### run_platypus {input[0]} {input[1]} {output[3]}
+        ### run_platypus {input[0]} {input[1]} {output[2]}
         echo "Running platypus"
         Platypus.py callVariants --refFile={input[0]} \
         --bamFiles={input[1]} --nCPU={THREADS} -o $VCF_PLT
-        bgzip -c $VCF_PLT > {output[3]}
-        tabix -f -p vcf {output[3]}
+        bgzip -c $VCF_PLT > {output[2]}
+        tabix -f -p vcf {output[2]}
 
         #### "Merging outputs from all the callers"
         ### Must remove colons from the contig names in upstream steps. Unable to merge the variants
         ### due to this problem
-        #vcf-isec -f -a -n +2 {output[1]} {output[2]} > {AN_OUT}/MG.variants.isec.vcf
+        #vcf-isec -f -a -n +2 {output[0]} {output[1]} > {AN_OUT}/MG.variants.isec.vcf
 
         ## Compress and index the output.
         #bgzip -c {AN_OUT}/MG.variants.isec.vcf > {output[0]}
@@ -193,7 +192,6 @@ rule ANALYSIS_MT_CALL_VARIANT:
         "%s/MGMT.assembly.merged.fa" % A_OUT,
         "%s/MT.reads.sorted.bam" % A_OUT,
     output:
-        #"%s/MT.variants.isec.vcf.gz" % AN_OUT,
         "%s/MT.variants.samtools.vcf.gz" % AN_OUT,
         "%s/MT.variants.freebayes.vcf.gz" % AN_OUT,
         "%s/MT.variants.platypus.vcf.gz" % AN_OUT
@@ -219,32 +217,32 @@ rule ANALYSIS_MT_CALL_VARIANT:
         VCF_FRB=$(mktemp --tmpdir={TMPDIR} -t "XXXXXX.frb.vcf")
         VCF_PLT=$(mktemp --tmpdir={TMPDIR} -t "XXXXXX.plt.vcf")
 
-        ### run_mpileup {input[0]} {input[1]} {output[1]}
+        ### run_mpileup {input[0]} {input[1]} {output[0]}
         echo "Running samtools mpileup"
         samtools mpileup -uf {input[0]} {input[1]} |\
         bcftools view -vcg - |\
         vcf-convert -r {input[0]} -v 4.2 > $VCF_MPU
-        bgzip -c $VCF_MPU > {output[1]}
-        tabix -f -p vcf {output[1]}
+        bgzip -c $VCF_MPU > {output[0]}
+        tabix -f -p vcf {output[0]}
 
-        ### run_freebayes {input[0]} {input[1]} {output[2]}
+        ### run_freebayes {input[0]} {input[1]} {output[1]}
         echo "Running freebayes"
         freebayes -f {input[0]} {input[1]} |\
         vcf-convert -r {input[0]} -v 4.2 > $VCF_FRB
-        bgzip -c $VCF_FRB > {output[2]}
-        tabix -f -p vcf {output[2]}
+        bgzip -c $VCF_FRB > {output[1]}
+        tabix -f -p vcf {output[1]}
 
-        ### run_platypus {input[0]} {input[1]} {output[3]}
+        ### run_platypus {input[0]} {input[1]} {output[2]}
         echo "Running platypus"
         Platypus.py callVariants --refFile={input[0]} \
         --bamFiles={input[1]} --nCPU={THREADS} -o $VCF_PLT
-        bgzip -c $VCF_PLT > {output[3]}
-        tabix -f -p vcf {output[3]}
+        bgzip -c $VCF_PLT > {output[2]}
+        tabix -f -p vcf {output[2]}
 
         ### "Merging outputs from all the callers"
         ## Must remove colons from the contig names in upstream steps. Unable to merge the variants
         ## due to this problem
-        #vcf-isec -f -a -n +2 {output[1]} {output[2]} > {AN_OUT}/MT.variants.isec.vcf
+        #vcf-isec -f -a -n +2 {output[0]} {output[1]} > {AN_OUT}/MT.variants.isec.vcf
 
         ## Compress and index the output.
         #bgzip -c {AN_OUT}/MT.variants.isec.vcf > {output[0]}
