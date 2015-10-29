@@ -16,17 +16,17 @@ rule ASSEMBLY_HYBRID_IDBA_1:
         '{dir}/MGMT.assembly_1.fa'.format(dir=A_OUT),
     shell:
         """
-        echo "Performing first hyrbid assembly step using IDBA"
+        echo "[x] Performing first hyrbid assembly step using IDBA"
 
-        echo "Interleave MG and MT fastq files"
+        echo "[x] Interleave MG and MT fastq files"
         TMPD=$(mktemp -d -t --tmpdir={TMPDIR} "XXXXXX")
         fq2fa --merge {input[0]} {input[1]} $TMPD/merged_MG.fa
         fq2fa --merge {input[3]} {input[4]} $TMPD/merged_MT.fa
 
-        echo "Join MG and MT interleaved fasta files"
+        echo "[x] Join MG and MT interleaved fasta files"
         cat $TMPD/merged_MG.fa $TMPD/merged_MT.fa > $TMPD/merged.fa
 
-        echo "Concatenate MT contigs, MT and MG single end files"
+        echo "[x] Concatenate MT contigs, MT and MG single end files"
         cat \
         <(cat {input[6]} {input[7]} | \
         awk '/^>/{{print ">contig_MT_" ++i; next}}{{print}}') \
@@ -60,17 +60,17 @@ rule ASSEMBLY_HYBRID_IDBA_2:
         '{dir}/MGMT.assembly_2.fa'.format(dir=A_OUT),
     shell:
         """
-        echo "Performing second hybrid assembly step using IDBA"
+        echo "[x] Performing second hybrid assembly step using IDBA"
 
-        echo "Interleave MG and MT fastq files"
+        echo "[x] Interleave MG and MT fastq files"
         TMPD=$(mktemp -d -t --tmpdir={TMPDIR} "XXXXXX")
         fq2fa --merge {input[0]} {input[1]} $TMPD/merged_MG.fa
         fq2fa --merge {input[2]} {input[3]} $TMPD/merged_MT.fa
 
-        echo "Join MG and MT interleaved fasta files"
+        echo "[x] Join MG and MT interleaved fasta files"
         cat $TMPD/merged_MG.fa $TMPD/merged_MT.fa > $TMPD/merged.fa
 
-        echo "Concatenate MT and MG single end files"
+        echo "[x] Concatenate MT and MG single end files"
         cat <(cat {input[2]} | sed -n '1~4s/^@/>/p;2~4p') <(cat {input[5]} | \
         sed -n '1~4s/^@/>/p;2~4p') > $TMPD/MG_MT.SE.fa
 

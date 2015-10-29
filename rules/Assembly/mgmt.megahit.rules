@@ -24,6 +24,8 @@ rule ASSEMBLY_HYBRID_MEGAHIT_1:
         fi
         echo "Performing first hyrbid assembly step using MEGAHIT"
 
+        MAX_MEM="$(({MEMTOTAL} * 1000000000))"
+
         megahit -1 {input[0]},{input[3]} \
         -2 {input[1]},{input[4]} \
         -r {input[2]},{input[5]},{input[6]},{input[7]} \
@@ -32,6 +34,7 @@ rule ASSEMBLY_HYBRID_MEGAHIT_1:
         --k-max {config[idba_ud][maxk]} \
         --k-step {config[idba_ud][step]} \
         -t {THREADS} --cpu-only \
+        -m ${{MAX_MEM}} \
         --mem-flag 1 >> {log} 2>&1
         cp {output[0]} {output[1]}
         """
@@ -60,6 +63,8 @@ rule ASSEMBLY_HYBRID_MEGAHIT_2:
             rm -rf {params.outdir}
         fi
 
+        MAX_MEM="$(({MEMTOTAL} * 1000000000))"
+
         echo "Performing second hyrbid assembly step using MEGAHIT"
         megahit -1 {input[0]},{input[3]} \
         -2 {input[1]},{input[4]} \
@@ -69,6 +74,7 @@ rule ASSEMBLY_HYBRID_MEGAHIT_2:
         --k-max {config[idba_ud][maxk]} \
         --k-step {config[idba_ud][step]} \
         -t {THREADS} --cpu-only \
+        -m ${{MAX_MEM}} \
         --mem-flag 1 >> {log} 2>&1
         cp {output[0]} {output[1]}
         """
