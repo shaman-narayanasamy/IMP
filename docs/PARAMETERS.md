@@ -20,7 +20,7 @@ if you are using Snakemake, or via the IMP wrapper script `-c` option.
 * outputdir: Path to the output directory.
 * db_path: Path to the databases.
 * preprocessing_filtering: If you want to filter reads from a database. Can be true or false.
-* assembler: The assembler to use. Only idba is supported for now.
+* assembler: The assembler to use. Could be idba or megahit.
 
 
 ## Example config file

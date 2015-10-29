@@ -188,6 +188,15 @@ RUN echo "`snakemake --bash-completion`" >> ~/.bashrc \
 ## add LD_LIBRARY_PATH
     && echo "export LD_LIBRARY_PATH=/usr/local/lib" >> ~/.bashrc
 
+#####################
+# Ship IMP codebase #
+#####################
+
+RUN mkdir /code \
+    && cd /code \
+    && git clone --branch 1.2.0 --single-branch https://git-r3lab.uni.lu/shaman.narayanasamy/IMP.git
+
+
 ######################
 # runtime parameters #
 ######################
