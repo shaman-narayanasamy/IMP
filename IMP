@@ -114,15 +114,6 @@ def install_imp(repo):
     os.remove(fname)
 
 
-def get_git_version():
-    """
-    Get the current git hash.
-    """
-    return subprocess.check_output(
-        ['git', '--no-pager', 'log', '-n', '1', '--pretty=format:%H']
-    )
-
-
 def map_user(command, directory):
     """
     User inside the docker container and outside the container are not the same.
@@ -249,7 +240,7 @@ def validate(args):
 
 if __name__ == '__main__':
     check_installation()
-    args = docopt(__doc__, version=get_git_version(), options_first=True)
+    args = docopt(__doc__, version=args['-v'], options_first=True)
     check_imp_installed(args['-n'], args['-v'], args['-r'])
 
     if args['--init']:
