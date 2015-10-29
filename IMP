@@ -259,7 +259,7 @@ def validate(args):
 
 if __name__ == '__main__':
     check_installation()
-    args = docopt(__doc__, version=args['-v'], options_first=True)
+    args = docopt(__doc__, version=IMP_VERSION, options_first=True)
     check_imp_installed(args['-n'], args['-v'], args['-r'])
 
     if args['--init']:
