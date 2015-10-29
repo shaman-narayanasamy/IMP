@@ -28,7 +28,7 @@ if you are using Snakemake, or via the IMP wrapper script `-c` option.
     {
       "threads": 8,
       "output": /home/user/temp
-      "preprocessing_filtering": false
+      "conf/userconfig.imp.json": false
     }
 
 IMP will take all default parameters and override those provided via this config file.
