@@ -157,7 +157,7 @@ def init(args):
         docker_cmd = 'docker run --rm -v {p}:/code -v {d}:/databases {n}:{v}'
 
     # format docker command
-    docker_cmd.format(**formatting_args)
+    docker_cmd = docker_cmd.format(**formatting_args)
     # IMP command + user mapping (see https://github.com/docker/docker/pull/12648)
     cmd = docker_cmd + map_user('snakemake -s /code/rules/init', '/databases')
     print("Executing", '"', cmd, '"')
