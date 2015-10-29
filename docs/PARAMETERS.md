@@ -10,7 +10,7 @@ if you are using snakemake, or via the IMP wrapper script option.
 
 
 
-## TODO: document follwing parameters:
+## TODO: document following parameters:
 {
     "threads": 4,
     "memory_total_gb": 8,
