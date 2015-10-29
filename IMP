@@ -44,8 +44,16 @@ Options:
   -a ASSEMBLER      Name of the assembler for MGMT. Only idba and megahit are supported.
 
 Typical use:
+    # first run
+    ./IMP --init
+
     # simple run with default options
-    ./IMP -m input/mg.r1 -m input/mg.r2 -t input/mt.r1 -t input/mt.r2 -o output
+    ./IMP -m input/mg.r1.fq -m input/mg.r2.fq -t input/mt.r1.fq -t input/mt.r2.fq -o output_directory
+
+    # use a different database path
+    ./IMP --init -d /path/to/databases_directory
+    ./IMP -m input/mg.r1.fq -m input/mg.r2.fq -t input/mt.r1.fq -t input/mt.r2.fq -o output_directory -d /path/to/databases_directory
+
 
 """.format(
     name=IMP_IMAGE_NAME,
