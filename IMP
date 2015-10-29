@@ -196,7 +196,7 @@ def run(args):
         '-v %s:/databases' % database_path,
     ]
     # add code mount point if the user want to mount a specific version of IMP codebase.
-    if args[--'current']:
+    if args['--current']:
         mount_points.append('-v %s:/code' % CURRENT_PATH)
 
     # environment variables: add MG and MT data and config if specified
