@@ -383,20 +383,43 @@ rule ANALYSIS_MT_CALL_CONTIG_DEPTH:
 
 def mg_fqfiles():
     raw = expand('{dir}/{raw}', raw=['MG.R1.fq', 'MG.R2.fq'], dir=P_OUT)
+    preprocessed = [
+        '%s/MG.R1.preprocessed.fq' % P_OUT,
+        '%s/MG.R2.preprocessed.fq' % P_OUT,
+        '%s/MG.SE.preprocessed.fq' % P_OUT,
+    ]
     trim = expand('{dir}/{trim}', trim=[
         'MG.R1.trimmed.fq',
         'MG.R2.trimmed.fq',
         'MG.SE.trimmed.fq'], dir=P_OUT)
-    filter = expand('{dir}/{filter}', filter=expand([
-        'MG.R1.trimmed.{f}.fq',
-        'MG.R2.trimmed.{f}.fq',
-        'MG.SE.trimmed.{f}.fq'], f=config['human_filtering']['filter']), dir=P_OUT)
+    # if filter is set, we have to include the trimmed one
     if config['preprocessing_filtering']:
-        return raw + trim + filter
-    return raw + trim
+        return raw + trim + preprocessed
+    return raw + preprocessed
+
+# raw = expand('{dir}/{raw}', raw=['MG.R1.fq', 'MG.R2.fq'], dir=P_OUT)
+# uniq = expand('{dir}/{uniq}', uniq=['MG.R1.uniq.fq', 'MG.R2.uniq.fq'], dir=P_OUT)
+# trim = expand('{dir}/{trim}', trim=[
+#     'MG.R1.uniq.trimmed.fq',
+#     'MG.R2.uniq.trimmed.fq',
+#     'MG.SE.uniq.trimmed.fq'], dir=P_OUT)
+# preprocessed = [
+#     '%s/MG.R1.preprocessed.fq' % P_OUT,
+#     '%s/MG.R2.preprocessed.fq' % P_OUT,
+#     '%s/MG.SE.preprocessed.fq' % P_OUT,
+# # ]
+# if config['preprocessing_filtering']:
+#     return raw + uniq + trim + preprocessed
+# return raw + uniq + preprocessed
+
 
 def mt_fqfiles():
     raw = expand('{dir}/{raw}', raw=['MT.R1.fq', 'MT.R2.fq'], dir=P_OUT)
+    preprocessed = [
+        '%s/MT.R1.preprocessed.fq' % P_OUT,
+        '%s/MT.R2.preprocessed.fq' % P_OUT,
+        '%s/MT.SE.preprocessed.fq' % P_OUT,
+    ]
     trim = expand('{dir}/{trim}', trim=[
         'MT.R1.trimmed.fq',
         'MT.R2.trimmed.fq',
@@ -405,13 +428,9 @@ def mt_fqfiles():
         'MT.R1.trimmed.rna_filtered.fq',
         'MT.R2.trimmed.rna_filtered.fq',
         'MT.SE.trimmed.rna_filtered.fq'], dir=P_OUT)
-    h_filter = expand('{dir}/{filter}', filter=expand([
-        'MT.R1.trimmed.rna_filtered.{f}.fq',
-        'MT.R2.trimmed.rna_filtered.{f}.fq',
-        'MT.SE.trimmed.rna_filtered.{f}.fq'], f=config['human_filtering']['filter']), dir=P_OUT)
     if config['preprocessing_filtering']:
-        return raw + trim + rna_filter + h_filter
-    return raw + trim + rna_filter
+        return raw + preprocessed + rna_filter + trim
+    return raw + preprocessed + rna_filter
 
 rule ANALYSIS_MG_READ_COUNT:
     log:
@@ -577,16 +596,16 @@ rule ANALYSIS_MG_FASTQC:
 
 rule ANALYSIS_MG_PREPROCESSED_FASTQC:
     input:
-        preprocessed_mg('R1'),
-        preprocessed_mg('R2'),
-        preprocessed_mg('SE')
+        '%s/MG.R1.preprocessed.fq' % P_OUT,
+        '%s/MG.R2.preprocessed.fq' % P_OUT,
+        '%s/MG.SE.preprocessed.fq' % P_OUT
     output:
-        preprocessed_mg('R1', dir=AN_OUT + '/stats/MG') + '_fastqc.zip',
-        preprocessed_mg('R2', dir=AN_OUT + '/stats/MG') + '_fastqc.zip',
-        preprocessed_mg('SE', dir=AN_OUT + '/stats/MG') + '_fastqc.zip',
-        preprocessed_mg('R1', dir=AN_OUT + '/stats/MG') + '_fastqc.html',
-        preprocessed_mg('R2', dir=AN_OUT + '/stats/MG') + '_fastqc.html',
-        preprocessed_mg('SE', dir=AN_OUT + '/stats/MG') + '_fastqc.html'
+        '%s/stats/MG/MG.R1.preprocessed.fq_fastqc.zip' % AN_OUT,
+        '%s/stats/MG/MG.R2.preprocessed.fq_fastqc.zip' % AN_OUT,
+        '%s/stats/MG/MG.SE.preprocessed.fq_fastqc.zip' % AN_OUT,
+        '%s/stats/MG/MG.R1.preprocessed.fq_fastqc.html' % AN_OUT,
+        '%s/stats/MG/MG.R2.preprocessed.fq_fastqc.html' % AN_OUT,
+        '%s/stats/MG/MG.SE.preprocessed.fq_fastqc.html' % AN_OUT,
     benchmark:
         "%s/benchmarks/PREPROCESSING_MG_FASTQC.json" % AN_OUT
     log:
@@ -608,18 +627,18 @@ rule ANALYSIS_MG_PREPROCESSED_FASTQC:
 
 rule RENAME_STAT_OUTPUT:
     input:
-        preprocessed_mt('R1', dir=AN_OUT + '/stats/MT') + '_fastqc.zip',
-        preprocessed_mt('R2', dir=AN_OUT + '/stats/MT') + '_fastqc.zip',
-        preprocessed_mt('SE', dir=AN_OUT + '/stats/MT') + '_fastqc.zip',
-        preprocessed_mt('R1', dir=AN_OUT + '/stats/MT') + '_fastqc.html',
-        preprocessed_mt('R2', dir=AN_OUT + '/stats/MT') + '_fastqc.html',
-        preprocessed_mt('SE', dir=AN_OUT + '/stats/MT') + '_fastqc.html',
-        preprocessed_mg('R1', dir=AN_OUT + '/stats/MG') + '_fastqc.zip',
-        preprocessed_mg('R2', dir=AN_OUT + '/stats/MG') + '_fastqc.zip',
-        preprocessed_mg('SE', dir=AN_OUT + '/stats/MG') + '_fastqc.zip',
-        preprocessed_mg('R1', dir=AN_OUT + '/stats/MG') + '_fastqc.html',
-        preprocessed_mg('R2', dir=AN_OUT + '/stats/MG') + '_fastqc.html',
-        preprocessed_mg('SE', dir=AN_OUT + '/stats/MG') + '_fastqc.html'
+        '%s/stats/MT/MT.R1.preprocessed.fq_fastqc.zip' % AN_OUT,
+        '%s/stats/MT/MT.R2.preprocessed.fq_fastqc.zip' % AN_OUT,
+        '%s/stats/MT/MT.SE.preprocessed.fq_fastqc.zip' % AN_OUT,
+        '%s/stats/MT/MT.R1.preprocessed.fq_fastqc.html' % AN_OUT,
+        '%s/stats/MT/MT.R2.preprocessed.fq_fastqc.html' % AN_OUT,
+        '%s/stats/MT/MT.SE.preprocessed.fq_fastqc.html' % AN_OUT,
+        '%s/stats/MG/MG.R1.preprocessed.fq_fastqc.zip' % AN_OUT,
+        '%s/stats/MG/MG.R2.preprocessed.fq_fastqc.zip' % AN_OUT,
+        '%s/stats/MG/MG.SE.preprocessed.fq_fastqc.zip' % AN_OUT,
+        '%s/stats/MG/MG.R1.preprocessed.fq_fastqc.html' % AN_OUT,
+        '%s/stats/MG/MG.R2.preprocessed.fq_fastqc.html' % AN_OUT,
+        '%s/stats/MG/MG.SE.preprocessed.fq_fastqc.html' % AN_OUT
     output:
         "%s/stats/MT/MT.R1_preprocessed_fastqc.zip" % AN_OUT,
         "%s/stats/MT/MT.R2_preprocessed_fastqc.zip" % AN_OUT,
@@ -657,16 +676,16 @@ rule ANALYSIS_MT_FASTQC:
 
 rule ANALYSIS_MT_PREPROCESSED_FASTQC:
     input:
-        preprocessed_mt('R1'),
-        preprocessed_mt('R2'),
-        preprocessed_mt('SE')
+        '%s/MT.R1.preprocessed.fq' % P_OUT,
+        '%s/MT.R2.preprocessed.fq' % P_OUT,
+        '%s/MT.SE.preprocessed.fq' % P_OUT
     output:
-        preprocessed_mt('R1', dir=AN_OUT + '/stats/MT') + '_fastqc.zip',
-        preprocessed_mt('R2', dir=AN_OUT + '/stats/MT') + '_fastqc.zip',
-        preprocessed_mt('SE', dir=AN_OUT + '/stats/MT') + '_fastqc.zip',
-        preprocessed_mt('R1', dir=AN_OUT + '/stats/MT') + '_fastqc.html',
-        preprocessed_mt('R2', dir=AN_OUT + '/stats/MT') + '_fastqc.html',
-        preprocessed_mt('SE', dir=AN_OUT + '/stats/MT') + '_fastqc.html'
+        '%s/stats/MT/MT.R1.preprocessed.fq_fastqc.zip' % AN_OUT,
+        '%s/stats/MT/MT.R2.preprocessed.fq_fastqc.zip' % AN_OUT,
+        '%s/stats/MT/MT.SE.preprocessed.fq_fastqc.zip' % AN_OUT,
+        '%s/stats/MT/MT.R1.preprocessed.fq_fastqc.html' % AN_OUT,
+        '%s/stats/MT/MT.R2.preprocessed.fq_fastqc.html' % AN_OUT,
+        '%s/stats/MT/MT.SE.preprocessed.fq_fastqc.html' % AN_OUT,
     benchmark:
         "%s/benchmarks/PREPROCESSING_MT_FASTQC.json" % AN_OUT
     log:
