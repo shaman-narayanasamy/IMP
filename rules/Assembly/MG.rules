@@ -9,7 +9,7 @@ rule ASSEMBLY_MG_ASSEMBLY_SE_CAT:
         "%s/benchmarks/ASSEMBLY_MG_ASSEMBLY_SE_CAT.json" % A_OUT
     input:
         '{dir}/MG.assembly.cat.fa'.format(dir=A_OUT),
-        preprocessed_mg('SE')
+        '%s/MG.SE.preprocessed.fq' % P_OUT
     output:
         '{dir}/MG_assembly-MG_SE.fa'.format(dir=A_OUT),
     shell:
@@ -23,9 +23,9 @@ rule ASSEMBLY_MG_ASSEMBLY_1:
     benchmark:
         "%s/benchmarks/ASSEMBLY_MG_ASSEMBLY_1.json" % A_OUT
     input:
-        preprocessed_mg('R1'),
-        preprocessed_mg('R2'),
-        preprocessed_mg('SE'),
+        '%s/MG.R1.preprocessed.fq' % P_OUT,
+        '%s/MG.R2.preprocessed.fq' % P_OUT,
+        '%s/MG.SE.preprocessed.fq' % P_OUT,
     output:
         '{dir}/MG.assembly_1.fa'.format(dir=A_OUT),
     shell:
@@ -49,9 +49,9 @@ rule ASSEMBLY_MG_EXTRACT_UNMAPPED_FROM_ASSEMBLY_1:
     benchmark:
         "%s/benchmarks/ASSEMBLY_MG_EXTRACT_UNMAPPED_FROM_ASSEMBLY_1.json" % A_OUT
     input:
-        preprocessed_mg('R1'),
-        preprocessed_mg('R2'),
-        preprocessed_mg('SE'),
+        '%s/MG.R1.preprocessed.fq' % P_OUT,
+        '%s/MG.R2.preprocessed.fq' % P_OUT,
+        '%s/MG.SE.preprocessed.fq' % P_OUT,
         '{dir}/MG.assembly_1.fa'.format(dir=A_OUT),
         expand('{dir}/MG.assembly_1.fa.{ext}', dir=A_OUT, ext=['amb', 'bwt', 'pac', 'sa', 'ann'])
     output:
@@ -130,9 +130,9 @@ rule ASSEMBLY_MG_FAST_1:
     benchmark:
         "%s/benchmarks/ASSEMBLY_MG_ASSEMBLY_1.json" % A_OUT
     input:
-        preprocessed_mg('R1'),
-        preprocessed_mg('R2'),
-        preprocessed_mg('SE'),
+        '%s/MG.R1.preprocessed.fq' % P_OUT,
+        '%s/MG.R2.preprocessed.fq' % P_OUT,
+        '%s/MG.SE.preprocessed.fq' % P_OUT,
         '{dir}/MG.assembly_1/final.contigs.fa'.format(dir=A_OUT)
     output:
         '{dir}/MG.assembly_1/final.contigs.fa'.format(dir=A_OUT)
@@ -155,9 +155,9 @@ rule ASSEMBLY_MG_EXTRACT_UNMAPPED_FROM_FAST_1:
     benchmark:
         "%s/benchmarks/ASSEMBLY_MG_EXTRACT_UNMAPPED_FROM_ASSEMBLY_1.json" % A_OUT
     input:
-        preprocessed_mg('R1'),
-        preprocessed_mg('R2'),
-        preprocessed_mg('SE'),
+        '%s/MG.R1.preprocessed.fq' % P_OUT,
+        '%s/MG.R2.preprocessed.fq' % P_OUT,
+        '%s/MG.SE.preprocessed.fq' % P_OUT,
         '{dir}/MG.assembly_1/final.contigs.fa'.format(dir=A_OUT),
         expand('{dir}/MG.assembly_1/final.contigs.fa.{ext}', dir=A_OUT, ext=['amb', 'bwt', 'pac', 'sa', 'ann'])
     output:

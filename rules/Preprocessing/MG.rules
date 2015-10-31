@@ -44,51 +44,9 @@ rule PREPROCESSING_MG_CAT_TRIMMED_SE:
         expand('{dir}/{trim}', trim=[
             'MG.SE1.trimmed.fq',
             'MG.SE2.trimmed.fq'], dir=P_OUT)
+    benchmark:
+        "%s/benchmarks/PREPROCESSING_MG_CAT_TRIMMED_SE.json" % P_OUT
     output:
         expand('{dir}/{cat}', cat='MG.SE.trimmed.fq', dir=P_OUT)
     shell:
         "cat {input[0]} {input[1]} > {output}"
-    benchmark:
-        "%s/benchmarks/PREPROCESSING_MG_CAT_TRIMMED_SE.json" % P_OUT
-
-rule PREPROCESSING_MG_FILTER_HG:
-    log:
-        P_LOG
-    input:
-        expand('{dir}/{trim}', trim=[
-            'MG.R1.trimmed.fq',
-            'MG.R2.trimmed.fq',
-            'MG.SE.trimmed.fq'], dir=P_OUT),
-        '{dir}/{ref}.fa'.format(dir=DBPATH + "/human", ref=config['human_filtering']['filter']),
-        expand(
-            "{p}/human/{filter}.{ext}", filter=config["human_filtering"]["filter"],
-            ext=['fa', 'fa.amb', 'fa.ann', 'fa.bwt', 'fa.pac', 'fa.sa'], p=DBPATH)
-    output:
-        expand('{dir}/{filter}', filter=expand([
-            'MG.R1.trimmed.{f}.fq',
-            'MG.R2.trimmed.{f}.fq',
-            'MG.SE.trimmed.{f}.fq'], f=config['human_filtering']['filter']), dir=P_OUT)
-    benchmark:
-        "%s/benchmarks/PREPROCESSING_MG_FILTER_HG.json" % P_OUT
-    shell:
-        """
-        TMP_FILE=$(mktemp --tmpdir={TMPDIR} -t "alignment_XXXXXX.bam")
-        BUFFER=$(mktemp --tmpdir={TMPDIR} -t "alignment_XXXXXX.bam")
-        bwa mem -v 1 -t {THREADS} {input[3]} {input[0]} {input[1]} | samtools view -@ {THREADS} -bS - > $TMP_FILE
-        samtools merge -@ {THREADS} -u - \
-        <(samtools view -@ {THREADS} -u  -f 4 -F 264 $TMP_FILE) \
-        <(samtools view -@ {THREADS} -u -f 8 -F 260 $TMP_FILE) \
-        <(samtools view -@ {THREADS} -u -f 12 -F 256 $TMP_FILE) | \
-        samtools view -@ {THREADS} -bF 0x800 -  | samtools sort -o -@ {THREADS} -m {MEMCORE}G -n - $BUFFER | \
-        bamToFastq -i stdin -fq {output[0]} -fq2 {output[1]}
-        if [[ -s {input[2]} ]]
-        then
-        bwa mem -v 1 -t {THREADS} {input[3]} {input[2]} | samtools view -@ {THREADS} -bS - | \
-        samtools view -@ {THREADS} -uf 4 - | bamToFastq -i stdin -fq {output[2]}
-        else
-        echo "{input[2]} is empty, skipping single end human sequence filtering, but creating it anyway..."
-        touch {output[2]}
-        fi
-
-        rm -rf $BUFFER* $TMP_FILE
-        """

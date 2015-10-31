@@ -4,12 +4,12 @@ rule ASSEMBLY_HYBRID_MEGAHIT_1:
     benchmark:
         "%s/benchmarks/ASSEMBLY_HYBRID_1.json" % A_OUT
     input:
-        preprocessed_mg('R1'),
-        preprocessed_mg('R2'),
-        preprocessed_mg('SE'),
-	preprocessed_mt('R1'),
-        preprocessed_mt('R2'),
-        preprocessed_mt('SE'),
+        '%s/MG.R1.preprocessed.fq' % P_OUT,
+        '%s/MG.R2.preprocessed.fq' % P_OUT,
+        '%s/MG.SE.preprocessed.fq' % P_OUT,
+        '%s/MT.R1.preprocessed.fq' % P_OUT,
+        '%s/MT.R2.preprocessed.fq' % P_OUT,
+        '%s/MT.SE.preprocessed.fq' % P_OUT,
         '{dir}/MT.assembly_1/final.contigs.fa'.format(dir=A_OUT),
         '{dir}/MT.assembly_2/final.contigs.fa'.format(dir=A_OUT)
     output:

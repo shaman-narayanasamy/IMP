@@ -198,6 +198,7 @@ rule ANALYSIS_MG_CONTIG_COVERAGE:
         echo "flagstat" >> {log}
         samtools flagstat {input[0]} | cut -f1 -d ' ' > {output[2]}
         """
+
 def mg_fqfiles():
     raw = expand('{dir}/{raw}', raw=['MG.R1.fq', 'MG.R2.fq'], dir=P_OUT)
     uniq = expand('{dir}/{uniq}', uniq=['MG.R1.uniq.fq', 'MG.R2.uniq.fq'], dir=P_OUT)
@@ -205,13 +206,14 @@ def mg_fqfiles():
         'MG.R1.uniq.trimmed.fq',
         'MG.R2.uniq.trimmed.fq',
         'MG.SE.uniq.trimmed.fq'], dir=P_OUT)
-    filter = expand('{dir}/{filter}', filter=expand([
-        'MG.R1.uniq.trimmed.{f}.fq',
-        'MG.R2.uniq.trimmed.{f}.fq',
-        'MG.SE.uniq.trimmed.{f}.fq'], f=config['human_filtering']['filter']), dir=P_OUT)
+    preprocessed = [
+        '%s/MG.R1.preprocessed.fq' % P_OUT,
+        '%s/MG.R2.preprocessed.fq' % P_OUT,
+        '%s/MG.SE.preprocessed.fq' % P_OUT,
+    ]
     if config['preprocessing_filtering']:
-        return raw + uniq + trim + filter
-    return raw + uniq + trim
+        return raw + uniq + trim + preprocessed
+    return raw + uniq + preprocessed
 
 rule ANALYSIS_MG_READ_COUNT:
     log:

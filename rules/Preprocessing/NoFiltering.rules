@@ -1,0 +1,28 @@
+rule PREPROCESSING_NO_FILTER:
+    log:
+        P_LOG
+    input:
+        '%s/MG.R1.trimmed.fq' % P_OUT,
+        '%s/MG.R2.trimmed.fq' % P_OUT,
+        '%s/MG.SE.trimmed.fq' % P_OUT,
+        '%s/MT.R1.trimmed.rna_filtered.fq' % P_OUT,
+        '%s/MT.R2.trimmed.rna_filtered.fq' % P_OUT,
+        '%s/MT.SE.trimmed.rna_filtered.fq' % P_OUT
+    output:
+        '%s/MG.R1.preprocessed.fq' % P_OUT,
+        '%s/MG.R2.preprocessed.fq' % P_OUT,
+        '%s/MG.SE.preprocessed.fq' % P_OUT,
+        '%s/MT.R1.preprocessed.fq' % P_OUT,
+        '%s/MT.R2.preprocessed.fq' % P_OUT,
+        '%s/MT.SE.preprocessed.fq' % P_OUT
+    benchmark:
+        "%s/benchmarks/PREPROCESSING_NO_FILTER.json" % P_OUT
+    shell:
+        """
+        mv {input[0]} {output[0]}
+        mv {input[1]} {output[1]}
+        mv {input[2]} {output[2]}
+        mv {input[3]} {output[3]}
+        mv {input[4]} {output[4]}
+        mv {input[5]} {output[5]}
+        """

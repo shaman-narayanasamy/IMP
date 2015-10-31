@@ -7,6 +7,14 @@ include:
 include:
     "MT.rules"
 
+# include proper rules based on the filtering option
+if config['preprocessing_filtering']:
+    include:
+        "Filtering.rules"
+else:
+    include:
+        "NoFiltering.rules"
+
 
 CHUNK_SIZE = 100 * 1024
 
@@ -16,35 +24,37 @@ def preprocessing_output_files():
     Dynamically generate output files names based on parameters
     """
     return [
-        preprocessed_mt('R1'),
-        preprocessed_mt('R2'),
-        preprocessed_mt('SE'),
-        preprocessed_mg('R1'),
-        preprocessed_mg('R2'),
-        preprocessed_mg('SE')
+        '%s/MG.R1.preprocessed.fq' % P_OUT,
+        '%s/MG.R2.preprocessed.fq' % P_OUT,
+        '%s/MG.SE.preprocessed.fq' % P_OUT,
+        '%s/MT.R1.preprocessed.fq' % P_OUT,
+        '%s/MT.R2.preprocessed.fq' % P_OUT,
+        '%s/MT.SE.preprocessed.fq' % P_OUT
     ]
 
 
-def preprocessed_mg(target, dir=P_OUT):
-    if config['preprocessing_filtering']:
-        # with human filtering ON
-        return '{dir}/MG.{target}.trimmed.{f}.fq'.format(
-            f=config['human_filtering']['filter'],
-            dir=dir,
-            target=target)
-    # with human filtering OFF
-    return '{dir}/MG.{target}.trimmed.fq'.format(dir=dir, target=target)
-
-
-def preprocessed_mt(target,  dir=P_OUT):
-    if config['preprocessing_filtering']:
-        # with human filtering ON
-        return '{dir}/MT.{target}.trimmed.rna_filtered.{f}.fq'.format(
-            f=config['human_filtering']['filter'],
-            dir=dir,
-            target=target)
-    # with human filtering OFF
-    return '{dir}/MT.{target}.trimmed.rna_filtered.fq'.format(dir=dir, target=target)
+# def preprocessed_mg(target, dir=P_OUT):
+#     return '%s/MG.%s.preprocessed.fq' % (P_OUT, target)
+#     if config['preprocessing_filtering']:
+#         # with human filtering ON
+#         return '{dir}/MG.{target}.trimmed.{f}.fq'.format(
+#             f=config['human_filtering']['filter'],
+#             dir=dir,
+#             target=target)
+#     # with human filtering OFF
+#     return '{dir}/MG.{target}.trimmed.fq'.format(dir=dir, target=target)
+#
+#
+# def preprocessed_mt(target,  dir=P_OUT):
+#     return '%s/MT.%s.preprocessed.fq' % (P_OUT, target)
+#     if config['preprocessing_filtering']:
+#         # with human filtering ON
+#         return '{dir}/MT.{target}.trimmed.rna_filtered.{f}.fq'.format(
+#             f=config['human_filtering']['filter'],
+#             dir=dir,
+#             target=target)
+#     # with human filtering OFF
+#     return '{dir}/MT.{target}.trimmed.rna_filtered.fq'.format(dir=dir, target=target)
 
 
 def prepare_input_files(input, rtype):
