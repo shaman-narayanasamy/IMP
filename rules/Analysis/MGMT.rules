@@ -148,7 +148,7 @@ rule ANALYSIS_MG_CALL_VARIANT:
 
         ### run_mpileup {input[0]} {input[1]} {output[0]}
         echo "Running samtools mpileup"
-        samtools mpileup -uf {input[0]} {input[1]} |\
+        samtools mpileup -uAf {input[0]} {input[1]} |\
         bcftools view -vcg - |\
         vcf-convert -r {input[0]} -v 4.2 > $VCF_MPU
         bgzip -c $VCF_MPU > {output[0]}
@@ -219,7 +219,7 @@ rule ANALYSIS_MT_CALL_VARIANT:
 
         ### run_mpileup {input[0]} {input[1]} {output[0]}
         echo "Running samtools mpileup"
-        samtools mpileup -uf {input[0]} {input[1]} |\
+        samtools mpileup -uAf {input[0]} {input[1]} |\
         bcftools view -vcg - |\
         vcf-convert -r {input[0]} -v 4.2 > $VCF_MPU
         bgzip -c $VCF_MPU > {output[0]}
