@@ -144,18 +144,21 @@ def init(args):
     """
     CURRENT_PATH = Path(__file__).parent.abspath()
     database_path = Path(args['-d']).abspath()
+    config_file = str(Path(args['-c']).name)
+    config_directory = Path(args['-c']).parent.abspath()
     # prepare docker command
-    docker_cmd = 'docker run --rm -v {d}:/databases -e CONFIGFILE={c} {n}:{v}'
+    docker_cmd = 'docker run --rm -v {d}:/databases -v {conf}:/conf -e CONFIGFILE={c} {n}:{v}'
     formatting_args = {
         'd': database_path,
         'n': args['-n'],
         'v': args['-v'],
-        'c': args['-c']
+        'c': config_file,
+        'conf': config_directory
     }
     # override docker command if the user want to mount a specific version of IMP codebase.
     if args['--current']:
         formatting_args['p'] = CURRENT_PATH
-        docker_cmd = 'docker run --rm -v {p}:/code -v {d}:/databases -e CONFIGFILE={c} {n}:{v}'
+        docker_cmd = 'docker run --rm -v {p}:/code -v {d}:/databases -v {conf}:/conf -e CONFIGFILE={c} {n}:{v}'
 
     # format docker command
     docker_cmd = docker_cmd.format(**formatting_args)
@@ -190,11 +193,15 @@ def run(args):
 
     database_path = Path(args['-d']).abspath()
 
+    config_file = str(Path(args['-c']).name)
+    config_directory = Path(args['-c']).parent.abspath()
+
     # configure IMP mount point to the docker container
     mount_points = [
         '-v %s:/data' % common_path,
         '-v %s:/output' % output,
         '-v %s:/databases' % database_path,
+        '-v %s:/conf' % config_directory
     ]
     # add code mount point if the user want to mount a specific version of IMP codebase.
     if args['--current']:
@@ -213,7 +220,7 @@ def run(args):
         envs += ['-e MT="%s"' % ' '.join(mt)]
 
     if args['-c']:
-        envs += ['-e CONFIGFILE=%s' % args['-c']]
+        envs += ['-e CONFIGFILE=%s' % config_file]
     if args['-a']:
         envs += ['-e IMP_ASSEMBLER=%s' % args['-a']]
 
