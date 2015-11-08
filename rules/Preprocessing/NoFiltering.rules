@@ -19,10 +19,10 @@ rule PREPROCESSING_NO_FILTER:
         "%s/benchmarks/PREPROCESSING_NO_FILTER.json" % P_OUT
     shell:
         """
-        mv {input[0]} {output[0]}
-        mv {input[1]} {output[1]}
-        mv {input[2]} {output[2]}
-        mv {input[3]} {output[3]}
-        mv {input[4]} {output[4]}
-        mv {input[5]} {output[5]}
+        cp {input[0]} {output[0]}
+        cp {input[1]} {output[1]}
+        cp {input[2]} {output[2]}
+        cp {input[3]} {output[3]}
+        cp {input[4]} {output[4]}
+        cp {input[5]} {output[5]}
         """
