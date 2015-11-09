@@ -18,7 +18,7 @@ Edit the `IMP` script and put the `IMP_VERSION` variable to the same version.
 
 ### Build dependencies
 
-    docker build -t docker-r3lab.uni.lu/imp/imp-deps:1.1 -f Dockerfile-dependencies .
+    docker build -t docker-r3lab.uni.lu/imp/imp-deps:1.2 -f Dockerfile-dependencies .
 
 > 'docker-r3lab.uni.lu/imp/imp-deps:1.1' is the image name that we will have to give to the main Docker file.
 

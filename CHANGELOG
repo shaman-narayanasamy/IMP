@@ -1,2 +1,6 @@
+# v 1.2.0
+    * Upgrade Snakemake to the latest Version
+    * Current version of the IMP code is shipped inside the docker container
+
 # v 1.1.1
     * Change megahit version

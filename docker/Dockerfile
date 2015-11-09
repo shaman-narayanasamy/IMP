@@ -1,8 +1,8 @@
 # Base container with tools needed for the IMP pipeline
 #
-# VERSION       1.1.1
+# VERSION       1.2.0
 
-FROM docker-r3lab.uni.lu/imp/imp-deps:1.1
+FROM docker-r3lab.uni.lu/imp/imp-deps:1.2
 MAINTAINER yohan.jarosz@uni.lu
 
 

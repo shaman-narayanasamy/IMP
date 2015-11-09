@@ -1,6 +1,6 @@
 # Base container with tools dependencies for the IMP pipeline
 #
-# VERSION       1.1
+# VERSION       1.2
 
 FROM ubuntu:trusty
 MAINTAINER yohan.jarosz@uni.lu
