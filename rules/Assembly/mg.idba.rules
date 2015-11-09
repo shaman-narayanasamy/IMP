@@ -1,0 +1,71 @@
+rule ASSEMBLY_MG_ASSEMBLY_1:
+    log:
+        A_LOG
+    benchmark:
+        "%s/benchmarks/ASSEMBLY_MG_ASSEMBLY_1.json" % A_OUT
+    input:
+        '%s/MG.R1.preprocessed.fq' % P_OUT,
+        '%s/MG.R2.preprocessed.fq' % P_OUT,
+        '%s/MG.SE.preprocessed.fq' % P_OUT,
+    output:
+        '{dir}/MG.assembly_1.fa'.format(dir=A_OUT),
+    shell:
+        """
+        TMPD=$(mktemp -d -t --tmpdir={TMPDIR} "XXXXXX")
+        fq2fa --merge {input[0]} {input[1]} $TMPD/merged.fa
+        fq2fa {input[2]} $TMPD/se.fa
+        echo $TMPDIR
+        idba_ud -r $TMPD/merged.fa \
+        -l $TMPD/se.fa -o $TMPD \
+        --mink {config[idba_ud][mink]} --maxk {config[idba_ud][maxk]} \
+        --step {config[idba_ud][step]} --num_threads {THREADS} \
+        --similar {config[idba_ud][perid]} --pre_correction
+        mv $TMPD/contig.fa {output}
+        """
+        #rm -rf $TMPD
+
+rule ASSEMBLY_MG_ASSEMBLY_2:
+    log:
+        A_LOG
+    benchmark:
+        "%s/benchmarks/ASSEMBLY_MG_ASSEMBLY_2.json" % A_OUT
+    input:
+        expand('{dir}/{name}', name=[
+            'MG.assembly_1.R1.fq',
+            'MG.assembly_1.R2.fq',
+            'MG.assembly_1.SE.fq'], dir=A_OUT)
+    output:
+        '{dir}/MG.assembly_2.fa'.format(dir=A_OUT),
+    shell:
+        """
+        TMPD=$(mktemp -d -t --tmpdir={TMPDIR} "XXXXXX")
+        fq2fa --merge {input[0]} {input[1]} $TMPD/merged.fa
+        idba_ud -r $TMPD/merged.fa \
+        -l {input[2]} -o $TMPD \
+        --mink {config[idba_ud][mink]} --maxk {config[idba_ud][maxk]} \
+        --step {config[idba_ud][step]} --num_threads {THREADS} \
+        --similar {config[idba_ud][perid]} --pre_correction
+        mv $TMPD/contig.fa {output}
+        rm -rf $TMPD
+        """
+
+rule ASSEMBLY_MG_MERGE_ASSEMBLY:
+    log:
+        A_LOG
+    benchmark:
+        "%s/benchmarks/ASSEMBLY_MG_MERGE_ASSEMBLY.json" % A_OUT
+    input:
+        '{dir}/MG.assembly_1.fa'.format(dir=A_OUT),
+        '{dir}/MG.assembly_2.fa'.format(dir=A_OUT)
+    output:
+        '{dir}/final_assembly.fa'.format(dir=A_OUT),
+    shell:
+        """
+        NAME={A_OUT}/MG.assembly
+        cat {input} > $NAME.cat.fa
+        cap3 $NAME.cat.fa
+        # Concatenate assembled contigs, singletons and rename the contigs
+        cat $NAME.cat.fa.cap.contigs $NAME.cat.fa.cap.singlets | \
+        awk '/^>/{{print \">contig_\" ++i; next}}{{print}}' > $NAME.merged.fa
+        ln -s $NAME.merged.fa {output} && touch -h {output}
+        """
