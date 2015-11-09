@@ -24,6 +24,38 @@ rule ASSEMBLY_MG_ASSEMBLY_1:
         """
         #rm -rf $TMPD
 
+rule ASSEMBLY_MG_EXTRACT_UNMAPPED:
+    log:
+        A_LOG
+    benchmark:
+        "%s/benchmarks/ASSEMBLY_MG_EXTRACT_UNMAPPED.json" % A_OUT
+    input:
+        '%s/MG.R1.preprocessed.fq' % P_OUT,
+        '%s/MG.R2.preprocessed.fq' % P_OUT,
+        '%s/MG.SE.preprocessed.fq' % P_OUT,
+        '{dir}/MG.assembly_1.fa'.format(dir=A_OUT),
+        expand('{dir}/MG.assembly_1.fa.{ext}', dir=A_OUT, ext=['amb', 'bwt', 'pac', 'sa', 'ann'])
+    output:
+        expand('{dir}/{name}', name=[
+            'MG.assembly_1_MG_unmapped.R1.fq',
+            'MG.assembly_1_MG_unmapped.R2.fq',
+            'MG.assembly_1_MG_unmapped.SE.fq'], dir=A_OUT)
+    shell:
+        """
+        TMP_FILE=$(mktemp --tmpdir={TMPDIR} -t "alignment_XXXXXX.bam")
+        BUFFER=$(mktemp --tmpdir={TMPDIR} -t "alignment_XXXXXX.bam")
+        bwa mem -v 1 -t {THREADS} {input[3]} {input[0]} {input[1]} | samtools view -@ {THREADS} -bS - > $TMP_FILE
+        samtools merge -@ {THREADS} -u - \
+        <(samtools view -@ {THREADS} -u  -f 4 -F 264 $TMP_FILE) \
+        <(samtools view -@ {THREADS} -u -f 8 -F 260 $TMP_FILE) \
+        <(samtools view -@ {THREADS} -u -f 12 -F 256 $TMP_FILE) | \
+        samtools view -@ {THREADS} -bF 0x800 -  | samtools sort -o -@ {THREADS} -m {MEMCORE}G -n - BUFFER | \
+        bamToFastq -i stdin -fq {output[0]} -fq2 {output[1]}
+        bwa mem -v 1 -t {THREADS} {input[3]} {input[2]} | samtools view -@ {THREADS} -bS - | \
+        samtools view -@ {THREADS} -uf 4 - | bamToFastq -i stdin -fq {output[2]}
+        rm -rf $BUFFER* $TMP_FILE
+        """
+
 rule ASSEMBLY_MG_ASSEMBLY_2:
     log:
         A_LOG
@@ -31,9 +63,9 @@ rule ASSEMBLY_MG_ASSEMBLY_2:
         "%s/benchmarks/ASSEMBLY_MG_ASSEMBLY_2.json" % A_OUT
     input:
         expand('{dir}/{name}', name=[
-            'MG.assembly_1.R1.fq',
-            'MG.assembly_1.R2.fq',
-            'MG.assembly_1.SE.fq'], dir=A_OUT)
+            'MG.assembly_1_unmapped.R1.fq',
+            'MG.assembly_1_unmapped.R2.fq',
+            'MG.assembly_1_unmapped.SE.fq'], dir=A_OUT)
     output:
         '{dir}/MG.assembly_2.fa'.format(dir=A_OUT),
     shell:
