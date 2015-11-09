@@ -19,10 +19,10 @@ rule PREPROCESSING_NO_FILTER:
         "%s/benchmarks/PREPROCESSING_NO_FILTER.json" % P_OUT
     shell:
         """
-        cp {input[0]} {output[0]}
-        cp {input[1]} {output[1]}
-        cp {input[2]} {output[2]}
-        cp {input[3]} {output[3]}
-        cp {input[4]} {output[4]}
-        cp {input[5]} {output[5]}
+        ln -s {input[0]} {output[0]} && touch -h {output[0]}
+        ln -s {input[1]} {output[1]} && touch -h {output[1]}
+        ln -s {input[2]} {output[2]} && touch -h {output[2]}
+        ln -s {input[3]} {output[3]} && touch -h {output[3]}
+        ln -s {input[4]} {output[4]} && touch -h {output[4]}
+        ln -s {input[5]} {output[5]} && touch -h {output[5]}
         """
