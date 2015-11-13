@@ -91,9 +91,10 @@ rule REPORT_ARCHIVE:
             # copying results stats
             cp -r {params.stats_dir} {params.archive_tmp_dir}/Analysis/.
             # copying results quast
-            cp -r {params.quast_dir} {params.archive_tmp_dir}/Analysis/.
+            cp -r {params.quast_dir} {params.archive_tmp_dir}/Analysis/results/.
             # copying libraries and HTML
             cp {OUTPUTDIR}/*.{{js,css}} {params.archive_tmp_dir}/.
+            cp {OUTPUTDIR}/workflow.{{png,pdf}} {params.archive_tmp_dir}/.
             cp {OUTPUTDIR}/REPORT.html {params.archive_tmp_dir}/.
             tar -czf {output} {params.archive_tmp_dir}
             rm -rf {params.archive_tmp_dir}
