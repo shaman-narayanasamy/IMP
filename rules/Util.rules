@@ -51,11 +51,14 @@ rule REPORT:
     message:
         'Create report'
     run:
-        with open('%s/data.js' % OUTPUTDIR, 'w') as whandle:
-            with open('%s/config.json' % OUTPUTDIR, 'w') as confgjson:
-                towrite = json.dumps(config)
-                json.dump(config, confgjson)
-                whandle.write("IMP_CONFIG = %s;" % towrite)
+        version = shell("head -1 CHANGELOG |awk '{{print $3;}}'")
+        config['IMP_VERSION'] = version
+        config['MG'] = MG
+        config['MT'] = MT
+        with open('%s/data.js' % OUTPUTDIR, 'w') as whandle, open('%s/config.json' % OUTPUTDIR, 'w') as confgjson:
+            towrite = json.dumps(config)
+            json.dump(config, confgjson)
+            whandle.write("IMP_CONFIG = %s;" % towrite)
         shell("cp {input[0]} {params.outdir}/REPORT.html")
         shell(
         """
