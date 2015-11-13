@@ -85,7 +85,7 @@ rule REPORT_ARCHIVE:
             'Archiving report'
         shell:
             """
-            mkdir -p {params.archive_tmp_dir}/Analysis/{results,stats}
+            mkdir -p {params.archive_tmp_dir}/Analysis/{{results,stats}}
             # copying results images
             cp -r {params.results_dir}/*.png {params.archive_tmp_dir}/Analysis/results/.
             # copying results stats
