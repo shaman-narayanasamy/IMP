@@ -25,14 +25,13 @@ def prepare_environment(stepname):
 
 # INCLUDES PROCESSING RULES
 include:
-    "rules/Util.rules"
-include:
     "rules/Preprocessing/master.rules"
 include:
     "rules/Assembly/master.rules"
 include:
     "rules/Analysis/master.rules"
-
+include:
+    "rules/Util.rules"
 
 rule ALL:
     input:
