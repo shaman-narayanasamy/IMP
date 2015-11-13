@@ -51,7 +51,7 @@ rule REPORT:
     message:
         'Create report'
     run:
-        version = shell("head -1 CHANGELOG |awk '{{print $3;}}'")
+        version = shell("head -1 CHANGELOG |awk '{{print $3;}}'", iterable=True)
         config['IMP_VERSION'] = version
         config['MG'] = MG
         config['MT'] = MT
