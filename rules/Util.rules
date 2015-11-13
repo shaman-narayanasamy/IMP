@@ -70,27 +70,37 @@ rule REPORT:
         )
 
 
-rule REPORT2:
+rule REPORT_ARCHIVE:
         input:
-            ["lib/imp.html", "lib/d3.min.js", "lib/jquery-2.1.1.min.js", "lib/imp.js"]
+            analysis_output_files(),
+            "%s/REPORT.html" % OUTPUTDIR
+        output:
+            "%s/report_archive.tgz" % OUTPUTDIR
         params:
-            outdir = "%s" % OUTPUTDIR
+            results_dir = "%s/results" % AN_OUT,
+            quast_dir = "%s/results/quast" % AN_OUT,
+            stats_dir = "%s/stats" % AN_OUT,
+            archive_tmp_dir = "%s/Analysis/archive" % OUTPUTDIR
         message:
-            'Create report'
-        run:
-          with open('%s/data.js' % OUTPUTDIR, 'w') as whandle:
-                  towrite = json.dumps(config)
-                  whandle.write("IMP_CONFIG = %s;" % towrite)
-                  if os.path.exists('stats.json'):
-                          with open('stats.json', 'r') as rhandle:
-                                  towrite = json.load(rhandle)
-                                  whandle.write("\nIMP_STATS = %s;" % towrite)
-          shell("cp {input[0]} {params.outdir}/IMP.html")
-          shell("cp {input[1]} {params.outdir}")
-          shell("cp {input[2]} {params.outdir}")
-          shell("cp {input[3]} {params.outdir}")
-          if os.path.exists('imp.log'):
-            shell("mv imp.log {params.outdir}")
+            'Archiving report'
+        shell:
+            """
+            mkdir -p {params.archive_tmp_dir}
+            # copying results images
+            mkdir -p {params.archive_tmp_dir}/results
+            cp -r {params.results_dir}/*.png {params.archive_tmp_dir}/results/.
+            # copying results stats
+            cp -r {params.stats_dir} {params.archive_tmp_dir}/.
+            # copying results quast
+            cp -r {params.quast_dir} {params.archive_tmp_dir}/.
+            # copying libraries and HTML
+            cp {OUTPUTDIR}/*.{js,css} {params.archive_tmp_dir}/.
+            cp {OUTPUTDIR}/REPORT.html {params.archive_tmp_dir}/.
+            tar -czf {output} {params.archive_tmp_dir}
+            rm -rf {params.archive_tmp_dir}
+            """
+
+
 
 
 rule INDEX_FASTA_FILE:
