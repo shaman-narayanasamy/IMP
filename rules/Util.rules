@@ -80,7 +80,7 @@ rule REPORT_ARCHIVE:
             results_dir = "%s/results" % AN_OUT,
             quast_dir = "%s/results/quast" % AN_OUT,
             stats_dir = "%s/stats" % AN_OUT,
-            archive_tmp_dir = "%s/Analysis/archive" % OUTPUTDIR
+            archive_tmp_dir = "%s/archive/Analysis" % OUTPUTDIR
         message:
             'Archiving report'
         shell:
