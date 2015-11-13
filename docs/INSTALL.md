@@ -1,13 +1,38 @@
-# List of dependencies for IMP
+### Quick Install
 
-## With the wrapper script
+* Download (or clone with git) the latest IMP version:
+[Versions available](https://git-r3lab.uni.lu/shaman.narayanasamy/IMP/tags)
 
-* [docker](https://docs.docker.com/installation)
-* [git](http://www.git-scm.com)
-* [python3]( https://www.python.org/downloads)
+* Install some dependencies:
+    * [docker](https://docs.docker.com/installation)
+    * [python3]( https://www.python.org/downloads)
 
 
-## With Snakemake
+* Untar/Unzip the folder and go inside the directory with your terminal.
+
+* Start using it, you are ready ;)
+
+~~~
+./IMP --init  # initialize the workflow
+./IMP -h      # get some help
+~~~
+
+### Full install
+
+IMP uses the [Snakemake](https://bitbucket.org/johanneskoester/snakemake/wiki/Home) workflow manager to handle
+the analysis steps properly. The full installation is appropriate when you don't want to use the docker container
+or you cannot because you are not in a mutually trusted environment
+(see [Docker security documentation](https://docs.docker.com/articles/security/)) for more information about this.
+
+
+As the installation step may vary a lot from one environment to another, you will have to install every tools manually
+You could look at the **docker files** in the source code to look how to install some of the tools
+(under `docker` directory.)
+
+
+
+#### List of dependencies
+
 
 * [openjdk](http://openjdk.java.net/) - 7
 * [bioperl](http://www.bioperl.org/wiki/Main_Page) - 1.6.923-1
@@ -46,14 +71,17 @@
 * [Vizbin](https://github.com/claczny/VizBin)
 * [Quast/metaQuast](http://bioinf.spbau.ru/en/metaquast) - 3.1
 
-Some low dependencies are not listed.
-For a complete list of all dependencies, please see what is installed in `docker/Dockerfile-dependencies`
+<div class="alert alert-info" role="alert">
+    Some lower dependencies are not listed.
+    For a complete list of all dependencies, please see what is installed in `docker/Dockerfile-dependencies`
+</div>
 
 ### R dependencies
 
-* genomeIntervals from biocLite
+* genomeIntervals from [biocLite](http://bioconductor.org/install/).
 
-We use the `checkpoint` library set to the `2015-04-27` to install the following R packages:
+We use the [checkpoint](http://projects.revolutionanalytics.com/documents/rrt/rrtpkgs/) library set to the `2015-04-27`
+to install the following R packages:
 
 * ggplot2
 * gtools
