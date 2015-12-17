@@ -22,7 +22,7 @@ get_coverage=function(reads_mapped, length, read_len){
 ## is applied to
 ## every contig
 contig_rpkm=function(reads_mapped, length){
-    N <- sum(reads_mapped)
+    N <- sum(reads_mapped, na.rm=T)
     R <- reads_mapped
     L <- length
 
@@ -66,7 +66,7 @@ coding_density=function(total_len_genes, length){
 ## Calculate N50
 get_n50=function(lengths){
     x=lengths
-    x[cumsum(x) > sum(x)/2][1]
+    x[cumsum(x) > sum(x, na.rm=T)/2][1]
 }
 
 
@@ -80,7 +80,7 @@ get_stats=function(dat){
     med_len <- median(dat$length)
     #MG_mapped <- sum(dat$MG_mapped)
     #MT_mapped <- sum(dat$MT_mapped)
-    total_length <- sum(dat$length)
+    total_length <- sum(dat$length, na.rm=T)
     return(c(contigs,N50,max_len,mean_len,med_len,total_length))
 }
 
