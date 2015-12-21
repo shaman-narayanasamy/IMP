@@ -33,7 +33,7 @@ Options:
   --norm            Don't delete the container after use. Useful for debugging.
   --ask             Ask to create directory if it doesn't exist.
   --current         Use the current version of the IMP codebase (what you have pulled).
-  -c CONFIG         Pass a user defined config file. Default: conf/userconfig.imp.json
+  -c CONFIG         Pass a user defined config file. [default: conf/userconfig.imp.json]
   -h --help         Show this help and exit
   -m MG             Path to the metagenomics paired files (must be 2 files).
   -t MT             Path to the metatranscriptomic paired files (2 files).
