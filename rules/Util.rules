@@ -126,7 +126,7 @@ rule REPORT_ZIP:
             # copying results quast
             cp -r {params.quast_dir} {params.archive_tmp_dir}/Analysis/results/.
             # remove downloaded fasta files from quast to reduce archive size
-            find {params.archive_tmp_dir}/Analysis/results/. -type f -name "*.fasta" -exec rm {} +
+            find {params.archive_tmp_dir}/Analysis/results/. -type f -name "*.fasta" -exec rm {{}} +
             # copying libraries and HTML
             cp {OUTPUTDIR}/*.{{js,css,json}} {params.archive_tmp_dir}/.
             cp {OUTPUTDIR}/workflow.{{png,pdf}} {params.archive_tmp_dir}/.
