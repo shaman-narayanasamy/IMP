@@ -68,7 +68,7 @@ rule REPORT:
         cp -f {input[4]} {params.outdir}
         cp -f {input[5]} {params.outdir}
         cp -f {input[6]} {params.outdir}
-        cp {U_LOG} {A_LOG} {P_LOG} {AN_LOG} {params.outdir}
+        find {OUTPUTDIR} -type f -name "*.log" -exec cp  {{}} . \;
         """
         )
 
