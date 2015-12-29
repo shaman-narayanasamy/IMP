@@ -64,6 +64,10 @@ Advanced use:
 
     # Execute a specific step for snakemake
     ./IMP -m input/mg.r1.fq -m input/mg.r2.fq -t input/mt.r1.fq -t input/mt.r2.fq -o output_directory snakemake <STEP>
+
+    # Enter the container
+    ./IMP -m input/mg.r1.fq -m input/mg.r2.fq -t input/mt.r1.fq -t input/mt.r2.fq -o output_directory --enter
+
 """.format(
     name=IMP_IMAGE_NAME,
     version=IMP_VERSION,
