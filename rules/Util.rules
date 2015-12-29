@@ -103,7 +103,37 @@ rule REPORT_ARCHIVE:
             rm -rf {params.archive_tmp_dir}
             """
 
-
+rule REPORT_ZIP:
+        input:
+            analysis_output_files(),
+            "%s/REPORT.html" % OUTPUTDIR
+        output:
+            "%s/imp_report_archive.tgz" % OUTPUTDIR
+        params:
+            results_dir = "%s/results" % AN_OUT,
+            quast_dir = "%s/results/quast" % AN_OUT,
+            stats_dir = "%s/stats" % AN_OUT,
+            archive_tmp_dir = "%s/IMP-report" % OUTPUTDIR
+        message:
+            'Archiving report'
+        shell:
+            """
+            mkdir -p {params.archive_tmp_dir}/Analysis/{{results,stats}}
+            # copying results images
+            cp -r {params.results_dir}/*.png {params.archive_tmp_dir}/Analysis/results/.
+            # copying results stats
+            cp -r {params.stats_dir} {params.archive_tmp_dir}/Analysis/.
+            # copying results quast
+            cp -r {params.quast_dir} {params.archive_tmp_dir}/Analysis/results/.
+            # remove downloaded fasta files from quast to reduce archive size
+            find {params.archive_tmp_dir}/Analysis/results/. -type f -name "*.fasta" -exec rm {} +
+            # copying libraries and HTML
+            cp {OUTPUTDIR}/*.{{js,css,json}} {params.archive_tmp_dir}/.
+            cp {OUTPUTDIR}/workflow.{{png,pdf}} {params.archive_tmp_dir}/.
+            cp {OUTPUTDIR}/REPORT.html {params.archive_tmp_dir}/.
+            zip {output} {params.archive_tmp_dir}
+            rm -rf {params.archive_tmp_dir}
+            """
 
 
 rule INDEX_FASTA_FILE:
