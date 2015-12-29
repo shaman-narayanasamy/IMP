@@ -108,7 +108,7 @@ rule REPORT_ZIP:
             analysis_output_files(),
             "%s/REPORT.html" % OUTPUTDIR
         output:
-            "%s/imp_report_archive.tgz" % OUTPUTDIR
+            "%s/imp_report_archive.zip" % OUTPUTDIR
         params:
             results_dir = "%s/results" % AN_OUT,
             quast_dir = "%s/results/quast" % AN_OUT,
