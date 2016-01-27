@@ -10,7 +10,7 @@ from copy import deepcopy
 import tempfile
 import sys
 
-IMP_VERSION = '1.2.0'
+IMP_VERSION = '1.2.1'
 IMP_DEFAULT_TAR_REPOSITORY = 'https://webdav-r3lab.uni.lu/public/R3lab/IMP/dist/imp-%s.tar.gz' % IMP_VERSION
 IMP_IMAGE_NAME = 'docker-r3lab.uni.lu/imp/imp'
 
