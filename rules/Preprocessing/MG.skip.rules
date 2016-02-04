@@ -1,0 +1,13 @@
+rule SKIP_PREPROCESSING_MG_GET_FILES:
+    message:
+        "Preparing MG DATA files : %s." % ', '.join(MG)
+    input:
+        MG
+    output:
+        expand('{dir}/{raw}', raw=['MG.R1.fq', 'MG.R2.fq',
+            'MG.R1.preprocessed.fq', 'MG.R2.preprocessed.fq',
+            'MG.SE.preprocessed.fq'], dir=P_OUT)
+    benchmark:
+        "%s/benchmarks/PREPROCESSING_MG_GET_FILES.json" % P_OUT
+    run:
+        prepare_input_files(input, 'MG')

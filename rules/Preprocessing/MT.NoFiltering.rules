@@ -1,28 +1,19 @@
-rule PREPROCESSING_NO_FILTER:
+rule MT_PREPROCESSING_NO_FILTER:
     log:
         P_LOG
     input:
-        '%s/MG.R1.trimmed.fq' % P_OUT,
-        '%s/MG.R2.trimmed.fq' % P_OUT,
-        '%s/MG.SE.trimmed.fq' % P_OUT,
         '%s/MT.R1.trimmed.rna_filtered.fq' % P_OUT,
         '%s/MT.R2.trimmed.rna_filtered.fq' % P_OUT,
         '%s/MT.SE.trimmed.rna_filtered.fq' % P_OUT
     output:
-        '%s/MG.R1.preprocessed.fq' % P_OUT,
-        '%s/MG.R2.preprocessed.fq' % P_OUT,
-        '%s/MG.SE.preprocessed.fq' % P_OUT,
         '%s/MT.R1.preprocessed.fq' % P_OUT,
         '%s/MT.R2.preprocessed.fq' % P_OUT,
         '%s/MT.SE.preprocessed.fq' % P_OUT
     benchmark:
-        "%s/benchmarks/PREPROCESSING_NO_FILTER.json" % P_OUT
+        "%s/benchmarks/MT_PREPROCESSING_NO_FILTER.json" % P_OUT
     shell:
         """
         ln -s {input[0]} {output[0]} && touch -h {output[0]}
         ln -s {input[1]} {output[1]} && touch -h {output[1]}
         ln -s {input[2]} {output[2]} && touch -h {output[2]}
-        ln -s {input[3]} {output[3]} && touch -h {output[3]}
-        ln -s {input[4]} {output[4]} && touch -h {output[4]}
-        ln -s {input[5]} {output[5]} && touch -h {output[5]}
         """

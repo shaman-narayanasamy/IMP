@@ -1,0 +1,19 @@
+rule PREPROCESSING_NO_FILTER:
+    log:
+        P_LOG
+    input:
+        '%s/MG.R1.trimmed.fq' % P_OUT,
+        '%s/MG.R2.trimmed.fq' % P_OUT,
+        '%s/MG.SE.trimmed.fq' % P_OUT,
+    output:
+        '%s/MG.R1.preprocessed.fq' % P_OUT,
+        '%s/MG.R2.preprocessed.fq' % P_OUT,
+        '%s/MG.SE.preprocessed.fq' % P_OUT,
+    benchmark:
+        "%s/benchmarks/MG_PREPROCESSING_NO_FILTER.json" % P_OUT
+    shell:
+        """
+        ln -s {input[0]} {output[0]} && touch -h {output[0]}
+        ln -s {input[1]} {output[1]} && touch -h {output[1]}
+        ln -s {input[2]} {output[2]} && touch -h {output[2]}
+        """

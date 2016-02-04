@@ -10,7 +10,6 @@ rule PREPROCESSING_MG_GET_FILES:
     run:
         prepare_input_files(input, 'MG')
 
-
 rule PREPROCESSING_MG_TRIM:
     log:
         P_LOG

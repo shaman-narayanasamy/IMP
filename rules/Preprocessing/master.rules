@@ -1,19 +1,36 @@
 # output directory and log
 P_OUT, P_LOG = prepare_environment('Preprocessing')
 
-# include sub rules
-include:
-    "MG.rules"
+
+# skip or include preprocessing step fo MG data
+if len(MG) == 2:
+    print("[x] Include MG preprocessing")
+    include:
+        "MG.rules"
+    if config['preprocessing_filtering']:
+        print("[x] MG filtering")
+        include:
+            "MG.Filtering.rules"
+    else:
+        print("[x] No MG filtering")
+        include:
+            "MG.NoFiltering.rules"
+if len(MG) == 3:
+    include:
+        "MG.skip.rules"
+
 include:
     "MT.rules"
 
 # include proper rules based on the filtering option
 if config['preprocessing_filtering']:
+    print("[x] MT filtering")
     include:
-        "Filtering.rules"
+        "MT.Filtering.rules"
 else:
+    print("[x] No MT filtering")
     include:
-        "NoFiltering.rules"
+        "MT.NoFiltering.rules"
 
 
 CHUNK_SIZE = 100 * 1024
@@ -33,41 +50,31 @@ def preprocessing_output_files():
     ]
 
 
-# def preprocessed_mg(target, dir=P_OUT):
-#     return '%s/MG.%s.preprocessed.fq' % (P_OUT, target)
-#     if config['preprocessing_filtering']:
-#         # with human filtering ON
-#         return '{dir}/MG.{target}.trimmed.{f}.fq'.format(
-#             f=config['human_filtering']['filter'],
-#             dir=dir,
-#             target=target)
-#     # with human filtering OFF
-#     return '{dir}/MG.{target}.trimmed.fq'.format(dir=dir, target=target)
-#
-#
-# def preprocessed_mt(target,  dir=P_OUT):
-#     return '%s/MT.%s.preprocessed.fq' % (P_OUT, target)
-#     if config['preprocessing_filtering']:
-#         # with human filtering ON
-#         return '{dir}/MT.{target}.trimmed.rna_filtered.{f}.fq'.format(
-#             f=config['human_filtering']['filter'],
-#             dir=dir,
-#             target=target)
-#     # with human filtering OFF
-#     return '{dir}/MT.{target}.trimmed.rna_filtered.fq'.format(dir=dir, target=target)
-
-
-def prepare_input_files(input, rtype):
+def _process_file(fname, inp, outfilename):
     """
-    Prepare file names from input.
-    Will copy and/or ungzip paired input files into output directory named as '{rtype}.R1.fq' and '{rtype}.R2.fq'.
-    input: input names from the user
-    rtype: MG or MT
-
+    Write the input to the output.
     """
-    if len(input) != 2:
-        raise OSError("//[IMP] %s files must be two paired files." % rtype)
+    print(inp, '=>', outfilename)
+    import bz2
+    # ungunzip
+    if os.path.splitext(fname)[-1] in ['.gz', '.gzip']:
+        with open(outfilename, 'wb') as whandle, gzip.open(inp, 'rb') as rhandle:
+            whandle.write(rhandle.read())
+    # unbzip2
+    elif os.path.splitext(fname)[-1] in ['.bz2', '.bzip2']:
+        dec = bz2.BZ2Decompressor()
+        with open(outfilename, 'wb') as whandle, open(inp, 'rb') as rhandle:
+            for data in iter(lambda: rhandle.read(CHUNK_SIZE), b''):
+                whandle.write(dec.decompress(data))
+    # copy
+    else:
+        shutil.copy(inp, outfilename)
 
+
+def prepare_paired_files(input, rtype):
+    """
+    Prepare Paired file analysis
+    """
     for idx, inp in enumerate(input):
         if idx % 2 == 0:
             tmp = '%s.R1.fq' % rtype
@@ -77,21 +84,47 @@ def prepare_input_files(input, rtype):
         # get out path
         p, fname = os.path.split(inp)
         outfilename = os.path.join(P_OUT, tmp)
-        print(inp, '=>', outfilename)
-        import bz2
-        # ungunzip
-        if os.path.splitext(fname)[-1] in ['.gz', '.gzip']:
-            with open(outfilename, 'wb') as whandle, gzip.open(inp, 'rb') as rhandle:
-                whandle.write(rhandle.read())
-        # unbzip2
-        elif os.path.splitext(fname)[-1] in ['.bz2', '.bzip2']:
-            dec = bz2.BZ2Decompressor()
-            with open(outfilename, 'wb') as whandle, open(inp, 'rb') as rhandle:
-                for data in iter(lambda: rhandle.read(CHUNK_SIZE), b''):
-                    whandle.write(dec.decompress(data))
-        # copy
-        else:
-            shutil.copy(inp, outfilename)
+        _process_file(fname, inp, outfilename)
+
+
+def skip_preprocessing(input, rtype):
+    """
+    Skip the preprocessing step as user provide R1, R2 and SE.
+    """
+    for idx, inp in enumerate(input):
+        if idx % 3 == 0:
+            tmp = '%s.R1.fq' % rtype
+            stmp = '%s.R1.preprocessed.fq' % rtype
+        elif idx % 3 == 1:
+            tmp = '%s.R2.fq' % rtype
+            stmp = '%s.R2.preprocessed.fq' % rtype
+        elif idx % 3 == 2:
+            tmp = '%s.SE.fq' % rtype
+            stmp = '%s.SE.preprocessed.fq' % rtype
+
+        # get out path
+        p, fname = os.path.split(inp)
+        outfilename = os.path.join(P_OUT, tmp)
+        _process_file(fname, inp, outfilename)
+        # symlink to the preprocessing output directory
+        print('symlink',  tmp, '=>', stmp)
+        os.symlink(outfilename, os.path.join(P_OUT, stmp))
+
+
+def prepare_input_files(input, rtype):
+    """
+    Prepare file names from input.
+    Will copy and/or ungzip paired input files into output directory named as '{rtype}.R1.fq' and '{rtype}.R2.fq'.
+    If user provides R1, R2 and SE file, we rname the file as there were already preprocessed.
+    input: input names from the user
+    rtype: MG or MT
+    """
+    if len(input) < 2:
+        raise OSError("//[IMP] %s files must be at least two paired files or two paired file and single end." % rtype)
+    if len(input) == 2:
+        prepare_paired_files(input, rtype)
+    elif len(input) == 3:
+        skip_preprocessing(input, rtype)
 
 # master command
 rule PREPROCESSING:
