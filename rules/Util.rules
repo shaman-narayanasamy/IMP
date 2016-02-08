@@ -42,6 +42,7 @@ rule REPORT:
             "lib/bootstrap.min.css",
             "lib/bootstrap.min.js",
             "lib/imp.js",
+            "lib/vizbin_logo.png",
         ] +
         expand(["{dir}/workflow.png", "{dir}/workflow.pdf"], dir=OUTPUTDIR)
     output:
@@ -68,6 +69,7 @@ rule REPORT:
         cp -f {input[4]} {params.outdir}
         cp -f {input[5]} {params.outdir}
         cp -f {input[6]} {params.outdir}
+        cp -f {input[7]} {params.outdir}
         find {OUTPUTDIR} -type f -name "*.log" -exec cp  {{}} . \;
         """
         )
