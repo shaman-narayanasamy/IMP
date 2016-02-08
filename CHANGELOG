@@ -1,10 +1,3 @@
-# v 1.2.1
-
-    * add a method to ZIP the report
-    * add documentation
-    * MG assembly with idba_ud
-    * extract unmapped from MG data
-
 # v 1.2.0
     * Upgrade Snakemake to the latest Version
     * Current version of the IMP code is shipped inside the docker container
