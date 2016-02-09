@@ -72,7 +72,7 @@ rule REPORT:
         cp -f {input[6]} {params.outdir}
         cp -f {input[7]} {params.outdir}
         cp -f {input[8]} {params.outdir}
-        find {OUTPUTDIR} -type f -name "*.log" -exec cp  {{}} . \;
+        find {OUTPUTDIR} -type f -name "*.log" -exec cp  {{}} {params.outdir} \;
         """
         )
 
