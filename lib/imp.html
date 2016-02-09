@@ -53,6 +53,9 @@
   .vizbin-logo {
       width: 220px;
   }
+  .vizbin-logo-but {
+      width: 43px;
+  }
 
   </style>
 </head>
@@ -60,11 +63,6 @@
   <div id="block-stats" class="container-fluid">
      <div>
          <div class="col-xs-2 col-md-2"><div class='imp-logo'></div>
-         <div class="metaquast-p row" style="display:none">
-             <div class="col-xs-6 col-md-6">
-                 <p class="text-center lead">Sub-report made with <a href="http://bioinf.spbau.ru/metaquast">MetaQUAST</a>.</p>
-             </div>
-         </div>
      </div>
     <div id="tabs" role="tabpanel">
 
@@ -164,8 +162,12 @@
                     </label>
                     <label class="btn btn-primary">
                         <input id="but-assembly3" type="radio" value="Analysis/results/quast/summary/report.html" class="btn btn-default" name="assembly-data">MetaQUAST report
+                        <div class="metaquast-p" style="display:none">
+                            <p class="text-center lead">Sub-report made with <a href="http://bioinf.spbau.ru/metaquast">MetaQUAST</a></p>
+                        </div>
                     </label>
                 </div>
+
                 <div class="row">
                     <div id='assembly-wrapper' class='row'><img class='img-responsive' src='Analysis/results/IMP-vizbin_length.png'/></div>
                 </div>
