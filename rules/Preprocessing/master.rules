@@ -4,15 +4,12 @@ P_OUT, P_LOG = prepare_environment('Preprocessing')
 
 # skip or include preprocessing step fo MG data
 if len(MG) == 2:
-    print("[x] Include MG preprocessing")
     include:
         "MG.rules"
     if config['preprocessing_filtering']:
-        print("[x] MG filtering")
         include:
             "MG.Filtering.rules"
     else:
-        print("[x] No MG filtering")
         include:
             "MG.NoFiltering.rules"
 if len(MG) == 3:
@@ -24,11 +21,9 @@ include:
 
 # include proper rules based on the filtering option
 if config['preprocessing_filtering']:
-    print("[x] MT filtering")
     include:
         "MT.Filtering.rules"
 else:
-    print("[x] No MT filtering")
     include:
         "MT.NoFiltering.rules"
 
