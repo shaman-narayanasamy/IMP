@@ -12,6 +12,8 @@ Increment the version number in that file.
 
 Edit the `IMP` script and put the `IMP_VERSION` variable to the same version.
 
+Edit the Docker file and change the IMP clone process to clone the same version.
+
 ## Build the docker images locally
 
 > In order to build the docker images, you must have [Docker](https://docs.docker.com/installation/) installed.

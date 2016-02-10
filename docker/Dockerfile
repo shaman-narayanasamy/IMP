@@ -194,7 +194,7 @@ RUN echo "`snakemake --bash-completion`" >> ~/.bashrc \
 
 RUN mkdir /code \
     && cd /code \
-    && git clone --branch 1.2.0 --single-branch https://git-r3lab.uni.lu/shaman.narayanasamy/IMP.git .
+    && git clone --branch 1.2.1 --single-branch https://git-r3lab.uni.lu/shaman.narayanasamy/IMP.git .
 
 
 ######################
