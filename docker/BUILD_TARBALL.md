@@ -12,6 +12,8 @@ Increment the version number in that file.
 
 Edit the `IMP` script and put the `IMP_VERSION` variable to the same version.
 
+Tag the new version on the Gitlab.
+
 Edit the Docker file and change the IMP clone process to clone the same version.
 
 ## Build the docker images locally
