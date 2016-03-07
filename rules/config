@@ -6,7 +6,6 @@ import bz2
 from copy import deepcopy
 import subprocess
 
-
 def dict_merge(a, b):
     """
     Deep merge 2 dicts together
@@ -21,15 +20,17 @@ def dict_merge(a, b):
             result[k] = deepcopy(v)
     return result
 
+
 # default configuration file
 configfile:
-    "src/config.imp.json"
+    "../../src/config.imp.json"
 
 # default executable for snakmake
 shell.executable("bash")
 
 # custom configuration file
-CUSTOM_CONFIG_PATH = os.environ.get("CONFIGFILE", "conf/userconfig.imp.json")
+CUSTOM_CONFIG_PATH = os.environ.get("CONFIGFILE", "../../conf/userconf.imp.json")
+
 # merge 2 configurations files together
 if os.path.exists(CUSTOM_CONFIG_PATH):
     with open(CUSTOM_CONFIG_PATH, 'r') as rhandle:

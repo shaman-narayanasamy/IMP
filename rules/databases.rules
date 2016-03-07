@@ -1,0 +1,14 @@
+workdir:
+    DBPATH
+
+rule trimmomatic_adapters:
+    output:
+        touch("{DBPATH}/adapters/adapters.done")
+    shell:
+        """
+        wget --no-check-certificate {config[trimmomatic][pkg_url]} -O Trimmomatic-Src-0.32.zip
+        unzip Trimmomatic-Src-0.32.zip
+        cp -r trimmomatic-0.32/adapters {DBPATH}
+        rm Trimmomatic-Src-0.32.zip && rm -rf trimmomatic-0.32
+        touch {output}
+        """

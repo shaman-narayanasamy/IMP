@@ -1,0 +1,43 @@
+include:
+    "../../rules/config"
+
+import os
+
+
+TYPES = ['mg', 'mt']
+
+dip="/Users/yohan.jarosz/Programmation/lcsb/IMP/TEST_DATA/"
+data_input={
+        'mg': [dip + 'MG.R1.5_percent.fq', dip + 'MG.R2.5_percent.fq'],
+        'mt': [dip + 'MT.R1.5_percent.fq', dip + 'MT.R2.5_percent.fq']
+}
+
+mt = [
+    dip + 'MT.R1.5_percent.fq',
+    dip + 'MT.R2.5_percent.fq'
+]
+
+mg = [
+    dip + 'MG.R1.5_percent.fq',
+    dip + 'MG.R2.5_percent.fq'
+]
+
+
+
+include:
+    "../../rules/databases.rules"
+
+workdir:
+    os.path.join(OUTPUTDIR, 'Preprocessing')
+
+include:
+    "../../rules/data_input.rules"
+include:
+    "../../rules/trimming.rules"
+
+# master command
+rule PREPROCESSING:
+    input:
+        expand(['{type}.r1.trimmed.fq','{type}.r2.trimmed.fq', '{type}.se.trimmed.fq'], type=TYPES)
+    output:
+        touch('preprocessing.done')

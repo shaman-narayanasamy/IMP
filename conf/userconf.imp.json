@@ -1,0 +1,9 @@
+{
+    "human_filtering": {
+        "filter": "hg21",
+        "url": "http://hgdownload.cse.ucsc.edu/goldenPath/hg38/chromosomes/chr21.fa.gz"
+    },
+    "preprocessing_filtering": true,
+    "db_path": "/Users/yohan.jarosz/SandBox/databases",
+    "outputdir": "/Users/yohan.jarosz/SandBox/imp_output"
+}
