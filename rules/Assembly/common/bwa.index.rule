@@ -1,0 +1,13 @@
+rule bwa_index:
+    input:
+        "{fasta}"
+    output:
+        "{fasta}.amb",
+        "{fasta}.bwt",
+        "{fasta}.pac",
+        "{fasta}.sa",
+        "{fasta}.ann"
+    shell:
+        """
+        bwa index {wildcards.fasta}
+        """

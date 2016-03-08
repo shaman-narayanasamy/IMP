@@ -1,0 +1,21 @@
+rule idba_ud:
+    input:
+        '{step}/{type}.r1.{name}.fq',
+        '{step}/{type}.r2.{name}.fq',
+        '{step}/{type}.se.{name}.fq',
+    output:
+        '{step}/{type}.idba_{name}.{loop}.fa'
+    shell:
+        """
+        echo "[x] Performing {wildcards.type} {wildcards.name} assembly step '{wildcards.loop}' using IDBA"
+        TMPD=$(mktemp -d -t --tmpdir={TMPDIR} "XXXXXX")
+        fq2fa --merge {input[0]} {input[1]} $TMPD/merged.fa
+        fq2fa {input[2]} $TMPD/se.fa
+        echo $TMPD
+        idba_ud -r $TMPD/merged.fa \
+        -l $TMPD/se.fa -o $TMPD \
+        --mink {config[idba_ud][mink]} --maxk {config[idba_ud][maxk]} \
+        --step {config[idba_ud][step]} --num_threads {THREADS} \
+        --similar {config[idba_ud][perid]} --pre_correction
+        mv $TMPD/contig.fa {output}
+        """

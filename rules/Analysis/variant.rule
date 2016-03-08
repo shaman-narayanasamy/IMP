@@ -1,0 +1,66 @@
+rule variant_calling:
+    input:
+        "Assembly/%s.assembly.merged.fa" % ASS,
+        "Assembly/{type}.reads.sorted.bam",
+    output:
+        "Analysis/{type}.variants.samtools.vcf.gz",
+        "Analysis/{type}.variants.freebayes.vcf.gz",
+        "Analysis/{type}.variants.platypus.vcf.gz"
+    shell:
+        """
+        echo "[x] {wildcards.type} VARIANT CALLING `date +"%Y/%m/%d %H:%M:%S"`"
+        if [[ ! -f {input[1]}.bai ]]
+        then
+            echo "Bam index doesn't exist, Creating one..."
+            echo "Indexing bam: {input[1]}"
+            samtools index {input[1]}
+        fi
+
+        if [[ ! -f {input[0]}.fai ]]
+        then
+          echo "Fasta index doesn't exist, Creating one..."
+          echo "Indexing fasta: {input[0]}"
+          samtools faidx {input[0]}
+        fi
+
+        #temporary directory and files
+        VCF_MPU=$(mktemp --tmpdir={TMPDIR} -t "XXXXXX.mpu.vcf")
+        VCF_FRB=$(mktemp --tmpdir={TMPDIR} -t "XXXXXX.frb.vcf")
+        VCF_PLT=$(mktemp --tmpdir={TMPDIR} -t "XXXXXX.plt.vcf")
+
+        ### run_mpileup {input[0]} {input[1]} {output[0]}
+        echo "Running samtools mpileup"
+        samtools mpileup -uAf {input[0]} {input[1]} |\
+        bcftools view -vcg - |\
+        vcf-convert -r {input[0]} -v 4.2 > $VCF_MPU
+        bgzip -c $VCF_MPU > {output[0]}
+        tabix -f -p vcf {output[0]}
+
+        ### run_freebayes {input[0]} {input[1]} {output[1]}
+        echo "Running freebayes"
+        freebayes -f {input[0]} {input[1]} |\
+        vcf-convert -r {input[0]} -v 4.2 > $VCF_FRB
+        bgzip -c $VCF_FRB > {output[1]}
+        tabix -f -p vcf {output[1]}
+
+        ### run_platypus {input[0]} {input[1]} {output[2]}
+        echo "Running platypus"
+        Platypus.py callVariants --refFile={input[0]} \
+        --bamFiles={input[1]} --nCPU={THREADS} -o $VCF_PLT
+        bgzip -c $VCF_PLT > {output[2]}
+        tabix -f -p vcf {output[2]}
+
+        #### "Merging outputs from all the callers"
+        ### Must remove colons from the contig names in upstream steps. Unable to merge the variants
+        ### due to this problem
+        #vcf-isec -f -a -n +2 {output[0]} {output[1]} > {wildcards.step}/{wildcards.type}.variants.isec.vcf
+
+        ## Compress and index the output.
+        #bgzip -c {wildcards.step}/{wildcards.type}.variants.isec.vcf > {output[0]}
+        #tabix -f -p vcf {output[0]}
+
+        # Clean up directory
+        echo "Cleaning up directory"
+        cat log.txt >> {log}
+        rm -f {wildcards.step}/{wildcards.type}.variants.isec.vcf log.txt
+        """

@@ -1,0 +1,75 @@
+# include needed rules
+include:
+    'common/bwa.index.rule'
+
+include:
+    'common/idba_ud.rules'
+
+include:
+    'common/megahit.rules'
+
+include:
+    'hybrid/megahit.hybrid.rules'
+
+include:
+    'hybrid/extract-unmapped.rules'
+
+include:
+    'common/mg.merge-assembly.rules'
+
+include:
+    'hybrid/merge-hybrid-assembly.rules'
+
+include:
+    'hybrid/mapping.rules'
+
+# rule symlink_preprocessed_files:
+#     input:
+#         'Preprocessing/{type}.r1.preprocessed.fq',
+#         'Preprocessing/{type}.r2.preprocessed.fq',
+#         'Preprocessing/{type}.se.preprocessed.fq'
+#     output:
+#         'Assembly/{type}.r1.preprocessed.fq',
+#         'Assembly/{type}.r2.preprocessed.fq',
+#         'Assembly/{type}.se.preprocessed.fq'
+#     shell:
+#         """
+#         ln -s ../{input[0]} {output[0]} && touch -h {output[0]}
+#         ln -s ../{input[1]} {output[1]} && touch -h {output[1]}
+#         ln -s ../{input[2]} {output[2]} && touch -h {output[2]}
+#         """
+
+
+# rule integrative_assembly_loop_1:
+#     input:
+#         expand('{step}/{type}.{tool}_{name}.{loop}/final.contigs.fa',
+#                step='Assembly',
+#                type='mt',
+#                name='preprocessed',
+#                loop='1'
+#                )
+#     output:
+#         temp(touch('Assembly/mt.assembly_1.done'))
+#
+# rule integrative_assembly_loop_2:
+#     input:
+#         expand('{step}/{type}.megahit_{name}.{loop}/final.contigs.fa',
+#                step='Assembly',
+#                type='mt',
+#                name='unmapped',
+#                loop='2'
+#                )
+#     output:
+#         touch('Assembly/mt.assembly_2.done')
+
+
+# rule loop_2:
+#     input:
+#         '{step}/{type}.assembly_1.done',
+#     expand(
+#         '{step}/{type}.megahit_{name}.{loop}/final.contigs.fa',
+#             step='Assembly',
+#             type='mt',
+#             name='unmapped'
+#             loop='1'
+#     )

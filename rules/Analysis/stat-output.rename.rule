@@ -1,0 +1,30 @@
+rule RENAME_STAT_OUTPUT:
+    input:
+        'Analysis/stats/mt/mt.r1.preprocessed.fq_fastqc.zip',
+        'Analysis/stats/mt/mt.r2.preprocessed.fq_fastqc.zip',
+        'Analysis/stats/mt/mt.se.preprocessed.fq_fastqc.zip',
+        'Analysis/stats/mt/mt.r1.preprocessed.fq_fastqc.html',
+        'Analysis/stats/mt/mt.r2.preprocessed.fq_fastqc.html',
+        'Analysis/stats/mt/mt.se.preprocessed.fq_fastqc.html',
+        'Analysis/stats/mg/mg.r1.preprocessed.fq_fastqc.zip',
+        'Analysis/stats/mg/mg.r2.preprocessed.fq_fastqc.zip',
+        'Analysis/stats/mg/mg.se.preprocessed.fq_fastqc.zip',
+        'Analysis/stats/mg/mg.r1.preprocessed.fq_fastqc.html',
+        'Analysis/stats/mg/mg.r2.preprocessed.fq_fastqc.html',
+        'Analysis/stats/mg/mg.se.preprocessed.fq_fastqc.html'
+    output:
+        "Analysis/stats/mt/mt.r1_preprocessed_fastqc.zip",
+        "Analysis/stats/mt/mt.r2_preprocessed_fastqc.zip",
+        "Analysis/stats/mt/mt.se_preprocessed_fastqc.zip",
+        "Analysis/stats/mt/mt.r1_preprocessed_fastqc.html",
+        "Analysis/stats/mt/mt.r2_preprocessed_fastqc.html",
+        "Analysis/stats/mt/mt.se_preprocessed_fastqc.html",
+        "Analysis/stats/mg/mg.r1_preprocessed_fastqc.zip",
+        "Analysis/stats/mg/mg.r2_preprocessed_fastqc.zip",
+        "Analysis/stats/mg/mg.se_preprocessed_fastqc.zip",
+        "Analysis/stats/mg/mg.r1_preprocessed_fastqc.html",
+        "Analysis/stats/mg/mg.r2_preprocessed_fastqc.html",
+        "Analysis/stats/mg/mg.se_preprocessed_fastqc.html"
+    run:
+        for index, _file in enumerate(input):
+            shell("mv %s %s" % (_file, output[index]))

@@ -4,21 +4,21 @@ ref = ':'.join('%s,%s' % (a, b) for a, b in zip(fastafiles, fastaindexed))
 
 rule filter_rna:
     input:
-        '{step}/{type}.r1.trimmed.fq',
-        '{step}/{type}.r2.trimmed.fq',
-        '{step}/{type}.se.trimmed.fq',
+        'Preprocessing/{type}.r1.trimmed.fq',
+        'Preprocessing/{type}.r2.trimmed.fq',
+        'Preprocessing/{type}.se.trimmed.fq',
         expand(
             "{db}/sortmerna/idx/{files}.{ext}",
             files=config["sortmerna"]["files"],
             ext=['bursttrie_0.dat', 'kmer_0.dat', 'pos_0.dat', 'stats'],
             db=DBPATH)
     output:
-        '{step}/{type}.r1.trimmed.rna_filtered.fq',
-        '{step}/{type}.r2.trimmed.rna_filtered.fq',
-        '{step}/{type}.se.trimmed.rna_filtered.fq',
-        '{step}/{type}.r1.trimmed.rna.fq',
-        '{step}/{type}.r2.trimmed.rna.fq',
-        '{step}/{type}.se.trimmed.rna.fq',
+        'Preprocessing/{type}.r1.trimmed.rna_filtered.fq',
+        'Preprocessing/{type}.r2.trimmed.rna_filtered.fq',
+        'Preprocessing/{type}.se.trimmed.rna_filtered.fq',
+        'Preprocessing/{type}.r1.trimmed.rna.fq',
+        'Preprocessing/{type}.r2.trimmed.rna.fq',
+        'Preprocessing/{type}.se.trimmed.rna.fq',
     params:
         ref = ref, mem = str(config["sortmerna"]["mem"])
     shell:

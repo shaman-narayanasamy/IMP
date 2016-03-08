@@ -2,7 +2,7 @@
 
 # data input preparation
 include:
-    "../../rules/data_input.rules"
+    "../../rules/Preprocessing/data_input.rules"
 
 # include only if user don't skip preprocessing
 if not config['skip_preprocessing']:
@@ -25,8 +25,8 @@ if not config['skip_preprocessing']:
 rule PREPROCESSING:
     input:
         expand([
-        '{step}/{type}.r1.preprocessed.fq',
-        '{step}/{type}.r2.preprocessed.fq',
-        '{step}/{type}.se.preprocessed.fq'], type=TYPES, step='Preprocessing')
+        'Preprocessing/{type}.r1.preprocessed.fq',
+        'Preprocessing/{type}.r2.preprocessed.fq',
+        'Preprocessing/{type}.se.preprocessed.fq'], type=TYPES)
     output:
         touch('preprocessing.done')

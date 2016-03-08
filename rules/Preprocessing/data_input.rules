@@ -2,7 +2,7 @@ import os
 import shutil
 
 
-def prepare_input_files(input, type, step):
+def prepare_input_files(input, type):
     """
     Prepare file names from input.
     Will copy and/or ungzip paired input files into output directory named as '{type}.R1.fq' and '{type}.R2.fq'.
@@ -17,25 +17,25 @@ def prepare_input_files(input, type, step):
         r2 = input[1]
         _, fname1 = os.path.split(r1)
         _, fname2 = os.path.split(r2)
-        out1 = "{step}/{type}.r1.fq".format(type=type, step=step)
-        out2 = "{step}/{type}.r2.fq".format(type=type, step=step)
+        out1 = "Preprocessing/{type}.r1.fq".format(type=type)
+        out2 = "Preprocessing/{type}.r2.fq".format(type=type)
         _process_file(fname1, r1, out1)
         _process_file(fname2, r2, out2)
 
     if len(input) == 3:
         se = input[2]
         _, fname3 = os.path.split(se)
-        out3 = "{step}/{type}.se.fq".format(type=type, step=step)
+        out3 = "Preprocessing/{type}.se.fq".format(type=type)
         _process_file(fname3, se, out3)
         # symlink to the preprocessing output directory
-        link1 = '{step}/{type}.r1.preprocessed.fq'.format(type=type, step=step)
-        link2 = '{step}/{type}.r2.preprocessed.fq'.format(type=type, step=step)
-        link3 = '{step}/{type}.se.preprocessed.fq'.format(type=type, step=step)
-        # print('symlink',  out1, '=>', link1)
+        link1 = 'Preprocessing/{type}.r1.preprocessed.fq'.format(type=type)
+        link2 = 'Preprocessing/{type}.r2.preprocessed.fq'.format(type=type)
+        link3 = 'Preprocessing/{type}.se.preprocessed.fq'.format(type=type)
+        print('symlink',  out1, '=>', link1)
         os.symlink("{type}.r1.fq".format(type=type), link1)
-        # print('symlink',  out2, '=>', link2)
+        print('symlink',  out2, '=>', link2)
         os.symlink("{type}.r2.fq".format(type=type), link2)
-        # print('symlink',  out3, '=>', link3)
+        print('symlink',  out3, '=>', link3)
         os.symlink("{type}.se.fq".format(type=type), link3)
 
 
@@ -43,7 +43,7 @@ def _process_file(fname, inp, outfilename):
     """
     Write the input to the output. Handle raw, zip, or bzip input files.
     """
-    # print(inp, '=>', outfilename)
+    print(inp, '=>', outfilename)
     import bz2
     # ungunzip
     if os.path.splitext(fname)[-1] in ['.gz', '.gzip']:
@@ -66,7 +66,7 @@ data_input = {
 
 
 def datainput(wildcards):
-    if wildcards.step == 'Preprocessing' and wildcards.type in TYPES:
+    if wildcards.type in TYPES:
         return data_input[wildcards.type]
     return 'datainput-no-file-here'
 
@@ -76,24 +76,24 @@ if config['skip_preprocessing']:
         input:
             datainput
         output:
-            "{step}/{type}.r1.fq",
-            "{step}/{type}.r2.fq",
-            "{step}/{type}.se.fq",
-            "{step}/{type}.r1.preprocessed.fq",
-            "{step}/{type}.r2.preprocessed.fq",
-            "{step}/{type}.se.preprocessed.fq",
+            "Preprocessing/{type}.r1.fq",
+            "Preprocessing/{type}.r2.fq",
+            "Preprocessing/{type}.se.fq",
+            "Preprocessing/{type}.r1.preprocessed.fq",
+            "Preprocessing/{type}.r2.preprocessed.fq",
+            "Preprocessing/{type}.se.preprocessed.fq",
         params:
             type = '{wildcards.type}'
         run:
-            prepare_input_files(input, wildcards.type, wildcards.step)
+            prepare_input_files(input, wildcards.type)
 else:
     rule prepare_data_input:
         input:
             datainput
         output:
-            "{step}/{type}.r1.fq",
-            "{step}/{type}.r2.fq"
+            "Preprocessing/{type}.r1.fq",
+            "Preprocessing/{type}.r2.fq"
         params:
             type = '{wildcards.type}'
         run:
-            prepare_input_files(input, wildcards.type, wildcards.step)
+            prepare_input_files(input, wildcards.type)

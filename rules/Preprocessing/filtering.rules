@@ -1,13 +1,13 @@
 input_filtering = {
     'mg': [
-        '{step}/mg.r1.trimmed.fq',
-        '{step}/mg.r2.trimmed.fq',
-        '{step}/mg.se.trimmed.fq'
+        'Preprocessing/mg.r1.trimmed.fq',
+        'Preprocessing/mg.r2.trimmed.fq',
+        'Preprocessing/mg.se.trimmed.fq'
     ],
     'mt': [
-        '{step}/mt.r1.trimmed.rna_filtered.fq',
-        '{step}/mt.r2.trimmed.rna_filtered.fq',
-        '{step}/mt.se.trimmed.rna_filtered.fq'
+        'Preprocessing/mt.r1.trimmed.rna_filtered.fq',
+        'Preprocessing/mt.r2.trimmed.rna_filtered.fq',
+        'Preprocessing/mt.se.trimmed.rna_filtered.fq'
     ]
 }
 
@@ -25,9 +25,9 @@ rule filtering:
             "{p}/filtering/{filter}.{ext}", filter=config["filtering"]["filter"],
             ext=['fa', 'fa.amb', 'fa.ann', 'fa.bwt', 'fa.pac', 'fa.sa'], p=DBPATH)
     output:
-        '{step}/{type}.r1.preprocessed.fq',
-        '{step}/{type}.r2.preprocessed.fq',
-        '{step}/{type}.se.preprocessed.fq'
+        'Preprocessing/{type}.r1.preprocessed.fq',
+        'Preprocessing/{type}.r2.preprocessed.fq',
+        'Preprocessing/{type}.se.preprocessed.fq'
     shell:
         """
         TMP_FILE=$(mktemp --tmpdir={TMPDIR} -t "alignment_XXXXXX.bam")

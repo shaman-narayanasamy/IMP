@@ -1,13 +1,13 @@
 rule trimming:
     input:
-        '{step}/{type}.r1.fq',
-        '{step}/{type}.r2.fq',
+        'Preprocessing/{type}.r1.fq',
+        'Preprocessing/{type}.r2.fq',
         DBPATH + "/adapters/adapters.done"
     output:
-        '{step}/{type}.r1.trimmed.fq',
-        temp('{step}/{type}.se1.trimmed.fq'),
-        '{step}/{type}.r2.trimmed.fq',
-        temp('{step}/{type}.se2.trimmed.fq')
+        'Preprocessing/{type}.r1.trimmed.fq',
+        temp('Preprocessing/{type}.se1.trimmed.fq'),
+        'Preprocessing/{type}.r2.trimmed.fq',
+        temp('Preprocessing/{type}.se2.trimmed.fq')
     shell:
         """
         java -jar {config[trimmomatic][jarfile]} PE -threads {THREADS} {input[0]} {input[1]} {output} \
@@ -22,9 +22,9 @@ rule trimming:
 
 rule cat_se_trimmed:
     input:
-        '{step}/{type}.se1.trimmed.fq',
-        '{step}/{type}.se2.trimmed.fq'
+        'Preprocessing/{type}.se1.trimmed.fq',
+        'Preprocessing/{type}.se2.trimmed.fq'
     output:
-        '{step}/{type}.se.trimmed.fq',
+        'Preprocessing/{type}.se.trimmed.fq',
     shell:
         "cat {input[0]} {input[1]} > {output}"

@@ -1,10 +1,11 @@
 # include configuration file
 include:
-    "../../rules/config"
+    "../../rules/ini/config"
 
-# define the data types and map the data input to variables
+# define the data types used
 TYPES = ['mg', 'mt']
-
+# type pf the merged assembly
+ASS = 'mgmt'
 
 #include:
 #    "../../rules/databases.rules"
@@ -16,14 +17,17 @@ workdir:
 include:
     "Preprocessing"
 
-# include rules for the workflow
 include:
     "Assembly"
+
+include:
+    "Analysis"
 
 # master command
 rule ALL:
     input:
         "preprocessing.done",
-        "assembly.done"
+        "assembly.done",
+        "analysis.done"
     output:
         touch('workflow.done')

@@ -3,7 +3,7 @@
     "memory_total_gb": 8,
     "memory_per_core_gb": 2,
     "tmp_dir": "tmp",
-    "imp_src": "/code",
+    "imp_src": "/code/src",
     "skip_preprocessing": false,
     "raws": {
       "Metagenomics": "",
