@@ -1,0 +1,51 @@
+input_filtering = {
+    'mg': [
+        'mg.r1.trimmed.fq',
+        'mg.r2.trimmed.fq',
+        'mg.se.trimmed.fq'
+    ],
+    'mt': [
+        'mt.r1.trimmed.rna_filtered.fq',
+        'mt.r2.trimmed.rna_filtered.fq',
+        'mt.se.trimmed.rna_filtered.fq'
+    ]
+}
+
+def filtering_input(wildcards):
+    for wildcard in wildcards:
+        if str(wildcard) in TYPES:
+            return input_filtering[wildcard]
+        return None
+
+rule filtering:
+    input:
+        filtering_input,
+        '{dir}/{ref}.fa'.format(dir=DBPATH + "/filtering", ref=config['filtering']['filter']),
+        expand(
+            "{p}/filtering/{filter}.{ext}", filter=config["filtering"]["filter"],
+            ext=['fa', 'fa.amb', 'fa.ann', 'fa.bwt', 'fa.pac', 'fa.sa'], p=DBPATH)
+    output:
+        '{step}/{type}.r1.preprocessed.fq',
+        '{step}/{type}.r2.preprocessed.fq',
+        '{step}/{type}.se.preprocessed.fq'
+    shell:
+        """
+        TMP_FILE=$(mktemp --tmpdir={TMPDIR} -t "alignment_XXXXXX.bam")
+        BUFFER=$(mktemp --tmpdir={TMPDIR} -t "alignment_XXXXXX.bam")
+        bwa mem -v 1 -t {THREADS} {input[3]} {input[0]} {input[1]} | samtools view -@ {THREADS} -bS - > $TMP_FILE
+        samtools merge -@ {THREADS} -u - \
+        <(samtools view -@ {THREADS} -u  -f 4 -F 264 $TMP_FILE) \
+        <(samtools view -@ {THREADS} -u -f 8 -F 260 $TMP_FILE) \
+        <(samtools view -@ {THREADS} -u -f 12 -F 256 $TMP_FILE) | \
+        samtools view -@ {THREADS} -bF 0x800 -  | samtools sort -o -@ {THREADS} -m {MEMCORE}G -n - $BUFFER | \
+        bamToFastq -i stdin -fq {output[0]} -fq2 {output[1]}
+        if [[ -s {input[2]} ]]
+        then
+        bwa mem -v 1 -t {THREADS} {input[3]} {input[2]} | samtools view -@ {THREADS} -bS - | \
+        samtools view -@ {THREADS} -uf 4 - | bamToFastq -i stdin -fq {output[2]}
+        else
+        echo "{input[2]} is empty, skipping single end human sequence filtering, but creating it anyway..."
+        touch {output[2]}
+        fi
+        rm -rf $BUFFER* $TMP_FILE
+        """

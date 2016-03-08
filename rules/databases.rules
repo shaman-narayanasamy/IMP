@@ -1,14 +1,113 @@
-workdir:
-    DBPATH
-
 rule trimmomatic_adapters:
     output:
-        touch("{DBPATH}/adapters/adapters.done")
+        touch("adapters/adapters.done")
     shell:
         """
         wget --no-check-certificate {config[trimmomatic][pkg_url]} -O Trimmomatic-Src-0.32.zip
         unzip Trimmomatic-Src-0.32.zip
-        cp -r trimmomatic-0.32/adapters {DBPATH}
+        cp -r trimmomatic-0.32/adapters .
         rm Trimmomatic-Src-0.32.zip && rm -rf trimmomatic-0.32
         touch {output}
+        """
+
+rule sortmerna_databases:
+    output:
+        expand("sortmerna/{files}.fasta", files=config["sortmerna"]["files"])
+    shell:
+        """
+        TMPD=$(mktemp -d -t --tmpdir={tmp} "XXXXXX")
+        wget {pkg_url} --no-check-certificate -O $TMPD/sortmerna.tgz
+        tar -xzf  $TMPD/sortmerna.tgz --strip-components=1 -C $TMPD
+        mkdir -p sortmerna
+        mv $TMPD/rRNA_databases/*.fasta sortmerna/.
+        rm -rf $TMPD
+        """.format(
+            pkg_url=config["sortmerna"]["pkg_url"],
+            tmp=TMPDIR
+        )
+
+
+rule sortmerna_databases_index:
+    input:
+        expand("sortmerna/{files}.fasta", files=config["sortmerna"]["files"])
+    output:
+        expand(
+            "sortmerna/idx/{files}.{ext}",
+            files=config["sortmerna"]["files"],
+            ext=['bursttrie_0.dat', 'kmer_0.dat', 'pos_0.dat', 'stats'])
+    run:
+        fastaindexed = expand(
+            "sortmerna/idx/{files}",
+            files=config["sortmerna"]["files"])
+        ref = ':'.join('%s,%s' % (a, b) for a, b in zip(input, fastaindexed))
+        shell("mkdir -p sortmerna")
+        shell("indexdb_rna --ref {ref}")
+
+rule filtrering_database:
+    output:
+        'filtering/{filter}.fa'.format(filter=config["filtering"]["filter"])
+        #expand("filtering/{filter}.{ext}", filter=config["filtering"]["filter"], ext=['fa'])
+    params:
+        filter = config["filtering"]["filter"]
+    shell:
+        """
+        TMPD=$(mktemp -d -t --tmpdir={TMPDIR} "XXXXXX")
+        wget {config[filtering][url]} --no-check-certificate -O $TMPD/{params.filter}.fa.gz
+        gunzip $TMPD/{params.filter}.fa.gz
+        mkdir -p filtering
+        mv $TMPD/{params.filter}.fa filtering/.
+        rm -rf $TMPD
+        """
+
+rule filtrering_database_index:
+    input:
+        "{fasta}"
+    output:
+        "{fasta}.amb",
+        "{fasta}.bwt",
+        "{fasta}.pac",
+        "{fasta}.sa",
+        "{fasta}.ann"
+    shell:
+        """
+        bwa index {wildcards.fasta}
+        """
+
+
+rule kegg_information:
+    output:
+        "ec2pathway.txt",
+        "pathway2hierarchy.txt"
+    shell:
+        """
+        wget --no-check-certificate {config[kegg][db_ec2pthy]} -O ec2pathway.txt.tmp
+        grep "path:ec" ec2pathway.txt.tmp | sed -e 's/path:ec//g' | sed -e 's/ec://g' > {output[0]}
+        rm ec2pathway.txt.tmp
+
+        python {SRCDIR}/src/make.pwy.hierarchy.kegg.py > {output[1]}
+        """
+
+rule prokka_databases:
+    output:
+        expand("{db}", db=config["prokka"]["databases"])
+    shell:
+        """
+        ### prokka by default will look databases where is located the binary.
+        ### we have to softlink to put the binary somewhere and the databases somewhere else.
+        ### the author don't want to add an option to locate the database.
+        if [[ "{DBPATH}" = /* ]]
+        then
+            PP={DBPATH};
+        else
+            PP=$PWD/{DBPATH};
+        fi
+        cd $(dirname $(which prokka))/.. && ln -s $PP db
+        echo "Softlinking $(dirname $(which prokka))/../db to $PP"
+        TMPDIR=$(mktemp -d -t "XXXXXX")
+        wget {config[prokka][pkg_url]} --no-check-certificate -O $TMPDIR/prokka.tgz
+        tar -xzf $TMPDIR/prokka.tgz --strip-components=1 -C $TMPDIR
+        mkdir -p {DBPATH}
+        cp -r $TMPDIR/db/* {DBPATH}/.
+        rm -rf $TMPDIR
+        prokka --setupdb
         """

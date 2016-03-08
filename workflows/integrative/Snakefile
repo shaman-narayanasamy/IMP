@@ -1,43 +1,29 @@
+# include configuration file
 include:
     "../../rules/config"
 
-import os
-
-
+# define the data types and map the data input to variables
 TYPES = ['mg', 'mt']
 
-dip="/Users/yohan.jarosz/Programmation/lcsb/IMP/TEST_DATA/"
-data_input={
-        'mg': [dip + 'MG.R1.5_percent.fq', dip + 'MG.R2.5_percent.fq'],
-        'mt': [dip + 'MT.R1.5_percent.fq', dip + 'MT.R2.5_percent.fq']
-}
 
-mt = [
-    dip + 'MT.R1.5_percent.fq',
-    dip + 'MT.R2.5_percent.fq'
-]
-
-mg = [
-    dip + 'MG.R1.5_percent.fq',
-    dip + 'MG.R2.5_percent.fq'
-]
-
-
-
-include:
-    "../../rules/databases.rules"
+#include:
+#    "../../rules/databases.rules"
 
 workdir:
-    os.path.join(OUTPUTDIR, 'Preprocessing')
+    OUTPUTDIR
 
+# include rules for the workflow
 include:
-    "../../rules/data_input.rules"
+    "Preprocessing"
+
+# include rules for the workflow
 include:
-    "../../rules/trimming.rules"
+    "Assembly"
 
 # master command
-rule PREPROCESSING:
+rule ALL:
     input:
-        expand(['{type}.r1.trimmed.fq','{type}.r2.trimmed.fq', '{type}.se.trimmed.fq'], type=TYPES)
+        "preprocessing.done",
+        "assembly.done"
     output:
-        touch('preprocessing.done')
+        touch('workflow.done')

@@ -3,7 +3,8 @@
     "memory_total_gb": 8,
     "memory_per_core_gb": 2,
     "tmp_dir": "tmp",
-    "imp_src": "src",
+    "imp_src": "/code",
+    "skip_preprocessing": false,
     "raws": {
       "Metagenomics": "",
       "Metatranscriptomics": ""
@@ -43,14 +44,14 @@
         "cutoff": 1000,
         "jarfile": "/home/imp/lib/VizBin-dist.jar"
     },
-    "human_filtering": {
+    "filtering": {
         "filter": "hg38",
         "url": "http://hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz"
     },
     "sortmerna": {
         "pkg_url": "https://webdav-r3lab.uni.lu/public/R3lab/IMP/sortmerna.2.0.tgz",
         "scripts_path": "/home/imp/lib",
-
+        "mem": 4000,
         "files": [
             "rfam-5.8s-database-id98",
             "silva-arc-16s-id95",

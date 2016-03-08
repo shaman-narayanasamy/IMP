@@ -23,13 +23,13 @@ def dict_merge(a, b):
 
 # default configuration file
 configfile:
-    "../../src/config.imp.json"
+    "src/config.imp.json"
 
 # default executable for snakmake
 shell.executable("bash")
 
 # custom configuration file
-CUSTOM_CONFIG_PATH = os.environ.get("CONFIGFILE", "../../conf/userconf.imp.json")
+CUSTOM_CONFIG_PATH = os.environ.get("CONFIGFILE", "../conf/userconf.imp.json")
 
 # merge 2 configurations files together
 if os.path.exists(CUSTOM_CONFIG_PATH):
@@ -37,6 +37,8 @@ if os.path.exists(CUSTOM_CONFIG_PATH):
         data = json.load(rhandle)
         config = dict_merge(config, data)
 
+#print(subprocess.check_output('pwd'))
+#print(config)
 
 # some parameters
 SRCDIR = os.environ.get("SRCDIR", config['imp_src'])

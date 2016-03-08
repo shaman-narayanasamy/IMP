@@ -22,7 +22,7 @@ __doc__ = """Integrated Metaomic Pipeline.
 
 Usage:
   IMP [-m MG1 -m MG2 -m MGSE] [-t MT1 -t MT2 -t MTSE] -o OUTPUT [--enter] [--norm] [--current] [-r REPO] [-n CONTAINER] [-v VERSION] [-c CONFIGFILE] [-d DBPATH] [-a ASSEMBLER] [-e ENV] ... [COMMANDS ...]
-  IMP --init [--current] [-d DBPATH] [-n CONTAINER] [-v VERSION] [-r REPO] [-c CONFIGFILE]
+  IMP --init [--current] [--enter] [-d DBPATH] [-n CONTAINER] [-v VERSION] [-r REPO] [-c CONFIGFILE]
   IMP (-h | --help)
   IMP --version
 
@@ -163,17 +163,23 @@ def init(args):
         'n': args['-n'],
         'v': args['-v'],
         'c': config_file,
-        'conf': config_directory
+        'conf': config_directory,
+        'interactive': ''
     }
     # override docker command if the user want to mount a specific version of IMP codebase.
     if args['--current']:
         formatting_args['p'] = CURRENT_PATH
-        docker_cmd = 'docker run --rm -v {p}:/code -v {d}:/databases -v {conf}:/conf -e CONFIGFILE=/conf/{c} {n}:{v}'
-
+        docker_cmd = 'docker run --rm -v {p}:/code -v {d}:/databases -v {conf}:/conf -e CONFIGFILE=/conf/{c}{interactive} {n}:{v}'
+    if args['--enter']:
+        formatting_args['interactive'] = ' -it'
     # format docker command
     docker_cmd = docker_cmd.format(**formatting_args)
     # IMP command + user mapping (see https://github.com/docker/docker/pull/12648)
-    cmd = docker_cmd + map_user('snakemake -s /code/rules/init', '/databases')
+
+    if args['--enter']:
+        cmd = docker_cmd + ' /bin/bash'
+    else:
+        cmd = docker_cmd + map_user('snakemake -s /code/rules/init', '/databases')
     print("Executing", '"', cmd, '"')
     subprocess.call(cmd, shell=True)
 

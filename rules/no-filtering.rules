@@ -1,0 +1,33 @@
+input_no_filtering = {
+    'mg': [
+        '{step}/mg.r1.trimmed.fq',
+        '{step}/mg.r2.trimmed.fq',
+        '{step}/mg.se.trimmed.fq'
+    ],
+    'mt': [
+        '{step}/mt.r1.trimmed.rna_filtered.fq',
+        '{step}/mt.r2.trimmed.rna_filtered.fq',
+        '{step}/mt.se.trimmed.rna_filtered.fq'
+    ]
+}
+
+
+def no_filtering_input(wildcards):
+    if wildcards.step == 'Preprocessing' and wildcards.type in TYPES:
+        return expand(input_no_filtering[wildcards.type], step='Preprocessing')
+    return ''
+
+
+rule no_filtering:
+    input:
+        no_filtering_input
+    output:
+        '{step}/{type}.r1.preprocessed.fq',
+        '{step}/{type}.r2.preprocessed.fq',
+        '{step}/{type}.se.preprocessed.fq'
+    shell:
+        """
+        ln -s {input[0]} {output[0]} && touch -h {output[0]}
+        ln -s {input[1]} {output[1]} && touch -h {output[1]}
+        ln -s {input[2]} {output[2]} && touch -h {output[2]}
+        """

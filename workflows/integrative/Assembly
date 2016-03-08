@@ -1,0 +1,17 @@
+# include rules for the Preprocessing part of the workflow
+
+
+include:
+    "../../rules/integrative-assembly.rules"
+
+# master command
+rule ASSEMBLY:
+    input:
+        expand([
+            '{step}/{type}.r1.preprocessed.fq',
+            '{step}/{type}.r2.preprocessed.fq',
+            '{step}/{type}.se.preprocessed.fq',
+            '{step}/mt.assembly_1.done'
+        ], type=TYPES, step='Assembly'),
+    output:
+        touch('assembly.done')
