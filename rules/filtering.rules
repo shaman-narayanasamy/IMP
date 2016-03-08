@@ -15,7 +15,7 @@ def filtering_input(wildcards):
     for wildcard in wildcards:
         if str(wildcard) in TYPES:
             return input_filtering[wildcard]
-        return None
+        return "filtering-input-no-file-here"
 
 rule filtering:
     input:

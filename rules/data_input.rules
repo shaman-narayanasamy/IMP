@@ -68,7 +68,7 @@ data_input = {
 def datainput(wildcards):
     if wildcards.step == 'Preprocessing' and wildcards.type in TYPES:
         return data_input[wildcards.type]
-    return 'no-file-here'
+    return 'datainput-no-file-here'
 
 
 if config['skip_preprocessing']:
