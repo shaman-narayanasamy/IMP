@@ -1,13 +1,13 @@
 input_filtering = {
     'mg': [
-        'mg.r1.trimmed.fq',
-        'mg.r2.trimmed.fq',
-        'mg.se.trimmed.fq'
+        '{step}/mg.r1.trimmed.fq',
+        '{step}/mg.r2.trimmed.fq',
+        '{step}/mg.se.trimmed.fq'
     ],
     'mt': [
-        'mt.r1.trimmed.rna_filtered.fq',
-        'mt.r2.trimmed.rna_filtered.fq',
-        'mt.se.trimmed.rna_filtered.fq'
+        '{step}/mt.r1.trimmed.rna_filtered.fq',
+        '{step}/mt.r2.trimmed.rna_filtered.fq',
+        '{step}/mt.se.trimmed.rna_filtered.fq'
     ]
 }
 
