@@ -8,18 +8,18 @@ include:
 if not config['skip_preprocessing']:
     # trimming rules
     include:
-        "../../rules/trimming.rules"
+        "../../rules/Preprocessing/trimming.rules"
     # filtering rna for mt data
     include:
-        "../../rules/rna.filtering.rules"
+        "../../rules/Preprocessing/rna.filtering.rules"
 
     # include filtering rule or not
     if config['preprocessing_filtering']:
         include:
-            "../../rules/filtering.rules"
+            "../../rules/Preprocessing/filtering.rules"
     else:
         include:
-            "../../rules/no-filtering.rules"
+            "../../rules/Preprocessing/no-filtering.rules"
 
 # master command
 rule PREPROCESSING:
