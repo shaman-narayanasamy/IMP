@@ -41,7 +41,6 @@ rule ASSEMBLY:
             #'{step}/mgmt.megahit_hybrid.1.fa',
             #'{step}/mgmt.megahit_hybrid.2.fa',
             'Assembly/mgmt.assembly.merged.fa',
-            'Assembly/mg.assembly.merged.fa',
             'Assembly/mt.reads.sorted.bam',
             'Assembly/mg.reads.sorted.bam'
     output:
