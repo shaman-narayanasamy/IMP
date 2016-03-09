@@ -1,0 +1,37 @@
+# include configuration file
+include:
+    "../../rules/ini/config"
+
+# define the data types used
+TYPES = ['mg']
+# type pf the merged assembly
+ASS = 'mg'
+
+#include:
+#    "../../rules/databases.rules"
+
+workdir:
+    OUTPUTDIR
+
+# include rules for the workflow
+include:
+    "Preprocessing"
+
+include:
+    "Assembly"
+
+include:
+    "Analysis"
+
+include:
+    "Report"
+
+# master command
+rule ALL:
+    input:
+        "preprocessing.done",
+        "assembly.done",
+        "analysis.done",
+        "report.done"
+    output:
+        touch('workflow.done')

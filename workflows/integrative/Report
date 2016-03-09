@@ -1,0 +1,118 @@
+# include rules for the Report part of the workflow
+
+include:
+    "../../rules/Report/diagramm.rule"
+
+include:
+    "../../rules/Report/libraries.rules"
+
+include:
+    "../../rules/Report/report.rules"
+
+# rule REPORT_ARCHIVE:
+#         input:
+#             analysis_output_files(),
+#             "%s/REPORT.html" % OUTPUTDIR
+#         output:
+#             "%s/imp_report_archive.tgz" % OUTPUTDIR
+#         params:
+#             results_dir = "%s/results" % AN_OUT,
+#             quast_dir = "%s/results/quast" % AN_OUT,
+#             stats_dir = "%s/stats" % AN_OUT,
+#             archive_tmp_dir = "%s/IMP-report" % OUTPUTDIR
+#         message:
+#             'Archiving report'
+#         shell:
+#             """
+#             mkdir -p {params.archive_tmp_dir}/Analysis/{{results,stats}}
+#             # copying results images
+#             cp -r {params.results_dir}/*.png {params.archive_tmp_dir}/Analysis/results/.
+#             # copying results stats
+#             cp -r {params.stats_dir} {params.archive_tmp_dir}/Analysis/.
+#             # copying results quast
+#             cp -r {params.quast_dir} {params.archive_tmp_dir}/Analysis/results/.
+#             # copying libraries and HTML
+#             cp {OUTPUTDIR}/*.{{js,css,json,png}} {params.archive_tmp_dir}/.
+#             cp {OUTPUTDIR}/workflow.{{png,pdf}} {params.archive_tmp_dir}/.
+#             cp {OUTPUTDIR}/REPORT.html {params.archive_tmp_dir}/.
+#             tar -czf {output} {params.archive_tmp_dir}
+#             rm -rf {params.archive_tmp_dir}
+#             """
+#
+# rule REPORT_ZIP:
+#         input:
+#             analysis_output_files(),
+#             "%s/REPORT.html" % OUTPUTDIR
+#         output:
+#             "%s/imp_report_archive.zip" % OUTPUTDIR
+#         params:
+#             results_dir = "%s/results" % AN_OUT,
+#             quast_dir = "%s/results/quast" % AN_OUT,
+#             stats_dir = "%s/stats" % AN_OUT,
+#             archive_tmp_dir = "%s/IMP-report" % OUTPUTDIR
+#         message:
+#             'Archiving report'
+#         shell:
+#             """
+#             mkdir -p {params.archive_tmp_dir}/Analysis/{{results,stats}}
+#             # copying results images
+#             cp -r {params.results_dir}/*.png {params.archive_tmp_dir}/Analysis/results/.
+#             # copying results stats
+#             cp -r {params.stats_dir} {params.archive_tmp_dir}/Analysis/.
+#             # copying results quast
+#             cp -r {params.quast_dir} {params.archive_tmp_dir}/Analysis/results/.
+#             # remove downloaded fasta files from quast to reduce archive size
+#             find {params.archive_tmp_dir}/Analysis/results/. -type f -name "*.fasta" -exec rm {{}} +
+#             # copying libraries and HTML
+#             cp {OUTPUTDIR}/*.{{js,css,json}} {params.archive_tmp_dir}/.
+#             cp {OUTPUTDIR}/workflow.{{png,pdf}} {params.archive_tmp_dir}/.
+#             cp {OUTPUTDIR}/REPORT.html {params.archive_tmp_dir}/.
+#             zip {output} {params.archive_tmp_dir}
+#             rm -rf {params.archive_tmp_dir}
+#             """
+
+
+
+# rule CHECK_TOOL_VERSION:
+#     log:
+#         U_LOG
+#     benchmark:
+#         "%s/benchmarks/CHECK_TOOL_VERSION.json" % U_OUT
+#     output:
+#         "%s/tools.versions" % U_OUT
+#     shell:
+#         """
+#         echo "# ht2-stat" > {output}
+#         ht2-stat --version >> {output}
+#         echo "# ht2-stat-draw.pl" >> {output}
+#         which ht2-stat-draw.pl | md5sum | awk '{{print $1}}' >> {output}
+#         echo "# Trimmomatic" >> {output}
+#         echo "{config[Preprocessing][trimmomatic][jarfile]}" | grep -Eo '[0-9]+.[0-9]+' >> {output}
+#         echo "# Sortmerna" >> {output} 2>&1
+#         sortmerna --version >> {output} 2>&1
+#         echo "# megahit" >> {output}
+#         megahit --help > megahit_version 2>&1
+#         cat megahit_version | head -1 >> {output}
+#         echo "# bwa" >> {output}
+#         bwa > bwa_version 2>&1
+#         cat bwa_version | grep -i "version" >> {output}
+#         echo "# samtools" >> {output}
+#         samtools > samtools_version 2>&1
+#         cat samtools_version | grep "Version" >> {output}
+#         echo "# bamToFastq" >> {output}
+#         bamToFastq > bamToFastq_version 2>&1
+#         cat bamToFastq_version | grep -i "version" >> {output}
+#         echo "# idba_ud" >> {output}
+#         echo "# fq2fa" >> {output}
+#         echo "# cap3"  >> {output}
+#         echo "# coverageBed"  >> {output}
+#         echo "# bh_tsne" >> {output}
+#         echo "# KronaTools" >> {output}
+
+
+# master command
+rule REPORT:
+    input:
+        "Report/REPORT.html"
+    output:
+        touch('report.done')
