@@ -1,12 +1,12 @@
 rule cap3:
     input:
-        '{step}/mg.idba_preprocessed.1.fa',
-        '{step}/mg.idba_unmapped.2.fa',
+        'Assembly/mg.idba_preprocessed.1.fa',
+        'Assembly/mg.idba_unmapped.2.fa',
     output:
-        '{step}/mg.assembly.merged.fa',
+        'Assembly/mg.assembly.merged.fa',
     shell:
         """
-        NAME={wildcards.step}/mg.assembly
+        NAME=Assembly/mg.assembly
         cat {input} > $NAME.cat.fa
         cap3 $NAME.cat.fa
         # Concatenate assembled contigs, singletons and rename the contigs

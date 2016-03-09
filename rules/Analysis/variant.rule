@@ -53,14 +53,14 @@ rule variant_calling:
         #### "Merging outputs from all the callers"
         ### Must remove colons from the contig names in upstream steps. Unable to merge the variants
         ### due to this problem
-        #vcf-isec -f -a -n +2 {output[0]} {output[1]} > {wildcards.step}/{wildcards.type}.variants.isec.vcf
+        #vcf-isec -f -a -n +2 {output[0]} {output[1]} > Analysis/{wildcards.type}.variants.isec.vcf
 
         ## Compress and index the output.
-        #bgzip -c {wildcards.step}/{wildcards.type}.variants.isec.vcf > {output[0]}
+        #bgzip -c Analysis/{wildcards.type}.variants.isec.vcf > {output[0]}
         #tabix -f -p vcf {output[0]}
 
         # Clean up directory
         echo "Cleaning up directory"
-        cat log.txt >> {log}
-        rm -f {wildcards.step}/{wildcards.type}.variants.isec.vcf log.txt
+        #cat log.txt 
+        rm -f Analysis/{wildcards.type}.variants.isec.vcf log.txt
         """

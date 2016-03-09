@@ -10,7 +10,7 @@ rule mapping_on_hybrid_assembly:
     shell:
         """
         SAMHEADER="@RG\\tID:{SAMPLE}\\tSM:MG"
-        PREFIX={wildcards.step}/{wildcards.type}.reads
+        PREFIX=Assembly/{wildcards.type}.reads
         # index
         bwa index {input[3]}
         # merge paired and se

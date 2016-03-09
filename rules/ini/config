@@ -23,7 +23,8 @@ def dict_merge(a, b):
 
 # default configuration file
 configfile:
-    "src/config.imp.json"
+    srcdir("../../src/config.imp.json")
+
 
 # default executable for snakmake
 shell.executable("bash")
@@ -41,7 +42,9 @@ if os.path.exists(CUSTOM_CONFIG_PATH):
 #print(config)
 
 # some parameters
+ROOT_DIR = os.environ.get("ROOTDIR", config['imp_root'])
 SRCDIR = os.environ.get("SRCDIR", config['imp_src'])
+LIBDIR = os.environ.get("LIBDIR", config['imp_lib'])
 
 # get parameters from the command line
 OUTPUTDIR = os.environ.get("OUTPUTDIR", config['outputdir'])

@@ -1,28 +1,43 @@
-rule megahit_assembly:
+MEGAHIT_ASSEMBLY_SHELL = """
+echo "[x] Performing {wildcards.type} assembly step '{wildcards.loop}' using MEGAHIT"
+if [ -d "{params.outdir}" ]; then
+    rm -rf {params.outdir}
+fi
+MAX_MEM="$(({MEMTOTAL} * 1000000000))"
+megahit -1 {input[0]} \
+-2 {input[1]} \
+-r {input[2]} \
+-o {params.outdir} \
+--k-min {config[idba_ud][mink]} \
+--k-max {config[idba_ud][maxk]} \
+--k-step {config[idba_ud][step]} \
+--no-bubble \
+-t {THREADS} --cpu-only \
+-m "${{MAX_MEM}}" \
+--mem-flag 1
+"""
+
+rule megahit_assembly_from_preprocessing:
     input:
-        '{step}/{type}.r1.{name}.fq',
-        '{step}/{type}.r2.{name}.fq',
-        '{step}/{type}.se.{name}.fq',
+        'Preprocessing/{type}.r1.preprocessed.fq',
+        'Preprocessing/{type}.r2.preprocessed.fq',
+        'Preprocessing/{type}.se.preprocessed.fq'
     output:
-        '{step}/{type}.megahit_{name}.{loop}/final.contigs.fa'
+        'Assembly/{type}.megahit_preprocessed.{loop}/final.contigs.fa'
     params:
-        outdir='{step}/{type}.megahit_{name}.{loop}'
+        outdir = 'Assembly/{type}.megahit_preprocessed.{loop}'
     shell:
-        """
-        echo "[x] Performing {wildcards.type} assembly step '{wildcards.loop}' using MEGAHIT"
-        if [ -d "{params.outdir}" ]; then
-            rm -rf {params.outdir}
-        fi
-        MAX_MEM="$(({MEMTOTAL} * 1000000000))"
-        megahit -1 {input[0]} \
-        -2 {input[1]} \
-        -r {input[2]} \
-        -o {params.outdir} \
-        --k-min {config[idba_ud][mink]} \
-        --k-max {config[idba_ud][maxk]} \
-        --k-step {config[idba_ud][step]} \
-        --no-bubble \
-        -t {THREADS} --cpu-only \
-        -m "${{MAX_MEM}}" \
-        --mem-flag 1
-        """
+        MEGAHIT_ASSEMBLY_SHELL
+
+
+rule megahit_assembly_from_assembly:
+    input:
+        'Assembly/{type}.r1.unmapped.fq',
+        'Assembly/{type}.r2.unmapped.fq',
+        'Assembly/{type}.se.unmapped.fq'
+    output:
+        'Assembly/{type}.megahit_unmapped.{loop}/final.contigs.fa'
+    params:
+        outdir='Assembly/{type}.megahit_unmapped.{loop}'
+    shell:
+        MEGAHIT_ASSEMBLY_SHELL
