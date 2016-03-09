@@ -30,7 +30,7 @@ rule megahit_assembly_from_preprocessing:
         MEGAHIT_ASSEMBLY_SHELL
 
 
-rule megahit_assembly_from_assembly:
+rule megahit_assembly_from_unmapped:
     input:
         'Assembly/{type}.r1.unmapped.fq',
         'Assembly/{type}.r2.unmapped.fq',
