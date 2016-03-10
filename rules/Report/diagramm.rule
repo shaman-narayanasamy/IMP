@@ -1,4 +1,3 @@
-print(workflow.basedir)
 rule diagramm:
     message:
         "Creating diagramms."
@@ -8,6 +7,6 @@ rule diagramm:
     shell:
         """
         mkdir -p Report
-        snakemake ALL --forceall --dag | dot -Tpng > Report/workflow.png
-        snakemake ALL --forceall --dag | dot -Tpdf > Report/workflow.pdf
+        snakemake -s {ROOT_DIR}/Snakefile ALL --forceall --dag | dot -Tpng > Report/workflow.png
+        snakemake -s {ROOT_DIR}/Snakefile ALL --forceall --dag | dot -Tpdf > Report/workflow.pdf
         """
