@@ -20,7 +20,7 @@ workdir:
 
 
 # INTEGRATIVE MG-MT workflow
-if MG is nont None and MTis not None:
+if MG is not None and MT is not None:
     include:
         "workflows/integrative/Preprocessing"
 
