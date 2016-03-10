@@ -52,13 +52,15 @@ elif MG:
         "workflows/single_omics/mg/Preprocessing"
     include:
         "workflows/single_omics/mg/Assembly"
+    include:
+        "workflows/single_omics/mg/Analysis"
 
     # master command
     rule ALL:
         input:
             "preprocessing.done",
             "assembly.done",
-            #"analysis.done",
+            "analysis.done",
             #"report.done"
         output:
             touch('workflow.done')
@@ -69,13 +71,15 @@ elif MT:
         "workflows/single_omics/mt/Preprocessing"
     include:
         "workflows/single_omics/mt/Assembly"
+    include:
+        "workflows/single_omics/mt/Analysis"
 
     # master command
     rule ALL:
         input:
             "preprocessing.done",
             "assembly.done",
-            #"analysis.done",
+            "analysis.done",
             #"report.done"
         output:
             touch('workflow.done')

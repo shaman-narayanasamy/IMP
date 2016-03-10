@@ -1,0 +1,63 @@
+# include rules for the Analysis part of the workflow
+
+include:
+    '../../../rules/Analysis/assembly.contig-length.rule'
+include:
+    '../../../rules/Analysis/contig-depth.rule'
+include:
+    '../../../rules/Analysis/contig-length.rule'
+include:
+    '../../../rules/Analysis/fastqc.rules'
+include:
+    '../../../rules/Analysis/gene-depth.rule'
+include:
+    '../../../rules/Analysis/krona.rule'
+include:
+    '../../../rules/Analysis/prokka.rule'
+include:
+    '../../../rules/Analysis/quast.rule'
+include:
+    '../../../rules/Analysis/reads-count.rule'
+include:
+    '../../../rules/Analysis/stat-output.rename.rule'
+include:
+    '../../../rules/Analysis/variant.rule'
+include:
+    '../../../rules/Analysis/visualize.rules'
+include:
+    '../../../rules/Analysis/vizbin.rule'
+
+
+# master command
+rule ANALYSIS:
+    input:
+        "Analysis/mg.assembly.length.txt",
+        "Analysis/mg.assembly.gc_content.txt",
+        "Analysis/results/quast/summary/combined_quast_output/contigs_reports/nucmer_output/aux/mg.assembly.merged.coords_edited",
+        "Analysis/mg.annotation.bed",
+        "Analysis/mg.gene_depth.hist",
+        "Analysis/mg.gene_depth.avg",
+        "Analysis/mg.gene.len",
+        "Analysis/mg.prokkaID2ec.txt",
+        # #Analysis/"mg.variants.isec.vcf.gz",
+        "Analysis/mg.variants.samtools.vcf.gz",
+        "Analysis/mg.variants.freebayes.vcf.gz",
+        "Analysis/mg.variants.platypus.vcf.gz",
+        "Analysis/mg.assembly.contig_coverage.txt",
+        "Analysis/mg.assembly.contig_depth.txt",
+        "Analysis/mg.assembly.contig_flagstat.txt",
+        "Analysis/results/mg.gene_kegg_krona.txt",
+        "Analysis/results/mg.gene_kegg_krona.html",
+        "Analysis/stats/mg/mg.r1.fq_fastqc.html",
+        "Analysis/stats/mg/mg.r2.fq_fastqc.html",
+        "Analysis/stats/mg/mg.r1.fq_fastqc.zip",
+        "Analysis/stats/mg/mg.r2.fq_fastqc.zip",
+        "Analysis/stats/mg/mg.r1_preprocessed_fastqc.zip",
+        "Analysis/stats/mg/mg.r2_preprocessed_fastqc.zip",
+        "Analysis/stats/mg/mg.se_preprocessed_fastqc.zip",
+        "Analysis/stats/mg/mg.r1_preprocessed_fastqc.html",
+        "Analysis/stats/mg/mg.r2_preprocessed_fastqc.html",
+        "Analysis/stats/mg/mg.se_preprocessed_fastqc.html",
+
+    output:
+        touch('analysis.done')
