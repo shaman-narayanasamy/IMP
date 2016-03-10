@@ -57,6 +57,8 @@ rule ANALYSIS:
         "Analysis/stats/mt/mt.r1_preprocessed_fastqc.html",
         "Analysis/stats/mt/mt.r2_preprocessed_fastqc.html",
         "Analysis/stats/mt/mt.se_preprocessed_fastqc.html",
+        "Analysis/mt.vizbin.filtered.fa",
+        "Analysis/mt.vizbin.with-contig-names.points",
 
     output:
         touch('analysis.done')
