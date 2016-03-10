@@ -6,7 +6,7 @@ rule cap3:
         'Assembly/{type}.assembly.merged.fa',
     shell:
         """
-        NAME=Assembly/mg.assembly
+        NAME=Assembly/{wildcards.type}.assembly
         cat {input} > $NAME.cat.fa
         cap3 $NAME.cat.fa
         # Concatenate assembled contigs, singletons and rename the contigs
