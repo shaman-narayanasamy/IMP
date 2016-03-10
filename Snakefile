@@ -17,6 +17,9 @@ workdir:
     OUTPUTDIR
 
 # include rules for the workflow based on the input parameters
+
+
+# INTEGRATIVE MG-MT workflow
 if MG and MT:
     include:
         "workflows/integrative/Preprocessing"
@@ -30,12 +33,47 @@ if MG and MT:
     include:
         "workflows/integrative/Report"
 
+
+    # master command
+    rule ALL:
+        input:
+            "preprocessing.done",
+            "assembly.done",
+            "analysis.done",
+            "report.done"
+        output:
+            touch('workflow.done')
+
+
+
+# Single omics MG workflow
+elif MG:
+    include:
+        "workflows/single_omics/mg/Preprocessing"
+    include:
+        "workflows/single_omics/mg/Assembly"
+
+    # master command
+    rule ALL:
+        input:
+            "preprocessing.done",
+            "assembly.done",
+            #"analysis.done",
+            #"report.done"
+        output:
+            touch('workflow.done')
+
+
+else:
+    raise Exception('Single MT omics not implemented yet.')
+
+
 # master command
-rule ALL:
-    input:
-        "preprocessing.done",
-        "assembly.done",
-        "analysis.done",
-        "report.done"
-    output:
-        touch('workflow.done')
+# rule ALL:
+#     input:
+#         "preprocessing.done",
+#         "assembly.done",
+#         "analysis.done",
+#         "report.done"
+#     output:
+#         touch('workflow.done')

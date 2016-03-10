@@ -1,4 +1,4 @@
-# include rules for the Preprocessing part of the workflow
+# include rules for the Assembly part of the workflow
 
 # include needed rules
 include:

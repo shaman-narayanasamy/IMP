@@ -7,6 +7,6 @@ rule diagramm:
     shell:
         """
         mkdir -p Report
-        snakemake -s {ROOT_DIR}/workflows/integrative/Snakefile ALL --forceall --dag | dot -Tpng > Report/workflow.png
-        snakemake -s {ROOT_DIR}/workflows/integrative/Snakefile ALL --forceall --dag | dot -Tpdf > Report/workflow.pdf
+        snakemake ALL --forceall --dag | dot -Tpng > Report/workflow.png
+        snakemake ALL --forceall --dag | dot -Tpdf > Report/workflow.pdf
         """
