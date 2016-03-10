@@ -45,6 +45,7 @@ GC.dat_file	    <- args[12]
 coords_file	    <- args[13]
 annot_file	    <- args[14]
 nucmer_file	    <- args[15]
+function_script	    <- args[16]
 
 print("DONE: Reading arguments")
 
@@ -52,7 +53,7 @@ print("DONE: Reading arguments")
 ## Initialize functions for various calculations and normalizations
 ###################################################################################################
 print("START: Reading functions")
-source("src/IMP_plot_functions.R")
+source(function_script)
 print("DONE: Reading functions")
 
 ###################################################################################################
