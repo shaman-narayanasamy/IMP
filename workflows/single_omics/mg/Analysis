@@ -58,6 +58,12 @@ rule ANALYSIS:
         "Analysis/stats/mg/mg.r1_preprocessed_fastqc.html",
         "Analysis/stats/mg/mg.r2_preprocessed_fastqc.html",
         "Analysis/stats/mg/mg.se_preprocessed_fastqc.html",
+        "Analysis/mg.vizbin.filtered.fa",
+        "Analysis/mg.vizbin.with-contig-names.points",
+        "Analysis/results/IMP-vizbin_length.png",
+        "Analysis/results/IMP-vizbin_length_GC.png",
+        "Analysis/results/IMP-vizbin_length_geneDensity.png",
+        "Analysis/results/IMP-vizbin_standard.png"
 
     output:
         touch('analysis.done')
