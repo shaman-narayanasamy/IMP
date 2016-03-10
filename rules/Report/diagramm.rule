@@ -1,3 +1,4 @@
+print(workflow.basedir)
 rule diagramm:
     message:
         "Creating diagramms."
