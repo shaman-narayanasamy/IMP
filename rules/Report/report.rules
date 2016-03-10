@@ -28,7 +28,7 @@ rule make_report:
             json.dump(config, confgjson)
             whandle.write("IMP_CONFIG = %s;" % towrite)
 
-        shell("cp {input[0]} {output}")
+        shell("cp {input[0]} {output[0]}")
         # shell(
         # """
         # cp -f {input[1]} {params.outdir}
