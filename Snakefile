@@ -64,9 +64,24 @@ elif MG:
             touch('workflow.done')
 
 
-else:
-    raise Exception('Single MT omics not implemented yet.')
+elif MT:
+    include:
+        "workflows/single_omics/mt/Preprocessing"
+    include:
+        "workflows/single_omics/mt/Assembly"
 
+    # master command
+    rule ALL:
+        input:
+            "preprocessing.done",
+            "assembly.done",
+            #"analysis.done",
+            #"report.done"
+        output:
+            touch('workflow.done')
+
+else:
+    raise Exception('No input data.')
 
 # master command
 # rule ALL:
