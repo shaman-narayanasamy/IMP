@@ -347,11 +347,11 @@ MG.read.count.final <- unique(MG.read.count[,c(5,4,2)])
 MG.read.count.final$count <- as.integer(MG.read.count.final$count)
 
 # Write out table in html and tab separated files
-sink(name_plot("MG.read_stats.html"))
+sink(name_plot("mg.read_stats.html"))
 print(xtable(MG.read.count.final, html.table.attributes=""), type = "html")
 sink()
 
-write.table(MG.read.count.final, name_plot("MG.read_stats.txt"),
+write.table(MG.read.count.final, name_plot("mg.read_stats.txt"),
 	    sep="\t", quote=F,
 	    row.names=F)
 
@@ -405,11 +405,11 @@ MT.read.count.final <- unique(MT.read.count[,c(5,4,2)])
 MT.read.count.final$count <- as.integer(MT.read.count.final$count)
 
 # Write out table in html and tab separated files
-sink(name_plot("MT.read_stats.html"))
+sink(name_plot("mt.read_stats.html"))
 print(xtable(MT.read.count.final, html.table.attributes=""), type = "html")
 sink()
 
-write.table(MT.read.count.final, name_plot("MT.read_stats.txt"),
+write.table(MT.read.count.final, name_plot("mt.read_stats.txt"),
 	    sep="\t", quote=F,
 	    row.names=F)
 
