@@ -10,11 +10,11 @@ rule make_report:
         "Report/lib/vizbin_logo.png",
         "Report/lib/IMP_logo.png",
         "Report/workflow.png",
-        "Report/workflow.pdf",
-        "Report/data.js",
-        "Report/config.json"
+        "Report/workflow.pdf"
     output:
         "REPORT.html",
+        "Report/data.js",
+        "Report/config.json"
     message:
         'Create report'
     run:
