@@ -1,4 +1,4 @@
-rule RENAME_STAT_OUTPUT:
+rule rename_stat_output:
     input:
         'Analysis/stats/mt/mt.r1.preprocessed.fq_fastqc.zip',
         'Analysis/stats/mt/mt.r2.preprocessed.fq_fastqc.zip',

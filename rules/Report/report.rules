@@ -22,11 +22,12 @@ rule make_report:
         config['IMP_VERSION'] = '1.2.2'
         config['MG'] = MG
         config['MT'] = MT
+        shell("mkdir -p Report")
         with open('Report/data.js', 'w') as whandle, open('Report/config.json', 'w') as confgjson:
             towrite = json.dumps(config)
             json.dump(config, confgjson)
             whandle.write("IMP_CONFIG = %s;" % towrite)
-        shell("mkdir -p Report")
+
         shell("cp {input[0]} {output}")
         # shell(
         # """
