@@ -1,0 +1,15 @@
+rule cap3:
+    input:
+        'Assembly/{type}.idba_preprocessed.1.fa',
+        'Assembly/{type}.idba_unmapped.2.fa',
+    output:
+        'Assembly/{type}.assembly.merged.fa',
+    shell:
+        """
+        NAME=Assembly/mg.assembly
+        cat {input} > $NAME.cat.fa
+        cap3 $NAME.cat.fa
+        # Concatenate assembled contigs, singletons and rename the contigs
+        cat $NAME.cat.fa.cap.contigs $NAME.cat.fa.cap.singlets | \
+        awk '/^>/{{print \">contig_\" ++i; next}}{{print}}' > $NAME.merged.fa
+        """

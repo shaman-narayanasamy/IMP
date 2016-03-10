@@ -1,0 +1,29 @@
+# include rules for the Assembly part of the workflow
+
+# include needed rules
+include:
+    '../../../rules/Assembly/common/bwa.index.rule'
+
+include:
+    '../../../rules/Assembly/common/idba_ud.rules'
+
+include:
+    '../../../rules/Assembly/common/megahit.rules'
+
+
+include:
+    '../../../rules/Assembly/common/merge-assembly.rules'
+
+
+include:
+    '../../../rules/Assembly/single-omic/extract-unmapped.rules'
+
+include:
+    '../../../rules/Assembly/common/mapping.rules'
+
+# master command
+rule ASSEMBLY:
+    input:
+            'Assembly/mg.reads.sorted.bam'
+    output:
+        touch('assembly.done')
