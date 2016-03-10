@@ -1,0 +1,27 @@
+rule mapping_on_assembly:
+    input:
+        'Preprocessing/{type}.r1.preprocessed.fq',
+        'Preprocessing/{type}.r2.preprocessed.fq',
+        'Preprocessing/{type}.se.preprocessed.fq',
+        'Assembly/%s.assembly.merged.fa' % ASS
+    output:
+        'Assembly/{type}.reads.sorted.bam',
+        'Assembly/{type}.reads.sorted.bam.bai',
+    shell:
+        """
+        SAMHEADER="@RG\\tID:{SAMPLE}\\tSM:MG"
+        PREFIX=Assembly/{wildcards.type}.reads
+        # index
+        bwa index {input[3]}
+        # merge paired and se
+        samtools merge -@ {THREADS} -f $PREFIX.merged.bam \
+        <(bwa mem -v 1 -t {THREADS} -M -R \"$SAMHEADER\" {input[3]} {input[0]} {input[1]} | \
+        samtools view -@ {THREADS} -bS -) \
+        <(bwa mem -v 1 -t {THREADS} -M -R \"$SAMHEADER\" {input[3]} {input[2]} | \
+        samtools view -@ {THREADS} -bS -)
+        # sort
+        samtools sort -@ {THREADS} -m {MEMCORE}G $PREFIX.merged.bam $PREFIX.sorted
+        rm $PREFIX.merged.bam
+        # index
+        samtools index $PREFIX.sorted.bam
+        """
