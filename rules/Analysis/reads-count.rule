@@ -13,9 +13,9 @@ trimmed_fq_files = [
     'Preprocessing/{type}.se.trimmed.fq'
 ]
 rna_filtered_fq_mt_files = [
-    'Preprocessing/mt.r1.rna_filtered.fq',
-    'Preprocessing/mt.r2.rna_filtered.fq',
-    'Preprocessing/mt.se.rna_filtered.fq',
+    'Preprocessing/mt.r1.trimmed.rna_filtered.fq',
+    'Preprocessing/mt.r2.trimmed.rna_filtered.fq',
+    'Preprocessing/mt.se.trimmed.rna_filtered.fq',
 ]
 
 def reads_input_files(wildcards):
@@ -26,7 +26,7 @@ def reads_input_files(wildcards):
         base += preprocessed_fq_files
     if config['preprocessing_filtering']:
         base += trimmed_fq_files
-    if wildcards.type == 'mt':
+    if wildcards.type == 'mt' and not config['skip_preprocessing']:
         base += rna_filtered_fq_mt_files
     return expand(base, type=wildcards.type)
 

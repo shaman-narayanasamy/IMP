@@ -113,6 +113,6 @@ include:
 # master command
 rule REPORT:
     input:
-        "Report/REPORT.html"
+        "REPORT.html"
     output:
         touch('report.done')

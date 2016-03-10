@@ -81,9 +81,9 @@ rule visualize:
        'Analysis/mg.variants.samtools.vcf.gz',
        'Analysis/mt.variants.samtools.vcf.gz',
        'Analysis/mgmt.assembly.gc_content.txt',
-       "mgmt.vizbin.with-contig-names.points",
-       "annotation/annotation.filt.gff",
-       "results/quast/summary/combined_quast_output/contigs_reports/nucmer_output/aux/mgmt.assembly.merged.coords_edited"
+       "Analysis/mgmt.vizbin.with-contig-names.points",
+       "Analysis/annotation/annotation.filt.gff",
+       "Analysis/results/quast/summary/combined_quast_output/contigs_reports/nucmer_output/aux/mgmt.assembly.merged.coords_edited"
     output:
         analysis_plot_files_output()
     shell:

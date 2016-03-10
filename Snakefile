@@ -1,42 +1,41 @@
+# include configuration file
 include:
-    "rules/config"
+    "rules/ini/config"
 
+# define the data types used and the assembly
+if MG and MT:
+    TYPES = ['mg', 'mt']
+    ASS = 'mgmt'
+elif MG:
+    TYPES = ['mg']
+    ASS = 'mg'
+elif MT:
+    TYPES = ['mt']
+    ASS = 'mt'
 
-def prepare_environment(stepname):
-    """
-    Prepare the output directories and logs.
-    stepname: the name of the pipeline step
-    return: the step master directory, the step log
-    """
-    out = os.path.join(OUTPUTDIR, stepname)
-    # mkdirs
-    if not os.path.exists(out):
-        os.makedirs(out)
-    elif not os.path.isdir(out):
-        raise OSError("//[IMP] Output is not a directory: %s" % out)
-    if not os.path.exists(TMPDIR):
-        os.makedirs(TMPDIR)
-    bench = os.path.join(out, 'benchmarks')
-    if not os.path.exists(bench):
-        os.makedirs(bench)
+workdir:
+    OUTPUTDIR
 
-    return out, os.path.join(out, '%s.log' % stepname)
+# include rules for the workflow based on the input parameters
+if MG and MT:
+    include:
+        "workflows/integrative/Preprocessing"
 
+    include:
+        "workflows/integrative/Assembly"
 
-# INCLUDES PROCESSING RULES
-include:
-    "rules/Preprocessing/master.rules"
-include:
-    "rules/Assembly/master.rules"
-include:
-    "rules/Analysis/master.rules"
-include:
-    "rules/Util.rules"
+    include:
+        "workflows/integrative/Analysis"
 
+    include:
+        "workflows/integrative/Report"
+
+# master command
 rule ALL:
     input:
-        preprocessing_output_files(),
-        assembly_output_files(),
-        analysis_output_files()
-    shell:
-        "echo 'DONE'"
+        "preprocessing.done",
+        "assembly.done",
+        "analysis.done",
+        "report.done"
+    output:
+        touch('workflow.done')
