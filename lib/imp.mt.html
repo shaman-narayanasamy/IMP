@@ -87,12 +87,6 @@
               <section id="raw-section" class="row">
                 <h2><small>Raw data QC</small></h2>
                 <div id="but-raw" class="btn-group" data-toggle="buttons" name="raw-data">
-                    <label class="btn btn-primary active">
-                        <input id="but-raw-mgr1" type="radio" value="Analysis/stats/mg/mg.r1.fq_fastqc.html" class="btn btn-default" name="raw-data" checked>Metagenomic pair-1 FASTQC report
-                    </label>
-                  <label class="btn btn-primary">
-                      <input id="but-raw-mgr2" type="radio" value="Analysis/stats/mg/mg.r2.fq_fastqc.html" class="btn btn-default" name="raw-data">Metagenomic pair-2 FASTQC report
-                  </label>
                   <label class="btn btn-primary">
                       <input id="but-raw-mtr1" type="radio" value="Analysis/stats/mt/mt.r1.fq_fastqc.html" class="btn btn-default" name="raw-data">Metatranscriptomic pair-1 FASTQC report
                   </label>
@@ -101,7 +95,7 @@
                   </label>
                 </div>
                 <div class="row">
-                    <iframe id="ifr-raw-stat" src="Analysis/stats/mg/mg.r1.fq_fastqc.html" style="position: absolute; width: 100%;height: 100%; border: none"></iframe>
+                    <iframe id="ifr-raw-stat" src="Analysis/stats/mt/mt.r1.fq_fastqc.html" style="position: absolute; width: 100%;height: 100%; border: none"></iframe>
                 </div>
               </section>
             </div>
@@ -112,15 +106,6 @@
             <section id="preprocess-section" class="row">
                 <h2><small>Preprocessed data QC</small></h2>
                 <div id="but-preprocess" class="btn-group" data-toggle="buttons" name="preprocess-data">
-                    <label class="btn btn-primary active">
-                        <input id="but-preprocess-mgr1" type="radio" value="Analysis/stats/mg/mg.r1_preprocessed_fastqc.html" class="btn btn-default" name="preprocess-data" checked>Metagenomic pair-1 FASTQC report
-                    </label>
-                  <label class="btn btn-primary">
-                      <input id="but-preprocess-mgr2" type="radio" value="Analysis/stats/mg/mg.r2_preprocessed_fastqc.html" class="btn btn-default" name="preprocess-data">Metagenomic pair-2 FASTQC report
-                  </label>
-                  <label class="btn btn-primary">
-                      <input id="but-preprocess-mgse" type="radio" value="Analysis/stats/mg/mg.se_preprocessed_fastqc.html" class="btn btn-default" name="preprocess-data">Metagenomic single-end FASTQC report
-                  </label>
                   <label class="btn btn-primary">
                       <input id="but-preprocess-mtr1" type="radio" value="Analysis/stats/mt/mt.r1_preprocessed_fastqc.html" class="btn btn-default" name="preprocess-data">Metatranscriptomic pair-1 FASTQC report
                   </label>
@@ -132,7 +117,7 @@
                   </label>
                 </div>
                 <div class="row">
-                    <iframe id="ifr-preprocess-stat" src="Analysis/stats/mg/mg.r1_preprocessed_fastqc.html" style="position: absolute; width: 100%;height: 100%; border: none"></iframe>
+                    <iframe id="ifr-preprocess-stat" src="Analysis/stats/mt/mt.r1_preprocessed_fastqc.html" style="position: absolute; width: 100%;height: 100%; border: none"></iframe>
                 </div>
             </section>
           </div>
@@ -233,9 +218,6 @@
           <section id="annotation-section" class="row">
               <h1><small>KEGG Ontology based Functional Krona Chart</small></h1>
               <div id="but-annot" class="btn-group" data-toggle="buttons" name="annot-data">
-                  <label class="btn btn-primary active">
-                      <input id="but-annot-mg" type="radio" value="Analysis/results/mg.gene_kegg_krona.html" class="btn btn-default" name="annot-data" checked>Metagenome
-                  </label>
                 <label class="btn btn-primary">
                     <input id="but-annot-mt" type="radio" value="Analysis/results/mt.gene_kegg_krona.html" class="btn btn-default" name="annot-data">Metatranscriptome
                 </label>
@@ -274,7 +256,7 @@
               <div class="row">
                   <p class="lead text-center">
                       In order to perform a human augmented binning of the contigs, please import the following
-                      <a href="Analysis/mgmt.vizbin.filtered.fa">fasta file</a> to
+                      <a href="Analysis/mt.vizbin.filtered.fa">fasta file</a> to
                   </p>
               </div>
               <div class="row">
@@ -299,9 +281,6 @@
                    <input id="but-variant2" type="radio" value="Analysis/results/IMP-var_density.png" class="btn btn-default" name="variant-data">Variant density beanplot
                </label>
                <label class="btn btn-primary">
-                   <input id="but-variant3" type="radio" value="Analysis/results/IMP-vizbin_length_mgvardens.png" class="btn btn-default" name="variant-data">VizBin + metagenomic variant density
-               </label>
-               <label class="btn btn-primary">
                    <input id="but-variant4" type="radio" value="Analysis/results/IMP-vizbin_length_mtvardens.png" class="btn btn-default" name="variant-data">VizBin + metatranscriptomic variant density
                </label>
            </div>
@@ -311,7 +290,7 @@
            <div class="row">
                <p class="lead vizbin-img text-center" style="display:none">
                    In order to perform a human augmented binning of the contigs, please import the following
-                   <a href="Analysis/mgmt.vizbin.filtered.fa">fasta file</a> to
+                   <a href="Analysis/mt.vizbin.filtered.fa">fasta file</a> to
                </p>
            </div>
            <div class="vizbin-img row" style="display:none">
