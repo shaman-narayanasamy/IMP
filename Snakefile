@@ -34,18 +34,6 @@ if MG and MT:
         "workflows/integrative/Report"
 
 
-    # master command
-    rule ALL:
-        input:
-            "preprocessing.done",
-            "assembly.done",
-            "analysis.done",
-            "report.done"
-        output:
-            touch('workflow.done')
-
-
-
 # Single omics MG workflow
 elif MG:
     include:
@@ -54,16 +42,8 @@ elif MG:
         "workflows/single_omics/mg/Assembly"
     include:
         "workflows/single_omics/mg/Analysis"
-
-    # master command
-    rule ALL:
-        input:
-            "preprocessing.done",
-            "assembly.done",
-            "analysis.done",
-            #"report.done"
-        output:
-            touch('workflow.done')
+    include:
+        "workflows/single_omics/mg/Report"
 
 
 elif MT:
@@ -73,26 +53,18 @@ elif MT:
         "workflows/single_omics/mt/Assembly"
     include:
         "workflows/single_omics/mt/Analysis"
-
-    # master command
-    rule ALL:
-        input:
-            "preprocessing.done",
-            "assembly.done",
-            "analysis.done",
-            #"report.done"
-        output:
-            touch('workflow.done')
+    include:
+        "workflows/single_omics/mt/Report"
 
 else:
     raise Exception('No input data.')
 
 # master command
-# rule ALL:
-#     input:
-#         "preprocessing.done",
-#         "assembly.done",
-#         "analysis.done",
-#         "report.done"
-#     output:
-#         touch('workflow.done')
+rule ALL:
+    input:
+        "preprocessing.done",
+        "assembly.done",
+        "analysis.done",
+        "report.done"
+    output:
+        touch('workflow.done')

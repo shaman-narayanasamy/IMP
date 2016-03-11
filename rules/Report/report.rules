@@ -13,8 +13,8 @@ rule make_report:
         "Report/workflow.pdf"
     output:
         "REPORT.html",
-        "Report/data.js",
-        "Report/config.json"
+        #"Report/data.js",
+        #"Report/config.json"
     message:
         'Create report'
     run:
