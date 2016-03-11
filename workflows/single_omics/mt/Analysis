@@ -33,6 +33,7 @@ rule ANALYSIS:
     input:
         "Analysis/mt.assembly.length.txt",
         "Analysis/mt.assembly.gc_content.txt",
+        "Analysis/results/quast/summary/combined_quast_output/contigs_reports/nucmer_output/aux/mt.assembly.merged.coords_edited",
         "Analysis/mt.annotation.bed",
         "Analysis/mt.gene_depth.hist",
         "Analysis/mt.gene_depth.avg",

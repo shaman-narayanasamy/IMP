@@ -7,6 +7,10 @@ rule quast:
     shell:
         """
         metaquast -t {THREADS} -o Analysis/results/quast {input[0]} --max-ref-number 75
-        sed -e 's/|//g' Analysis/results/quast/combined_quast_output/contigs_reports/nucmer_output/aux/{wildcards.type}.assembly.merged.coords \
-        | sed -e 's/*\s/\t/g' | tail -n +3 > {output[1]}
+        FFILE="Analysis/results/quast/combined_quast_output/contigs_reports/nucmer_output/aux/{wildcards.type}.assembly.merged.coords"
+        if [ -f $FFILE ];then
+        sed -e 's/|//g' $FFILE | sed -e 's/*\s/\t/g' | tail -n +3 > {output[1]}
+        else
+        touch {output}
+        fi
         """
