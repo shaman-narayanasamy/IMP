@@ -11,11 +11,28 @@ input_filtering = {
     ]
 }
 
+input_symlinking = {
+    'mg': [
+        'Preprocessing/mg.r1.trimmed.{filter}_filtered.fq',
+        'Preprocessing/mg.r2.trimmed.{filter}_filtered.fq',
+        'Preprocessing/mg.se.trimmed.{filter}_filtered.fq'
+    ],
+    'mt': [
+        'Preprocessing/mt.r1.trimmed.rna_filtered.{filter}_filtered.fq',
+        'Preprocessing/mt.r2.trimmed.rna_filtered.{filter}_filtered.fq',
+        'Preprocessing/mt.se.trimmed.rna_filtered.{filter}_filtered.fq'
+    ]
+}
+
 def filtering_input(wildcards):
-    for wildcard in wildcards:
-        if str(wildcard) in TYPES:
-            return input_filtering[wildcard]
-        return "filtering-input-no-file-here"
+    if wildcards.type in TYPES:
+        return input_filtering[wildcards.type]
+    return "filtering-input-no-file-here"
+
+def symlink_input(wildcards):
+    if wildcards.type in TYPES:
+        return expand(input_symlinking[wildcards.type], filter=config["filtering"]["filter"])
+    return "filtering-input-no-file-here"
 
 rule filtering:
     input:
@@ -25,9 +42,9 @@ rule filtering:
             "{p}/filtering/{filter}.{ext}", filter=config["filtering"]["filter"],
             ext=['fa', 'fa.amb', 'fa.ann', 'fa.bwt', 'fa.pac', 'fa.sa'], p=DBPATH)
     output:
-        'Preprocessing/{type}.r1.preprocessed.fq',
-        'Preprocessing/{type}.r2.preprocessed.fq',
-        'Preprocessing/{type}.se.preprocessed.fq'
+        'Preprocessing/{type}.r1.{prefix}.{filter}_filtered.fq',
+        'Preprocessing/{type}.r2.{prefix}.{filter}_filtered.fq',
+        'Preprocessing/{type}.se.{prefix}.{filter}_filtered.fq'
     shell:
         """
         TMP_FILE=$(mktemp --tmpdir={TMPDIR} -t "alignment_XXXXXX.bam")
@@ -48,4 +65,18 @@ rule filtering:
         touch {output[2]}
         fi
         rm -rf $BUFFER* $TMP_FILE
+        """
+
+rule symlink_preprocessed_files:
+    input:
+        symlink_input
+    output:
+        'Preprocessing/{type}.r1.preprocessed.fq',
+        'Preprocessing/{type}.r2.preprocessed.fq',
+        'Preprocessing/{type}.se.preprocessed.fq'
+    shell:
+        """
+        ln -s $(echo {input[0]} | cut -f 2 -d /) {output[0]} && touch -h {output[0]}
+        ln -s $(echo {input[1]} | cut -f 2 -d /) {output[1]} && touch -h {output[1]}
+        ln -s $(echo {input[2]} | cut -f 2 -d /) {output[2]} && touch -h {output[2]}
         """
