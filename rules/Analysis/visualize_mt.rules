@@ -1,71 +1,19 @@
-PLOT_OUTPUT_FILES = {
-    'default': [
-        "IMP-vizbin_length.png",
-        "IMP-vizbin_length_GC.png",
-        "IMP-vizbin_length_geneDensity.png",
-        "IMP-vizbin_standard.png"
-    ],
-    'mgmt': [
-        "IMP-reads_density.png",
-        "IMP-rpkm_density.png",
-        "IMP-coverage_density.png",
-        "IMP-depth_density.png",
-        "IMP-var_count.png",
-        "IMP-var_density.png",
-        "IMP-vizbin_length_MGcov.png",
-        "IMP-vizbin_length_MGdepth.png",
-        "IMP-vizbin_length_MGvardens.png",
-        "IMP-vizbin_length_MTcov.png",
-        "IMP-vizbin_length_MTdepth.png",
-        "IMP-vizbin_length_MTvardens.png",
-        "IMP-vizbin_length_covRatio.png",
-        "IMP-vizbin_length_depthRatio.png",
-        "IMP-vizbin_length_rpkmRatio.png",
-        "mg.read_stats.html",
-        "mg.read_stats.txt",
-        "MG_mapping_stats.html",
-        "MG_mapping_stats.txt",
-        "mt.read_stats.html",
-        "mt.read_stats.txt",
-        "MT_mapping_stats.html",
-        "MT_mapping_stats.txt",
-    ],
-    'mg': [
-        "IMP-MG_var_count.png",
-        "IMP-MG_coverage_density.png",
-        "IMP-MG_reads_density.png",
-        "IMP-MG_vizbin_length_cov.png",
-        "IMP-MG_vizbin_length_depth.png",
-        "IMP-MG_vizbin_length_vardens.png",
-        "mg.read_stats.html",
-        "mg.read_stats.txt",
-        "MG_mapping_stats.html",
-        "MG_mapping_stats.txt",
-    ],
-    'mt': [
-        "IMP-MT_var_count.png",
-        "IMP-MT_coverage_density.png",
-        "IMP-MT_reads_density.png",
-        "IMP-MT_vizbin_length_cov.png",
-        "IMP-MT_vizbin_length_depth.png",
-        "IMP-MT_vizbin_length_vardens.png",
-        "mt.read_stats.html",
-        "mt.read_stats.txt",
-        "MT_mapping_stats.html",
-        "MT_mapping_stats.txt",
-    ]
-}
-
-
-def analysis_plot_files_output():
-    addon = []
-    if MG and MT:
-        addon = PLOT_OUTPUT_FILES['mgmt']
-    elif MG:
-        addon = PLOT_OUTPUT_FILES['mg']
-    elif MT:
-        addon = PLOT_OUTPUT_FILES['mt']
-    return expand('Analysis/results/{name}', name=PLOT_OUTPUT_FILES['default'] + addon)
+PLOT_OUTPUT_FILES = [
+    "Analysis/results/IMP-vizbin_length.png",
+    "Analysis/results/IMP-vizbin_length_GC.png",
+    "Analysis/results/IMP-vizbin_length_geneDensity.png",
+    "Analysis/results/IMP-vizbin_standard.png",
+    "Analysis/results/IMP-MT_var_count.png",
+    "Analysis/results/IMP-MT_coverage_density.png",
+    "Analysis/results/IMP-MT_reads_density.png",
+    "Analysis/results/IMP-MT_vizbin_length_cov.png",
+    "Analysis/results/IMP-MT_vizbin_length_depth.png",
+    "Analysis/results/IMP-MT_vizbin_length_vardens.png",
+    "Analysis/results/mt.read_stats.html",
+    "Analysis/results/mt.read_stats.txt",
+    "Analysis/results/MT_mapping_stats.html",
+    "Analysis/results/MT_mapping_stats.txt",
+]
 
 
 rule visualize:
@@ -83,12 +31,12 @@ rule visualize:
        'Analysis/mgmt.assembly.gc_content.txt',
        "Analysis/mgmt.vizbin.with-contig-names.points",
        "Analysis/annotation/annotation.filt.gff",
-       "Analysis/results/quast/summary/combined_quast_output/contigs_reports/nucmer_output/aux/mgmt.assembly.merged.coords_edited"
+       "Analysis/results/quast/summary/combined_quast_output/contigs_reports/nucmer_output/aux/mt.assembly.merged.coords_edited"
     output:
-        analysis_plot_files_output()
+        PLOT_OUTPUT_FILES
     shell:
         """
-        PLOT_SCRIPT="{SRCDIR}/IMP_visualize_mgmt.R"
+        PLOT_SCRIPT="{SRCDIR}/IMP_visualize_mt.R"
 
         echo "[x] PLOT `date +"%Y/%m/%d %H:%M:%S"`"
         mkdir -p Analysis/results

@@ -32,7 +32,7 @@ def filtering_input(wildcards):
 def symlink_input(wildcards):
     if wildcards.type in TYPES:
         return expand(input_symlinking[wildcards.type], filter=config["filtering"]["filter"])
-    return "filtering-input-no-file-here"
+    return "symlink-input-no-file-here"
 
 rule filtering:
     input:

@@ -1,0 +1,34 @@
+IDBA_UD_SHELL = """
+echo "[x] Performing {wildcards.type} assembly step '{wildcards.loop}' using IDBA"
+TMPD=$(mktemp -d -t --tmpdir={TMPDIR} "XXXXXX")
+fq2fa --merge {input[0]} {input[1]} $TMPD/merged.fa
+fq2fa {input[2]} $TMPD/se.fa
+echo $TMPD
+idba_ud -r $TMPD/merged.fa \
+-l $TMPD/se.fa -o $TMPD \
+--mink {config[idba_ud][mink]} --maxk {config[idba_ud][maxk]} \
+--step {config[idba_ud][step]} --num_threads {THREADS} \
+--similar {config[idba_ud][perid]} --pre_correction
+mv $TMPD/contig.fa {output}
+"""
+
+rule idba_ud_from_preprocessing:
+    input:
+        'Preprocessing/{type}.r1.preprocessed.fq',
+        'Preprocessing/{type}.r2.preprocessed.fq',
+        'Preprocessing/{type}.se.preprocessed.fq',
+    output:
+        'Assembly/{type}.idba_preprocessed.{loop}.fa'
+    shell:
+        IDBA_UD_SHELL
+
+
+rule idba_ud_from_assembly:
+    input:
+        'Assembly/{type}.r1.unmapped.fq',
+        'Assembly/{type}.r2.unmapped.fq',
+        'Assembly/{type}.se.unmapped.fq',
+    output:
+        'Assembly/{type}.idba_unmapped.{loop}.fa'
+    shell:
+        IDBA_UD_SHELL
