@@ -5,7 +5,7 @@ include:
     '../../rules/Assembly/common/bwa.index.rule'
 
 include:
-    '../../rules/Assembly/common/idba_ud.rules'
+    '../../rules/Assembly/common/idba.rules'
 
 include:
     '../../rules/Assembly/common/megahit.rules'
