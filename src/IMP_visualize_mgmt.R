@@ -4,6 +4,7 @@
 ## Load required packages
 ###################################################################################################
 
+print("Loading required R libraries")
 require(genomeIntervals)
 
 require(checkpoint)

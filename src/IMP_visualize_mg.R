@@ -5,13 +5,17 @@
 ###################################################################################################
 
 print("Loading required R libraries")
+require(genomeIntervals)
+
+require(checkpoint)
+checkpoint('2015-04-27', scanForPackages=FALSE)
+
 require(ggplot2)
 require(gtools)
 require(data.table)
 require(reshape)
 require(grid)
 require(grDevices)
-require(genomeIntervals)
 require(stringr)
 require(xtable)
 require(beanplot)
@@ -34,13 +38,15 @@ MG.var_file	    <- args[10]
 GC.dat_file	    <- args[12]
 coords_file	    <- args[13]
 annot_file	    <- args[14]
+function_script	    <- args[15]
+print("DONE: Reading arguments")
 
 ###################################################################################################
 ## Initialize functions for various calculations and normalizations
 ###################################################################################################
 
-print("Loading IMP custom R functions")
-source("IMP_plot_functions.R")
+print("START: Reading functions")
+source(function_script)
 
 ###################################################################################################
 ## Read in the necessary input files
