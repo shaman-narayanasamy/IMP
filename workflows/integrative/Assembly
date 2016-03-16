@@ -11,7 +11,7 @@ include:
     '../../rules/Assembly/common/megahit.rules'
 
 include:
-    '../../rules/Assembly/hybrid/megahit.hybrid.rules'
+    '../../rules/Assembly/hybrid/%s.hybrid.rules' % IMP_ASSEMBLER
 
 include:
     '../../rules/Assembly/hybrid/extract-unmapped.rules'
