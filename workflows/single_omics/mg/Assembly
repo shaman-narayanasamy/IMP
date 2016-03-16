@@ -4,11 +4,9 @@
 include:
     '../../../rules/Assembly/common/bwa.index.rule'
 
-include:
-    '../../../rules/Assembly/common/idba_ud.rules'
 
 include:
-    '../../../rules/Assembly/common/megahit.rules'
+    '../../../rules/Assembly/common/%s.rules' % IMP_ASSEMBLER
 
 
 include:

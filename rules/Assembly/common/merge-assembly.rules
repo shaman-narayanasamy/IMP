@@ -1,7 +1,7 @@
 rule cap3:
     input:
-        'Assembly/{type}.idba_preprocessed.1.fa',
-        'Assembly/{type}.idba_unmapped.2.fa',
+        'Assembly/{type}.%s_preprocessed.1.fa' % IMP_ASSEMBLER,
+        'Assembly/{type}.%s_unmapped.2.fa' % IMP_ASSEMBLER,
     output:
         'Assembly/{type}.assembly.merged.fa',
     shell:
