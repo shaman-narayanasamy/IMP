@@ -27,7 +27,7 @@ rule no_filtering:
         'Preprocessing/{type}.se.preprocessed.fq'
     shell:
         """
-        ln -s {input[0]} {output[0]} && touch -h {output[0]}
-        ln -s {input[1]} {output[1]} && touch -h {output[1]}
-        ln -s {input[2]} {output[2]} && touch -h {output[2]}
+        ln -fs {input[0]} {output[0]} && touch -h {output[0]}
+        ln -fs {input[1]} {output[1]} && touch -h {output[1]}
+        ln -fs {input[2]} {output[2]} && touch -h {output[2]}
         """

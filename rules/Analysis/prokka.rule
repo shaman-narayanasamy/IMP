@@ -22,7 +22,7 @@ rule annotate:
             cd $(dirname $(which prokka))/.. && ln -s $PP db
             cd $CUR
         fi
-
+        rm -rf Analysis/annotation/
         prokka --force --outdir Analysis/annotation --cpus {THREADS} --metagenome {input[0]} >> Analysis/annotation.log 2>&1
 
         # Prokka gives a gff file with a long header and with all the contigs at the bottom.  The command below removes the
