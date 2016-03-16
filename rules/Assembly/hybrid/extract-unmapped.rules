@@ -14,57 +14,58 @@ bamToFastq -i stdin -fq {output[2]}
 rm -rf $BUFFER* $TMP_FILE
 """
 
-rule extract_mt_unmapped_from_megahit:
+rule extract_unmapped_from_megahit:
     input:
-        'Preprocessing/mt.r1.preprocessed.fq',
-        'Preprocessing/mt.r2.preprocessed.fq',
-        'Preprocessing/mt.se.preprocessed.fq',
-        'Assembly/mt.megahit_preprocessed.1/final.contigs.fa',
-        'Assembly/mt.megahit_preprocessed.1/final.contigs.fa.amb',
-        'Assembly/mt.megahit_preprocessed.1/final.contigs.fa.bwt',
-        'Assembly/mt.megahit_preprocessed.1/final.contigs.fa.pac',
-        'Assembly/mt.megahit_preprocessed.1/final.contigs.fa.sa',
-        'Assembly/mt.megahit_preprocessed.1/final.contigs.fa.ann',
+        'Preprocessing/{type}.r1.preprocessed.fq',
+        'Preprocessing/{type}.r2.preprocessed.fq',
+        'Preprocessing/{type}.se.preprocessed.fq',
+        'Assembly/{type}.megahit_preprocessed.1/final.contigs.fa',
+        'Assembly/{type}.megahit_preprocessed.1/final.contigs.fa.amb',
+        'Assembly/{type}.megahit_preprocessed.1/final.contigs.fa.bwt',
+        'Assembly/{type}.megahit_preprocessed.1/final.contigs.fa.pac',
+        'Assembly/{type}.megahit_preprocessed.1/final.contigs.fa.sa',
+        'Assembly/{type}.megahit_preprocessed.1/final.contigs.fa.ann',
     output:
-        'Assembly/mt.r1.unmapped.fq',
-        'Assembly/mt.r2.unmapped.fq',
-        'Assembly/mt.se.unmapped.fq'
+        'Assembly/{type}.r1.unmapped.fq',
+        'Assembly/{type}.r2.unmapped.fq',
+        'Assembly/{type}.se.unmapped.fq'
     shell:
         EXTRACT_UNMAPPED_SHELL
 
 
-rule extract_mg_unmapped_from_idba:
-    input:
-        'Preprocessing/mg.r1.preprocessed.fq',
-        'Preprocessing/mg.r2.preprocessed.fq',
-        'Preprocessing/mg.se.preprocessed.fq',
-        'Assembly/mg.idba_preprocessed.1.fa',
-        'Assembly/mg.idba_preprocessed.1.fa.amb',
-        'Assembly/mg.idba_preprocessed.1.fa.bwt',
-        'Assembly/mg.idba_preprocessed.1.fa.pac',
-        'Assembly/mg.idba_preprocessed.1.fa.sa',
-        'Assembly/mg.idba_preprocessed.1.fa.ann'
-    output:
-        'Assembly/mg.r1.unmapped.fq',
-        'Assembly/mg.r2.unmapped.fq',
-        'Assembly/mg.se.unmapped.fq'
-    shell:
-        EXTRACT_UNMAPPED_SHELL
+#
+# rule extract_mg_unmapped_from_idba:
+#     input:
+#         'Preprocessing/mg.r1.preprocessed.fq',
+#         'Preprocessing/mg.r2.preprocessed.fq',
+#         'Preprocessing/mg.se.preprocessed.fq',
+#         'Assembly/mg.idba_preprocessed.1.fa',
+#         'Assembly/mg.idba_preprocessed.1.fa.amb',
+#         'Assembly/mg.idba_preprocessed.1.fa.bwt',
+#         'Assembly/mg.idba_preprocessed.1.fa.pac',
+#         'Assembly/mg.idba_preprocessed.1.fa.sa',
+#         'Assembly/mg.idba_preprocessed.1.fa.ann'
+#     output:
+#         'Assembly/mg.r1.unmapped.fq',
+#         'Assembly/mg.r2.unmapped.fq',
+#         'Assembly/mg.se.unmapped.fq'
+#     shell:
+#         EXTRACT_UNMAPPED_SHELL
 
 rule extract_unmapped_from_hybrid_assembly:
     input:
         'Preprocessing/{type}.r1.preprocessed.fq',
         'Preprocessing/{type}.r2.preprocessed.fq',
         'Preprocessing/{type}.se.preprocessed.fq',
-        'Assembly/mgmt.megahit_hybrid.1.fa',
-        'Assembly/mgmt.megahit_hybrid.1.fa.amb',
-        'Assembly/mgmt.megahit_hybrid.1.fa.bwt',
-        'Assembly/mgmt.megahit_hybrid.1.fa.pac',
-        'Assembly/mgmt.megahit_hybrid.1.fa.sa',
-        'Assembly/mgmt.megahit_hybrid.1.fa.ann',
+        'Assembly/mgmt.{assembler}_hybrid.1.fa',
+        'Assembly/mgmt.{assembler}_hybrid.1.fa.amb',
+        'Assembly/mgmt.{assembler}_hybrid.1.fa.bwt',
+        'Assembly/mgmt.{assembler}_hybrid.1.fa.pac',
+        'Assembly/mgmt.{assembler}_hybrid.1.fa.sa',
+        'Assembly/mgmt.{assembler}_hybrid.1.fa.ann',
     output:
-        'Assembly/mgmt.r1.megahit_hybrid.{type}.fq',
-        'Assembly/mgmt.r2.megahit_hybrid.{type}.fq',
-        'Assembly/mgmt.se.megahit_hybrid.{type}.fq',
+        'Assembly/mgmt.r1.{assembler}_hybrid.{type}.unmapped.fq',
+        'Assembly/mgmt.r2.{assembler}_hybrid.{type}.unmapped.fq',
+        'Assembly/mgmt.se.{assembler}_hybrid.{type}.unmapped.fq',
     shell:
         EXTRACT_UNMAPPED_SHELL

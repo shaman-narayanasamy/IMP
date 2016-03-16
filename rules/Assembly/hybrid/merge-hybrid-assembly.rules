@@ -1,7 +1,7 @@
 rule collapse_hybrid_assemblies:
     input:
-        'Assembly/mgmt.megahit_hybrid.1.fa',
-        'Assembly/mgmt.megahit_hybrid.2.fa',
+        'Assembly/mgmt.%s_hybrid.1.fa' % IMP_ASSEMBLER,
+        'Assembly/mgmt.%s_hybrid.2.fa' % IMP_ASSEMBLER,
     output:
         'Assembly/mgmt.assembly.merged.fa'
     shell:
@@ -11,6 +11,7 @@ rule collapse_hybrid_assemblies:
 
         # Options should be after input file!
         cap3 $NAME.cat.fa -p 98 -o 100
+        cap3 $NAME.cat.fa -p {config[cap3][identity]} -o {config[cap3][overlap]}
 
         # Concatenate assembled contigs, singletons and rename the contigs
         cat $NAME.cat.fa.cap.contigs $NAME.cat.fa.cap.singlets | \

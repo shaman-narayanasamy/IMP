@@ -27,21 +27,20 @@ rule megahit_hybrid_assembly_1:
         --k-min {config[idba_ud][mink]} \
         --k-max {config[idba_ud][maxk]} \
         --k-step {config[idba_ud][step]} \
-        --no-bubble \
         -t {THREADS} --cpu-only \
         -m "${{MAX_MEM}}" \
         --mem-flag 1
-        cp {output[0]} {output[1]}
+        ln -fs $(echo {output[0]} | cut -f 2 -d /) {output[1]} && touch -h {output[1]}
         """
 
 rule megahit_hybrid_assembly_2:
     input:
-        'Assembly/mgmt.r1.megahit_hybrid.mt.fq',
-        'Assembly/mgmt.r2.megahit_hybrid.mt.fq',
-        'Assembly/mgmt.se.megahit_hybrid.mt.fq',
-        'Assembly/mgmt.r1.megahit_hybrid.mg.fq',
-        'Assembly/mgmt.r2.megahit_hybrid.mg.fq',
-        'Assembly/mgmt.se.megahit_hybrid.mg.fq',
+        'Assembly/mgmt.r1.megahit_hybrid.mt.unmapped.fq',
+        'Assembly/mgmt.r2.megahit_hybrid.mt.unmapped.fq',
+        'Assembly/mgmt.se.megahit_hybrid.mt.unmapped.fq',
+        'Assembly/mgmt.r1.megahit_hybrid.mg.unmapped.fq',
+        'Assembly/mgmt.r2.megahit_hybrid.mg.unmapped.fq',
+        'Assembly/mgmt.se.megahit_hybrid.mg.unmapped.fq',
     output:
         'Assembly/mgmt.megahit_hybrid.2/final.contigs.fa',
         'Assembly/mgmt.megahit_hybrid.2.fa'
@@ -66,5 +65,5 @@ rule megahit_hybrid_assembly_2:
         -t {THREADS} --cpu-only \
         -m ${{MAX_MEM}} \
         --mem-flag 1
-        cp {output[0]} {output[1]}
+        ln -fs $(echo {output[0]} | cut -f 2 -d /) {output[1]} && touch -h {output[1]}
         """

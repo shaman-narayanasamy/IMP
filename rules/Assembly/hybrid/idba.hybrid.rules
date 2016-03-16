@@ -1,0 +1,80 @@
+rule idba_hybrid_assembly_1:
+    input:
+        'Preprocessing/mg.r1.preprocessed.fq',
+        'Preprocessing/mg.r2.preprocessed.fq',
+        'Preprocessing/mg.se.preprocessed.fq',
+        'Preprocessing/mt.r1.preprocessed.fq',
+        'Preprocessing/mt.r2.preprocessed.fq',
+        'Preprocessing/mt.se.preprocessed.fq',
+        'Assembly/mt.megahit_preprocessed.1/final.contigs.fa',
+        'Assembly/mt.megahit_unmapped.2/final.contigs.fa',
+    output:
+        'Assembly/mgmt.idba_hybrid.1.fa'
+    params:
+        outdir = 'Assembly/mgmt.idba_hybrid.1'
+    shell:
+        """
+        echo "[x] Performing first hyrbid assembly step using IDBA"
+
+        echo "[x] Interleave MG and MT fastq files"
+        TMPD=$(mktemp -d -t --tmpdir={TMPDIR} "XXXXXX")
+        fq2fa --merge {input[0]} {input[1]} $TMPD/merged_MG.fa
+        fq2fa --merge {input[3]} {input[4]} $TMPD/merged_MT.fa
+
+        echo "[x] Join MG and MT interleaved fasta files"
+        cat $TMPD/merged_MG.fa $TMPD/merged_MT.fa > $TMPD/merged.fa
+
+        echo "[x] Concatenate MT contigs, MT and MG single end files"
+        cat \
+        <(cat {input[6]} {input[7]} | \
+        awk '/^>/{{print ">contig_MT_" ++i; next}}{{print}}') \
+        <(cat {input[2]} | sed -n '1~4s/^@/>/p;2~4p') \
+	<(cat {input[5]} | sed -n '1~4s/^@/>/p;2~4p') \
+        > $TMPD/MT_contigs-MG_MT.SE.fa
+
+        idba_ud -r $TMPD/merged.fa \
+        -l $TMPD/MT_contigs-MG_MT.SE.fa -o $TMPD \
+        --mink {config[idba_ud][mink]} --maxk {config[idba_ud][maxk]} \
+        --step {config[idba_ud][step]} --num_threads {THREADS} \
+        --similar {config[idba_ud][perid]} --pre_correction
+        mv $TMPD/contig.fa {output}
+        rm -rf $TMPD
+        """
+
+rule idba_hybrid_assembly_2:
+    input:
+        'Assembly/mgmt.r1.idba_hybrid.mt.unmapped.fq',
+        'Assembly/mgmt.r2.idba_hybrid.mt.unmapped.fq',
+        'Assembly/mgmt.se.idba_hybrid.mt.unmapped.fq',
+        'Assembly/mgmt.r1.idba_hybrid.mg.unmapped.fq',
+        'Assembly/mgmt.r2.idba_hybrid.mg.unmapped.fq',
+        'Assembly/mgmt.se.idba_hybrid.mg.unmapped.fq',
+    output:
+        'Assembly/mgmt.idba_hybrid.2.fa'
+    params:
+        outdir = 'Assembly/mgmt.idba_hybrid.2'
+    shell:
+        """
+        echo "[x] Performing second hybrid assembly step using IDBA"
+
+        echo "[x] Interleave MG and MT fastq files"
+        TMPD=$(mktemp -d -t --tmpdir={TMPDIR} "XXXXXX")
+        fq2fa --merge {input[0]} {input[1]} $TMPD/merged_MG.fa
+        fq2fa --merge {input[2]} {input[3]} $TMPD/merged_MT.fa
+
+        echo "[x] Join MG and MT interleaved fasta files"
+        cat $TMPD/merged_MG.fa $TMPD/merged_MT.fa > $TMPD/merged.fa
+
+        echo "[x] Concatenate MT and MG single end files"
+        cat <(cat {input[2]} | sed -n '1~4s/^@/>/p;2~4p') <(cat {input[5]} | \
+        sed -n '1~4s/^@/>/p;2~4p') > $TMPD/MG_MT.SE.fa
+
+        idba_ud -r $TMPD/merged.fa \
+        -l $TMPD/MG_MT.SE.fa -o $TMPD \
+        --mink {config[idba_ud][mink]} --maxk {config[idba_ud][maxk]} \
+        --step {config[idba_ud][step]} --num_threads {THREADS} \
+        --similar {config[idba_ud][perid]} --pre_correction
+
+        mv $TMPD/contig.fa {output}
+        rm -rf $TMPD
+        """
