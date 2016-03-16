@@ -76,7 +76,7 @@ rule symlink_preprocessed_files:
         'Preprocessing/{type}.se.preprocessed.fq'
     shell:
         """
-        ln -s $(echo {input[0]} | cut -f 2 -d /) {output[0]} && touch -h {output[0]}
-        ln -s $(echo {input[1]} | cut -f 2 -d /) {output[1]} && touch -h {output[1]}
-        ln -s $(echo {input[2]} | cut -f 2 -d /) {output[2]} && touch -h {output[2]}
+        ln -fs $(echo {input[0]} | cut -f 2 -d /) {output[0]} && touch -h {output[0]}
+        ln -fs $(echo {input[1]} | cut -f 2 -d /) {output[1]} && touch -h {output[1]}
+        ln -fs $(echo {input[2]} | cut -f 2 -d /) {output[2]} && touch -h {output[2]}
         """
