@@ -5,12 +5,13 @@ rule visualize:
        'Analysis/mg.assembly.contig_coverage.txt',
        'Analysis/mg.assembly.contig_depth.txt',
        'Analysis/mg.variants.samtools.vcf.gz',
+       'Analysis/mg.assembly.gc_content.txt',
        "Analysis/annotation/annotation.filt.gff",
+       "Analysis/mg.vizbin.with-contig-names.points",
        "Analysis/results/quast/summary/combined_quast_output/contigs_reports/nucmer_output/aux/mg.assembly.merged.coords_edited"
     output:
         "Analysis/results/IMP-vizbin_length.png",
         "Analysis/results/IMP-vizbin_length_GC.png",
-        "Analysis/results/IMP-vizbin_length_geneDensity.png",
         "Analysis/results/IMP-vizbin_standard.png",
         "Analysis/results/IMP-MG_var_count.png",
         "Analysis/results/IMP-MG_coverage_density.png",
@@ -18,8 +19,8 @@ rule visualize:
         "Analysis/results/IMP-MG_vizbin_length_cov.png",
         "Analysis/results/IMP-MG_vizbin_length_depth.png",
         "Analysis/results/IMP-MG_vizbin_length_vardens.png",
-        "Analysis/results/mg.read_stats.html",
-        "Analysis/results/mg.read_stats.txt",
+        "Analysis/results/MG.read_stats.html",
+        "Analysis/results/MG.read_stats.txt",
         "Analysis/results/MG_mapping_stats.html",
         "Analysis/results/MG_mapping_stats.txt",
     shell:

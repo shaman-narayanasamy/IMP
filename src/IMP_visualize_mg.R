@@ -28,17 +28,19 @@ require(psych)
 # User should input the three different files
 # Uncomment when ready
 
+print("START: Reading arguments")
 args		    <- commandArgs(trailingOnly = TRUE)
 out_dir		    <- args[1] # Output directory
 MG.read.count_file  <- args[2]
-MG.map.summary_file <- args[4]
-MG.cov_file	    <- args[6]
-MG.depth_file	    <- args[8]
-MG.var_file	    <- args[10]
-GC.dat_file	    <- args[12]
-coords_file	    <- args[13]
-annot_file	    <- args[14]
-function_script	    <- args[15]
+MG.map.summary_file <- args[3]
+MG.cov_file	    <- args[4]
+MG.depth_file	    <- args[5]
+MG.var_file	    <- args[6]
+GC.dat_file	    <- args[7]
+annot_file	    <- args[8]
+coords_file	    <- args[9]
+nucmer_file	    <- args[10]
+function_script	    <- args[11]
 print("DONE: Reading arguments")
 
 ###################################################################################################
@@ -46,7 +48,9 @@ print("DONE: Reading arguments")
 ###################################################################################################
 
 print("START: Reading functions")
+function_script
 source(function_script)
+print("DONE: Reading functions")
 
 ###################################################################################################
 ## Read in the necessary input files
@@ -271,20 +275,12 @@ vb_dat <- vb_dat[!is.na(vb_dat$x),]
 # Handle missing and infinite values
 vb_dat[is.na(vb_dat)] <- 0
 
+
+print("Processing vizbin-based data")
 # Remove outliers and infinite values
 vb_dat$MG_var_dens <- outliers(vb_dat$MG_var_dens,2)
 vb_dat$MG_depth <- outliers(vb_dat$MG_depth,2)
 vb_dat$MG_rpkm <- outliers(vb_dat$MG_rpkm,2)
-vb_dat$cov_ratio <- outliers(vb_dat$cov_ratio,2)
-vb_dat$depth_ratio <- outliers(vb_dat$depth_ratio,2)
-vb_dat$rpkm_ratio <- outliers(vb_dat$rpkm_ratio,2)
-vb_dat$var_ratio <- outliers(vb_dat$var_ratio,2)
-vb_dat$log_cov_ratio <- outliers(vb_dat$log_cov_ratio,2)
-vb_dat$log_depth_ratio <- outliers(vb_dat$log_depth_ratio,2)
-vb_dat$log_rpkm_ratio <- outliers(vb_dat$log_rpkm_ratio,2)
-vb_dat$log_var_ratio <- outliers(vb_dat$log_var_ratio,2)
-
-#write.table(vb_dat, "final.contig.merged_min1000_info_processed.txt", sep="\t", quote=F, row.names=F)
 
 ####################################################################
 ## ASSEMBLY STATISTICS AND VISUALIZATIONS
@@ -301,8 +297,6 @@ sink()
 write.table(assembly.stats, name_plot("assembly_stats.txt"),
 	    sep="\t", quote=F,
 	    row.names=F)
-
-#print(assembly.stats_plot)
 
 ## Output mapping stats table
 print("Print metagenomic mapping statistics table")
@@ -431,41 +425,6 @@ scale_colour_gradient(high="black", low="cyan") +
        ) +
 theme_nothing()
 dev.off()
-
-####################################################################
-## ANNOTATION STATISTICS AND VISUALIZATIONS
-####################################################################
-## Vizbin plot with length and raw number of genes
-print("Generating vizbin plot for number of genes")
-png(name_plot("IMP-vizbin_length_geneCount.png"), width=700, height=700)
-ggplot(vb_dat, aes(x=x,y=y)) +
-geom_point(aes(colour=genes, size=log10(length), order=genes), alpha=0.75) +
-scale_colour_gradientn(colours=topo.colors(max(vb_dat$genes)),
-		      guide="colourbar",
-		      guide_legend(title="Gene count")
-		      ) +
-       guides(size=guide_legend(title=log10len)
-       ) +
-theme_nothing()
-dev.off()
-
-## Vizbin plot with length and gene density
-print("Generating vizbin plot for gene density")
-png(name_plot("IMP-vizbin_length_geneDensity.png"), width=700, height=700)
-ggplot(vb_dat, aes(x=x,y=y)) +
-geom_point(aes(colour=gene_dens, size=log10(length), order=gene_dens), alpha=0.75) +
-scale_colour_gradientn(colours=topo.colors(500),
-		      guide="colourbar",
-		      guide_legend(title="Gene density\n (genes/1kb)")
-		      ) +
-       guides(size=guide_legend(title=log10len)
-       ) +
-theme_nothing()
-dev.off()
-
-## Vizbin plot with length and taxanomic markers
-
-## Also write an estimated number of complete genomes for the report
 
 ## Save the R workspace
 save.image(name_plot("MG_results.Rdat"))
