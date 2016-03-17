@@ -23,7 +23,7 @@ include:
 include:
     '../../../rules/Analysis/variant.rule'
 include:
-    '../../../rules/Analysis/visualize.rules'
+    '../../../rules/Analysis/visualize_mt.rules'
 include:
     '../../../rules/Analysis/vizbin.rule'
 
@@ -60,6 +60,19 @@ rule ANALYSIS:
         "Analysis/stats/mt/mt.se_preprocessed_fastqc.html",
         "Analysis/mt.vizbin.filtered.fa",
         "Analysis/mt.vizbin.with-contig-names.points",
+        "Analysis/results/IMP-vizbin_length.png",
+        "Analysis/results/IMP-vizbin_length_GC.png",
+        "Analysis/results/IMP-vizbin_standard.png",
+        "Analysis/results/IMP-MT_var_count.png",
+        "Analysis/results/IMP-MT_coverage_density.png",
+        "Analysis/results/IMP-MT_reads_density.png",
+        "Analysis/results/IMP-MT_vizbin_length_cov.png",
+        "Analysis/results/IMP-MT_vizbin_length_depth.png",
+        "Analysis/results/IMP-MT_vizbin_length_vardens.png",
+        "Analysis/results/MT.read_stats.html",
+        "Analysis/results/MT.read_stats.txt",
+        "Analysis/results/MT_mapping_stats.html",
+        "Analysis/results/MT_mapping_stats.txt"
 
     output:
         touch('analysis.done')

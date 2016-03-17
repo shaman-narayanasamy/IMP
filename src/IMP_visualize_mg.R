@@ -48,7 +48,6 @@ print("DONE: Reading arguments")
 ###################################################################################################
 
 print("START: Reading functions")
-function_script
 source(function_script)
 print("DONE: Reading functions")
 

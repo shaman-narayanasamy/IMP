@@ -3,44 +3,49 @@
 ###################################################################################################
 ## Load required packages
 ###################################################################################################
-
 print("Loading required R libraries")
+require(genomeIntervals)
+
+require(checkpoint)
+checkpoint('2015-04-27', scanForPackages=FALSE)
+
 require(ggplot2)
 require(gtools)
 require(data.table)
 require(reshape)
 require(grid)
 require(grDevices)
-require(genomeIntervals)
 require(stringr)
 require(xtable)
 require(beanplot)
 require(psych)
-
 
 ###################################################################################################
 ## Read in arguments
 ###################################################################################################
 # User should input the three different files
 # Uncomment when ready
-
+print("START: Reading arguments")
 args		    <- commandArgs(trailingOnly = TRUE)
 out_dir		    <- args[1] # Output directory
 MT.read.count_file  <- args[2]
-MT.map.summary_file <- args[4]
-MT.cov_file	    <- args[6]
-MT.depth_file	    <- args[8]
-MT.var_file	    <- args[10]
-GC.dat_file	    <- args[12]
-coords_file	    <- args[13]
-annot_file	    <- args[14]
+MT.map.summary_file <- args[3]
+MT.cov_file	    <- args[4]
+MT.depth_file	    <- args[5]
+MT.var_file	    <- args[6]
+GC.dat_file	    <- args[7]
+annot_file	    <- args[8]
+coords_file	    <- args[9]
+nucmer_file	    <- args[10]
+function_script	    <- args[11]
+print("DONE: Reading arguments")
 
 ###################################################################################################
 ## Initialize functions for various calculations and normalizations
 ###################################################################################################
-
-print("Loading IMP custom R functions")
-source("IMP_plot_functions.R")
+print("START: Reading functions")
+source(function_script)
+print("DONE: Reading functions")
 
 ###################################################################################################
 ## Read in the necessary input files
@@ -99,7 +104,7 @@ colnames(GC.dat) <- c("contig", "GC")
 
 ## gff annotation file
 print("Read in gff3 annotation file")
-annot <- readGff3(annot_file)
+annot <- readZeroLengthFeaturesGff3(annot_file)
 
 # extract only interesting information
 print("Processing gff3 annotation file")
@@ -269,14 +274,6 @@ vb_dat[is.na(vb_dat)] <- 0
 vb_dat$MT_var_dens <- outliers(vb_dat$MT_var_dens,2)
 vb_dat$MT_depth <- outliers(vb_dat$MT_depth,2)
 vb_dat$MT_rpkm <- outliers(vb_dat$MT_rpkm,2)
-vb_dat$cov_ratio <- outliers(vb_dat$cov_ratio,2)
-vb_dat$depth_ratio <- outliers(vb_dat$depth_ratio,2)
-vb_dat$rpkm_ratio <- outliers(vb_dat$rpkm_ratio,2)
-vb_dat$var_ratio <- outliers(vb_dat$var_ratio,2)
-vb_dat$log_cov_ratio <- outliers(vb_dat$log_cov_ratio,2)
-vb_dat$log_depth_ratio <- outliers(vb_dat$log_depth_ratio,2)
-vb_dat$log_rpkm_ratio <- outliers(vb_dat$log_rpkm_ratio,2)
-vb_dat$log_var_ratio <- outliers(vb_dat$log_var_ratio,2)
 
 #write.table(vb_dat, "final.contig.merged_min1000_info_processed.txt", sep="\t", quote=F, row.names=F)
 
