@@ -102,7 +102,7 @@ print("Read in GC percentage file")
 GC.dat <- read.delim(GC.dat_file)
 colnames(GC.dat) <- c("contig", "GC")
 
-## gff annotation file
+### gff annotation file
 print("Read in gff3 annotation file")
 annot <- readZeroLengthFeaturesGff3(annot_file)
 
@@ -143,9 +143,8 @@ annot.4 <- merge(annot.2, annot.3, by="contig")
 # vizbin points, the contig names are usually not included in this file,
 # concatenate it before reading in
 print("Reading in vizbin coordinates")
-coords <- read.table(coords_file, colClasses=c("factor", "numeric", "numeric"),
-		     sep="\t", col.names=c("contig", "x", "y"))
-
+coords <- read.delim(coords_file, colClasses=c("factor", "numeric", "numeric"),
+		     sep="\t", col.names=c("contig", "x", "y"), header=F)
 
 ###################################################################################################
 ## Merge the data sets without the vizbin coordinates
@@ -399,7 +398,7 @@ var2 <- c(rep("MT",nrow(all.dat)),rep("MT",nrow(all.dat)))
 MT_variant_count<-data.frame(var1,var2) 
 
 print("Generating variant count plots")
-png(name_plot("IMP-var_count.png") ,width=350, height=700)
+png(name_plot("IMP-MT_var_count.png") ,width=350, height=700)
 
 par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
 beanplot(var1 ~ var2, data= MT_variant_count,  side = "both",log="auto", 
@@ -423,42 +422,7 @@ scale_colour_gradient(high="black", low="cyan") +
 theme_nothing()
 dev.off()
 
-####################################################################
-## ANNOTATION STATISTICS AND VISUALIZATIONS
-####################################################################
-## Vizbin plot with length and raw number of genes
-print("Generating vizbin plot for number of genes")
-png(name_plot("IMP-vizbin_length_geneCount.png"), width=700, height=700)
-ggplot(vb_dat, aes(x=x,y=y)) +
-geom_point(aes(colour=genes, size=log10(length), order=genes), alpha=0.75) +
-scale_colour_gradientn(colours=topo.colors(max(vb_dat$genes)),
-		      guide="colourbar",
-		      guide_legend(title="Gene count")
-		      ) +
-       guides(size=guide_legend(title=log10len)
-       ) +
-theme_nothing()
-dev.off()
-
-## Vizbin plot with length and gene density
-print("Generating vizbin plot for gene density")
-png(name_plot("IMP-vizbin_length_geneDensity.png"), width=700, height=700)
-ggplot(vb_dat, aes(x=x,y=y)) +
-geom_point(aes(colour=gene_dens, size=log10(length), order=gene_dens), alpha=0.75) +
-scale_colour_gradientn(colours=topo.colors(500),
-		      guide="colourbar",
-		      guide_legend(title="Gene density\n (genes/1kb)")
-		      ) +
-       guides(size=guide_legend(title=log10len)
-       ) +
-theme_nothing()
-dev.off()
-
-## Vizbin plot with length and taxanomic markers
-
-## Also write an estimated number of complete genomes for the report
-
 ## Save the R workspace
-save.image(name_plot("MT_results.Rdat"))
+save.image(name_plot("results.Rdat"))
 
 

@@ -23,8 +23,8 @@ rule visualize:
        'Analysis/mt.assembly.contig_depth.txt',
        'Analysis/mt.variants.samtools.vcf.gz',
        'Analysis/mt.assembly.gc_content.txt',
-       "Analysis/mt.vizbin.with-contig-names.points",
        "Analysis/annotation/annotation.filt.gff",
+       "Analysis/mt.vizbin.with-contig-names.points",
        "Analysis/results/quast/summary/combined_quast_output/contigs_reports/nucmer_output/aux/mt.assembly.merged.coords_edited"
     output:
         PLOT_OUTPUT_FILES
