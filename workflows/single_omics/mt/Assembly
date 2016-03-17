@@ -10,10 +10,8 @@ include:
 include:
     '../../../rules/Assembly/common/megahit.rules'
 
-
 include:
     '../../../rules/Assembly/common/merge-assembly.rules'
-
 
 include:
     '../../../rules/Assembly/single-omic/extract-unmapped.rules'
