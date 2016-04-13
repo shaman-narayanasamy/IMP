@@ -71,7 +71,6 @@
             <li><a href="#mapping" aria-controls="mapping" role="tab" data-toggle="tab">Mapping</a></li>
             <li><a id="annottab" href="#annotation" aria-controls="annotation" role="tab" data-toggle="tab">Annotation</a></li>
             <li><a href="#variants" aria-controls="variants" role="tab" data-toggle="tab">Variants</a></li>
-            <li><a href="#ratio" aria-controls="ratio" role="tab" data-toggle="tab">Ratio</a></li>
             <li><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Workflow overview</a></li>
             <li><a href="#configurations" aria-controls="configurations" role="tab" data-toggle="tab">Configuration</a></li>
             <li><a href="#references" aria-controls="references" role="tab" data-toggle="tab">References</a></li>
@@ -87,12 +86,6 @@
               <section id="raw-section" class="row">
                 <h2><small>Raw data QC</small></h2>
                 <div id="but-raw" class="btn-group" data-toggle="buttons" name="raw-data">
-                    <label class="btn btn-primary active">
-                        <input id="but-raw-mgr1" type="radio" value="Analysis/stats/mg/mg.r1.fq_fastqc.html" class="btn btn-default" name="raw-data" checked>Metagenomic pair-1 FASTQC report
-                    </label>
-                  <label class="btn btn-primary">
-                      <input id="but-raw-mgr2" type="radio" value="Analysis/stats/mg/mg.r2.fq_fastqc.html" class="btn btn-default" name="raw-data">Metagenomic pair-2 FASTQC report
-                  </label>
                   <label class="btn btn-primary">
                       <input id="but-raw-mtr1" type="radio" value="Analysis/stats/mt/mt.r1.fq_fastqc.html" class="btn btn-default" name="raw-data">Metatranscriptomic pair-1 FASTQC report
                   </label>
@@ -101,7 +94,7 @@
                   </label>
                 </div>
                 <div class="row">
-                    <iframe id="ifr-raw-stat" src="Analysis/stats/mg/mg.r1.fq_fastqc.html" style="position: absolute; width: 100%;height: 100%; border: none"></iframe>
+                    <iframe id="ifr-raw-stat" src="Analysis/stats/mt/mt.r1.fq_fastqc.html" style="position: absolute; width: 100%;height: 100%; border: none"></iframe>
                 </div>
               </section>
             </div>
@@ -112,15 +105,6 @@
             <section id="preprocess-section" class="row">
                 <h2><small>Preprocessed data QC</small></h2>
                 <div id="but-preprocess" class="btn-group" data-toggle="buttons" name="preprocess-data">
-                    <label class="btn btn-primary active">
-                        <input id="but-preprocess-mgr1" type="radio" value="Analysis/stats/mg/mg.r1_preprocessed_fastqc.html" class="btn btn-default" name="preprocess-data" checked>Metagenomic pair-1 FASTQC report
-                    </label>
-                  <label class="btn btn-primary">
-                      <input id="but-preprocess-mgr2" type="radio" value="Analysis/stats/mg/mg.r2_preprocessed_fastqc.html" class="btn btn-default" name="preprocess-data">Metagenomic pair-2 FASTQC report
-                  </label>
-                  <label class="btn btn-primary">
-                      <input id="but-preprocess-mgse" type="radio" value="Analysis/stats/mg/mg.se_preprocessed_fastqc.html" class="btn btn-default" name="preprocess-data">Metagenomic single-end FASTQC report
-                  </label>
                   <label class="btn btn-primary">
                       <input id="but-preprocess-mtr1" type="radio" value="Analysis/stats/mt/mt.r1_preprocessed_fastqc.html" class="btn btn-default" name="preprocess-data">Metatranscriptomic pair-1 FASTQC report
                   </label>
@@ -128,11 +112,11 @@
                       <input id="but-preprocess-mtr2" type="radio" value="Analysis/stats/mt/mt.r2_preprocessed_fastqc.html" class="btn btn-default" name="preprocess-data">Metatranscriptomic pair-2 FASTQC report
                   </label>
                   <label class="btn btn-primary">
-                      <input id="but-preprocess-mtse" type="radio" value="Analysis/stats/mt/mt.se_preprocessed_fastqc.html" class="btn btn-default" name="preprocess-data">Metatranscriptomic single-end FASTQC report
+                      <input id="but-preprocess-mgse" type="radio" value="Analysis/stats/mt/mt.se_preprocessed_fastqc.html" class="btn btn-default" name="preprocess-data">Metatranscriptomic single-end FASTQC report
                   </label>
                 </div>
                 <div class="row">
-                    <iframe id="ifr-preprocess-stat" src="Analysis/stats/mg/mg.r1_preprocessed_fastqc.html" style="position: absolute; width: 100%;height: 100%; border: none"></iframe>
+                    <iframe id="ifr-preprocess-stat" src="Analysis/stats/mt/mt.r1_preprocessed_fastqc.html" style="position: absolute; width: 100%;height: 100%; border: none"></iframe>
                 </div>
             </section>
           </div>
@@ -170,7 +154,7 @@
                 <div class="vizbin-img row">
                     <p class="lead text-center">
                         In order to perform a human augmented binning of the contigs, please import the following
-                        <a href="Analysis/mgmt.vizbin.filtered.fa">fasta file</a> to
+                        <a href="Analysis/mt.vizbin.filtered.fa">fasta file</a> to
                     </p>
                 </div>
                 <div class="vizbin-img row">
@@ -189,35 +173,35 @@
             <section id="mapping-section" class="row">
                 <h2><small>Read mapping visualizations</small></h2>
                 <div id="but-mapping" class="row btn-group" data-toggle="buttons" name="mapping-data">
-                    <label class="btn btn-primary active">
+                    <!-- <label class="btn btn-primary active">
                         <input id="but-mapping1" type="radio" value="Analysis/results/IMP-rpkm_density.png" class="btn btn-default" name="mapping-data" checked>RPKM density beanplot
+                    </label> -->
+                    <label class="btn btn-primary">
+                        <input id="but-mapping2" type="radio" value="Analysis/results/IMP-MT_coverage_density.png" class="btn btn-default" name="mapping-data">Coverage and depth density beanplot
                     </label>
                     <label class="btn btn-primary">
-                        <input id="but-mapping2" type="radio" value="Analysis/results/IMP-coverage_density.png" class="btn btn-default" name="mapping-data">Coverage density beanplot
+                        <input id="but-mapping3" type="radio" value="Analysis/results/IMP-MT_reads_density.png" class="btn btn-default" name="mapping-data">Reads density beanplot
                     </label>
                     <label class="btn btn-primary">
-                        <input id="but-mapping3" type="radio" value="Analysis/results/IMP-depth_density.png" class="btn btn-default" name="mapping-data">Depth of coverage density beanplot
+                        <input id="but-mapping4" type="radio" value="Analysis/results/IMP-MT_vizbin_length_cov.png" class="btn btn-default" name="mapping-data">VizBin + metagenomic coverage
                     </label>
+                    <!-- <label class="btn btn-primary">
+                        <input id="but-mapping5" type="radio" value="Analysis/results/IMP-vizbin_length_mgcov.png" class="btn btn-default" name="mapping-data">VizBin + metatranscriptomic coverage
+                    </label> -->
                     <label class="btn btn-primary">
-                        <input id="but-mapping4" type="radio" value="Analysis/results/IMP-vizbin_length_mgcov.png" class="btn btn-default" name="mapping-data">VizBin + metagenomic coverage
+                        <input id="but-mapping6" type="radio" value="Analysis/results/IMP-MT_vizbin_length_depth.png" class="btn btn-default" name="mapping-data">VizBin + metagenomic depth of coverage
                     </label>
-                    <label class="btn btn-primary">
-                        <input id="but-mapping5" type="radio" value="Analysis/results/IMP-vizbin_length_mtcov.png" class="btn btn-default" name="mapping-data">VizBin + metatranscriptomic coverage
-                    </label>
-                    <label class="btn btn-primary">
-                        <input id="but-mapping6" type="radio" value="Analysis/results/IMP-vizbin_length_mgdepth.png" class="btn btn-default" name="mapping-data">VizBin + metagenomic depth of coverage
-                    </label>
-                    <label class="btn btn-primary">
-                        <input id="but-mapping7" type="radio" value="Analysis/results/IMP-vizbin_length_mtdepth.png" class="btn btn-default" name="mapping-data">VizBin + metatranscriptomic depth of coverage
-                    </label>
+                    <!-- <label class="btn btn-primary">
+                        <input id="but-mapping7" type="radio" value="Analysis/results/IMP-vizbin_length_mgdepth.png" class="btn btn-default" name="mapping-data">VizBin + metatranscriptomic depth of coverage
+                    </label> -->
                 </div>
                 <div class="row">
-                    <img id='mapping-wrapper' class='img-responsive' src='Analysis/results/IMP-reads_density.png'/>
+                    <img id='mapping-wrapper' class='img-responsive' src='Analysis/results/IMP-MT_reads_density.png'/>
                 </div>
                 <div class="vizbin-img row">
                     <p class="lead text-center">
                         In order to perform a human augmented binning of the contigs, please import the following
-                        <a href="Analysis/mgmt.vizbin.filtered.fa">fasta file</a> to
+                        <a href="Analysis/mt.vizbin.filtered.fa">fasta file</a> to
                     </p>
                 </div>
                 <div class="vizbin-img row">
@@ -233,11 +217,8 @@
           <section id="annotation-section" class="row">
               <h1><small>KEGG Ontology based Functional Krona Chart</small></h1>
               <div id="but-annot" class="btn-group" data-toggle="buttons" name="annot-data">
-                  <label class="btn btn-primary active">
-                      <input id="but-annot-mg" type="radio" value="Analysis/results/mg.gene_kegg_krona.html" class="btn btn-default" name="annot-data" checked>Metagenome
-                  </label>
                 <label class="btn btn-primary">
-                    <input id="but-annot-mt" type="radio" value="Analysis/results/mt.gene_kegg_krona.html" class="btn btn-default" name="annot-data">Metatranscriptome
+                    <input id="but-annot-mg" type="radio" value="Analysis/results/mt.gene_kegg_krona.html" class="btn btn-default" name="annot-data">Metatranscriptome
                 </label>
             </div>
               <div class="row">
@@ -256,36 +237,6 @@
         </div> -->
 
 
-        <!-- RATIO -->
-        <div role="tabpanel" class="tab-pane fade" id="ratio">
-          <section id="ration-section" class="row">
-              <h1><small>Visualizations of metatranscriptomic to metagenomic ratio</small></h1>
-              <div id="but-ratio" class="row btn-group" data-toggle="buttons" name="ratio-data">
-                  <label class="btn btn-primary active">
-                      <input id="but-ratio1" type="radio" value="Analysis/results/IMP-vizbin_length_depthRatio.png" class="btn btn-default" name="ratio-data" checked>VizBin + depth of coverage ratio
-                  </label>
-                  <label class="btn btn-primary">
-                      <input id="but-ratio2" type="radio" value="Analysis/results/IMP-vizbin_length_rpkmRatio.png" class="btn btn-default" name="ratio-data">VizBin + RPKM ratio
-                  </label>
-              </div>
-              <div class="row">
-                  <img id='ratio-wrapper' class='img-responsive' src='Analysis/results/IMP-vizbin_length_depthRatio.png'/>
-              </div>
-              <div class="row">
-                  <p class="lead text-center">
-                      In order to perform a human augmented binning of the contigs, please import the following
-                      <a href="Analysis/mgmt.vizbin.filtered.fa">fasta file</a> to
-                  </p>
-              </div>
-              <div class="row">
-                  <div style="text-align:center;">
-                      <a href="http://claczny.github.io/VizBin/"><img src='Report/lib/vizbin_logo.png'/></a>
-                  </div>
-              </div>
-
-          </section>
-        </div>
-
 
         <!-- VARIANTS -->
         <div role="tabpanel" class="tab-pane fade" id="variants">
@@ -293,25 +244,22 @@
            <h2><small>Variants </small></h2>
            <div id="but-variant" class="row btn-group" data-toggle="buttons" name="variant-data">
                <label class="btn btn-primary active">
-                   <input id="but-variant1" type="radio" value="Analysis/results/IMP-var_count.png" class="btn btn-default" name="variant-data" checked>Variant count beanplot
+                   <input id="but-variant1" type="radio" value="Analysis/results/IMP-MT_var_count.png" class="btn btn-default" name="variant-data" checked>Variant count and density beanplot
                </label>
-               <label class="btn btn-primary">
+               <!-- <label class="btn btn-primary">
                    <input id="but-variant2" type="radio" value="Analysis/results/IMP-var_density.png" class="btn btn-default" name="variant-data">Variant density beanplot
-               </label>
+               </label> -->
                <label class="btn btn-primary">
-                   <input id="but-variant3" type="radio" value="Analysis/results/IMP-vizbin_length_mgvardens.png" class="btn btn-default" name="variant-data">VizBin + metagenomic variant density
-               </label>
-               <label class="btn btn-primary">
-                   <input id="but-variant4" type="radio" value="Analysis/results/IMP-vizbin_length_mtvardens.png" class="btn btn-default" name="variant-data">VizBin + metatranscriptomic variant density
+                   <input id="but-variant4" type="radio" value="Analysis/results/IMP-MT_vizbin_length_vardens.png" class="btn btn-default" name="variant-data">VizBin + metagenomic variant density
                </label>
            </div>
            <div class="row">
-               <img id='variant-wrapper' class='img-responsive' src='Analysis/results/IMP-var_count.png'/>
+               <img id='variant-wrapper' class='img-responsive' src='Analysis/results/IMP-MT_var_count.png'/>
            </div>
            <div class="row">
                <p class="lead vizbin-img text-center" style="display:none">
                    In order to perform a human augmented binning of the contigs, please import the following
-                   <a href="Analysis/mgmt.vizbin.filtered.fa">fasta file</a> to
+                   <a href="Analysis/mt.vizbin.filtered.fa">fasta file</a> to
                </p>
            </div>
            <div class="vizbin-img row" style="display:none">

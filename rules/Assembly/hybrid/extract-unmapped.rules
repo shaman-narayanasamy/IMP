@@ -1,0 +1,71 @@
+EXTRACT_UNMAPPED_SHELL = """
+TMP_FILE=$(mktemp --tmpdir={TMPDIR} -t "alignment_XXXXXX.bam")
+BUFFER=$(mktemp --tmpdir={TMPDIR} -t "alignment_buffer_XXXXXX.bam")
+bwa mem -v 1 -t {THREADS} {input[3]} {input[0]} {input[1]} | samtools view -@ {THREADS} -bS - > $TMP_FILE
+samtools merge -@ {THREADS} -u - \
+<(samtools view -@ {THREADS} -u  -f 4 -F 264 $TMP_FILE) \
+<(samtools view -@ {THREADS} -u -f 8 -F 260 $TMP_FILE) \
+<(samtools view -@ {THREADS} -u -f 12 -F 256 $TMP_FILE) | \
+samtools view -@ {THREADS} -bF 0x800 -  | samtools sort -o -@ {THREADS} -m {MEMCORE}G -n - $BUFFER | \
+bamToFastq -i stdin -fq {output[0]} -fq2 {output[1]}
+bwa mem -v 1 -t {THREADS} {input[3]} {input[2]} | \
+samtools view -@ {THREADS} -bS - | samtools view -@ {THREADS} -uf 4 - | \
+bamToFastq -i stdin -fq {output[2]}
+rm -rf $BUFFER* $TMP_FILE
+"""
+
+rule extract_unmapped_from_megahit:
+    input:
+        'Preprocessing/{type}.r1.preprocessed.fq',
+        'Preprocessing/{type}.r2.preprocessed.fq',
+        'Preprocessing/{type}.se.preprocessed.fq',
+        'Assembly/{type}.megahit_preprocessed.1/final.contigs.fa',
+        'Assembly/{type}.megahit_preprocessed.1/final.contigs.fa.amb',
+        'Assembly/{type}.megahit_preprocessed.1/final.contigs.fa.bwt',
+        'Assembly/{type}.megahit_preprocessed.1/final.contigs.fa.pac',
+        'Assembly/{type}.megahit_preprocessed.1/final.contigs.fa.sa',
+        'Assembly/{type}.megahit_preprocessed.1/final.contigs.fa.ann',
+    output:
+        'Assembly/{type}.r1.unmapped.fq',
+        'Assembly/{type}.r2.unmapped.fq',
+        'Assembly/{type}.se.unmapped.fq'
+    shell:
+        EXTRACT_UNMAPPED_SHELL
+
+
+#
+# rule extract_mg_unmapped_from_idba:
+#     input:
+#         'Preprocessing/mg.r1.preprocessed.fq',
+#         'Preprocessing/mg.r2.preprocessed.fq',
+#         'Preprocessing/mg.se.preprocessed.fq',
+#         'Assembly/mg.idba_preprocessed.1.fa',
+#         'Assembly/mg.idba_preprocessed.1.fa.amb',
+#         'Assembly/mg.idba_preprocessed.1.fa.bwt',
+#         'Assembly/mg.idba_preprocessed.1.fa.pac',
+#         'Assembly/mg.idba_preprocessed.1.fa.sa',
+#         'Assembly/mg.idba_preprocessed.1.fa.ann'
+#     output:
+#         'Assembly/mg.r1.unmapped.fq',
+#         'Assembly/mg.r2.unmapped.fq',
+#         'Assembly/mg.se.unmapped.fq'
+#     shell:
+#         EXTRACT_UNMAPPED_SHELL
+
+rule extract_unmapped_from_hybrid_assembly:
+    input:
+        'Preprocessing/{type}.r1.preprocessed.fq',
+        'Preprocessing/{type}.r2.preprocessed.fq',
+        'Preprocessing/{type}.se.preprocessed.fq',
+        'Assembly/mgmt.{assembler}_hybrid.1.fa',
+        'Assembly/mgmt.{assembler}_hybrid.1.fa.amb',
+        'Assembly/mgmt.{assembler}_hybrid.1.fa.bwt',
+        'Assembly/mgmt.{assembler}_hybrid.1.fa.pac',
+        'Assembly/mgmt.{assembler}_hybrid.1.fa.sa',
+        'Assembly/mgmt.{assembler}_hybrid.1.fa.ann',
+    output:
+        'Assembly/mgmt.r1.{assembler}_hybrid.{type}.unmapped.fq',
+        'Assembly/mgmt.r2.{assembler}_hybrid.{type}.unmapped.fq',
+        'Assembly/mgmt.se.{assembler}_hybrid.{type}.unmapped.fq',
+    shell:
+        EXTRACT_UNMAPPED_SHELL

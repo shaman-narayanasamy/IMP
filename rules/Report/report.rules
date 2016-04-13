@@ -1,0 +1,44 @@
+rule make_report:
+    input:
+        "Report/lib/imp.html",
+        "Report/lib/d3.min.js",
+        "Report/lib/jquery-2.1.1.min.js",
+        "Report/lib/jquery.cookie.min.js",
+        "Report/lib/bootstrap.min.css",
+        "Report/lib/bootstrap.min.js",
+        "Report/lib/imp.js",
+        "Report/lib/vizbin_logo.png",
+        "Report/lib/IMP_logo.png",
+        "Report/workflow.png",
+        "Report/workflow.pdf"
+    output:
+        "REPORT.html",
+        #"Report/data.js",
+        #"Report/config.json"
+    message:
+        'Create report'
+    run:
+        #version = shell("head -1 CHANGELOG |awk '{{print $3;}}'", read=True).strip().decode('UTF-8')
+        config['IMP_VERSION'] = '1.2.2'
+        config['MG'] = MG
+        config['MT'] = MT
+        shell("mkdir -p Report")
+        with open('Report/data.js', 'w') as whandle, open('Report/config.json', 'w') as confgjson:
+            towrite = json.dumps(config)
+            json.dump(config, confgjson)
+            whandle.write("IMP_CONFIG = %s;" % towrite)
+
+        shell("cp {input[0]} {output[0]}")
+        # shell(
+        # """
+        # cp -f {input[1]} {params.outdir}
+        # cp -f {input[2]} {params.outdir}
+        # cp -f {input[3]} {params.outdir}
+        # cp -f {input[4]} {params.outdir}
+        # cp -f {input[5]} {params.outdir}
+        # cp -f {input[6]} {params.outdir}
+        # cp -f {input[7]} {params.outdir}
+        # cp -f {input[8]} {params.outdir}
+        # find {OUTPUTDIR} -type f -name "*.log" -exec cp  {{}} {params.outdir} \;
+        # """
+        #)

@@ -1,0 +1,38 @@
+PLOT_OUTPUT_FILES = [
+    "Analysis/results/IMP-vizbin_length.png",
+    "Analysis/results/IMP-vizbin_length_GC.png",
+    "Analysis/results/IMP-vizbin_standard.png",
+    "Analysis/results/IMP-MT_var_count.png",
+    "Analysis/results/IMP-MT_coverage_density.png",
+    "Analysis/results/IMP-MT_reads_density.png",
+    "Analysis/results/IMP-MT_vizbin_length_cov.png",
+    "Analysis/results/IMP-MT_vizbin_length_depth.png",
+    "Analysis/results/IMP-MT_vizbin_length_vardens.png",
+    "Analysis/results/MT.read_stats.html",
+    "Analysis/results/MT.read_stats.txt",
+    "Analysis/results/MT_mapping_stats.html",
+    "Analysis/results/MT_mapping_stats.txt",
+]
+
+
+rule visualize:
+    input:
+       'Analysis/mt.read_counts.txt',
+       'Analysis/mt.assembly.contig_flagstat.txt',
+       'Analysis/mt.assembly.contig_coverage.txt',
+       'Analysis/mt.assembly.contig_depth.txt',
+       'Analysis/mt.variants.samtools.vcf.gz',
+       'Analysis/mt.assembly.gc_content.txt',
+       "Analysis/annotation/annotation.filt.gff",
+       "Analysis/mt.vizbin.with-contig-names.points",
+       "Analysis/results/quast/summary/combined_quast_output/contigs_reports/nucmer_output/aux/mt.assembly.merged.coords_edited"
+    output:
+        PLOT_OUTPUT_FILES
+    shell:
+        """
+        PLOT_SCRIPT="{SRCDIR}/IMP_visualize_mt.R"
+
+        echo "[x] PLOT `date +"%Y/%m/%d %H:%M:%S"`"
+        mkdir -p Analysis/results
+        Rscript $PLOT_SCRIPT Analysis/results {input} {SRCDIR}/IMP_plot_functions.R
+        """

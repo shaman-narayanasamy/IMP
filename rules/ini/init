@@ -1,0 +1,27 @@
+include:
+    "config"
+workdir:
+    DBPATH
+
+include:
+    "databases.rules"
+
+
+
+rule ALL:
+    input:
+        expand(
+            "filtering/{filter}.{ext}",
+            filter=config["filtering"]["filter"],
+            ext=['fa', 'fa.amb', 'fa.ann', 'fa.bwt', 'fa.pac', 'fa.sa']
+        ),
+        expand("{path}/{files}.fasta", files=config["sortmerna"]["files"], path="sortmerna"),
+        expand("{db}", path=DBPATH, db=config["prokka"]["databases"]),
+        "adapters/adapters.done",
+        expand(
+            "{path}/idx/{files}.{ext}",
+            files=config["sortmerna"]["files"],
+            path="sortmerna",
+            ext=['bursttrie_0.dat', 'kmer_0.dat', 'pos_0.dat', 'stats']),
+        "ec2pathway.txt",
+        "pathway2hierarchy.txt"

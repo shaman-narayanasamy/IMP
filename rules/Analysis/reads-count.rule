@@ -1,0 +1,45 @@
+raw_fq_files = [
+    'Preprocessing/{type}.r1.fq',
+    'Preprocessing/{type}.r2.fq'
+]
+preprocessed_fq_files = [
+    'Preprocessing/{type}.r1.preprocessed.fq',
+    'Preprocessing/{type}.r2.preprocessed.fq',
+    'Preprocessing/{type}.se.preprocessed.fq',
+]
+trimmed_fq_files = [
+    'Preprocessing/{type}.r1.trimmed.fq',
+    'Preprocessing/{type}.r2.trimmed.fq',
+    'Preprocessing/{type}.se.trimmed.fq'
+]
+rna_filtered_fq_mt_files = [
+    'Preprocessing/mt.r1.trimmed.rna_filtered.fq',
+    'Preprocessing/mt.r2.trimmed.rna_filtered.fq',
+    'Preprocessing/mt.se.trimmed.rna_filtered.fq',
+]
+
+def reads_input_files(wildcards):
+    if wildcards.type not in TYPES:
+        return 'reads_input_files-no-file-here'
+    base = raw_fq_files
+    if not config['skip_preprocessing']:
+        base += preprocessed_fq_files
+    if config['preprocessing_filtering']:
+        base += trimmed_fq_files
+    if wildcards.type == 'mt' and not config['skip_preprocessing']:
+        base += rna_filtered_fq_mt_files
+    return expand(base, type=wildcards.type)
+
+#"Analysis/mg.read_counts.txt",
+
+rule reads_count:
+    input:
+        reads_input_files
+    output:
+        'Analysis/{type}.read_counts.txt'
+    run:
+        for idx, f in enumerate({input}):
+            if idx == 0:
+                shell("wc -l {f} > {output}")
+            else:
+                shell("wc -l {f} >> {output}")

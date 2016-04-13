@@ -1,0 +1,45 @@
+rule call_contig_depth:
+    input:
+        "Assembly/{type}.reads.sorted.bam",
+        "Assembly/%s.assembly.merged.fa" % ASS
+    output:
+        "Analysis/{type}.assembly.contig_coverage.txt",
+        "Analysis/{type}.assembly.contig_depth.txt",
+        "Analysis/{type}.assembly.contig_flagstat.txt",
+    shell:
+        """
+        echo "[x]  COVERAGE AND DEPTH `date +"%Y/%m/%d %H:%M:%S"`"
+        echo "Creating genome file ..."
+        if [[ ! -f {input[1]}.fai ]]
+        then
+          echo "No fasta index! Creating one."
+          samtools faidx {input[1]}
+        fi
+        cat {input[1]}.fai | awk '{{print $1 \"\t0\t\" $2}}' > {input[1]}.bed3
+        echo "Done creating bed file"
+
+        echo "Running BEDTools coverage calculation ..."
+        coverageBed -abam {input[0]} -b {input[1]}.bed3 > {output[0]}
+        echo "Coverage calculation done"
+        echo "Running BEDTools for average depth in each position"
+        TMP_DEPTH=$(mktemp --tmpdir={TMPDIR} -t "depth_file_XXXXXX.txt")
+        genomeCoverageBed -ibam {input[0]} | grep -v "genome" > $TMP_DEPTH
+        echo "Depth calculation done"
+
+        ## This method of depth calculation was adapted and modified from the CONCOCT code
+        awk -v OFS='\t' 'BEGIN {{pc=""}}
+        {{
+        c=$1;
+        if (c == pc) {{
+        cov=cov+$2*$5;
+        }} else {{
+        print pc,cov;
+        cov=$2*$5;
+        pc=c}}
+        }} END {{print pc,cov}}' $TMP_DEPTH | tail -n +2 > {output[1]}
+
+        echo "Remove the temporary file"
+        rm $TMP_DEPTH
+        echo "flagstat"
+        samtools flagstat {input[0]} | cut -f1 -d ' ' > {output[2]}
+        """

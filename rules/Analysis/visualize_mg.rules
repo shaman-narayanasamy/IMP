@@ -1,0 +1,33 @@
+rule visualize:
+    input:
+       'Analysis/mg.read_counts.txt',
+       'Analysis/mg.assembly.contig_flagstat.txt',
+       'Analysis/mg.assembly.contig_coverage.txt',
+       'Analysis/mg.assembly.contig_depth.txt',
+       'Analysis/mg.variants.samtools.vcf.gz',
+       'Analysis/mg.assembly.gc_content.txt',
+       "Analysis/annotation/annotation.filt.gff",
+       "Analysis/mg.vizbin.with-contig-names.points",
+       "Analysis/results/quast/summary/combined_quast_output/contigs_reports/nucmer_output/aux/mg.assembly.merged.coords_edited"
+    output:
+        "Analysis/results/IMP-vizbin_length.png",
+        "Analysis/results/IMP-vizbin_length_GC.png",
+        "Analysis/results/IMP-vizbin_standard.png",
+        "Analysis/results/IMP-MG_var_count.png",
+        "Analysis/results/IMP-MG_coverage_density.png",
+        "Analysis/results/IMP-MG_reads_density.png",
+        "Analysis/results/IMP-MG_vizbin_length_cov.png",
+        "Analysis/results/IMP-MG_vizbin_length_depth.png",
+        "Analysis/results/IMP-MG_vizbin_length_vardens.png",
+        "Analysis/results/MG.read_stats.html",
+        "Analysis/results/MG.read_stats.txt",
+        "Analysis/results/MG_mapping_stats.html",
+        "Analysis/results/MG_mapping_stats.txt",
+    shell:
+        """
+        PLOT_SCRIPT="{SRCDIR}/IMP_visualize_mg.R"
+
+        echo "[x] PLOT `date +"%Y/%m/%d %H:%M:%S"`"
+        mkdir -p Analysis/results
+        Rscript $PLOT_SCRIPT Analysis/results {input} {SRCDIR}/IMP_plot_functions.R
+        """

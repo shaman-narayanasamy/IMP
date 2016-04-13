@@ -1,0 +1,17 @@
+# include rules for the Report part of the workflow
+
+include:
+    "../../../rules/Report/diagramm.rule"
+
+include:
+    "../../../rules/Report/libraries.rules"
+
+include:
+    "../../../rules/Report/report.rules"
+
+# master command
+rule REPORT:
+    input:
+        "REPORT.html"
+    output:
+        touch('report.done')

@@ -1,0 +1,42 @@
+rule fastqc_raw:
+    input:
+        'Preprocessing/{type}.r1.fq',
+        'Preprocessing/{type}.r2.fq',
+
+    output:
+        'Analysis/stats/{type}/{type}.r1.fq_fastqc.html',
+        'Analysis/stats/{type}/{type}.r2.fq_fastqc.html',
+        'Analysis/stats/{type}/{type}.r1.fq_fastqc.zip',
+        'Analysis/stats/{type}/{type}.r2.fq_fastqc.zip'
+    shell:
+        """
+        mkdir -p Analysis/stats/{wildcards.type}
+        fastqc -o Analysis/stats/{wildcards.type} -f fastq {input[0]} {input[1]} -t {THREADS} -d {TMPDIR}
+        """
+
+rule fastqc_preprocessed:
+    input:
+        'Preprocessing/{type}.r1.preprocessed.fq',
+        'Preprocessing/{type}.r2.preprocessed.fq',
+        'Preprocessing/{type}.se.preprocessed.fq',
+    output:
+        'Analysis/stats/{type}/{type}.r1.preprocessed.fq_fastqc.html',
+        'Analysis/stats/{type}/{type}.r2.preprocessed.fq_fastqc.html',
+        'Analysis/stats/{type}/{type}.se.preprocessed.fq_fastqc.html',
+        'Analysis/stats/{type}/{type}.r1.preprocessed.fq_fastqc.zip',
+        'Analysis/stats/{type}/{type}.r2.preprocessed.fq_fastqc.zip',
+        'Analysis/stats/{type}/{type}.se.preprocessed.fq_fastqc.zip'
+    shell:
+        """
+        mkdir -p Analysis/stats/{wildcards.type}
+        if [[ -s {input[2]} ]]
+        then
+        fastqc -o Analysis/stats/{wildcards.type} -f fastq {input} -t {THREADS} -d {TMPDIR}
+        else
+        echo "{input[2]} is empty, FastQC will not run for that file"
+        fastqc -o Analysis/stats/{wildcards.type} -f fastq {input[0]} {input[1]} -t {THREADS} -d {TMPDIR}
+        echo "Creating empty files for {input[2]}..."
+        touch {output[2]}
+        echo "No single end reads were generated" > {output[5]}
+        fi
+        """

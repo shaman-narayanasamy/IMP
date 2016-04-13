@@ -1,0 +1,69 @@
+rule megahit_hybrid_assembly_1:
+    input:
+        'Preprocessing/mg.r1.preprocessed.fq',
+        'Preprocessing/mg.r2.preprocessed.fq',
+        'Preprocessing/mg.se.preprocessed.fq',
+        'Preprocessing/mt.r1.preprocessed.fq',
+        'Preprocessing/mt.r2.preprocessed.fq',
+        'Preprocessing/mt.se.preprocessed.fq',
+        'Assembly/mt.megahit_preprocessed.1/final.contigs.fa',
+        'Assembly/mt.megahit_unmapped.2/final.contigs.fa',
+    output:
+        'Assembly/mgmt.megahit_hybrid.1/final.contigs.fa',
+        'Assembly/mgmt.megahit_hybrid.1.fa'
+    params:
+        outdir = 'Assembly/mgmt.megahit_hybrid.1'
+    shell:
+        """
+        echo "[x] Performing hybrid assembly step '1' using MEGAHIT"
+        if [ -d "{params.outdir}" ]; then
+            rm -rf {params.outdir}
+        fi
+        MAX_MEM="$(({MEMTOTAL} * 1000000000))"
+        megahit -1 {input[0]},{input[3]} \
+        -2 {input[1]},{input[4]} \
+        -r {input[2]},{input[5]},{input[6]},{input[7]} \
+        -o {params.outdir} \
+        --k-min {config[idba_ud][mink]} \
+        --k-max {config[idba_ud][maxk]} \
+        --k-step {config[idba_ud][step]} \
+        -t {THREADS} --cpu-only \
+        -m "${{MAX_MEM}}" \
+        --mem-flag 1
+        ln -fs $(echo {output[0]} | cut -f 2,3 -d /) {output[1]} && touch -h {output[1]}
+        """
+
+rule megahit_hybrid_assembly_2:
+    input:
+        'Assembly/mgmt.r1.megahit_hybrid.mt.unmapped.fq',
+        'Assembly/mgmt.r2.megahit_hybrid.mt.unmapped.fq',
+        'Assembly/mgmt.se.megahit_hybrid.mt.unmapped.fq',
+        'Assembly/mgmt.r1.megahit_hybrid.mg.unmapped.fq',
+        'Assembly/mgmt.r2.megahit_hybrid.mg.unmapped.fq',
+        'Assembly/mgmt.se.megahit_hybrid.mg.unmapped.fq',
+    output:
+        'Assembly/mgmt.megahit_hybrid.2/final.contigs.fa',
+        'Assembly/mgmt.megahit_hybrid.2.fa'
+    params:
+        outdir = 'Assembly/mgmt.megahit_hybrid.2'
+    shell:
+        """
+        if [ -d "{params.outdir}" ]; then
+            rm -rf {params.outdir}
+        fi
+
+        MAX_MEM="$(({MEMTOTAL} * 1000000000))"
+
+        echo "Performing second hyrbid assembly step using MEGAHIT"
+        megahit -1 {input[0]},{input[3]} \
+        -2 {input[1]},{input[4]} \
+        -r {input[2]},{input[5]} \
+        -o {params.outdir} \
+        --k-min {config[idba_ud][mink]} \
+        --k-max {config[idba_ud][maxk]} \
+        --k-step {config[idba_ud][step]} \
+        -t {THREADS} --cpu-only \
+        -m ${{MAX_MEM}} \
+        --mem-flag 1
+        ln -fs $(echo {output[0]} | cut -f 2,3 -d /) {output[1]} && touch -h {output[1]}
+        """

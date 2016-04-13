@@ -1,0 +1,12 @@
+rule diagramm:
+    message:
+        "Creating diagramms."
+    output:
+        "Report/workflow.png",
+        "Report/workflow.pdf"
+    shell:
+        """
+        mkdir -p Report
+        snakemake -s {ROOT_DIR}/Snakefile ALL --forceall --dag | dot -Tpng > Report/workflow.png
+        snakemake -s {ROOT_DIR}/Snakefile ALL --forceall --dag | dot -Tpdf > Report/workflow.pdf
+        """

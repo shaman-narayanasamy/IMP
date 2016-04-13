@@ -1,0 +1,22 @@
+rule call_contig_length:
+    input:
+        "Assembly/{type}.assembly.merged.fa"
+    output:
+        "Analysis/{type}.assembly-{type}.length.txt",
+        "Analysis/{type}.assembly-{type}.gc_content.txt",
+    shell:
+        """
+        echo "[x]  LENGTH `date +"%Y/%m/%d %H:%M:%S"`"
+        echo "Obtaining contig lengths"
+        perl {SRCDIR}/fastaNamesSizes.pl {input} > {output[0]}
+
+        echo "Obtaining GC content"
+        TMP_GC=$(mktemp --tmpdir={TMPDIR} -t "gc_out_XXXXXX.txt")
+        perl {SRCDIR}/get_GC_content.pl {input} $TMP_GC
+
+        # Th program above provides a file gc_out.txt. This command cleans the output
+        echo "Clean up output"
+        cut -f1,2 $TMP_GC | sed -e 's/>//g'> {output[1]}
+        echo "Remove intermediate files"
+        rm $TMP_GC
+        """

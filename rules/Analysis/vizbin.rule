@@ -1,0 +1,26 @@
+rule vizbin:
+    input:
+        "Assembly/{type}.assembly.merged.fa"
+    output:
+        "Analysis/{type}.vizbin.filtered.fa",
+        "Analysis/{type}.vizbin.with-contig-names.points"
+    shell:
+        """
+        echo "[x] VIZBIN `date +"%Y/%m/%d %H:%M:%S"`"
+        TMP_VIZBIN=$(mktemp --tmpdir={TMPDIR} -dt "VIZBIN_XXXXXX")
+        perl {SRCDIR}/fasta_filter_length.pl 1000 {input[0]} > {output[0]}
+        java -jar {config[vizbin][jarfile]} \
+        -a {config[vizbin][dimension]} \
+        -c {config[vizbin][cutoff]} \
+        -i {output[0]} \
+        -o $TMP_VIZBIN/data.points \
+        -k {config[vizbin][kmer]} \
+        -p {config[vizbin][perp]}
+
+        if [ -f $TMP_VIZBIN/data.points ]
+            then
+                paste <(grep "^>" {output[0]} | sed -e 's/>//') \
+                <(cat $TMP_VIZBIN/data.points | sed -e 's/,/\t/') > {output[1]}
+            fi
+        rm -rf $TMP_VIZBIN
+        """

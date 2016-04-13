@@ -1,0 +1,18 @@
+rule krona:
+    input:
+        "Analysis/{type}.prokkaID2ec.txt",
+        "%s/ec2pathway.txt" % DBPATH,
+        "%s/pathway2hierarchy.txt" % DBPATH,
+        "Analysis/{type}.gene_depth.avg",
+        "Analysis/{type}.gene.len"
+    output:
+        "Analysis/results/{type}.gene_kegg_krona.txt",
+        "Analysis/results/{type}.gene_kegg_krona.html"
+    shell:
+        """
+        echo "[x] PLOT KRONA `date +"%Y/%m/%d %H:%M:%S"`"
+        echo {input}
+        echo {output[0]}
+        python {SRCDIR}/genes.to.kronaTable.py -i {input[0]} -m {input[1]} -H {input[2]} -c {input[3]} -L {input[4]} -o {output[0]}
+        ktImportText -o {output[1]} {output[0]} -a
+        """

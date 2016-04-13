@@ -1,0 +1,58 @@
+PLOT_OUTPUT_FILES = [
+    "Analysis/results/IMP-vizbin_length.png",
+    "Analysis/results/IMP-vizbin_length_GC.png",
+    "Analysis/results/IMP-vizbin_length_geneDensity.png",
+    "Analysis/results/IMP-vizbin_standard.png",
+    "Analysis/results/IMP-reads_density.png",
+    "Analysis/results/IMP-rpkm_density.png",
+    "Analysis/results/IMP-coverage_density.png",
+    "Analysis/results/IMP-depth_density.png",
+    "Analysis/results/IMP-var_count.png",
+    "Analysis/results/IMP-var_density.png",
+    "Analysis/results/IMP-vizbin_length_MGcov.png",
+    "Analysis/results/IMP-vizbin_length_MGdepth.png",
+    "Analysis/results/IMP-vizbin_length_MGvardens.png",
+    "Analysis/results/IMP-vizbin_length_MTcov.png",
+    "Analysis/results/IMP-vizbin_length_MTdepth.png",
+    "Analysis/results/IMP-vizbin_length_MTvardens.png",
+    "Analysis/results/IMP-vizbin_length_covRatio.png",
+    "Analysis/results/IMP-vizbin_length_depthRatio.png",
+    "Analysis/results/IMP-vizbin_length_rpkmRatio.png",
+    "Analysis/results/mg.read_stats.html",
+    "Analysis/results/mg.read_stats.txt",
+    "Analysis/results/MG_mapping_stats.html",
+    "Analysis/results/MG_mapping_stats.txt",
+    "Analysis/results/mt.read_stats.html",
+    "Analysis/results/mt.read_stats.txt",
+    "Analysis/results/MT_mapping_stats.html",
+    "Analysis/results/MT_mapping_stats.txt",
+]
+
+
+
+rule visualize:
+    input:
+       'Analysis/mg.read_counts.txt',
+       'Analysis/mt.read_counts.txt',
+       'Analysis/mg.assembly.contig_flagstat.txt',
+       'Analysis/mt.assembly.contig_flagstat.txt',
+       'Analysis/mg.assembly.contig_coverage.txt',
+       'Analysis/mt.assembly.contig_coverage.txt',
+       'Analysis/mg.assembly.contig_depth.txt',
+       'Analysis/mt.assembly.contig_depth.txt',
+       'Analysis/mg.variants.samtools.vcf.gz',
+       'Analysis/mt.variants.samtools.vcf.gz',
+       'Analysis/mgmt.assembly.gc_content.txt',
+       "Analysis/mgmt.vizbin.with-contig-names.points",
+       "Analysis/annotation/annotation.filt.gff",
+       "Analysis/results/quast/summary/combined_quast_output/contigs_reports/nucmer_output/aux/mgmt.assembly.merged.coords_edited"
+    output:
+        PLOT_OUTPUT_FILES
+    shell:
+        """
+        PLOT_SCRIPT="{SRCDIR}/IMP_visualize_mgmt.R"
+
+        echo "[x] PLOT `date +"%Y/%m/%d %H:%M:%S"`"
+        mkdir -p Analysis/results
+        Rscript $PLOT_SCRIPT Analysis/results {input} {SRCDIR}/IMP_plot_functions.R
+        """

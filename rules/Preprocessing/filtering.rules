@@ -1,0 +1,82 @@
+input_filtering = {
+    'mg': [
+        'Preprocessing/mg.r1.trimmed.fq',
+        'Preprocessing/mg.r2.trimmed.fq',
+        'Preprocessing/mg.se.trimmed.fq'
+    ],
+    'mt': [
+        'Preprocessing/mt.r1.trimmed.rna_filtered.fq',
+        'Preprocessing/mt.r2.trimmed.rna_filtered.fq',
+        'Preprocessing/mt.se.trimmed.rna_filtered.fq'
+    ]
+}
+
+input_symlinking = {
+    'mg': [
+        'Preprocessing/mg.r1.trimmed.{filter}_filtered.fq',
+        'Preprocessing/mg.r2.trimmed.{filter}_filtered.fq',
+        'Preprocessing/mg.se.trimmed.{filter}_filtered.fq'
+    ],
+    'mt': [
+        'Preprocessing/mt.r1.trimmed.rna_filtered.{filter}_filtered.fq',
+        'Preprocessing/mt.r2.trimmed.rna_filtered.{filter}_filtered.fq',
+        'Preprocessing/mt.se.trimmed.rna_filtered.{filter}_filtered.fq'
+    ]
+}
+
+def filtering_input(wildcards):
+    if wildcards.type in TYPES:
+        return input_filtering[wildcards.type]
+    return "filtering-input-no-file-here"
+
+def symlink_input(wildcards):
+    if wildcards.type in TYPES:
+        return expand(input_symlinking[wildcards.type], filter=config["filtering"]["filter"])
+    return "symlink-input-no-file-here"
+
+rule filtering:
+    input:
+        filtering_input,
+        '{dir}/{ref}.fa'.format(dir=DBPATH + "/filtering", ref=config['filtering']['filter']),
+        expand(
+            "{p}/filtering/{filter}.{ext}", filter=config["filtering"]["filter"],
+            ext=['fa', 'fa.amb', 'fa.ann', 'fa.bwt', 'fa.pac', 'fa.sa'], p=DBPATH)
+    output:
+        'Preprocessing/{type}.r1.{prefix}.{filter}_filtered.fq',
+        'Preprocessing/{type}.r2.{prefix}.{filter}_filtered.fq',
+        'Preprocessing/{type}.se.{prefix}.{filter}_filtered.fq'
+    shell:
+        """
+        TMP_FILE=$(mktemp --tmpdir={TMPDIR} -t "alignment_XXXXXX.bam")
+        BUFFER=$(mktemp --tmpdir={TMPDIR} -t "alignment_XXXXXX.bam")
+        bwa mem -v 1 -t {THREADS} {input[3]} {input[0]} {input[1]} | samtools view -@ {THREADS} -bS - > $TMP_FILE
+        samtools merge -@ {THREADS} -u - \
+        <(samtools view -@ {THREADS} -u  -f 4 -F 264 $TMP_FILE) \
+        <(samtools view -@ {THREADS} -u -f 8 -F 260 $TMP_FILE) \
+        <(samtools view -@ {THREADS} -u -f 12 -F 256 $TMP_FILE) | \
+        samtools view -@ {THREADS} -bF 0x800 -  | samtools sort -o -@ {THREADS} -m {MEMCORE}G -n - $BUFFER | \
+        bamToFastq -i stdin -fq {output[0]} -fq2 {output[1]}
+        if [[ -s {input[2]} ]]
+        then
+        bwa mem -v 1 -t {THREADS} {input[3]} {input[2]} | samtools view -@ {THREADS} -bS - | \
+        samtools view -@ {THREADS} -uf 4 - | bamToFastq -i stdin -fq {output[2]}
+        else
+        echo "{input[2]} is empty, skipping single end human sequence filtering, but creating it anyway..."
+        touch {output[2]}
+        fi
+        rm -rf $BUFFER* $TMP_FILE
+        """
+
+rule symlink_preprocessed_files:
+    input:
+        symlink_input
+    output:
+        'Preprocessing/{type}.r1.preprocessed.fq',
+        'Preprocessing/{type}.r2.preprocessed.fq',
+        'Preprocessing/{type}.se.preprocessed.fq'
+    shell:
+        """
+        ln -fs $(echo {input[0]} | cut -f 2 -d /) {output[0]} && touch -h {output[0]}
+        ln -fs $(echo {input[1]} | cut -f 2 -d /) {output[1]} && touch -h {output[1]}
+        ln -fs $(echo {input[2]} | cut -f 2 -d /) {output[2]} && touch -h {output[2]}
+        """

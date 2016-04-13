@@ -1,0 +1,35 @@
+rule annotate:
+    input:
+        'Assembly/%s.assembly.merged.fa' % ASS,
+        expand("{path}/{db}", path=DBPATH, db=config["prokka"]["databases"])
+    output:
+        "Analysis/annotation/annotation.filt.gff"
+    shell:
+        """
+        ### prokka by default will look databases where is located the binary.
+        ### we have to softlink to put the binary somewhere and the databases somewhere else.
+        if [[ "{DBPATH}" = /* ]]
+        then
+            PP={DBPATH};
+        else
+            PP=$PWD/{DBPATH};
+        fi
+        DD=$(dirname $(which prokka))/../db
+        if [[ ! -L $DD ]]
+        then
+            CUR=$PWD
+            echo "Softlinking $DD to $PP"
+            cd $(dirname $(which prokka))/.. && ln -s $PP db
+            cd $CUR
+        fi
+        rm -rf Analysis/annotation/
+        prokka --force --outdir Analysis/annotation --cpus {THREADS} --metagenome {input[0]} >> Analysis/annotation.log 2>&1
+
+        # Prokka gives a gff file with a long header and with all the contigs at the bottom.  The command below removes the
+        # And keeps only the gff table.
+
+        LN=`grep -Hn "^>" Analysis/annotation/PROKKA_*.gff | head -n1 | cut -f2 -d ":" || if [[ $? -eq 141 ]]; then true; else exit $?; fi`
+        LN1=1
+        LN=$(($LN-$LN1))
+        head -n $LN Analysis/annotation/*.gff | grep -v "^#" | sort | uniq | grep -v "^==" > {output}
+        """

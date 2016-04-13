@@ -21,8 +21,11 @@ __doc__ = """Integrated Metaomic Pipeline.
 (____)(_/\/\_)(__)
 
 Usage:
-  IMP [-m MG1 -m MG2 -m MGSE] [-t MT1 -t MT2 -t MTSE] -o OUTPUT [--enter] [--norm] [--current] [-r REPO] [-n CONTAINER] [-v VERSION] [-c CONFIGFILE] [-d DBPATH] [-a ASSEMBLER] [-e ENV] ... [COMMANDS ...]
-  IMP --init [--current] [-d DBPATH] [-n CONTAINER] [-v VERSION] [-r REPO] [-c CONFIGFILE]
+  IMP [-m MG1 -m MG2 -m MGSE]
+      [-t MT1 -t MT2 -t MTSE]
+      -o OUTPUT
+      [--enter] [--norm] [--current] [-r REPO] [-n CONTAINER] [-v VERSION] [-c CONFIGFILE] [-d DBPATH] [-a ASSEMBLER] [-e ENV] ... [COMMANDS ...]
+  IMP --init [--current] [--enter] [-d DBPATH] [-n CONTAINER] [-v VERSION] [-r REPO] [-c CONFIGFILE]
   IMP (-h | --help)
   IMP --version
 
@@ -163,17 +166,23 @@ def init(args):
         'n': args['-n'],
         'v': args['-v'],
         'c': config_file,
-        'conf': config_directory
+        'conf': config_directory,
+        'interactive': ''
     }
     # override docker command if the user want to mount a specific version of IMP codebase.
     if args['--current']:
         formatting_args['p'] = CURRENT_PATH
-        docker_cmd = 'docker run --rm -v {p}:/code -v {d}:/databases -v {conf}:/conf -e CONFIGFILE=/conf/{c} {n}:{v}'
-
+        docker_cmd = 'docker run --rm -v {p}:/code -v {d}:/databases -v {conf}:/conf -e CONFIGFILE=/conf/{c}{interactive} {n}:{v}'
+    if args['--enter']:
+        formatting_args['interactive'] = ' -it'
     # format docker command
     docker_cmd = docker_cmd.format(**formatting_args)
     # IMP command + user mapping (see https://github.com/docker/docker/pull/12648)
-    cmd = docker_cmd + map_user('snakemake -s /code/rules/init', '/databases')
+
+    if args['--enter']:
+        cmd = docker_cmd + ' /bin/bash'
+    else:
+        cmd = docker_cmd + map_user('snakemake -s /code/rules/init', '/databases')
     print("Executing", '"', cmd, '"')
     subprocess.call(cmd, shell=True)
 
@@ -201,8 +210,8 @@ def run(args):
     if not output.exists():
         output.makedirs()
 
+    # other path to mount
     database_path = Path(args['-d']).abspath()
-
     config_file = str(Path(args['-c']).name)
     config_directory = Path(args['-c']).parent.abspath()
 
@@ -217,20 +226,23 @@ def run(args):
     if args['--current']:
         mount_points.append('-v %s:/code' % CURRENT_PATH)
 
-    # environment variables: add MG and MT data and config if specified
+    # add environment variables
     envs = ['-e {}="{}"'.format(*e.split('=')) for e in args['-e']]
-
     # prepare MG and MT data
     mg = ['/data/' + d for d in mg_data]
     mt = ['/data/' + d for d in mt_data]
 
+    # add mg and/or mt data
     if mg:
         envs += ['-e MG="%s"' % ' '.join(mg)]
     if mt:
         envs += ['-e MT="%s"' % ' '.join(mt)]
 
+    # add config file
     if args['-c']:
         envs += ['-e CONFIGFILE=/conf/%s' % config_file]
+
+    # set imp assembler
     if args['-a']:
         envs += ['-e IMP_ASSEMBLER=%s' % args['-a']]
 
@@ -248,15 +260,26 @@ def run(args):
     # add container name and commands to pass to snakemake
     cmd += ['%s:%s' % (args['-n'], args['-v'])]
 
+    # map the workflow snakemake file
+    workflow_file = '/code/workflows/integrative/Snakefile'
+    if mg and not mt:
+        workflow_file = '/code/workflows/single-omic/mg/Snakefile'
+    if mt and not mg:
+        workflow_file = '/code/workflows/single-omic/mt/Snakefile'
+
     # if --enter flag is specified, change the command
     if args['--enter']:
         cmd += ['/bin/bash']
         cmd = ' '.join(cmd)
     else:
+        # put default command if not specified
         if not args['COMMANDS']:
             args['COMMANDS'] = ['snakemake', 'ALL']
+        # add the workflow file
+        args['COMMANDS'] += ['-s', workflow_file]
         cmd = ' '.join(cmd) + map_user(' '.join(args['COMMANDS']), '/output')
 
+    # execute the command
     print("Executing", '"', cmd, '"')
     subprocess.call(cmd, shell=True)
 
