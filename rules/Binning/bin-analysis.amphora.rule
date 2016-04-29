@@ -1,0 +1,41 @@
+### This rule is not yet complete because it depends on an external shell script. We need to figure out a way
+### of porting it fully into snakemake
+
+rule batch_amphora:
+    input:
+       "%s/separate_bins.done" % B_OUT
+    output:
+       "%s/batRunAMPHORA2.done" % B_OUT
+    shell:
+       """
+       src/batchRunAMPHORA2.sh {B_OUT}/clusterFiles {B_OUT}/clusterFiles/amphora2 {THREADS}
+
+       IN_TOPDIR={B_OUT}/clusterFiles
+       OUT_TOPDIR={B_OUT}/clusterfiles/amphora2
+       THREADS=${3}
+       
+       SCRIPT_DIR=$(dirname $0)
+       
+       date
+       
+       for i in $(find ${IN_TOPDIR} -maxdepth 1 -name "*.faa")
+       do
+           FILENAME="$(basename ${i%.*})"
+           OUT_DIR="${OUT_TOPDIR}/${FILENAME}"
+           if [[ -d ${OUT_DIR} ]]; then
+               echo "INFO: DEST_DIR (${OUT_DIR}) already exists."
+           else
+               mkdir -p ${OUT_DIR}
+               echo "INFO: Created ${OUT_DIR}."
+           fi
+           echo "STATUS: Running Amphora2 for ${FILENAME} ..."
+           echo
+           CMD="${SCRIPT_DIR}/runAMPHORA2.sh -i $i -o ${FILENAME}.phylotypes.txt -d ${OUT_DIR} -c {THREADS} -p"
+           echo "${CMD}"
+           eval "time ${CMD}"
+           echo "done (running batchRunAMPHORA2)."
+           echo
+       done
+       
+       touch {output}
+       """

@@ -1,0 +1,11 @@
+rule plot_completeness:
+    input:
+        "%s/CompletenesSummary.csv" % B_OUT
+    output:
+        "%s/analysis_essential_genes.pdf" % B_OUT
+    shell:
+        """
+        module load lang/R/3.2.0-ictce-7.3.5-bare
+        Rscript src/plotting_completenessresults.R {input} {B_OUT}
+        """
+

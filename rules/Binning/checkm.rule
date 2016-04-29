@@ -1,0 +1,12 @@
+rule run_checkm:
+    #in:indir outdir threads
+    input:
+       "%s/prepare_proteins.done" % B_OUT
+    output:
+       "%s/run_checkM.done" % B_OUT
+    shell:
+       """
+       src/run_checkm.sh {B_OUT}/clusterFiles/preparedproteins {B_OUT}/clusterFiles/checkm {THREADS}
+       touch {output}
+       """
+

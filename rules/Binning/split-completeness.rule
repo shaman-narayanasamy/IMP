@@ -1,0 +1,14 @@
+rule SPLIT_COMPLETENESS:
+    input:
+        "%s/ORFS.hmm.orfs.essential.hits" % B_OUT
+    output:
+        "%s/split_completeness.done" % B_OUT
+    shell:
+        """
+        for IDFILE in $(find {B_OUT}/clusterFiles -name "*.protids" | sort)
+        do
+            OUTFILE="{B_OUT}/clusterFiles/$(basename "${{IDFILE}}" .protids).essential.hits"
+            awk 'FNR==NR{{a[$1]=$1;next}}{{if(a[$1]) print $0}}' $IDFILE {input[0]} | uniq > $OUTFILE
+        done
+        touch {output}
+        """

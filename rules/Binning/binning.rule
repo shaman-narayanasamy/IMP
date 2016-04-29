@@ -1,0 +1,23 @@
+rule binning_clustering:
+    input:
+        "%s/MG.vizbin.with-contig-names.points" % AN_OUT,
+        "%s/MG.assembly.contig_depth.txt" % AN_OUT,
+        "%s/ORFS.hmm.orfs.essential.hits" % B_OUT,
+        "%s/ORFS-contig_links.bed" % B_OUT
+    output:
+        "%s/clusterFiles/reachabilityDistanceEstimates.tsv" % B_OUT,
+        "%s/clusterFiles/clusterFirstScan.tsv" % B_OUT,
+        "%s/clusterFiles/bimodalClusterCutoffs.tsv" % B_OUT,
+        "%s/clusterFiles/contigs2clusters.tsv" % B_OUT,
+        "%s/clusterFiles/contigs2clusters.RDS" % B_OUT,
+        "%s/clusterFiles/finalClusterMap.pdf" % B_OUT,
+    benchmark:
+        "%s/benchmarks/BINNING_CLUSTERING.json" % B_OUT
+    log:
+        AN_LOG
+    shell:
+        """
+        ## Run the R script for clustering the contigs
+        Rscript src/20160223_autoClusterFromIMP.R {input} {B_OUT}/clusterFiles {SAMPLE}
+        """
+

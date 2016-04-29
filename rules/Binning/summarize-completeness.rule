@@ -1,0 +1,36 @@
+rule SUMMARIZE_COMPLETENESS:
+    input:
+        "%s/split_completeness.done" % B_OUT
+    output:
+        "%s/CompletenesSummary.csv" % B_OUT
+    shell:
+        """
+        #src/getCompletenessAnalysisOverview.sh {B_OUT}/clusterFiles {output} 
+
+        EXPECTED_ARGS=2
+        E_BADARGS=65
+        
+        if (( $# != $EXPECTED_ARGS ))
+        then
+            echo "Usage: `basename $0` <directory w/ essential.hits files> <OUT_FILE (csv)>"
+            exit $E_BADARGS
+        fi
+        
+        IN_DIR="{B_OUT}/clusterFiles"
+        OUT_FILE="{output}"
+        COUNTER=0
+        
+        date
+        
+        echo "STATUS: Collecting completeness results..."
+        echo "#ClusterName,num. uniques,num. multiples" > ${OUT_FILE}
+        for IN_FILE in $(find $IN_DIR -name "*essential.hits" | sort)
+        do
+            COUNTER=$(($COUNTER + 1))
+            (echo -ne "$(basename "$IN_FILE" .essential.hits)," && grep -v "^#" $IN_FILE | awk '{{print $4}}'
+        done
+        
+        echo "done (collecting ${COUNTER} completeness results)."
+        
+        date
+        """

@@ -1,0 +1,11 @@
+rule batch_phylophlan:
+    #IN: <ABSOLUTE directory path w/ per-CAG .faa files> <PHYLOPHLAN_RUN_NAME> <threads> 
+    input:
+       "%s/prepare_proteins.done" % B_OUT
+    output:
+       "%s/batch_phylophlan.done" % B_OUT
+    shell:
+        """
+        src/runPhylophlanImpute.sh {B_OUT}/clusterFiles/preparedproteins {SAMPLE} {THREADS}
+        touch {output}
+
