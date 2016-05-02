@@ -1,13 +1,16 @@
 # include rules for the Binning part of the workflow
 
 include:
-    '../../rules/Binning/some.rule'
+    '../../rules/Binning/find-essential-genes.rule'
+
+include:
+    '../../rules/Binning/binning.rule'
 
 
 
 # master command
 rule ANALYSIS:
     input:
-        ""
+        "Binning/clusterFiles/reachabilityDistanceEstimates.tsv"
     output:
         touch('binning.done')
