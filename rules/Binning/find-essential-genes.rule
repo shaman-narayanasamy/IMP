@@ -1,4 +1,4 @@
-rule BINNING_ESSENTIAL_GENES:
+rule binning_essential_genes:
     input:
         "%s/PROKKA.faa" % B_OUT,
         "%s/annotation/annotation.filt.gff" % AN_OUT,

@@ -1,4 +1,4 @@
-rule SPLIT_COMPLETENESS:
+rule split_completeness:
     input:
         "%s/ORFS.hmm.orfs.essential.hits" % B_OUT
     output:

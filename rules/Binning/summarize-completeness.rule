@@ -1,4 +1,4 @@
-rule SUMMARIZE_COMPLETENESS:
+rule summarize_completeness:
     input:
         "%s/split_completeness.done" % B_OUT
     output:
