@@ -1,0 +1,13 @@
+# include rules for the Binning part of the workflow
+
+include:
+    '../../rules/Binning/some.rule'
+
+
+
+# master command
+rule ANALYSIS:
+    input:
+        ""
+    output:
+        touch('binning.done')
