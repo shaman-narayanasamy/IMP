@@ -110,4 +110,5 @@ rule prokka_databases:
         cp -r $TMPDIR/db/* {DBPATH}/.
         rm -rf $TMPDIR
         prokka --setupdb
+        wget {config[prokka][essentials_genes_db_url]} --no-check-certificate -O {DBPATH}/hmm/essentials_genes.hmm
         """

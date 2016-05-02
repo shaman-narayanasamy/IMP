@@ -1,21 +1,17 @@
 rule binning_essential_genes:
     input:
-        "%s/PROKKA.faa" % B_OUT,
-        "%s/annotation/annotation.filt.gff" % AN_OUT,
-        "%s/hmm/essential_genes/essential.hmm" % DBPATH
+        "Analysis/annotation/{config[prokka][prefix]}.faa",
+        "Analysis/annotation/annotation.filt.gff",
+        "%s/hmm/essentials_genes.hmm" % DBPATH,
     output:
-        "%s/ORFS.hmmer.essential.out" % B_OUT,
-        "%s/ORFS.hmm.orfs.essential.hits" % B_OUT,
-        "%s/ORFS-contig_links.bed" % B_OUT
-    benchmark:
-        "%s/benchmarks/BINNING_ESSENTIAL_GENES.json" % B_OUT
-    log:
-        AN_LOG
+        "Binning/ORFS.hmmer.essential.out",
+        "Binning/ORFS.hmm.orfs.essential.hits",
+        "Binning/ORFS-contig_links.bed"
     shell:
         """
         # Predict essential genes using hmm search
         hmmsearch --tblout {output[1]} --cut_tc --notextw {input[2]} {input[0]} > {output[0]}
-       
+
         BED_TMP=$(mktemp --tmpdir={TMPDIR} -t "XXXX_binning-bed.tmp")
 
         # Prepare file that links contigs to genes (using .gff file)
