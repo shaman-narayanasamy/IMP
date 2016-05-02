@@ -177,12 +177,13 @@ def init(args):
         formatting_args['interactive'] = ' -it'
     # format docker command
     docker_cmd = docker_cmd.format(**formatting_args)
+    print(docker_cmd)
     # IMP command + user mapping (see https://github.com/docker/docker/pull/12648)
 
     if args['--enter']:
         cmd = docker_cmd + ' /bin/bash'
     else:
-        cmd = docker_cmd + map_user('snakemake -s /code/rules/init', '/databases')
+        cmd = docker_cmd + map_user('snakemake -s /code/rules/ini/init', '/databases')
     print("Executing", '"', cmd, '"')
     subprocess.call(cmd, shell=True)
 

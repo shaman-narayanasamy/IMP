@@ -38,8 +38,6 @@ if os.path.exists(CUSTOM_CONFIG_PATH):
         data = json.load(rhandle)
         config = dict_merge(config, data)
 
-#print(subprocess.check_output('pwd'))
-#print(config)
 
 # some parameters
 ROOT_DIR = os.environ.get("ROOTDIR", config['imp_root'])

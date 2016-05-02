@@ -84,12 +84,13 @@ rule kegg_information:
         grep "path:ec" ec2pathway.txt.tmp | sed -e 's/path:ec//g' | sed -e 's/ec://g' > {output[0]}
         rm ec2pathway.txt.tmp
 
-        python {SRCDIR}/src/make.pwy.hierarchy.kegg.py > {output[1]}
+        python {SRCDIR}/make.pwy.hierarchy.kegg.py > {output[1]}
         """
 
 rule prokka_databases:
     output:
-        expand("{db}", db=config["prokka"]["databases"])
+        expand("{db}", db=config["prokka"]["databases"]),
+        "%s/hmm/essentials_genes.hmm" % DBPATH
     shell:
         """
         ### prokka by default will look databases where is located the binary.

@@ -9,7 +9,7 @@ include:
 
 
 # master command
-rule ANALYSIS:
+rule BINNING:
     input:
         "Binning/clusterFiles/reachabilityDistanceEstimates.tsv"
     output:
