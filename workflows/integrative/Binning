@@ -6,8 +6,6 @@ include:
 include:
     '../../rules/Binning/binning.rule'
 
-
-
 # master command
 rule BINNING:
     input:
