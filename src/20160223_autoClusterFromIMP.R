@@ -1,5 +1,3 @@
-.libPaths("/home/users/aheintzbuschart/lib/Rlibs/")
-
 # arguments from command
 args <- commandArgs(TRUE)
 
