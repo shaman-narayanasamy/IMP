@@ -1,3 +1,7 @@
+## This rule is also quite complicated due to the tool. It writes output in the program's directory.
+## We need to copy the output into the relevant files after the run. Alot of changes required
+## for this rule
+
 rule batch_phylophlan:
     #IN: <ABSOLUTE directory path w/ per-CAG .faa files> <PHYLOPHLAN_RUN_NAME> <threads> 
     input:
@@ -6,6 +10,63 @@ rule batch_phylophlan:
        "%s/batch_phylophlan.done" % B_OUT
     shell:
         """
-        src/runPhylophlanImpute.sh {B_OUT}/clusterFiles/preparedproteins {SAMPLE} {THREADS}
+        #src/runPhylophlanImpute.sh {B_OUT}/clusterFiles/preparedproteins {SAMPLE} {THREADS}
+
+        EXPECTED_ARGS=3
+        E_BADARGS=65
+        
+        if (( $# != $EXPECTED_ARGS ))
+        then
+            echo "Usage: `basename $0` <ABSOLUTE directory path w/ per-bin .faa files> <PHYLOPHLAN_RUN_NAME> <Threads>"
+            exit $E_BADARGS
+        fi
+        
+        IN_DIR="{B_OUT}/clusterFiles/preparedproteins"
+        PHYLOPHLAN_RUN_NAME="phylophlan"
+        THREADS="{THREADS}"
+        
+        ORIG_DIR=$(pwd)
+        
+        ESB="/work/projects/ecosystem_biology"
+        PHYLOPHLAN_DIR="${ESB}/local_tools/phylophlan/nsegata-phylophlan-7ea4a971d282/"
+        
+        #load env for Biopython
+        #module load 
+        export PYTHONPATH=/scratch/users/mherold/SCRATCH_REPOS/CanopyClustering/use_makefile/env/lib/python2.7/site-packages:$PYTHONPATH
+        source /scratch/users/mherold/SCRATCH_REPOS/CanopyClustering/use_makefile/env/bin/activate
+        
+        # Create a link in the phylophlan directory to the per-CAG protein directory
+        # Here, it is important that the path is ABSOLUTE
+        LINK_DEST="${PHYLOPHLAN_DIR}/input/${PHYLOPHLAN_RUN_NAME}"
+        if [ -L ${LINK_DEST} ]; then
+            echo "ERROR: Symbolic link (${LINK_DEST}) already exists. Please remove it and re-run '${0}'"
+            exit 2
+        fi
+        ln -s ${IN_DIR}/ ${LINK_DEST}
+        
+        source ${PHYLOPHLAN_DIR}/setEnv.sh
+        
+        PHYLOPHAN_BIN="./phylophlan.py"
+        
+        date
+        
+        cd ${PHYLOPHLAN_DIR}
+        # The creation of the "data" within the phylophlan directory should not be a problem as it might be deleted after succesfull execution of phylophlan.
+        # However, if results accumulate in the output/ folder, this might be less desirable, even if the size of phylophlan-based output is small.
+        # Hence TODO: Create a way to move the output to a destination folder
+        
+        echo "STATUS: Running Phylophlani-impute (${PHYLOPHLAN_RUN_NAME}) ..."
+        CMD="${PHYLOPHAN_BIN} -i -t ${PHYLOPHLAN_RUN_NAME} --nproc ${THREADS}"
+        echo "${CMD}"
+        eval "time ${CMD}"
+        echo "done (phylophlan-impute)."
+        
+        cd ${ORIG_DIR}
+        
+        deactivate
+        
+        date
+ 
         touch {output}
+        """
 
