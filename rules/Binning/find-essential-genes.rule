@@ -1,6 +1,6 @@
 rule binning_essential_genes:
     input:
-        "Analysis/annotation/{config[prokka][prefix]}.faa",
+        "Analysis/annotation/{p}.faa".format(p=config['prokka']['prefix']),
         "Analysis/annotation/annotation.filt.gff",
         "%s/hmm/essentials_genes.hmm" % DBPATH,
     output:

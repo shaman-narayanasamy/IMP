@@ -4,10 +4,10 @@ rule annotate:
         expand("{path}/{db}", path=DBPATH, db=config["prokka"]["databases"])
     output:
         "Analysis/annotation/annotation.filt.gff",
-        "Analysis/annotation/{config[prokka][prefix]}.faa",
-        "Analysis/annotation/{config[prokka][prefix]}.fna",
-        "Analysis/annotation/{config[prokka][prefix]}.ffn",
-        "Analysis/annotation/{config[prokka][prefix]}.fsa"
+        "Analysis/annotation/{p}.faa".format(p=config['prokka']['prefix']),
+        "Analysis/annotation/{p}.fna".format(p=config['prokka']['prefix']),
+        "Analysis/annotation/{p}.ffn".format(p=config['prokka']['prefix']),
+        "Analysis/annotation/{p}.fsa".format(p=config['prokka']['prefix']),
     shell:
         """
         ### prokka by default will look databases where is located the binary.
@@ -35,5 +35,5 @@ rule annotate:
         LN=`grep -Hn "^>" Analysis/annotation/{config[prokka][prefix]}.gff | head -n1 | cut -f2 -d ":" || if [[ $? -eq 141 ]]; then true; else exit $?; fi`
         LN1=1
         LN=$(($LN-$LN1))
-        head -n $LN Analysis/annotation/{config[prokka][prefix]}.gff | grep -v "^#" | sort | uniq | grep -v "^==" > {output}
+        head -n $LN Analysis/annotation/{config[prokka][prefix]}.gff | grep -v "^#" | sort | uniq | grep -v "^==" > {output[0]}
         """
