@@ -31,6 +31,9 @@ if MG and MT:
         "workflows/integrative/Analysis"
 
     include:
+        "workflows/integrative/Binning"
+
+    include:
         "workflows/integrative/Report"
 
 
