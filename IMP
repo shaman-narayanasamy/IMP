@@ -11,7 +11,7 @@ import tempfile
 import sys
 
 IMP_VERSION = '1.2.1'
-IMP_DEFAULT_TAR_REPOSITORY = 'https://webdav-r3lab.uni.lu/public/R3lab/IMP/dist/imp-%s.tar.gz' % IMP_VERSION
+IMP_DEFAULT_TAR_REPOSITORY = 'https://webdav-r3lab.uni.lu/public/R3lab/IMP/dist'
 IMP_IMAGE_NAME = 'docker-r3lab.uni.lu/imp/imp'
 
 __doc__ = """Integrated Metaomic Pipeline.
@@ -102,7 +102,7 @@ def check_imp_installed(name, version, repo):
     Check if IMP is installed. Install it if not.
     """
     if not is_imp_installed(name, version):
-        install_imp(repo)
+        install_imp(repo, version)
 
 
 def is_imp_installed(name, version):
@@ -114,22 +114,25 @@ def is_imp_installed(name, version):
         is_installed = subprocess.check_output(['grep', version], stdin=imp_image.stdout)
     except subprocess.CalledProcessError:
         return False
+    print("[x] Found IMP {n} {v}".format(n=name, v=version))
     return True
 
 
-def install_imp(repo):
+def install_imp(repo, version):
     """
     Install IMP.
     """
     fname = 'imp-tarball.tmp.tgz'
     if repo[:4].startswith('http'):
         # download
-        print("[x] Downloading IMP TARBALL at '%s'" % repo)
-        subprocess.check_output(['wget', '--no-check-certificate', repo, '-O', fname])
+        print("[x] Downloading IMP TARBALL from '%s'" % repo)
+        download_name = '{r}/imp-{v}.tar.gz'.format(r=repo, v=version)
+        subprocess.check_output(['wget', '--no-check-certificate', download_name, '-O', fname])
     else:
         # copy
         print("[x] Copying IMP TARBALL '%s'" % repo)
-        subprocess.check_output(['cp', repo, fname])
+        download_name = '{r}/imp-{v}.tar.gz'.format(r=repo, v=version)
+        subprocess.check_output(['cp', download_name, fname])
     # load
     print("[x] Loading IMP TARBALL into docker")
     subprocess.check_output(['docker', 'load', '-i', fname])
