@@ -13,7 +13,7 @@ input_no_filtering = {
 
 
 def no_filtering_input(wildcards):
-    if wildcards.step == 'Preprocessing' and wildcards.type in TYPES:
+    if wildcards.type in TYPES:
         return input_no_filtering[wildcards.type]
     return ''
 
