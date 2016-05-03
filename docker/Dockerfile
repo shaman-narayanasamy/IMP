@@ -1,8 +1,8 @@
 # Base container with tools needed for the IMP pipeline
 #
-# VERSION       1.2.1
+# VERSION       1.4
 
-FROM docker-r3lab.uni.lu/imp/imp-deps:1.2
+FROM docker-r3lab.uni.lu/imp/imp-deps:1.4
 MAINTAINER yohan.jarosz@uni.lu
 
 
@@ -178,6 +178,66 @@ RUN cd /home/imp/lib \
     && unzip quast.zip \
     && cd quast-release_3.1 \
     && ln -s $PWD/metaquast.py /usr/bin/metaquast
+
+##CheckM
+RUN cd /home/imp/lib \
+    && pip2.7 install pysam dendropy ScreamingBackpack \
+    && wget https://github.com/Ecogenomics/CheckM/archive/v1.0.6.tar.gz \
+    && tar xf v1.0.6.tar.gz \
+    && cd CheckM-1.0.6/ \
+    && python2.7 setup.py install \
+    && cd .. \
+    && rm -r CheckM-1.0.6/ \
+    && wget https://github.com/matsen/pplacer/releases/download/v1.1.alpha17/pplacer-Linux-v1.1.alpha17.zip \
+    && unzip pplacer-Linux-v1.1.alpha17.zip \
+    && cp pplacer-Linux-v1.1.alpha17/guppy /usr/bin \
+    && cp pplacer-Linux-v1.1.alpha17/pplacer /usr/bin \
+    && rm -r pplacer-Linux-v1.1.alpha17 
+
+##CheckM Data
+RUN cd /home/imp/lib \ 
+    && wget https://data.ace.uq.edu.au/public/CheckM_databases/checkm_data_v1.0.6.tar.gz
+
+RUN cd /home/imp/lib \
+    && mkdir checkm_data_v1.0.6 \
+    && tar -xf checkm_data_v1.0.6.tar.gz -C checkm_data_v1.0.6 \
+    #this might open interactively:
+    && echo checkm_data_v1.0.6 | checkm data setRoot checkm_data_v1.0.6/
+
+##Phylophlan
+RUN cd /home/imp/lib \
+    && wget https://bitbucket.org/nsegata/phylophlan/get/default.tar.gz \
+    && tar -xf default.tar.gz \
+    && wget http://www.microbesonline.org/fasttree/FastTree \
+    && mv FastTree /usr/bin \
+    #move usearch binary to webdav? this uses my downloadlink, from 2.5.2016 , not sure how long this works.
+    && wget --user-agent=Mozilla --content-disposition -E -c http://drive5.com/cgi-bin/upload3.py?license=2016050205235811143 \ 
+    && mv usearch8.1.1861_i86linux32 /usr/bin/usearch \
+    && cd nsegata-phylophlan-* \
+    && ln -s $PWD/phylophlan.py /usr/bin/phylophlan
+
+##Amphora2
+RUN cd /home/imp/lib \
+    && git clone https://github.com/mherold1/AMPHORA2 \ 
+    && wget https://github.com/stamatak/standard-RAxML/archive/v8.2.8.tar.gz -O stamatak-standard-RAxML.tar.gz \
+    && tar xf stamatak-standard-RAxML.tar.gz \
+    && cd standard-RAxML-8.2.8; make -f Makefile.gcc; make -f Makefile.PTHREADS.gcc; cp raxmlHPC* /usr/bin/. \
+    && cd .. \
+#    && wget ftp://emboss.open-bio.org/pub/EMBOSS/old/6.5.0/EMBOSS-6.5.7.tar.gz \
+#    && tar -xf EMBOSS-6.5.7.tar.gz \
+#    && cd EMBOSS-6.5.7 \
+#    && ./configure \
+#    && make \ 
+#    && make install
+    && apt-get install emboss
+
+
+##pullseq
+RUN cd /home/imp/lib \
+    && wget https://github.com/bcthomas/pullseq/releases/download/1.0.2/pullseq_v1.0.2_linux64.zip \
+    && unzip pullseq_v1.0.2_linux64.zip \
+    && rm seqdiff \ 
+    && mv pullseq /usr/bin 
 
 ######################
 # set up environment #
