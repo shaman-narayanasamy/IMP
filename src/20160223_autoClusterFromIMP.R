@@ -1,3 +1,18 @@
+#!/bin/R
+
+#libraries
+require(checkpoint)
+checkpoint('2015-04-27', scanForPackages=FALSE)
+
+library(caTools)
+library(fpc)
+library(FNN)
+library(RColorBrewer)
+library(scales)
+library(diptest)
+library(mixtools)
+library(gclus)
+
 # arguments from command
 args <- commandArgs(TRUE)
 
@@ -15,17 +30,7 @@ links  <- args[4]
 
 outdir <- args[5]
 
-sample <- args[6]
-
-#libraries
-library(caTools)
-library(fpc)
-library(FNN)
-library(RColorBrewer)
-library(scales)
-library(diptest)
-library(mixtools)
-library(gclus)
+sample <- "Binning"
 
 
 #my functions
@@ -91,7 +96,7 @@ contigInfo <- merge(contigInfo,cov,by.x=1,by.y=1,all.x=T)
 colnames(contigInfo)[ncol(contigInfo)] <- "aveCov"
 
 #read essential genes
-essGenes <- read.delim(essGenes.hits, header=F, stringsAsFactors=F, quote="", strip.white=T, skip=3, colClasses=c("character","NULL","character","NULL","numeric",rep("NULL",14)))
+essGenes <- read.table(essGenes.hits, header=F, stringsAsFactors=F, quote="", strip.white=T, skip=3, colClasses=c("character","NULL","character","NULL","numeric",rep("NULL",14)))
 dupliEss <- unique(names(table(essGenes$V1)[table(essGenes$V1)>1]))
 dupliID <- dupliEss
 for(dupGenes in dupliEss) dupliID[which(dupliID==dupGenes)] <- essGenes$V3[essGenes$V1==dupGenes][which.min(essGenes$V5[essGenes$V1==dupGenes])]

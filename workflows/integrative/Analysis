@@ -15,7 +15,7 @@ include:
 include:
     '../../rules/Analysis/prokka.rule'
 include:
-    '../../rules/Analysis/quast.rule'
+    '../../rules/Analysis/metaquast.rule'
 include:
     '../../rules/Analysis/reads-count.rule'
 include:
