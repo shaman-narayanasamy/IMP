@@ -9,10 +9,13 @@ rule binning_essential_genes:
         "Binning/ORFS-contig_links.bed"
     shell:
         """
-        # Predict essential genes using hmm search
-        hmmsearch --tblout {output[1]} --cut_tc --notextw {input[2]} {input[0]} > {output[0]}
+        TBL_TMP=$(mktemp --tmpdir={TMPDIR} -t "XXXX_hmmer.essential.hits")
         BED_TMP=$(mktemp --tmpdir={TMPDIR} -t "XXXX_binning-bed.tmp")
 
+        # Predict essential genes using hmm search
+        hmmsearch --tblout $TBL_TMP --cut_tc --notextw {input[2]} {input[0]} > {output[0]}
+        sed 's/ \+ /\t/g' <(grep -v "^#" $TBL_TMP) > {output[1]}
+        
         # Prepare file that links contigs to genes (using .gff file)
         grep CDS --line-buffered {input[1]} | awk '{{printf("%s\\t%s\\t%s\\t%s\\t0\\t%s\\n",$1,$4,$5,$9,$7)}}' > $BED_TMP
         awk '{{gsub(/ID=/,""); gsub(/;.*\t0/,"\t0");print}}' $BED_TMP > {output[2]}
