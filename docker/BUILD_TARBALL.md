@@ -8,7 +8,7 @@ Edit the docker file `docker/Dockerfile`:
 
 Increment the version number in that file.
 
-> The version number can be anything: e.g '1.1.2' or 'my-feature'
+> The <version> number can be anything: e.g '1.1.2' or 'my-feature'
 
 Edit the `IMP` script and put the `IMP_VERSION` variable to the same version.
 
@@ -22,9 +22,9 @@ Edit the Docker file and change the IMP clone process to clone the same version.
 
 ### Build dependencies
 
-    docker build -t docker-r3lab.uni.lu/imp/imp-deps:1.2 -f Dockerfile-dependencies .
+    docker build -t docker-r3lab.uni.lu/imp/imp-deps:<version> -f Dockerfile-dependencies .
 
-> 'docker-r3lab.uni.lu/imp/imp-deps:1.2' is the image name that we will have to give to the main Docker file.
+> 'docker-r3lab.uni.lu/imp/imp-deps:<version>' is the image name that we will have to give to the main Docker file.
 
 ### Build the main Docker file.
 
