@@ -86,5 +86,9 @@
     },
     "metaquast": {
         "max_genomes": 50
+    },
+    "binning": {
+        "pk": 10,
+        "nn": 4
     }
 }

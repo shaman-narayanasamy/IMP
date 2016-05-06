@@ -14,5 +14,5 @@ rule binning_clustering:
     shell:
         """
         ## Run the R script for clustering the contigs
-        Rscript {SRCDIR}/binny.R {input} Binning/clusterFiles {SAMPLE}
+        Rscript {SRCDIR}/binny.R {input} Binning/clusterFiles {SAMPLE} {config[binning][pk]} {config[binning][nn]}
         """

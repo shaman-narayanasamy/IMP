@@ -37,16 +37,6 @@ sample <- args[6]
 pk <- as.numeric(args[7])
 nn <- as.numeric(args[8])
 
-#libraries
-library(caTools)
-library(fpc)
-library(FNN)
-library(RColorBrewer)
-library(scales)
-library(diptest)
-library(mixtools)
-library(gclus)
-
 #my functions
 find.cutoff <- function(data,k=2,proba=0.5) {
   model <- try(normalmixEM(x=data, k=k,maxrestarts=50))
@@ -110,7 +100,7 @@ contigInfo <- merge(contigInfo,cov,by.x=1,by.y=1,all.x=T)
 colnames(contigInfo)[ncol(contigInfo)] <- "aveCov"
 
 #read essential genes (essential genes were search using findEssentialGenesInPredictions.sh)
-essGenes <- read.table(essGenes.hits,header=F,stringsAsFactors=F,quote="",strip.white=T,skip=3,colClasses=c("character","NULL","character","NULL","numeric",rep("NULL",14)))
+essGenes <- read.delim(essGenes.hits,header=F,stringsAsFactors=F,quote="",strip.white=T,skip=3,colClasses=c("character","NULL","character","NULL","numeric",rep("NULL",14)))
 dupliEss <- unique(names(table(essGenes$V1)[table(essGenes$V1)>1]))
 dupliID <- dupliEss
 for(dupGenes in dupliEss) dupliID[which(dupliID==dupGenes)] <- essGenes$V3[essGenes$V1==dupGenes][which.min(essGenes$V5[essGenes$V1==dupGenes])]
@@ -136,11 +126,11 @@ sdkn <- runsd(skn,10)
 est <- sort(skn)[min(which(sdkn>quantile(sdkn,0.975)&skn>median(skn)))]
 #plot(skn)
 #abline(h=est)
-write.table(t(c("scan","reachabilityDist")),paste("reachabilityDistanceEstimates",pk,nn,"tsv",sep="."),row.names=F,col.names=F,quote=F,sep="\t")
-write.table(t(c("first",est)),paste("reachabilityDistanceEstimates",pk,nn,"tsv",sep="."),row.names=F,col.names=F,quote=F,sep="\t",append=T)
+write.table(t(c("scan","reachabilityDist")),paste(outdir, "/", "reachabilityDistanceEstimates",pk,nn,".tsv",sep=""),row.names=F,col.names=F,quote=F,sep="\t")
+write.table(t(c("first",est)),paste(outdir, "/", "reachabilityDistanceEstimates",pk,nn,".tsv",sep=""),row.names=F,col.names=F,quote=F,sep="\t",append=T)
 cdb <- dbscan(contigInfo[,coco],est,pk)
 
-pdf(paste("scatterPlot1",pk,pk,"pdf",sep="."))
+pdf(paste(outdir,"/","scatterPlot1",pk,pk,".pdf",sep=""))
 plot(contigInfo[,coco],pch=16,cex=0.25,ann=F,axes=F)
 j <- 1
 cdbTab <- data.frame("cluster"=names(table(cdb$cluster)),"contigs"=0,"numberEss"=0,"uniqueEss"=0,stringsAsFactors=F)
@@ -153,9 +143,8 @@ for(i in names(table(cdb$cluster))) {
 }
 box()
 dev.off()
-system(paste("mkdir cluster",pk,nn,"Files",sep="."))
-write.table(cdbTab,paste("cluster",pk,nn,"Files/clusterFirstScan.tsv",sep="."),sep="\t",row.names=F,quote=F)
-write.table(t(c("clusterName","cutoff")),paste("bimodalClusterCutoffs",pk,nn,"tsv",sep="."),sep="\t",row.names=F,col.names=F,quote=F)
+write.table(cdbTab,paste(outdir, "/", "clusterFirstScan.tsv",sep=""),sep="\t",row.names=F,quote=F)
+write.table(t(c("clusterName","cutoff")),paste(outdir, "/", "bimodalClusterCutoffs",pk,nn,".tsv",sep=""),sep="\t",row.names=F,col.names=F,quote=F)
 clusterRes <- data.frame("contig"=contigInfo$contig,"cluster"="x",stringsAsFactors=F)
 clusterRes$cluster[cdb$cluster==0] <- "N"
 
@@ -168,13 +157,13 @@ clusterRes$cluster[cdb$cluster %in% closeClus] <- paste("C",cdb$cluster[cdb$clus
 duClus <- cdbTab$cluster[cdbTab$numberEss/cdbTab$uniqueEss>1.2&cdbTab$cluster!=0]
 clusterRes$cluster[cdb$cluster %in% duClus] <- paste("D",cdb$cluster[cdb$cluster %in% duClus],sep="")
 
-write.table(t(c("cluster","cutoff")),paste("bimodalClusterCutoffs",pk,nn,"tsv",sep="."),sep="\t",col.names=F,row.names=F,quote=F)
+write.table(t(c("cluster","cutoff")),paste(outdir, "/", "bimodalClusterCutoffs",pk,nn,".tsv",sep=""),sep="\t",col.names=F,row.names=F,quote=F)
 for(ds in unique(clusterRes$cluster[grep("D",clusterRes$cluster)])){
-  clusterRes <- muClus(ds,clusterRes,paste("bimodalClusterCutoffs",pk,nn,"tsv",sep="."))
+  clusterRes <- muClus(ds,clusterRes,paste(outdir, "/", "bimodalClusterCutoffs",pk,nn,".tsv",sep=""))
 }
 
 pk2 <- pk + 2
-pdf(paste("scatterPlots2",pk,nn,"pdf",sep="."))
+pdf(paste(outdir, "/", "scatterPlots2",pk,nn,".pdf",sep=""))
 for(bb in unique(clusterRes$cluster[grep("B",clusterRes$cluster)])){
   bbInfo <- contigInfo[clusterRes$cluster==bb,]
   if(nrow(bbInfo)>nn){  
@@ -192,7 +181,7 @@ for(bb in unique(clusterRes$cluster[grep("B",clusterRes$cluster)])){
       plot(sknBB)
       abline(h=estBB)
       
-      write.table(t(c(bb,estBB)),paste("reachabilityDistanceEstimates",pk,nn,"tsv",sep="."),row.names=F,col.names=F,quote=F,sep="\t",append=T)
+      write.table(t(c(bb,estBB)),paste(outdir, "/", "reachabilityDistanceEstimates",pk,nn,".tsv",sep=""),row.names=F,col.names=F,quote=F,sep="\t",append=T)
       BBcdb <- dbscan(bbInfo[,coco],estBB,pk2)
       
       plot(bbInfo[,coco],pch=16,cex=0.25,ann=F)
@@ -205,7 +194,7 @@ for(bb in unique(clusterRes$cluster[grep("B",clusterRes$cluster)])){
         BBcdbTab$uniqueEss[BBcdbTab$cluster==i] <- length(unique(unlist(sapply(bbInfo$essentialGene[bbInfo$essentialGene!="notEssential"&BBcdb$cluster==i],function(x) unlist(strsplit(x,split=";"))))))
         j<-j+1
       }
-      write.table(BBcdbTab,paste("cluster",pk,nn,"Files/blob1Cluster",bb,"tsv",sep="."),sep="\t",row.names=F,quote=F)
+      write.table(BBcdbTab,paste(outdir, "/", "blob1Cluster",bb,".tsv",sep=""),sep="\t",row.names=F,quote=F)
       
       BBclusterRes <- data.frame("contig"=bbInfo$contig,"cluster"="x",stringsAsFactors=F)
       BBclusterRes$cluster[BBcdb$cluster==0] <- "N"
@@ -236,7 +225,7 @@ for(bb in unique(clusterRes$cluster[grep("B",clusterRes$cluster)])){
                                                                    gsub("D","",unlist(sapply(clusterRes$contig[clusterRes$contig %in% BBduCont],function(x)BBclusterRes$cluster[BBclusterRes$contig==x]))),
                                                                    sep=".")
       for(bds in uniD){
-        clusterRes <- muClus(bds,clusterRes,paste("bimodalClusterCutoffs",pk,nn,"tsv",sep="."))
+        clusterRes <- muClus(bds,clusterRes,paste(outdir, "/", "bimodalClusterCutoffs",pk,nn,".tsv",sep=""))
       }
     }else{
       print(paste("Cluster",bb,"too small for knn-approach.\n"))
@@ -266,7 +255,7 @@ for(bb in unique(clusterRes$cluster[grep("B",clusterRes$cluster)])){
       plot(sknBB)
       abline(h=estBB)
       
-      write.table(t(c(bb,estBB)),paste("reachabilityDistanceEstimates",pk,nn,"tsv",sep="."),row.names=F,col.names=F,quote=F,sep="\t",append=T)
+      write.table(t(c(bb,estBB)),paste(outdir, "/", "reachabilityDistanceEstimates",pk,nn,".tsv",sep=""),row.names=F,col.names=F,quote=F,sep="\t",append=T)
       BBcdb <- dbscan(bbInfo[,coco],estBB,pk4)
       
       plot(bbInfo[,coco],pch=16,cex=0.25,ann=F)
@@ -279,7 +268,7 @@ for(bb in unique(clusterRes$cluster[grep("B",clusterRes$cluster)])){
         BBcdbTab$uniqueEss[BBcdbTab$cluster==i] <- length(unique(unlist(sapply(bbInfo$essentialGene[bbInfo$essentialGene!="notEssential"&BBcdb$cluster==i],function(x) unlist(strsplit(x,split=";"))))))
         j<-j+1
       }
-      write.table(BBcdbTab,paste("cluster",pk,nn,"Files/blob2Cluster",bb,"tsv",sep="."),sep="\t",row.names=F,quote=F)
+      write.table(BBcdbTab,paste(outdir, "/", "blob2Cluster",bb,".tsv",sep=""),sep="\t",row.names=F,quote=F)
       
       BBclusterRes <- data.frame("contig"=bbInfo$contig,"cluster"="x",stringsAsFactors=F)
       BBclusterRes$cluster[BBcdb$cluster==0] <- "N"
@@ -341,7 +330,7 @@ for(bb in unique(clusterRes$cluster[grep("B",clusterRes$cluster)])){
       plot(sknBB)
       abline(h=estBB)
       
-      write.table(t(c(bb,estBB)),paste("reachabilityDistanceEstimates",pk,nn,"tsv",sep="."),row.names=F,col.names=F,quote=F,sep="\t",append=T)
+      write.table(t(c(bb,estBB)),paste(outdir, "/", "reachabilityDistanceEstimates",pk,nn,".tsv",sep=""),row.names=F,col.names=F,quote=F,sep="\t",append=T)
       BBcdb <- dbscan(bbInfo[,coco],estBB,pk6)
       
       plot(bbInfo[,coco],pch=16,cex=0.25,ann=F)
@@ -354,7 +343,7 @@ for(bb in unique(clusterRes$cluster[grep("B",clusterRes$cluster)])){
         BBcdbTab$uniqueEss[BBcdbTab$cluster==i] <- length(unique(unlist(sapply(bbInfo$essentialGene[bbInfo$essentialGene!="notEssential"&BBcdb$cluster==i],function(x) unlist(strsplit(x,split=";"))))))
         j<-j+1
       }
-      write.table(BBcdbTab,paste("cluster",pk,nn,"Files/blob3Cluster",bb,"tsv",sep="."),sep="\t",row.names=F,quote=F)
+      write.table(BBcdbTab,paste(outdir, "/", "cluster",pk,nn,"blob3Cluster",bb,".tsv",sep=""),sep="\t",row.names=F,quote=F)
       
       BBclusterRes <- data.frame("contig"=bbInfo$contig,"cluster"="x",stringsAsFactors=F)
       BBclusterRes$cluster[BBcdb$cluster==0] <- "N"
@@ -411,14 +400,14 @@ for(clus in grep("C",unique(clusterRes$cluster),value=T)){
   }
 }
 
-write.table(clusterRes,paste("contigs2clusters",pk,nn,"tsv",sep="."),sep="\t",row.names=F,quote=F)
-save.image(paste("WS",pk,nn,"Rdata",sep="."))
-saveRDS(clusterRes,paste("contigs2clusters",pk,nn,"RDS",sep="."))
+write.table(clusterRes,paste(outdir, "/", "contigs2clusters",pk,nn,".tsv",sep=""),sep="\t",row.names=F,quote=F)
+save.image(paste(outdir, "/", "WS",pk,nn,".Rdata",sep=""))
+saveRDS(clusterRes,paste(outdir, "/", "contigs2clusters",pk,nn,".RDS",sep=""))
 
 print("Saved tables. Plotting final map now.")
 
 essPal <- colorRampPalette(brewer.pal(11,"Spectral"))(111)[111:1]
-pdf(paste("finalClusterMap",pk,nn,"pdf",sep="."),width=6,height=5,pointsize=8)
+pdf(paste(outdir, "/", "finalClusterMap",pk,nn,".pdf",sep=""),width=6,height=5,pointsize=8)
 layout(matrix(1:2,nrow=1,ncol=2),c(5/6,1/6))
 par(mar=rep(1,4),pty="s")
 plot(contigInfo[,coco],pch=16,cex=0.25,ann=F,axes=F,bty="o")
