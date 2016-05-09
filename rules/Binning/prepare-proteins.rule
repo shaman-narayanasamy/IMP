@@ -1,12 +1,12 @@
-rule prepare_proteins:
+rule binning_prepare_proteins:
     #IN: <directory w/ unprepared .faa files> <OUT_DIR>
     input:
-       "%s/separate_bins.done" % B_OUT
+       "Binning/separate_bins.done"
     output:
-       "%s/prepare_proteins.done" % B_OUT
+       "Binning/prepare_proteins.done"
     shell:
         """
-        src/prepareProteins.sh {B_OUT}/clusterFiles {B_OUT}/clusterFiles/preparedproteins
+        src/prepareProteins.sh Binning/clusterFiles Binning/clusterFiles/preparedproteins
         touch {output}
         """
 

@@ -1,27 +1,28 @@
-rule run_checkm:
+rule binning_run_checkm:
     #in:indir outdir threads
     input:
-       "%s/prepare_proteins.done" % B_OUT
+       "Binning/prepare_proteins.done"
     output:
-       "%s/run_checkM.done" % B_OUT
+       "Binning/checkM/checkm_table.tsv",
+       "Binning/run_checkM.done"
     shell:
        """
-       #src/run_checkm.sh {B_OUT}/clusterFiles/preparedproteins {B_OUT}/clusterFiles/checkm {THREADS}
+#	src/run_checkm.sh Binning/clusterFiles/preparedproteins Binning/clusterFiles/checkm {THREADS}
 #       module load bio/HMMER
 #
 #       source /home/users/mherold/TOOLS/CHECKM/env/bin/activate
 #       PATH=/home/users/mherold/TOOLS/pplacer/pplacer-Linux-v1.1.alpha17:$PATH
-       
+#       
        EXT="faa"
        GENES="--genes"
-       INDIR={B_OUT}/clusterFiles/preparedproteins
-       OUTDIR={B_OUT}/clusterFiles/checkM
+       INDIR=Binning/clusterFiles/
+       OUTDIR=Binning/clusterFiles/checkM
        
-       CMD="checkm lineage_wf -t {THREADS} -x ${EXT} ${GENES} ${INDIR} ${OUTDIR}"
-       echo "${CMD}"
-       eval "${CMD}"
+       CMD="checkm lineage_wf -t {THREADS} -x ${{EXT}} ${{GENES}} ${{INDIR}} ${{OUTDIR}} -f {output[0]} --tab_table"
+       echo "${{CMD}}"
+       eval "${{CMD}}"
        
-       deactivate
+ #     deactivate
 
-       touch {output}
+       touch {output[1]}
        """
