@@ -6,9 +6,13 @@ include:
 include:
     '../../rules/Binning/binning.rule'
 
+include:
+    '../../rules/Binning/separate-bins.rule'
+
 # master command
 rule BINNING:
     input:
-        "Binning/clusterFiles/reachabilityDistanceEstimates.tsv"
+        #"Binning/clusterFiles/reachabilityDistanceEstimates.tsv"
+        "Binning/clusterFiles/N.gff"
     output:
         touch('binning.done')

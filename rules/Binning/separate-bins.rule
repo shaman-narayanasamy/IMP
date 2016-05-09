@@ -1,6 +1,6 @@
 rule separate_bins:
     input:
-        "%s/clusterFiles/contigs2clusters.tsv" % B_OUT,
+        expand("{out}/clusterFiles/contigs2clusters{pk}{nn}.tsv",out=B_OUT,pk=config["binning"]["pk"],nn=config["binning"]["nn"]),
         "%s/MG.assembly.merged.fa" % A_OUT,
         "%s/ORFS-contig_links.bed" % B_OUT,
         "%s/PROKKA.faa" % B_OUT,
@@ -16,11 +16,11 @@ rule separate_bins:
             headerfile="{B_OUT}/clusterFiles/${{cluster}}.contigids"
             protids="{B_OUT}/clusterFiles/${{cluster}}.protids"
 
-            echo "Obtaining contigs for cluster/bin ${{cluster}}"
+            echo "Obtaining contigs for cluster ${{cluster}}"
             awk -v c=${{cluster}} '{{ if($2==c) {{print $1}}  }}' {input[0]} > ${{headerfile}}
             pullseq -i {input[1]} -n ${{headerfile}}  > {B_OUT}/clusterFiles/${{cluster}}.fa
             
-            echo "Obtaining amino acid sequences for cluster/bin ${{cluster}}"
+            echo "Obtaining amino acid sequences for cluster ${{cluster}}"
             awk 'FNR==NR{{a[$1]=$1;next}}{{if(a[$1]) print $4}}' ${{headerfile}} {input[2]} > ${{protids
             pullseq -i {input[3]} -n ${{protids}}  > {B_OUT}/clusterFiles/${{cluster}}.faa
 
