@@ -1,7 +1,7 @@
 rule binning_run_checkm:
     #in:indir outdir threads
     input:
-       "Binning/prepare_proteins.done"
+       "Binning/separate_bins.done"
     output:
        "Binning/checkM/checkm_table.tsv",
        "Binning/run_checkM.done"

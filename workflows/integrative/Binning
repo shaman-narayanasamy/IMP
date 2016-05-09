@@ -15,6 +15,9 @@ include:
 include:
     '../../rules/Binning/checkm.rule'
 
+include:
+    '../../rules/Binning/bin-analysis.amphora.rule'
+
 # master command
 rule BINNING:
     input:
