@@ -1,12 +1,12 @@
-rule separate_bins:
+rule binning_separate_bins:
     input:
-        expand("{out}/clusterFiles/contigs2clusters{pk}{nn}.tsv",out=B_OUT,pk=config["binning"]["pk"],nn=config["binning"]["nn"]),
-        "%s/MG.assembly.merged.fa" % A_OUT,
-        "%s/ORFS-contig_links.bed" % B_OUT,
-        "%s/PROKKA.faa" % B_OUT,
-        "%s/annotation/annotation.filt.gff" % AN_OUT
+        expand("Binning/clusterFiles/contigs2clusters{pk}{nn}.tsv",pk=config["binning"]["pk"],nn=config["binning"]["nn"]),
+        "Assembly/MG.assembly.merged.fa",
+        "Binning/ORFS-contig_links.bed",
+        "Binning/PROKKA.faa",
+        "Annotation/annotation/annotation.filt.gff"
     output:
-        "%s/separate_bins.done" % B_OUT
+        "Binning/separate_bins.done"
     shell:
         """
         for cluster in `tail -n+2 {input[0]} | cut -f2 | sort | uniq`
