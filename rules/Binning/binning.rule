@@ -5,8 +5,8 @@ rule binning_clustering:
         "Binning/ORFS.hmm.orfs.essential.hits",
         "Binning/ORFS-contig_links.bed"
     output:
-        expand("Binning/clusterFiles/reachabilityDistanceEstimates{pk}{nn}.tsv",
-        "Binning/clusterFiles/clusterFirstScan{pk}{nn}.tsv",
+        expand("Binning/clusterFiles/reachabilityDistanceEstimates{pk}{nn}.tsv \
+        Binning/clusterFiles/clusterFirstScan{pk}{nn}.tsv \
         "Binning/clusterFiles/bimodalClusterCutoffs{pk}{nn}.tsv",
         "Binning/clusterFiles/contigs2clusters{pk}{nn}.tsv",
         "Binning/clusterFiles/contigs2clusters{pk}{nn}.RDS",
