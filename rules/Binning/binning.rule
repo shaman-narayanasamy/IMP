@@ -5,12 +5,12 @@ rule binning_clustering:
         "Binning/ORFS.hmm.orfs.essential.hits",
         "Binning/ORFS-contig_links.bed"
     output:
-        "Binning/clusterFiles/reachabilityDistanceEstimates.tsv",
-        "Binning/clusterFiles/clusterFirstScan.tsv",
-        "Binning/clusterFiles/bimodalClusterCutoffs.tsv",
-        "Binning/clusterFiles/contigs2clusters.tsv",
-        "Binning/clusterFiles/contigs2clusters.RDS",
-        "Binning/clusterFiles/finalClusterMap.pdf",
+        expand("Binning/clusterFiles/reachabilityDistanceEstimates{pk}{nn}.tsv \
+        Binning/clusterFiles/clusterFirstScan{pk}{nn}.tsv \
+        Binning/clusterFiles/bimodalClusterCutoffs{pk}{nn}.tsv \
+        Binning/clusterFiles/contigs2clusters{pk}{nn}.tsv \
+        Binning/clusterFiles/contigs2clusters{pk}{nn}.RDS \
+        Binning/clusterFiles/finalClusterMap{pk}{nn}.pdf".split(),pk=config["binning"]["pk"],nn=config["binning"]["nn"])
     shell:
         """
         ## Run the R script for clustering the contigs

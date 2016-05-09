@@ -143,7 +143,7 @@ for(i in names(table(cdb$cluster))) {
 }
 box()
 dev.off()
-write.table(cdbTab,paste(outdir, "/", "clusterFirstScan.tsv",sep=""),sep="\t",row.names=F,quote=F)
+write.table(cdbTab,paste(outdir, "/", "clusterFirstScan",pk,nn,".tsv",sep=""),sep="\t",row.names=F,quote=F)
 write.table(t(c("clusterName","cutoff")),paste(outdir, "/", "bimodalClusterCutoffs",pk,nn,".tsv",sep=""),sep="\t",row.names=F,col.names=F,quote=F)
 clusterRes <- data.frame("contig"=contigInfo$contig,"cluster"="x",stringsAsFactors=F)
 clusterRes$cluster[cdb$cluster==0] <- "N"
@@ -237,7 +237,7 @@ for(bb in unique(clusterRes$cluster[grep("B",clusterRes$cluster)])){
 dev.off()
 
 pk4 <- pk + 4
-pdf(paste("scatterPlots3",pk,nn,"pdf",sep="."))
+pdf(paste(outdir,"/","scatterPlots3",pk,nn,".pdf",sep=""))
 for(bb in unique(clusterRes$cluster[grep("B",clusterRes$cluster)])){
   bbInfo <- contigInfo[clusterRes$cluster==bb,]
   if(nrow(bbInfo)>nn){  
@@ -312,7 +312,7 @@ dev.off()
 
 
 pk6 <- pk + 6
-pdf(paste("scatterPlots4",pk,nn,"pdf",sep="."))
+pdf(paste(outdir,"/","scatterPlots4",pk,nn,".pdf",sep=""))
 for(bb in unique(clusterRes$cluster[grep("B",clusterRes$cluster)])){
   bbInfo <- contigInfo[clusterRes$cluster==bb,]
   if(nrow(bbInfo)>nn){  
@@ -450,7 +450,7 @@ mtext("% completeness",2,2)
 mtext("clusters",1,2)
 dev.off()
 
-
+dev.cur()
 
 
 
