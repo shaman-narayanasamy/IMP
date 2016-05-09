@@ -234,10 +234,17 @@ RUN cd /home/imp/lib \
 
 ##pullseq
 RUN cd /home/imp/lib \
-    && wget https://github.com/bcthomas/pullseq/releases/download/1.0.2/pullseq_v1.0.2_linux64.zip \
-    && unzip pullseq_v1.0.2_linux64.zip \
-    && rm seqdiff \
-    && mv pullseq /usr/bin
+   # && wget https://github.com/bcthomas/pullseq/releases/download/1.0.2/pullseq_v1.0.2_linux64.zip \
+   # && unzip pullseq_v1.0.2_linux64.zip \
+   # && rm seqdiff \
+   # && mv pullseq /usr/bin
+    && git clone https://github.com/bcthomas/pullseq
+    && cd pullseq \
+    && ./bootstrap \
+    && ./configure \
+    && make \
+    && make install \
+    && cp /usr/local/bin/pullseq /usr/bin
 
 ######################
 # set up environment #
