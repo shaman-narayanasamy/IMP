@@ -9,10 +9,20 @@ include:
 include:
     '../../rules/Binning/separate-bins.rule'
 
+include:
+    '../../rules/Binning/prepare-proteins.rule'
+
+include:
+    '../../rules/Binning/checkm.rule'
+
+include:
+    '../../rules/Binning/bin-analysis.amphora.rule'
+
 # master command
 rule BINNING:
     input:
         #"Binning/clusterFiles/reachabilityDistanceEstimates.tsv"
         "Binning/clusterFiles/N.gff"
+        #Binning/clusterFiles/preparedproteins/N.faa
     output:
         touch('binning.done')

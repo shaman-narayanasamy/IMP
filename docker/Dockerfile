@@ -223,6 +223,7 @@ RUN cd /home/imp/lib \
     && tar xf stamatak-standard-RAxML.tar.gz \
     && cd standard-RAxML-8.2.8; make -f Makefile.gcc; make -f Makefile.PTHREADS.gcc; cp raxmlHPC* /usr/bin/. \
     && cd .. \
+    && (echo y;echo o conf prerequisites_policy follow;echo o conf commit)|cpan -e install Parallel::ForkManager \
 #    && wget ftp://emboss.open-bio.org/pub/EMBOSS/old/6.5.0/EMBOSS-6.5.7.tar.gz \
 #    && tar -xf EMBOSS-6.5.7.tar.gz \
 #    && cd EMBOSS-6.5.7 \
@@ -234,10 +235,17 @@ RUN cd /home/imp/lib \
 
 ##pullseq
 RUN cd /home/imp/lib \
-    && wget https://github.com/bcthomas/pullseq/releases/download/1.0.2/pullseq_v1.0.2_linux64.zip \
-    && unzip pullseq_v1.0.2_linux64.zip \
-    && rm seqdiff \
-    && mv pullseq /usr/bin
+   # && wget https://github.com/bcthomas/pullseq/releases/download/1.0.2/pullseq_v1.0.2_linux64.zip \
+   # && unzip pullseq_v1.0.2_linux64.zip \
+   # && rm seqdiff \
+   # && mv pullseq /usr/bin
+    && git clone https://github.com/bcthomas/pullseq
+    && cd pullseq \
+    && ./bootstrap \
+    && ./configure \
+    && make \
+    && make install \
+    && cp /usr/local/bin/pullseq /usr/bin
 
 ######################
 # set up environment #
@@ -260,6 +268,7 @@ RUN mkdir /code \
 ######################
 # runtime parameters #
 ######################
+#ENV  AMPHORA2_home /home/imp/lib/AMPHORA2  ###CHECK IF THIS IS CORRECT?
 ENV PATH /home/imp/lib/trinityrnaseq_r20140717:/home/imp/lib/Platypus_0.8.1:/home/imp/lib/megahit:/home/imp/lib/fastqc/FastQC:$PATH
 ENV LD_LIBRARY_PATH /usr/local/lib/:/home/imp/lib/Platypus_0.8.1
 VOLUME ["/data", "/output", "/databases", "/code"]
