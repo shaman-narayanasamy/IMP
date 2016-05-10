@@ -1,5 +1,9 @@
-#!/usr/bin/env Rscript
-.libPaths("/mnt/nfs/projects/ecosystem_biology/local_tools/R/library")
+#!/usr/R
+print("Loading required R libraries")
+require(genomeIntervals)
+
+require(checkpoint)
+checkpoint('2015-04-27', scanForPackages=FALSE)
 
 args=commandArgs(trailingOnly=TRUE)
 data_file = args[1]
