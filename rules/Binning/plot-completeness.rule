@@ -1,11 +1,11 @@
-rule plot_completeness:
+rule binning_plot_completeness:
     input:
-        "%s/CompletenesSummary.csv" % B_OUT
+        "Binning/CompletenessSummary.csv"
     output:
-        "%s/analysis_essential_genes.pdf" % B_OUT
+        "Binning/analysis_essential_genes.pdf"
     shell:
         """
-        module load lang/R/3.2.0-ictce-7.3.5-bare
-        Rscript src/plotting_completenessresults.R {input} {B_OUT}
+      #  module load lang/R/3.2.0-ictce-7.3.5-bare
+        Rscript {SRCDIR}/plotting_completenessresults.R {input} Binning/
         """
 

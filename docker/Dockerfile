@@ -206,15 +206,24 @@ RUN cd /home/imp/lib \
 
 ##Phylophlan
 RUN cd /home/imp/lib \
-    && wget https://bitbucket.org/nsegata/phylophlan/get/default.tar.gz \
-    && tar -xf default.tar.gz \
+#    && wget https://bitbucket.org/nsegata/phylophlan/get/default.tar.gz \
+#    && tar -xf default.tar.gz \
+    && pip install mercurial \
+    && hg clone https://bitbucket.org/nsegata/phylophlan \
+#    && cd phylophlan \
+#for development version: (stick to old one for now)
+#    && hg pull && hg update dev \ 
     && wget http://www.microbesonline.org/fasttree/FastTree \
-    && mv FastTree /usr/bin \
+    && chmod +x FastTree \
+    && cp FastTree /usr/bin \
+#usearch binary copied from gaia for now and put in imp code -> need to solve this 
+
     #move usearch binary to webdav? this uses my downloadlink, from 2.5.2016 , not sure how long this works.
-    && wget --user-agent=Mozilla --content-disposition -E -c http://drive5.com/cgi-bin/upload3.py?license=2016050205235811143 \
-    && mv usearch8.1.1861_i86linux32 /usr/bin/usearch \
-    && cd nsegata-phylophlan-* \
-    && ln -s $PWD/phylophlan.py /usr/bin/phylophlan
+#    && wget --user-agent=Mozilla --content-disposition -E -c http://drive5.com/cgi-bin/upload3.py?license=2016050205235811143 \
+ #   && chmod +x usearch8.1.1861_i86linux32 \
+  #  && cp usearch8.1.1861_i86linux32 /usr/bin/usearch \
+#    && cd  \
+#    && ln -s $PWD/phylophlan.py /usr/bin/phylophlan
 
 ##Amphora2
 RUN cd /home/imp/lib \
@@ -268,7 +277,7 @@ RUN mkdir /code \
 ######################
 # runtime parameters #
 ######################
-#ENV  AMPHORA2_home /home/imp/lib/AMPHORA2  ###CHECK IF THIS IS CORRECT?
+ENV AMPHORA2_home /home/imp/lib/AMPHORA2  ###CHECK IF THIS IS CORRECT?
 ENV PATH /home/imp/lib/trinityrnaseq_r20140717:/home/imp/lib/Platypus_0.8.1:/home/imp/lib/megahit:/home/imp/lib/fastqc/FastQC:$PATH
 ENV LD_LIBRARY_PATH /usr/local/lib/:/home/imp/lib/Platypus_0.8.1
 VOLUME ["/data", "/output", "/databases", "/code"]

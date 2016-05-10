@@ -18,6 +18,19 @@ include:
 include:
     '../../rules/Binning/bin-analysis.amphora.rule'
 
+include:
+    '../../rules/Binning/batch-phylophlan.rule'
+
+include:
+    '../../rules/Binning/split-completeness.rule'
+
+include:
+    '../../rules/Binning/summarize-completeness.rule'
+
+include:
+    '../../rules/Binning/plot-completeness.rule'
+
+
 # master command
 rule BINNING:
     input:

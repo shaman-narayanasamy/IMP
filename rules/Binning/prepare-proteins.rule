@@ -6,7 +6,7 @@ rule binning_prepare_proteins:
        "Binning/prepare_proteins.done"
     shell:
         """
-        src/prepareProteins.sh Binning/clusterFiles Binning/clusterFiles/preparedproteins
+        {SRCDIR}/prepareProteins.sh Binning/clusterFiles Binning/clusterFiles/preparedproteins
         touch {output}
         """
 
