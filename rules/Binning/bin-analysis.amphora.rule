@@ -11,7 +11,7 @@ rule binning_batch_amphora:
 #       src/batchRunAMPHORA2.sh Binning/clusterFiles Binning/clusterFiles/amphora2 {THREADS}
 
        IN_TOPDIR=Binning/clusterFiles
-       OUT_TOPDIR=Binning/clusterfiles/amphora2
+       OUT_TOPDIR=Binning/amphora2
        
       # SCRIPT="src/runAMPHORA2.sh"
        
@@ -32,7 +32,7 @@ rule binning_batch_amphora:
            CMD="{SRCDIR}/runAMPHORA2.sh -i $i -o ${{FILENAME}}.phylotypes.txt -d ${{OUT_DIR}} -c {THREADS} -p"
            echo "${{CMD}}"
            eval "time ${{CMD}}"
-           echo "done (running batchRunAMPHORA2)."
+           echo "done (running AMPHORA2 for ${{FILENAME}})."
            echo
        done
        
