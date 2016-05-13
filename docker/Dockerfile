@@ -253,8 +253,7 @@ RUN cd /home/imp/lib \
     && ./bootstrap \
     && ./configure \
     && make \
-    && make install \
-    && cp /usr/local/bin/pullseq /usr/bin
+    && make install
 
 ######################
 # set up environment #
@@ -278,7 +277,7 @@ RUN mkdir /code \
 # runtime parameters #
 ######################
 ENV AMPHORA2_home /home/imp/lib/AMPHORA2  ###CHECK IF THIS IS CORRECT?
-ENV PATH /home/imp/lib/trinityrnaseq_r20140717:/home/imp/lib/Platypus_0.8.1:/home/imp/lib/megahit:/home/imp/lib/fastqc/FastQC:$PATH
+ENV PATH /home/imp/lib/pullseq/src:/home/imp/lib/trinityrnaseq_r20140717:/home/imp/lib/Platypus_0.8.1:/home/imp/lib/megahit:/home/imp/lib/fastqc/FastQC:$PATH
 ENV LD_LIBRARY_PATH /usr/local/lib/:/home/imp/lib/Platypus_0.8.1
 VOLUME ["/data", "/output", "/databases", "/code"]
 WORKDIR /code
