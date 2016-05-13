@@ -6,27 +6,29 @@ rule binning_separate_bins:
         "Analysis/annotation/prokka.faa",
         "Analysis/annotation/annotation.filt.gff"
     output:
-        "Binning/separate_bins.done"
+        dynamic("Binning/clusterFiles/cluster.{cluster}.contigids"),
+        dynamic("Binning/clusterFiles/cluster.{cluster}.gff"),
+        dynamic("Binning/clusterFiles/cluster.{cluster}.protids"),
+        dynamic("Binning/clusterFiles/cluster.{cluster}.fa"),
     shell:
         """
         for cluster in $(tail -n+2 {input[0]} | cut -f2 | sort | uniq)
         do
             #get contig identifiers for each cluster with awk
 
-            headerfile="Binning/clusterFiles/${{cluster}}.contigids"
-            protids="Binning/clusterFiles/${{cluster}}.protids"
+            headerfile="Binning/clusterFiles/cluster.${{cluster}}.contigids"
+            protids="Binning/clusterFiles/cluster.${{cluster}}.protids"
 
             echo "Obtaining contigs for cluster ${{cluster}}"
             awk -v c=${{cluster}} '{{ if($2==c) {{print $1}}  }}' {input[0]} > ${{headerfile}}
-            pullseq -i {input[1]} -n ${{headerfile}}  > Binning/clusterFiles/${{cluster}}.fa
-            
+            pullseq -i {input[1]} -n ${{headerfile}}  > Binning/clusterFiles/cluster.${{cluster}}.fa
+
             echo "Obtaining amino acid sequences for cluster ${{cluster}}"
             awk 'FNR==NR{{a[$1]=$1;next}}{{if(a[$1]) print $4}}' ${{headerfile}} {input[2]} > ${{protids}}
-            pullseq -i {input[3]} -n ${{protids}}  > Binning/clusterFiles/${{cluster}}.faa
+            pullseq -i {input[3]} -n ${{protids}}  > Binning/clusterFiles/cluster.${{cluster}}.faa
 
             echo "Obtaining functional annotations (gff format) for cluster/bin ${{cluster}}"
-            grep -wFf ${{headerfile}} {input[4]} > Binning/clusterFiles/${{cluster}}.gff
+            grep -wFf ${{headerfile}} {input[4]} > Binning/clusterFiles/cluster.${{cluster}}.gff
         done
         echo "Complete separating bins"
-        touch {output}
         """
