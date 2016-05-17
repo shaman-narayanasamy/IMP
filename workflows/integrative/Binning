@@ -35,8 +35,7 @@ include:
 rule BINNING:
     input:
         #"Binning/clusterFiles/reachabilityDistanceEstimates.tsv"
-        #"Binning/clusterFiles/N.gff",
-        dynamic("Binning/clusterFiles/cluster.{cluster}.fa")
-        #Binning/clusterFiles/preparedproteins/N.faa
+        dynamic("Binning/clusterFiles/cluster.{cluster}.fa"),
+        dynamic("Binning/clusterFiles/cluster.{cluster}.faa")
     output:
         touch('binning.done')

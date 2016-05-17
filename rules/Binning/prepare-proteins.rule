@@ -1,12 +1,11 @@
 rule binning_prepare_proteins:
     #IN: <directory w/ unprepared .faa files> <OUT_DIR>
     input:
-       "Binning/separate_bins.done"
+        "Binning/clusterFiles/cluster.{cluster}.faa"
     output:
-       "Binning/prepare_proteins.done"
+        "Binning/clusterFiles/cluster.{cluster}_prepared.faa"
     shell:
         """
-        {SRCDIR}/prepareProteins.sh Binning/clusterFiles Binning/clusterFiles/preparedproteins
-        touch {output}
+        cp {input} {output}
         """
 
