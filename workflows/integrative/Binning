@@ -34,8 +34,11 @@ include:
 # master command
 rule BINNING:
     input:
-        #"Binning/clusterFiles/reachabilityDistanceEstimates.tsv"
-        dynamic("Binning/clusterFiles/cluster.{cluster}.fa"),
-        dynamic("Binning/clusterFiles/cluster.{cluster}.faa")
+        expand("Binning/clusterFiles/contigs2clusters{pk}{nn}.tsv",pk=config["binning"]["pk"],nn=config["binning"]["nn"]),
+        dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.contigids"),
+        dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.gff"),
+        dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.protids"),
+        dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.fa"),
+        dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.faa")
     output:
         touch('binning.done')
