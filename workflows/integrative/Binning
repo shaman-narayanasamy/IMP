@@ -39,6 +39,7 @@ rule BINNING:
         dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.gff"),
         dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.protids"),
         dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.fa"),
-        dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.faa")
+        dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.faa"),
+        dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}_prepared.faa")
     output:
         touch('binning.done')
