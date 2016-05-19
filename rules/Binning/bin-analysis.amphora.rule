@@ -1,6 +1,5 @@
 ### This rule is not yet complete because it depends on an external shell script. We need to figure out a way
 ### of porting it fully into snakemake
-
 rule binning_batch_amphora:
     input:
        "Binning/clusterFiles/{cluster}/cluster.{cluster}.faa"
@@ -8,9 +7,9 @@ rule binning_batch_amphora:
        "Binning/clusterFiles/{cluster}/cluster.{cluster}.amphora2_res.tsv"
     shell:
        """
-       AMPHORA_home="/home/imp/lib/"
+       AMPHORA2_home="/home/imp/lib/"
        DNA="-DNA"  
-       OUTDIR="Binning/clusterFiles/{wildcard.cluster}"
+       OUTDIR="Binning/clusterFiles/{wildcards.cluster}"
        INFILE={input}
        CPUSTRING={THREADS} 
        OUTSV={output}
