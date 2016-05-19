@@ -1,6 +1,6 @@
 # Base container with tools dependencies for the IMP pipeline
 #
-# VERSION       1.2
+# VERSION       1.4.2
 
 FROM ubuntu:trusty
 MAINTAINER yohan.jarosz@uni.lu
@@ -29,9 +29,9 @@ RUN  apt-get update \
     && apt-get install -yq openjdk-7-jdk \
     && rm -rf /var/lib/apt/lists/*
 #bioperl needs to be 1.6.924 for amphora2 # not available through apt-get for trusty...
-#(echo y;echo o conf prerequisites_policy follow;echo o conf commit)|cpan -e force install CJFIELDS/BioPerl-1.6.924.tar.gz
+RUN (echo y;echo o conf prerequisites_policy follow;echo o conf commit)|cpan -e force install CJFIELDS/BioPerl-1.6.924.tar.gz
 RUN apt-get update \
-    && apt-get install -yq bioperl=1.6.923-1 \
+    #&& apt-get install -yq bioperl=1.6.923-1 \
     && rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update \
