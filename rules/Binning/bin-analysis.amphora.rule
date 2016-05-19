@@ -8,7 +8,7 @@ rule binning_batch_amphora:
        "Binning/clusterFiles/{cluster}/cluster.{cluster}.amphora2_res.tsv"
     shell:
        """
-       AMPHORA_home="/home/imp/lib/"
+       AMPHORA_home="/home/imp/lib/AMPHORA2"
        DNA="-DNA"  
        OUTDIR="Binning/clusterFiles/{wildcard.cluster}"
        INFILE={input}
