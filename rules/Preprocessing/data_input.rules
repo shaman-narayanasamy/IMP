@@ -52,10 +52,11 @@ def _process_file(fname, inp, outfilename):
             whandle.write(rhandle.read())
     # unbzip2
     elif os.path.splitext(fname)[-1] in ['.bz2', '.bzip2']:
+        shell("bzip2 -dc {i} > {o}".format(i=inp, o=outfilename))
         #dec = bz2.BZ2Decompressor()
-        with open(outfilename, 'wb') as whandle, bz2.open(inp, 'rb') as rhandle:
+        #with open(outfilename, 'wb') as whandle, bz2.open(inp, 'rb') as rhandle:
             #whandle.write(bz2.decompress(rhandle.read()))
-            whandle.write(rhandle.read())
+        #    whandle.write(rhandle.read())
             # for data in iter(lambda: rhandle.read(CHUNK_SIZE), b''):
             #     whandle.write(bz2.decompress(data))
     # copy
