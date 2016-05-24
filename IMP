@@ -261,7 +261,7 @@ def run(args):
     cmd += ['%s:%s' % (args['-n'], args['-v'])]
 
     # map the workflow snakemake file
-    workflow_file = '/code/workflows/integrative/Snakefile'
+    workflow_file = '/code/Snakefile'
     # if mg and not mt:
     #     workflow_file = '/code/workflows/single-omic/mg/Snakefile'
     # if mt and not mg:
