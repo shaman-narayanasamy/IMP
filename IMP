@@ -262,10 +262,10 @@ def run(args):
 
     # map the workflow snakemake file
     workflow_file = '/code/workflows/integrative/Snakefile'
-    if mg and not mt:
-        workflow_file = '/code/workflows/single-omic/mg/Snakefile'
-    if mt and not mg:
-        workflow_file = '/code/workflows/single-omic/mt/Snakefile'
+    # if mg and not mt:
+    #     workflow_file = '/code/workflows/single-omic/mg/Snakefile'
+    # if mt and not mg:
+    #     workflow_file = '/code/workflows/single-omic/mt/Snakefile'
 
     # if --enter flag is specified, change the command
     if args['--enter']:
