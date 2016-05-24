@@ -55,7 +55,10 @@ def _process_file(fname, inp, outfilename):
         dec = bz2.BZ2Decompressor()
         with open(outfilename, 'wb') as whandle, open(inp, 'rb') as rhandle:
             for data in iter(lambda: rhandle.read(CHUNK_SIZE), b''):
-                whandle.write(dec.decompress(data))
+                try:
+                    whandle.write(dec.decompress(data))
+                except EOFError:
+                    pass    
     # copy
     else:
         shutil.copy(inp, outfilename)
