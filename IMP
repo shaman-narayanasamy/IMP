@@ -182,7 +182,7 @@ def init(args):
     if args['--enter']:
         cmd = docker_cmd + ' /bin/bash'
     else:
-        cmd = docker_cmd + map_user('snakemake -s /code/rules/init', '/databases')
+        cmd = docker_cmd + map_user('snakemake -s /code/rules/ini/init', '/databases')
     print("Executing", '"', cmd, '"')
     subprocess.call(cmd, shell=True)
 
