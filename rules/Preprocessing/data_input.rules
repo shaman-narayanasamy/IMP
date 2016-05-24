@@ -38,6 +38,7 @@ def prepare_input_files(input, type):
         print('symlink',  out3, '=>', link3)
         os.symlink("{type}.se.fq".format(type=type), link3)
 
+CHUNK_SIZE = 1024
 
 def _process_file(fname, inp, outfilename):
     """
