@@ -81,5 +81,8 @@
     "kegg": {
         "db_ec2pthy": "http://rest.kegg.jp/link/ec/pathway",
         "db_hierarchy": "http://rest.kegg.jp/list/pathway"
+    },
+        "metaquast": {
+        "max_genomes": 50
     }
 }

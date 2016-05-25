@@ -31,5 +31,5 @@ rule annotate:
         LN=`grep -Hn "^>" Analysis/annotation/PROKKA_*.gff | head -n1 | cut -f2 -d ":" || if [[ $? -eq 141 ]]; then true; else exit $?; fi`
         LN1=1
         LN=$(($LN-$LN1))
-        head -n $LN Analysis/annotation/*.gff | grep -v "^#" | sort | uniq | grep -v "^==" > {output}
+        head -n $LN Analysis/annotation/PROKKA*.gff | grep -v "^#" | sort | uniq | grep -v "^==" > {output}
         """

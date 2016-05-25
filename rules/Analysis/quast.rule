@@ -6,7 +6,7 @@ rule quast:
         "Analysis/results/quast/summary/combined_quast_output/contigs_reports/nucmer_output/aux/{type}.assembly.merged.coords_edited"
     shell:
         """
-        metaquast -t {THREADS} -o Analysis/results/quast {input[0]} --max-ref-number 75
+        metaquast -t {THREADS} -o Analysis/results/quast {input[0]} --max-ref-number {config[metaquast][max_genomes]}
         FFILE="Analysis/results/quast/combined_quast_output/contigs_reports/nucmer_output/aux/{wildcards.type}.assembly.merged.coords"
         if [ -f $FFILE ];then
         sed -e 's/|//g' $FFILE | sed -e 's/*\s/\t/g' | tail -n +3 > {output[1]}
