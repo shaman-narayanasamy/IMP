@@ -22,7 +22,7 @@
     },
     "trimmomatic": {
         "pkg_url": "https://webdav-r3lab.uni.lu/public/R3lab/IMP/Trimmomatic-Src-0.32.zip",
-        "adapter": "TruSeq3",
+        "adapter": "TruSeq3-PE",
         "leading": 20,
         "minlen": 40,
         "palindrome_clip_threshold": 30,
