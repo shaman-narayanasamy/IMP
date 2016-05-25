@@ -163,19 +163,20 @@ def init(args):
     config_file = str(Path(args['-c']).name)
     config_directory = Path(args['-c']).parent.abspath()
     # prepare docker command
-    docker_cmd = 'docker run --rm -v {d}:/databases -v {conf}:/conf -e CONFIGFILE=/conf/{c} {n}:{v}'
+    docker_cmd = 'docker run --rm --name {name} -v {d}:/databases -v {conf}:/conf -e CONFIGFILE=/conf/{c} {n}:{v}'
     formatting_args = {
         'd': database_path,
         'n': args['-i'],
         'v': args['-v'],
         'c': config_file,
         'conf': config_directory,
+        'name': args['-n']
         'interactive': ''
     }
     # override docker command if the user want to mount a specific version of IMP codebase.
     if args['--current']:
         formatting_args['p'] = CURRENT_PATH
-        docker_cmd = 'docker run --rm -v {p}:/code -v {d}:/databases -v {conf}:/conf -e CONFIGFILE=/conf/{c}{interactive} {n}:{v}'
+        docker_cmd = 'docker run --rm --name {name} -v {p}:/code -v {d}:/databases -v {conf}:/conf -e CONFIGFILE=/conf/{c}{interactive} {n}:{v}'
     if args['--enter']:
         formatting_args['interactive'] = ' -it'
     # format docker command
@@ -261,6 +262,8 @@ def run(args):
     if args['--enter']:
         cmd += ['-it']
 
+    # add container name
+    cmd += ['--name %s' % args['-n']]
     # add container name and commands to pass to snakemake
     cmd += ['%s:%s' % (args['-i'], args['-v'])]
 
