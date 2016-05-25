@@ -25,8 +25,8 @@ Usage:
   IMP [-m MG1 -m MG2 -m MGSE]
       [-t MT1 -t MT2 -t MTSE]
       -o OUTPUT
-      [--enter] [--norm] [--current] [-r REPO] [-i IMAGENAME] [-v VERSION] [-c CONFIGFILE] [-d DBPATH] [-a ASSEMBLER] [-e ENV] ... [COMMANDS ...]
-  IMP --init [--current] [--enter] [-d DBPATH] [-i IMAGENAME] [-v VERSION] [-r REPO] [-c CONFIGFILE]
+      [--enter] [--norm] [--current] [-r REPO] [-i IMAGENAME] [-n NAME] [-v VERSION] [-c CONFIGFILE] [-d DBPATH] [-a ASSEMBLER] [-e ENV] ... [COMMANDS ...]
+  IMP --init [--current] [--enter] [-d DBPATH] [-i IMAGENAME] [-n NAME] [-v VERSION] [-r REPO] [-c CONFIGFILE]
   IMP (-h | --help)
   IMP --version
 
