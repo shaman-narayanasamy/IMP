@@ -170,7 +170,7 @@ def init(args):
         'v': args['-v'],
         'c': config_file,
         'conf': config_directory,
-        'name': args['-n']
+        'name': args['-n'],
         'interactive': ''
     }
     # override docker command if the user want to mount a specific version of IMP codebase.
