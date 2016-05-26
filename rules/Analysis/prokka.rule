@@ -19,7 +19,6 @@ rule annotate:
         else
             PP=$PWD/{DBPATH};
         fi
-        export PATH=/tmp:$PATH
         DD=$(dirname $(which prokka))/../db
         if [[ ! -L $DD ]]
         then
@@ -52,6 +51,6 @@ rule update_tbl2asn:
                 wget https://webdav-r3lab.uni.lu/public/R3lab/IMP/linux64.tbl2asn.gz -O /tmp/tbl2asn.gz
                 gzip -d /tmp/tbl2asn.gz
                 chmod +x /tmp/tbl2asn
-                export PATH=/tmp:$PATH
+                mv /tmp/tbl2asn /usr/bin
         fi
         """
