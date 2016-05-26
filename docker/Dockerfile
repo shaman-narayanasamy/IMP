@@ -204,4 +204,10 @@ ENV PATH /home/imp/lib/trinityrnaseq_r20140717:/home/imp/lib/Platypus_0.8.1:/hom
 ENV LD_LIBRARY_PATH /usr/local/lib/:/home/imp/lib/Platypus_0.8.1
 VOLUME ["/data", "/output", "/databases", "/code"]
 WORKDIR /code
+
+#
+# USER_ID=${LOCAL_USER_ID:-9001}
+# echo "Starting with UID : $USER_ID"
+# useradd --shell /bin/bash -u $USER_ID -o -c "" -m user
+#
 CMD ["snakemake", "ALL"]

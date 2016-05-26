@@ -183,10 +183,13 @@ def init(args):
     docker_cmd = docker_cmd.format(**formatting_args)
     # IMP command + user mapping (see https://github.com/docker/docker/pull/12648)
 
+    # map user
+    docker_cmd + " -u `id -u $USER`"
+
     if args['--enter']:
         cmd = docker_cmd + ' /bin/bash'
     else:
-        cmd = docker_cmd + map_user('snakemake -s /code/rules/ini/init', '/databases')
+        cmd = docker_cmd + ' snakemake -s /code/rules/ini/init'
 
     _call(cmd, args['-n'])
     #subprocess.call(cmd, shell=True)
@@ -274,6 +277,9 @@ def run(args):
     # if mt and not mg:
     #     workflow_file = '/code/workflows/single-omic/mt/Snakefile'
 
+    # map user
+    cmd += ["-u `id -u $USER`"]
+
     # if --enter flag is specified, change the command
     if args['--enter']:
         cmd += ['/bin/bash']
@@ -284,7 +290,8 @@ def run(args):
             args['COMMANDS'] = ['snakemake', 'ALL']
         # add the workflow file
         args['COMMANDS'] += ['-s', workflow_file]
-        cmd = ' '.join(cmd) + map_user(' '.join(args['COMMANDS']), '/output')
+        cmd =+ args['COMMANDS']
+        #cmd = ' '.join(cmd) + map_user(' '.join(args['COMMANDS']), '/output')
 
     # execute the command
     _call(cmd, args['-n'])
