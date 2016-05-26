@@ -126,7 +126,7 @@ def install_imp(repo):
     if repo[:4].startswith('http'):
         # download
         print("[x] Downloading IMP TARBALL at '%s'" % repo)
-        subprocess.check_output(['wget', '--no-check-certificate -c', repo, '-O', fname])
+        subprocess.check_output(['wget', '--no-check-certificate', '-c', repo, '-O', fname])
     else:
         # copy
         print("[x] Copying IMP TARBALL '%s'" % repo)
