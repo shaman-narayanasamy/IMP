@@ -1,5 +1,6 @@
 rule annotate:
     input:
+        'Analysis/tbl2asn.updated',
         'Assembly/%s.assembly.merged.fa' % ASS,
         expand("{path}/{db}", path=DBPATH, db=config["prokka"]["databases"])
     output:
@@ -18,6 +19,7 @@ rule annotate:
         else
             PP=$PWD/{DBPATH};
         fi
+        export PATH=/tmp:$PATH
         DD=$(dirname $(which prokka))/../db
         if [[ ! -L $DD ]]
         then
@@ -36,4 +38,20 @@ rule annotate:
         LN1=1
         LN=$(($LN-$LN1))
         head -n $LN Analysis/annotation/PROKKA*.gff | grep -v "^#" | sort | uniq | grep -v "^==" > {output}
+        """
+
+
+rule update_tbl2asn:
+    output:
+        touch("Analysis/tbl2asn.updated")
+    shell:
+        """
+        OUT=$(tbl2asn -hp /tmp 2>&1)
+        echo $OUT
+        if [[ "$OUT" =~ "copy of tbl2asn is more than a year old" ]]; then
+                wget https://webdav-r3lab.uni.lu/public/R3lab/IMP/linux64.tbl2asn.gz -O /tmp/tbl2asn.gz
+                gzip -d /tmp/tbl2asn.gz
+                chmod +x /tmp/tbl2asn
+                export PATH=/tmp:$PATH
+        fi
         """

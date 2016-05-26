@@ -35,6 +35,9 @@
         "target_length": 40,
         "jarfile": "/home/imp/lib/trimmomatic-0.32.jar"
     },
+    "tbl2asn": {
+        "url": "https://webdav-r3lab.uni.lu/public/R3lab/IMP/linux64.tbl2asn.gz"
+    },
     "idba_ud": {
         "mink": 25,
         "maxk": 99,
