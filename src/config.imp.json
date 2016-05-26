@@ -71,6 +71,7 @@
     },
     "prokka": {
         "pkg_url": "https://webdav-r3lab.uni.lu/public/R3lab/IMP/prokka-1.11.tar.gz",
+	"prefix": "prokka",
         "databases": [
             "cm/Bacteria.i1i",
             "genus/Staphylococcus.phr",

@@ -4,6 +4,10 @@ rule annotate:
         expand("{path}/{db}", path=DBPATH, db=config["prokka"]["databases"])
     output:
         "Analysis/annotation/annotation.filt.gff"
+        "Analysis/annotation/{p}.faa".format(p=config['prokka']['prefix']),
+        "Analysis/annotation/{p}.fna".format(p=config['prokka']['prefix']),
+        "Analysis/annotation/{p}.ffn".format(p=config['prokka']['prefix']),
+        "Analysis/annotation/{p}.fsa".format(p=config['prokka']['prefix']),
     shell:
         """
         ### prokka by default will look databases where is located the binary.
@@ -23,7 +27,7 @@ rule annotate:
             cd $CUR
         fi
         rm -rf Analysis/annotation/
-        prokka --force --outdir Analysis/annotation --cpus {THREADS} --metagenome {input[0]} >> Analysis/annotation.log 2>&1
+        prokka --force --outdir Analysis/annotation --prefix {config[prokka][prefix]} --cpus {THREADS} --metagenome {input[0]} >> Analysis/annotation.log 2>&1
 
         # Prokka gives a gff file with a long header and with all the contigs at the bottom.  The command below removes the
         # And keeps only the gff table.
