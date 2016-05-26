@@ -195,7 +195,7 @@ RUN echo "`snakemake --bash-completion`" >> ~/.bashrc \
 RUN mkdir /code \
     && cd /code \
     && git clone --branch 1.3 --single-branch https://git-r3lab.uni.lu/IMP/IMP.git . \
-    && chmod 777 -R /usr /code /data /output /databases
+    && chmod 777 -R /usr /code
 
 
 
