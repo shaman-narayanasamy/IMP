@@ -196,7 +196,7 @@ def init(args):
     if args['--enter']:
         cmd = docker_cmd + ' /bin/bash'
     else:
-        cmd = docker_cmd + ' snakemake -s /code/rules/ini/init --unlock'
+        cmd = docker_cmd + ' snakemake -s /code/rules/ini/init'
 
     _call(cmd, out_container_name)
     #subprocess.call(cmd, shell=True)
@@ -297,7 +297,7 @@ def run(args):
     else:
         # put default command if not specified
         if not args['COMMANDS']:
-            args['COMMANDS'] = ['snakemake', 'ALL', '--unlock']
+            args['COMMANDS'] = ['snakemake', 'ALL']
         # add the workflow file
         args['COMMANDS'] += ['-s', workflow_file]
         cmd += args['COMMANDS']
