@@ -163,7 +163,7 @@ def init(args):
     config_file = str(Path(args['-c']).name)
     config_directory = Path(args['-c']).parent.abspath()
     # prepare docker command
-    docker_cmd = 'docker run --rm --name {name} -v {d}:/databases -v {conf}:/conf -e CONFIGFILE=/conf/{c} {n}:{v}'
+    docker_cmd = 'docker run --rm -u `id -u $USER` --name {name} -v {d}:/databases -v {conf}:/conf -e CONFIGFILE=/conf/{c} {n}:{v}'
     formatting_args = {
         'd': database_path,
         'n': args['-i'],
@@ -173,10 +173,11 @@ def init(args):
         'name': args['-n'],
         'interactive': ''
     }
+
     # override docker command if the user want to mount a specific version of IMP codebase.
     if args['--current']:
         formatting_args['p'] = CURRENT_PATH
-        docker_cmd = 'docker run --rm --name {name} -v {p}:/code -v {d}:/databases -v {conf}:/conf -e CONFIGFILE=/conf/{c}{interactive} {n}:{v}'
+        docker_cmd = 'docker run --rm -u `id -u $USER` --name {name} -v {p}:/code -v {d}:/databases -v {conf}:/conf -e CONFIGFILE=/conf/{c}{interactive} {n}:{v}'
     if args['--enter']:
         formatting_args['interactive'] = ' -it'
     # format docker command
@@ -186,7 +187,7 @@ def init(args):
     if args['--enter']:
         cmd = docker_cmd + ' /bin/bash'
     else:
-        cmd = docker_cmd + map_user('snakemake -s /code/rules/ini/init', '/databases')
+        cmd = docker_cmd + ' snakemake -s /code/rules/ini/init'
 
     _call(cmd, args['-n'])
     #subprocess.call(cmd, shell=True)
@@ -262,6 +263,9 @@ def run(args):
     if args['--enter']:
         cmd += ['-it']
 
+    # map user
+    cmd += ["-u `id -u $USER`"]
+
     # add container name
     cmd += ['--name %s' % args['-n']]
     # add container name and commands to pass to snakemake
@@ -274,6 +278,7 @@ def run(args):
     # if mt and not mg:
     #     workflow_file = '/code/workflows/single-omic/mt/Snakefile'
 
+
     # if --enter flag is specified, change the command
     if args['--enter']:
         cmd += ['/bin/bash']
@@ -284,7 +289,9 @@ def run(args):
             args['COMMANDS'] = ['snakemake', 'ALL']
         # add the workflow file
         args['COMMANDS'] += ['-s', workflow_file]
-        cmd = ' '.join(cmd) + map_user(' '.join(args['COMMANDS']), '/output')
+        cmd += args['COMMANDS']
+        cmd = ' '.join(cmd)
+        #cmd = ' '.join(cmd) + map_user(' '.join(args['COMMANDS']), '/output')
 
     # execute the command
     _call(cmd, args['-n'])
