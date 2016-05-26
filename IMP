@@ -172,13 +172,14 @@ def init(args):
     config_directory = Path(args['-c']).parent.abspath()
     # prepare docker command
     docker_cmd = 'docker run --rm -u `id -u $USER` --name {name} -v {d}:/databases -v {conf}:/conf -e CONFIGFILE=/conf/{c} {n}:{v}'
+    out_container_name = _container_name_slug(database_path)
     formatting_args = {
         'd': database_path,
         'n': args['-i'],
         'v': args['-v'],
         'c': config_file,
         'conf': config_directory,
-        'name': _container_name_slug(database_path),
+        'name': out_container_name,
         'interactive': ''
     }
 
@@ -197,7 +198,7 @@ def init(args):
     else:
         cmd = docker_cmd + ' snakemake -s /code/rules/ini/init --unlock'
 
-    _call(cmd, args['-n'])
+    _call(cmd, out_container_name)
     #subprocess.call(cmd, shell=True)
 
 
@@ -274,8 +275,10 @@ def run(args):
     # map user
     cmd += ["-u `id -u $USER`"]
 
+    # output container name
+    out_container_name = _container_name_slug(output)
     # add container name
-    cmd += ['--name %s' % _container_name_slug(output)]
+    cmd += ['--name %s' % out_container_name]
     # add container name and commands to pass to snakemake
     cmd += ['%s:%s' % (args['-i'], args['-v'])]
 
@@ -302,7 +305,7 @@ def run(args):
         #cmd = ' '.join(cmd) + map_user(' '.join(args['COMMANDS']), '/output')
 
     # execute the command
-    _call(cmd, args['-n'])
+    _call(cmd, out_container_name)
 
 
 def validate(args):
