@@ -220,6 +220,8 @@ RUN set -x \
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
+RUN echo "Adding entrypoint"
+
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 USER root
