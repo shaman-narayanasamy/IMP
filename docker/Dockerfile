@@ -197,6 +197,14 @@ RUN mkdir /code /output /data /databases\
     && git clone --branch 1.3 --single-branch https://git-r3lab.uni.lu/IMP/IMP.git . \
     && chmod 777 -R /usr /code /output /data /databases
 
+#### Add IMP user
+RUN useradd -d /code imp \
+    && echo 'imp:imp' |chpasswd \
+    && echo "imp ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/imp \
+
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+USER root
 
 
 ######################
