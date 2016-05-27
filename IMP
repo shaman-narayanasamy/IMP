@@ -177,7 +177,7 @@ def init(args):
     config_file = str(Path(args['-c']).name)
     config_directory = Path(args['-c']).parent.abspath()
     # prepare docker command
-    docker_cmd = 'docker run --rm -e "LOCAL_USER_ID=`id -ur $USER`" -e "LOCAL_GROUP_ID=`id -gr $USER`" --name {name} -v {d}:{cont_db} -v {conf}:{cont_conf} -e CONFIGFILE={cont_conf}/{c}{interactive} {n}:{v}'
+    docker_cmd = 'docker run --rm -e "LOCAL_USER_ID=`id -u $USER`" -e "LOCAL_GROUP_ID=`id -g $USER`" --name {name} -v {d}:{cont_db} -v {conf}:{cont_conf} -e CONFIGFILE={cont_conf}/{c}{interactive} {n}:{v}'
     out_container_name = _container_name_slug(database_path)
     formatting_args = {
         'd': database_path,
@@ -195,7 +195,7 @@ def init(args):
     if args['--current']:
         formatting_args['p'] = CURRENT_PATH
         formatting_args['cont_code'] =  _IMP_CODE_DIR
-        docker_cmd = 'docker run --rm -e "LOCAL_USER_ID=`id -ur $USER`" -e "LOCAL_GROUP_ID=`id -gr $USER`" --name {name} -v {p}:{cont_code} -v {d}:{cont_db} -v {conf}:{cont_conf} -e CONFIGFILE={cont_conf}/{c}{interactive} {n}:{v}'
+        docker_cmd = 'docker run --rm -e "LOCAL_USER_ID=`id -u $USER`" -e "LOCAL_GROUP_ID=`id -g $USER`" --name {name} -v {p}:{cont_code} -v {d}:{cont_db} -v {conf}:{cont_conf} -e CONFIGFILE={cont_conf}/{c}{interactive} {n}:{v}'
     if args['--enter']:
         formatting_args['interactive'] = ' -it'
     # format docker command
@@ -282,7 +282,7 @@ def run(args):
         cmd += ['-it']
 
     # map user
-    cmd += ['-e "LOCAL_USER_ID=`id -ur $USER`"', '-e "LOCAL_GROUP_ID=`id -gr $USER`"']
+    cmd += ['-e "LOCAL_USER_ID=`id -u $USER`"', '-e "LOCAL_GROUP_ID=`id -g $USER`"']
 
     # output container name
     out_container_name = _container_name_slug(output)
