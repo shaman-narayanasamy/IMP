@@ -214,10 +214,10 @@ RUN useradd -d /home/imp imp \
 #####################
 
 USER root
-RUN mkdir -p /home/imp/code /home/imp/output /home/imp/data /home/imp/databases \
+RUN gosu imp mkdir -p /home/imp/code /home/imp/output /home/imp/data /home/imp/databases \
     && cd /home/imp/code \
-    && git clone --branch 1.3 --single-branch https://git-r3lab.uni.lu/IMP/IMP.git . \
-    && chown -R imp:imp /home/imp
+    && gosu imp git clone --branch 1.3 --single-branch https://git-r3lab.uni.lu/IMP/IMP.git .
+
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
