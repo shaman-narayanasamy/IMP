@@ -188,21 +188,6 @@ RUN echo "`snakemake --bash-completion`" >> ~/.bashrc \
 ## add LD_LIBRARY_PATH
     && echo "export LD_LIBRARY_PATH=/usr/local/lib" >> ~/.bashrc
 
-#####################
-# Ship IMP codebase #
-#####################
-
-RUN mkdir -p /home/imp/code /home/imp/output /home/imp/data /home/imp/databases \
-    && cd /home/imp/code \
-    && git clone --branch 1.3 --single-branch https://git-r3lab.uni.lu/IMP/IMP.git .
-
-
-
-#### Add IMP user
-RUN useradd -d /home/imp imp \
-    && echo 'imp:imp' |chpasswd \
-    && echo "imp ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/imp
-
 #### Add gosu
 ENV GOSU_VERSION 1.7
 RUN set -x \
@@ -217,6 +202,21 @@ RUN set -x \
     && gosu nobody true \
     && apt-get purge -y --auto-remove ca-certificates wget
 
+
+#### Add IMP user
+RUN useradd -d /home/imp imp \
+    && echo 'imp:imp' |chpasswd \
+    && echo "imp ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/imp
+
+
+#####################
+# Ship IMP codebase #
+#####################
+
+RUN mkdir -p /home/imp/code /home/imp/output /home/imp/data /home/imp/databases \
+    && cd /home/imp/code \
+    && git clone --branch 1.3 --single-branch https://git-r3lab.uni.lu/IMP/IMP.git . \
+    && chown -R imp:imp /home/imp 
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
