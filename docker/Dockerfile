@@ -196,15 +196,32 @@ RUN mkdir /code /output /data /databases\
     && cd /code \
     && git clone --branch 1.3 --single-branch https://git-r3lab.uni.lu/IMP/IMP.git .
 
-#&& chmod 777 -R /usr /code /output /data /databases
+
 
 #### Add IMP user
-RUN useradd -d /code imp \
+RUN useradd -d /home/imp imp \
     && echo 'imp:imp' |chpasswd \
-    && echo "imp ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/imp \
+    && echo "imp ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/imp
+
+#### Add gosu
+ENV GOSU_VERSION 1.7
+RUN set -x \
+    && apt-get update && apt-get install -y --no-install-recommends ca-certificates wget && rm -rf /var/lib/apt/lists/* \
+    && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture)" \
+    && wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture).asc" \
+    && export GNUPGHOME="$(mktemp -d)" \
+    && gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
+    && gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
+    && rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
+    && chmod +x /usr/local/bin/gosu \
+    && gosu nobody true \
+    && apt-get purge -y --auto-remove ca-certificates wget
+
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
 USER root
 
 
@@ -213,8 +230,8 @@ USER root
 ######################
 ENV PATH /home/imp/lib/trinityrnaseq_r20140717:/home/imp/lib/Platypus_0.8.1:/home/imp/lib/megahit:/home/imp/lib/fastqc/FastQC:$PATH
 ENV LD_LIBRARY_PATH /usr/local/lib/:/home/imp/lib/Platypus_0.8.1
-VOLUME ["/data", "/output", "/databases", "/code"]
-WORKDIR /code
+VOLUME ["/home/imp/data", "/home/imp/output", "/home/imp/databases", "/home/imp/code"]
+WORKDIR /home/imp/code
 
 
 CMD ["snakemake", "ALL"]
