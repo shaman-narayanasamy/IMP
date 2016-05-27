@@ -194,8 +194,9 @@ RUN echo "`snakemake --bash-completion`" >> ~/.bashrc \
 
 RUN mkdir /code /output /data /databases\
     && cd /code \
-    && git clone --branch 1.3 --single-branch https://git-r3lab.uni.lu/IMP/IMP.git . \
-    && chmod 777 -R /usr /code /output /data /databases
+    && git clone --branch 1.3 --single-branch https://git-r3lab.uni.lu/IMP/IMP.git .
+
+#&& chmod 777 -R /usr /code /output /data /databases
 
 #### Add IMP user
 RUN useradd -d /code imp \
@@ -215,9 +216,5 @@ ENV LD_LIBRARY_PATH /usr/local/lib/:/home/imp/lib/Platypus_0.8.1
 VOLUME ["/data", "/output", "/databases", "/code"]
 WORKDIR /code
 
-#
-# USER_ID=${LOCAL_USER_ID:-9001}
-# echo "Starting with UID : $USER_ID"
-# useradd --shell /bin/bash -u $USER_ID -o -c "" -m user
-#
+
 CMD ["snakemake", "ALL"]
