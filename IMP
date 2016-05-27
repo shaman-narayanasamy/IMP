@@ -248,7 +248,7 @@ def run(args):
     ]
     # add code mount point if the user want to mount a specific version of IMP codebase.
     if args['--current']:
-        mount_points.append('-v {cur}:{cont_code}'.format(cur=CURRENT_PATH, cont_code=_IMP_CODE_DIR)
+        mount_points.append('-v {cur}:{cont_code}'.format(cur=CURRENT_PATH, cont_code=_IMP_CODE_DIR))
 
     # add environment variables
     envs = ['-e {}="{}"'.format(*e.split('=')) for e in args['-e']]
