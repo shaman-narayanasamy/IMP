@@ -241,9 +241,9 @@ def run(args):
 
     # configure IMP mount point to the docker container
     mount_points = [
-        '-v %s:%s' % (common_path, _IMP_DATA_DIR)
-        '-v %s:%s' % (output, _IMP_OUTPUT_DIR)
-        '-v %s:%s' % (database_path, _IMP_DB_DIR)
+        '-v %s:%s' % (common_path, _IMP_DATA_DIR),
+        '-v %s:%s' % (output, _IMP_OUTPUT_DIR),
+        '-v %s:%s' % (database_path, _IMP_DB_DIR),
         '-v %s:%s' % (config_directory, _IMP_CONF_DIR)
     ]
     # add code mount point if the user want to mount a specific version of IMP codebase.
