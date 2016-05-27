@@ -177,7 +177,7 @@ def init(args):
     config_file = str(Path(args['-c']).name)
     config_directory = Path(args['-c']).parent.abspath()
     # prepare docker command
-    docker_cmd = 'docker run --rm -e "LOCAL_USER_ID=`id -u $USER`" --name {name} -v {d}:{cont_db} -v {conf}:{cont_conf} -e CONFIGFILE={cont_conf}/{c} {n}:{v}'
+    docker_cmd = 'docker run --rm -e "LOCAL_USER_ID=`id -u $USER`" --name {name} -v {d}:{cont_db} -v {conf}:{cont_conf} -e CONFIGFILE={cont_conf}/{c}{interactive} {n}:{v}'
     out_container_name = _container_name_slug(database_path)
     formatting_args = {
         'd': database_path,
