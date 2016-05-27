@@ -213,16 +213,16 @@ RUN useradd -d /home/imp imp \
 # Ship IMP codebase #
 #####################
 
+USER root
 RUN mkdir -p /home/imp/code /home/imp/output /home/imp/data /home/imp/databases \
     && cd /home/imp/code \
     && git clone --branch 1.3 --single-branch https://git-r3lab.uni.lu/IMP/IMP.git . \
-    && chown -R imp:imp /home/imp 
+    && chown -R imp:imp /home/imp
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
-USER root
 
 
 ######################
