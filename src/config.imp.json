@@ -3,17 +3,17 @@
     "memory_total_gb": 8,
     "memory_per_core_gb": 2,
     "tmp_dir": "tmp",
-    "imp_root": "/code",
-    "imp_src": "/code/src",
-    "imp_lib": "/code/lib",
+    "imp_root": "/home/imp/code",
+    "imp_src": "/home/imp/code/src",
+    "imp_lib": "/home/imp/code/lib",
     "skip_preprocessing": false,
     "raws": {
       "Metagenomics": "",
       "Metatranscriptomics": ""
     },
     "sample": "test",
-    "outputdir": "/output",
-    "db_path": "/databases",
+    "outputdir": "/home/imp/output",
+    "db_path": "/home/imp/databases",
     "preprocessing_filtering": true,
     "assembler": "idba",
     "cap3": {
