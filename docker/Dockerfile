@@ -192,7 +192,7 @@ RUN echo "`snakemake --bash-completion`" >> ~/.bashrc \
 # Ship IMP codebase #
 #####################
 
-RUN mkdir -p /home/imp/{code,output,data,databases} \
+RUN mkdir -p /home/imp/code /home/imp/output /home/imp/data /home/imp/databases \
     && cd /home/imp/code \
     && git clone --branch 1.3 --single-branch https://git-r3lab.uni.lu/IMP/IMP.git .
 
