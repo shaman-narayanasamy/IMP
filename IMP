@@ -282,7 +282,7 @@ def run(args):
         cmd += ['-it']
 
     # map user
-    cmd += [-e "LOCAL_USER_ID=`id -u $USER`"]
+    cmd += ['-e "LOCAL_USER_ID=`id -u $USER`"']
 
     # output container name
     out_container_name = _container_name_slug(output)
