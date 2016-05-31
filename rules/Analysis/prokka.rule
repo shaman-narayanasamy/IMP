@@ -24,7 +24,7 @@ rule annotate:
         then
             CUR=$PWD
             echo "Softlinking $DD to $PP"
-            cd $(dirname $(which prokka))/.. && ln -s $PP db
+            cd $(dirname $(which prokka))/.. && sudo ln -s $PP db
             cd $CUR
         fi
         rm -rf Analysis/annotation/
@@ -51,6 +51,6 @@ rule update_tbl2asn:
                 wget https://webdav-r3lab.uni.lu/public/R3lab/IMP/linux64.tbl2asn.gz -O /tmp/tbl2asn.gz
                 gzip -d /tmp/tbl2asn.gz
                 chmod +x /tmp/tbl2asn
-                mv /tmp/tbl2asn /usr/bin
+                sudo mv /tmp/tbl2asn /usr/bin
         fi
         """
