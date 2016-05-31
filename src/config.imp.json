@@ -87,6 +87,6 @@
         "db_hierarchy": "http://rest.kegg.jp/list/pathway"
     },
         "metaquast": {
-        "max_genomes": 50
+        "max_genomes": 20
     }
 }
