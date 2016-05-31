@@ -1,4 +1,4 @@
-rule quast:
+rule metaquast:
     input:
         'Assembly/{type}.assembly.merged.fa'
     output:
