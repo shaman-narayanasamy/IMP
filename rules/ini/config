@@ -52,12 +52,10 @@ MG = os.environ.get("MG", config['raws']['Metagenomics']).split()
 MT = os.environ.get("MT", config['raws']['Metatranscriptomics']).split()
 SAMPLE = os.environ.get("SAMPLE", config['sample'])
 DBPATH = os.environ.get("DBPATH", config['db_path'])
-print('----------init config')
-print(DBPATH)
+
 if not os.path.exists(DBPATH):
-    print(DBPATH)
     os.makedirs(DBPATH)
-print(DBPATH)
+
 # Get general parameters
 THREADS = os.environ.get("THREADS", config['threads'])
 MEMTOTAL = os.environ.get("MEMTOTAL", config['memory_total_gb'])
