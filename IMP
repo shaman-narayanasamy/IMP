@@ -206,7 +206,13 @@ def init(args):
         cmd = docker_cmd + ' /bin/bash'
     else:
         cmd = docker_cmd + ' snakemake -s {cont_code}/rules/ini/init'.format(cont_code=_IMP_CODE_DIR)
-
+    # before calling docker cmd, be sure that mounted directories exists
+    # or they will be created by the container as root user
+    if not database_path.exists():
+        database_path.makedirs()
+    if not config_directory.exists():
+        config_directory.makedirs()
+        
     _call(cmd, out_container_name)
     #subprocess.call(cmd, shell=True)
 
@@ -311,7 +317,7 @@ def run(args):
         args['COMMANDS'] += ['-s', workflow_file]
         cmd += args['COMMANDS']
         cmd = ' '.join(cmd)
-        #cmd = ' '.join(cmd) + map_user(' '.join(args['COMMANDS']), '{cont_out}')
+        # cmd = ' '.join(cmd) + map_user(' '.join(args['COMMANDS']), '{cont_out}')
 
     # before calling docker cmd, be sure that mounted directories exists
     # or they will be created by the container as root user
