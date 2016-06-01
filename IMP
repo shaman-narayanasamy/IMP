@@ -13,11 +13,7 @@ import re
 
 <<<<<<< HEAD
 IMP_VERSION = '1.4.1'
-IMP_DEFAULT_TAR_REPOSITORY = 'https://webdav-r3lab.uni.lu/public/R3lab/IMP/dist'
-=======
-IMP_VERSION = '1.3'
 IMP_DEFAULT_TAR_REPOSITORY = 'https://webdav-r3lab.uni.lu/public/R3lab/IMP/dist/imp-%s.tar.gz' % IMP_VERSION
->>>>>>> master
 IMP_IMAGE_NAME = 'docker-r3lab.uni.lu/imp/imp'
 
 __doc__ = """Integrated Metaomic Pipeline.
@@ -137,14 +133,8 @@ def install_imp(repo, version):
     fname = 'imp-tarball.tmp.tgz'
     if repo[:4].startswith('http'):
         # download
-<<<<<<< HEAD
-        print("[x] Downloading IMP TARBALL from '%s'" % repo)
-        download_name = '{r}/imp-{v}.tar.gz'.format(r=repo, v=version)
-        subprocess.check_output(['wget', '--no-check-certificate', download_name, '-O', fname])
-=======
         print("[x] Downloading IMP TARBALL at '%s'" % repo)
         subprocess.check_output(['wget', '--no-check-certificate', '-c', repo, '-O', fname])
->>>>>>> master
     else:
         # copy
         print("[x] Copying IMP TARBALL '%s'" % repo)
@@ -219,11 +209,6 @@ def init(args):
     if args['--enter']:
         cmd = docker_cmd + ' /bin/bash'
     else:
-<<<<<<< HEAD
-        cmd = docker_cmd + map_user('snakemake -s /code/rules/ini/init', '/databases')
-    print("Executing", '"', cmd, '"')
-    subprocess.call(cmd, shell=True)
-=======
         cmd = docker_cmd + ' snakemake -s {cont_code}/rules/ini/init'.format(cont_code=_IMP_CODE_DIR)
     # before calling docker cmd, be sure that mounted directories exists
     # or they will be created by the container as root user
@@ -234,8 +219,6 @@ def init(args):
         
     _call(cmd, out_container_name)
     #subprocess.call(cmd, shell=True)
->>>>>>> master
-
 
 def run(args):
     CURRENT_PATH = Path(__file__).parent.abspath()
