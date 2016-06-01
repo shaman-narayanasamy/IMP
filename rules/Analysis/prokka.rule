@@ -1,7 +1,8 @@
 rule annotate:
     input:
         'Assembly/%s.assembly.merged.fa' % ASS,
-        expand("{path}/{db}", path=DBPATH, db=config["prokka"]["databases"])
+        expand("{path}/{db}", path=DBPATH, db=config["prokka"]["databases"]),
+        'Analysis/tbl2asn.updated'
     output:
         "Analysis/annotation/annotation.filt.gff",
         "Analysis/annotation/{p}.faa".format(p=config['prokka']['prefix']),
@@ -23,7 +24,7 @@ rule annotate:
         then
             CUR=$PWD
             echo "Softlinking $DD to $PP"
-            cd $(dirname $(which prokka))/.. && ln -s $PP db
+            cd $(dirname $(which prokka))/.. && sudo ln -s $PP db
             cd $CUR
         fi
         rm -rf Analysis/annotation/
@@ -36,4 +37,23 @@ rule annotate:
         LN1=1
         LN=$(($LN-$LN1))
         head -n $LN Analysis/annotation/{config[prokka][prefix]}.gff | grep -v "^#" | sort | uniq | grep -v "^==" > {output[0]}
+<<<<<<< HEAD
+=======
+        """
+
+
+rule update_tbl2asn:
+    output:
+        touch("Analysis/tbl2asn.updated")
+    shell:
+        """
+        OUT=$(tbl2asn -hp /tmp 2>&1)
+        echo $OUT
+        if [[ "$OUT" =~ "copy of tbl2asn is more than a year old" ]]; then
+                wget https://webdav-r3lab.uni.lu/public/R3lab/IMP/linux64.tbl2asn.gz -O /tmp/tbl2asn.gz
+                gzip -d /tmp/tbl2asn.gz
+                chmod +x /tmp/tbl2asn
+                sudo mv /tmp/tbl2asn /usr/bin
+        fi
+>>>>>>> master
         """

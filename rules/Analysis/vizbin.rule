@@ -8,7 +8,7 @@ rule vizbin:
         """
         echo "[x] VIZBIN `date +"%Y/%m/%d %H:%M:%S"`"
         TMP_VIZBIN=$(mktemp --tmpdir={TMPDIR} -dt "VIZBIN_XXXXXX")
-        perl {SRCDIR}/fasta_filter_length.pl 1000 {input[0]} > {output[0]}
+        perl {SRCDIR}/fasta_filter_length.pl {config[vizbin][cutoff]} {input[0]} > {output[0]}
         java -jar {config[vizbin][jarfile]} \
         -a {config[vizbin][dimension]} \
         -c {config[vizbin][cutoff]} \

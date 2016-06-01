@@ -38,6 +38,7 @@ def prepare_input_files(input, type):
         print('symlink',  out3, '=>', link3)
         os.symlink("{type}.se.fq".format(type=type), link3)
 
+CHUNK_SIZE = 1024
 
 def _process_file(fname, inp, outfilename):
     """
@@ -51,10 +52,13 @@ def _process_file(fname, inp, outfilename):
             whandle.write(rhandle.read())
     # unbzip2
     elif os.path.splitext(fname)[-1] in ['.bz2', '.bzip2']:
-        dec = bz2.BZ2Decompressor()
-        with open(outfilename, 'wb') as whandle, open(inp, 'rb') as rhandle:
-            for data in iter(lambda: rhandle.read(CHUNK_SIZE), b''):
-                whandle.write(dec.decompress(data))
+        shell("bzip2 -dc {i} > {o}".format(i=inp, o=outfilename))
+        #dec = bz2.BZ2Decompressor()
+        #with open(outfilename, 'wb') as whandle, bz2.open(inp, 'rb') as rhandle:
+            #whandle.write(bz2.decompress(rhandle.read()))
+        #    whandle.write(rhandle.read())
+            # for data in iter(lambda: rhandle.read(CHUNK_SIZE), b''):
+            #     whandle.write(bz2.decompress(data))
     # copy
     else:
         shutil.copy(inp, outfilename)
