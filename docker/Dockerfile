@@ -4,11 +4,6 @@
 # VERSION       1.4.1
 
 FROM docker-r3lab.uni.lu/imp/imp-deps:1.4.1
-=======
-# VERSION       1.3
-
-FROM docker-r3lab.uni.lu/imp/imp-deps:1.3
->>>>>>> master
 MAINTAINER yohan.jarosz@uni.lu
 
 
@@ -315,13 +310,9 @@ ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 ######################
 <<<<<<< HEAD
 ENV AMPHORA2_home /home/imp/lib/AMPHORA2  ###CHECK IF THIS IS CORRECT?
-ENV PATH /home/imp/lib/trinityrnaseq_r20140717:/home/imp/lib/Platypus_0.8.1:/home/imp/lib/megahit:/home/imp/lib/fastqc/FastQC:$PATH
-=======
 ENV PATH /home/imp/bin:/home/imp/lib/trinityrnaseq_r20140717:/home/imp/lib/Platypus_0.8.1:/home/imp/lib/megahit:/home/imp/lib/fastqc/FastQC:$PATH
->>>>>>> master
 ENV LD_LIBRARY_PATH /usr/local/lib/:/home/imp/lib/Platypus_0.8.1
 VOLUME ["/home/imp/data", "/home/imp/output", "/home/imp/databases", "/home/imp/code"]
 WORKDIR /home/imp/code
-
 
 CMD ["snakemake", "ALL"]
