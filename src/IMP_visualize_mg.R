@@ -172,12 +172,12 @@ print("DONE: Reading data")
 ###################################################################################################
 
 print("START: Merging data")
-print("Merging data")
 all.dat <- merge(MG.cov, GC.dat, by=c("contig"), all=T, incomparables=NA)
 all.dat <- merge(all.dat, MG.depth, by=c("contig"), all=T, incomparables=NA)
 all.dat <- merge(all.dat, MG.var, by=c("contig"), all=T, incomparables=NA)
 all.dat <- merge(all.dat, annot.4, by=c("contig"), all=T, incomparables=NA)
 all.dat <- merge(all.dat, nucmer_res, by=c("contig"), all=T, incomparables=NA)
+print("DONE: Merging data")
 
 ###################################################################################################
 ## Perform calculations and append it to the full table
