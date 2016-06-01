@@ -150,16 +150,34 @@ print("Reading in vizbin coordinates")
 coords <- read.table(coords_file, colClasses=c("factor", "numeric", "numeric"),
 		     sep="\t", col.names=c("contig", "x", "y"))
 
+# Read in nucmer output from metaquast
+print("Reading in nucmer results")
+nucmer_try <- try(read.table(nucmer_file, header=F), silent=T)
+if(inherits(nucmer_try, "try-error")){
+  print("WARNING: Nucmer file empty. No taxanomy was assigned to contigs")
+  nucmer_res <- read.table(text = "", 
+			   col.names = c("ref_start", "ref_end", "query_start", "query_end", 
+					 "ref_align_len", "query_align_len", "identity", 
+					 "ref_id", "contig")
+	     )
+}else{ 
+  nucmer_res <- read.table(nucmer_file, header=F) 
+  colnames(nucmer_res) <- c("ref_start", "ref_end", "query_start", "query_end", "ref_align_len",
+			  "query_align_len", "identity", "ref_id", "contig")
+}
 
+print("DONE: Reading data")
 ###################################################################################################
 ## Merge the data sets without the vizbin coordinates
 ###################################################################################################
 
+print("START: Merging data")
 print("Merging data")
 all.dat <- merge(MG.cov, GC.dat, by=c("contig"), all=T, incomparables=NA)
 all.dat <- merge(all.dat, MG.depth, by=c("contig"), all=T, incomparables=NA)
 all.dat <- merge(all.dat, MG.var, by=c("contig"), all=T, incomparables=NA)
 all.dat <- merge(all.dat, annot.4, by=c("contig"), all=T, incomparables=NA)
+all.dat <- merge(all.dat, nucmer_res, by=c("contig"), all=T, incomparables=NA)
 
 ###################################################################################################
 ## Perform calculations and append it to the full table
