@@ -37,10 +37,7 @@ rule annotate:
         LN1=1
         LN=$(($LN-$LN1))
         head -n $LN Analysis/annotation/{config[prokka][prefix]}.gff | grep -v "^#" | sort | uniq | grep -v "^==" > {output[0]}
-<<<<<<< HEAD
-=======
         """
-
 
 rule update_tbl2asn:
     output:
@@ -55,5 +52,4 @@ rule update_tbl2asn:
                 chmod +x /tmp/tbl2asn
                 sudo mv /tmp/tbl2asn /usr/bin
         fi
->>>>>>> master
         """
