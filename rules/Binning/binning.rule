@@ -1,6 +1,6 @@
 rule binning_clustering:
     input:
-        "Analysis/mgmt.vizbin.with-contig-names.points",
+        "Analysis/{type}.vizbin.with-contig-names.points",
         "Analysis/mg.assembly.contig_depth.txt",
         "Binning/ORFS.hmm.orfs.essential.hits",
         "Binning/ORFS-contig_links.bed"
