@@ -1,6 +1,5 @@
 # Base container with tools needed for the IMP pipeline
 #
-<<<<<<< HEAD
 # VERSION       1.4.1
 
 FROM docker-r3lab.uni.lu/imp/imp-deps:1.4.1
@@ -205,26 +204,6 @@ RUN cd /home/imp/lib \
     #this might open interactively:
     && echo checkm_data_v1.0.6 | checkm data setRoot checkm_data_v1.0.6/
 
-##Phylophlan
-RUN cd /home/imp/lib \
-#    && wget https://bitbucket.org/nsegata/phylophlan/get/default.tar.gz \
-#    && tar -xf default.tar.gz \
-    && pip install mercurial \
-    && hg clone https://bitbucket.org/nsegata/phylophlan \
-#    && cd phylophlan \
-#for development version: (stick to old one for now)
-#    && hg pull && hg update dev \ 
-    && wget http://www.microbesonline.org/fasttree/FastTree \
-    && chmod +x FastTree \
-    && cp FastTree /usr/bin \
-#usearch binary copied from gaia for now and put in imp code -> need to solve this 
-
-    #move usearch binary to webdav? this uses my downloadlink, from 2.5.2016 , not sure how long this works.
-#    && wget --user-agent=Mozilla --content-disposition -E -c http://drive5.com/cgi-bin/upload3.py?license=2016050205235811143 \
- #   && chmod +x usearch8.1.1861_i86linux32 \
-  #  && cp usearch8.1.1861_i86linux32 /usr/bin/usearch \
-#    && cd  \
-#    && ln -s $PWD/phylophlan.py /usr/bin/phylophlan
 
 ##Amphora2
 RUN cd /home/imp/lib \
@@ -242,20 +221,40 @@ RUN cd /home/imp/lib \
 #    && make install
     && apt-get install emboss
 
-
 ##pullseq
 RUN cd /home/imp/lib \
    # && wget https://github.com/bcthomas/pullseq/releases/download/1.0.2/pullseq_v1.0.2_linux64.zip \
    # && unzip pullseq_v1.0.2_linux64.zip \
    # && rm seqdiff \
    # && mv pullseq /usr/bin
-    && git clone https://github.com/bcthomas/pullseq
+    && git clone https://github.com/bcthomas/pullseq \
     && cd pullseq \
     && ./bootstrap \
     && ./configure \
     && make \
     && make install \
     && cp /usr/local/bin/pullseq /usr/bin
+
+##Phylophlan
+#RUN cd /home/imp/lib \
+##    && wget https://bitbucket.org/nsegata/phylophlan/get/default.tar.gz \
+##    && tar -xf default.tar.gz \
+#    && pip install mercurial \
+#    && hg clone https://bitbucket.org/nsegata/phylophlan \
+##    && cd phylophlan \
+##for development version: (stick to old one for now)
+##    && hg pull && hg update dev \ 
+#    && wget http://www.microbesonline.org/fasttree/FastTree \
+#    && chmod +x FastTree \
+#    && cp FastTree /usr/bin \
+##usearch binary copied from gaia for now and put in imp code -> need to solve this 
+#
+#    #move usearch binary to webdav? this uses my downloadlink, from 2.5.2016 , not sure how long this works.
+##    && wget --user-agent=Mozilla --content-disposition -E -c http://drive5.com/cgi-bin/upload3.py?license=2016050205235811143 \
+# #   && chmod +x usearch8.1.1861_i86linux32 \
+#  #  && cp usearch8.1.1861_i86linux32 /usr/bin/usearch \
+##    && cd  \
+##    && ln -s $PWD/phylophlan.py /usr/bin/phylophlan
 
 ######################
 # set up environment #
@@ -308,7 +307,6 @@ ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 ######################
 # runtime parameters #
 ######################
-<<<<<<< HEAD
 ENV AMPHORA2_home /home/imp/lib/AMPHORA2  ###CHECK IF THIS IS CORRECT?
 ENV PATH /home/imp/bin:/home/imp/lib/trinityrnaseq_r20140717:/home/imp/lib/Platypus_0.8.1:/home/imp/lib/megahit:/home/imp/lib/fastqc/FastQC:$PATH
 ENV LD_LIBRARY_PATH /usr/local/lib/:/home/imp/lib/Platypus_0.8.1
