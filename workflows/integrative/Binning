@@ -19,9 +19,6 @@ include:
     '../../rules/Binning/bin-analysis.amphora.rule'
 
 include:
-    '../../rules/Binning/batch-phylophlan.rule'
-
-include:
     '../../rules/Binning/split-completeness.rule'
 
 include:
