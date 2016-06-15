@@ -5,14 +5,8 @@
 FROM docker-r3lab.uni.lu/imp/imp-tools:1.3
 MAINTAINER yohan.jarosz@uni.lu
 
+USER root
 
-# R with checkpoint libraries
-ADD dependencies.R /home/imp/lib/
-RUN mkdir /root/.checkpoint \
-    && echo "r <- getOption('repos'); r['CRAN'] <- 'http://cran.us.r-project.org'; options(repos = r);" > ~/.Rprofile \
-    && Rscript -e "install.packages('checkpoint')" \
-    && Rscript -e "library(checkpoint);checkpoint('2015-04-27', project='/home/imp/lib')" \
-    && Rscript -e "source('http://bioconductor.org/biocLite.R');biocLite('genomeIntervals')"
 
 ######################
 # set up environment #
@@ -34,11 +28,20 @@ RUN useradd -d /home/imp imp \
 # Ship IMP codebase #
 #####################
 
-USER root
+
 RUN mkdir -p /home/imp/code /home/imp/output /home/imp/data /home/imp/bin /home/imp/databases \
     && cd /home/imp/code \
     && git clone --branch 1.3 --single-branch https://git-r3lab.uni.lu/IMP/IMP.git . \
     && cd /usr && ln -s /home/imp/databases db
+
+
+# R with checkpoint libraries
+ADD dependencies.R /home/imp/lib/
+RUN mkdir /home/imp/lib/.checkpoint \
+    && echo "r <- getOption('repos'); r['CRAN'] <- 'http://cran.us.r-project.org'; options(repos = r);" > ~/.Rprofile \
+    && Rscript -e "install.packages('checkpoint')" \
+    && Rscript -e "library(checkpoint);checkpoint('2015-04-27', project='/home/imp/lib')" \
+    && Rscript -e "source('http://bioconductor.org/biocLite.R');biocLite('genomeIntervals')"
 
 #### Add gosu
 ENV GOSU_VERSION 1.7
