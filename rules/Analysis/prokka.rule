@@ -24,7 +24,7 @@ rule annotate:
         then
             CUR=$PWD
             echo "Softlinking $DD to $PP"
-            cd $(dirname $(which prokka))/.. && sudo ln -s $PP db
+            cd $(dirname $(which prokka))/.. && ln -fs $PP db
             cd $CUR
         fi
         rm -rf Analysis/annotation/
