@@ -31,9 +31,13 @@ include:
 # master command
 rule BINNING:
     input:
-        #"Binning/clusterFiles/reachabilityDistanceEstimates.tsv"
-        #"Binning/clusterFiles/N.gff",
-        dynamic("Binning/clusterFiles/cluster.{cluster}.fa")
-        #Binning/clusterFiles/preparedproteins/N.faa
+        expand("Binning/clusterFiles/contigs2clusters{pk}{nn}.tsv",pk=config["binning"]["pk"],nn=config["binning"]["nn"]),
+        dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.contigids"),
+        dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.gff"),
+        dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.protids"),
+        dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.fa"),
+        dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.faa"),
+        dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}_prepared.faa"),
+        dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.amphora2_res.tsv")
     output:
         touch('binning.done')

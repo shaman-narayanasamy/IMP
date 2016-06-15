@@ -1,12 +1,20 @@
 rule binning_prepare_proteins:
-    #IN: <directory w/ unprepared .faa files> <OUT_DIR>
     input:
-       "Binning/separate_bins.done"
+        "Binning/clusterFiles/{cluster}/cluster.{cluster}.faa"
     output:
-       "Binning/prepare_proteins.done"
+        "Binning/clusterFiles/{cluster}/cluster.{cluster}_prepared.faa"
     shell:
         """
-        {SRCDIR}/prepareProteins.sh Binning/clusterFiles Binning/clusterFiles/preparedproteins
-        touch {output}
+        echo "Cluster {wildcards.cluster}: Copying amino acid sequence file (.faa)"
+        cp {input} {output}
+        
+        echo "Cluster {wildcards.cluster}: Replacing whitespaces with underscores"
+        sed -i "/^>/{{s/ /_/g}}" {output}
+         
+        echo "Cluster {wildcards.cluster}: Prepending filenames to FASTA headers"
+        NAME=$(basename {output} .faa)
+        sed -i "s/^>/>${{NAME}}_/" {output} 
+         
+        echo "Cluster {wildcards.cluster}: Removing asterisks (*) within and at sequence ends"
+        sed -i 's/\*//g' {output}
         """
-

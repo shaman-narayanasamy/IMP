@@ -1,40 +1,35 @@
 ### This rule is not yet complete because it depends on an external shell script. We need to figure out a way
 ### of porting it fully into snakemake
-
 rule binning_batch_amphora:
     input:
-       "Binning/separate_bins.done"
+       "Binning/clusterFiles/{cluster}/cluster.{cluster}.faa"
     output:
-       "Binning/batchRunAMPHORA2.done"
+       "Binning/clusterFiles/{cluster}/cluster.{cluster}.amphora2_res.tsv"
     shell:
        """
-#       src/batchRunAMPHORA2.sh Binning/clusterFiles Binning/clusterFiles/amphora2 {THREADS}
+       export AMPHORA2_home="/home/imp/lib/AMPHORA2"
+       DNA=""  
+       OUTDIR="Binning/clusterFiles/{wildcards.cluster}"
+       INFILE={input}
+       CPUSTRING="-CPUs {THREADS}" 
+       OUTSV={output}
+       OLDIR=$PWD
 
-       IN_TOPDIR=Binning/clusterFiles
-       OUT_TOPDIR=Binning/amphora2
-       
-      # SCRIPT="src/runAMPHORA2.sh"
-       
-       date
-       
-       for i in $(find ${{IN_TOPDIR}} -maxdepth 1 -name "*.faa")
-       do
-           FILENAME="$(basename ${{i%.*}})"
-           OUT_DIR="${{OUT_TOPDIR}}/${{FILENAME}}"
-           if [[ -d ${{OUT_DIR}} ]]; then
-               echo "INFO: DEST_DIR (${{OUT_DIR}}) already exists."
-           else
-               mkdir -p ${{OUT_DIR}}
-               echo "INFO: Created ${{OUT_DIR}}."
-           fi
-           echo "STATUS: Running Amphora2 for ${{FILENAME}} ..."
-           echo
-           CMD="{SRCDIR}/runAMPHORA2.sh -i $i -o ${{FILENAME}}.phylotypes.txt -d ${{OUT_DIR}} -c {THREADS} -p"
-           echo "${{CMD}}"
-           eval "time ${{CMD}}"
-           echo "done (running AMPHORA2 for ${{FILENAME}})."
-           echo
-       done
-       
-       touch {output}
+       CMD="perl $AMPHORA2_home/Scripts/MarkerScanner.pl ${{DNA}} -Bacteria -Outdir ${{OUTDIR}} ${{INFILE}}"
+       echo ${{CMD}}
+       eval ${{CMD}}
+
+       CMD="perl $AMPHORA2_home/Scripts/MarkerAlignTrim.pl -WithReference ${{CPUSTRING}} -Directory ${{OUTDIR}}"
+       echo ${{CMD}}
+       eval ${{CMD}}
+
+       echo "changing dir to ${{OUTDIR}}"
+       cd ${{OUTDIR}}
+
+       CMD="perl $AMPHORA2_home/Scripts/Phylotyping.pl ${{CPUSTRING}} > {OUTPUTDIR}/${{OUTSV}}"
+       echo ${{CMD}}
+       eval ${{CMD}}
+
+       echo "changing dir to ${{OLDIR}}"
+       cd ${{OLDIR}}
        """
