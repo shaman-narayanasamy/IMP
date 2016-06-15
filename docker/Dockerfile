@@ -34,15 +34,16 @@ RUN mkdir -p /home/imp/code /home/imp/output /home/imp/data /home/imp/bin /home/
     && git clone --branch 1.3 --single-branch https://git-r3lab.uni.lu/IMP/IMP.git . \
     && cd /usr && ln -s /home/imp/databases db
 
-
+USER imp
 # R with checkpoint libraries
 ADD dependencies.R /home/imp/lib/
-RUN mkdir /home/imp/lib/.checkpoint \
+RUN mkdir /home/imp/.checkpoint \
     && echo "r <- getOption('repos'); r['CRAN'] <- 'http://cran.us.r-project.org'; options(repos = r);" > ~/.Rprofile \
     && Rscript -e "install.packages('checkpoint')" \
     && Rscript -e "library(checkpoint);checkpoint('2015-04-27', project='/home/imp/lib')" \
     && Rscript -e "source('http://bioconductor.org/biocLite.R');biocLite('genomeIntervals')"
 
+USER root
 #### Add gosu
 ENV GOSU_VERSION 1.7
 RUN set -x \
