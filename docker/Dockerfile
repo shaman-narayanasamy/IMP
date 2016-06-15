@@ -202,8 +202,8 @@ RUN useradd -d /home/imp imp \
 USER root
 RUN mkdir -p /home/imp/code /home/imp/output /home/imp/data /home/imp/bin /home/imp/databases \
     && cd /home/imp/code \
-    && git clone --branch 1.3 --single-branch https://git-r3lab.uni.lu/IMP/IMP.git .
-
+    && git clone --branch 1.3 --single-branch https://git-r3lab.uni.lu/IMP/IMP.git . \
+    && cd /usr && ln -s /home/imp/databases db
 
 #### Add gosu
 ENV GOSU_VERSION 1.7
