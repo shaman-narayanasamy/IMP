@@ -102,7 +102,7 @@ rule prokka_databases:
         else
             PP=$PWD/{DBPATH};
         fi
-        cd $(dirname $(which prokka))/.. && ln -s $PP db
+        cd $(dirname $(which prokka))/.. && ln -fs $PP db
         echo "Softlinking $(dirname $(which prokka))/../db to $PP"
         TMPDIR=$(mktemp -d -t "XXXXXX")
         wget {config[prokka][pkg_url]} --no-check-certificate -O $TMPDIR/prokka.tgz

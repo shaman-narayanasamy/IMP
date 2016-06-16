@@ -2,7 +2,7 @@
 
 > This README assumes that you are in the `docker` directory of the IMP project.
 
-## Increment Version number
+## Increment Version number in each Docker files
 
 Edit the docker file `docker/Dockerfile`:
 
@@ -24,7 +24,14 @@ Edit the Docker file and change the IMP clone process to clone the same version.
 
     docker build -t docker-r3lab.uni.lu/imp/imp-deps:<version> -f Dockerfile-dependencies .
 
-> 'docker-r3lab.uni.lu/imp/imp-deps:<version>' is the image name that we will have to give to the main Docker file.
+> 'docker-r3lab.uni.lu/imp/imp-deps:<version>' is the image name that we will have to give to the tools Docker file.
+
+
+### Build tools
+
+    docker build -t docker-r3lab.uni.lu/imp/imp-tools:<version> -f Dockerfile-tools .
+
+> 'docker-r3lab.uni.lu/imp/imp-tools:<version>' is the image name that we will have to give to the main Docker file.
 
 ### Build the main Docker file.
 
