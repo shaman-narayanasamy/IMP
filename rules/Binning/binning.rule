@@ -1,9 +1,6 @@
 rule binning_clustering:
     input:
-        "Analysis/{type}.vizbin.with-contig-names.points",
-        "Analysis/mg.assembly.contig_depth.txt",
         "Binning/ORFS.hmm.orfs.essential.hits",
-        "Binning/ORFS-contig_links.bed"
     output:
         expand("Binning/clusterFiles/reachabilityDistanceEstimates{pk}{nn}.tsv \
         Binning/clusterFiles/clusterFirstScan{pk}{nn}.tsv \
@@ -14,5 +11,5 @@ rule binning_clustering:
     shell:
         """
         ## Run the R script for clustering the contigs
-        Rscript {SRCDIR}/binny.R {input} Binning/clusterFiles {SAMPLE} {config[binning][pk]} {config[binning][nn]}
+        sudo Rscript {SRCDIR}/binny.R {SAMPLE} {input} {config[binning][pk]} {config[binning][nn]}
         """
