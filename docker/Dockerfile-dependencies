@@ -14,7 +14,8 @@ RUN echo "deb ftp://ftp.halifax.rwth-aachen.de/ubuntu trusty main restricted uni
     && apt-get update \
     && apt-get install -yq python-software-properties software-properties-common \
     && add-apt-repository "deb http://cran.stat.ucla.edu/bin/linux/ubuntu trusty/" \
-    && gpg --keyserver keyserver.ubuntu.com --recv-key E084DAB9 \
+    #&& gpg --keyserver keyserver.ubuntu.com:80 --recv-key E084DAB9 \
+    && apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv-keys E084DAB9 \
     && gpg -a --export E084DAB9 | apt-key add - \
     && apt-get update \
     && apt-get -yq upgrade \
@@ -27,9 +28,9 @@ RUN  apt-get update \
 RUN  apt-get update \
     && apt-get install -yq openjdk-7-jdk \
     && rm -rf /var/lib/apt/lists/*
+
 #bioperl needs to be 1.6.924 for amphora2 # not available through apt-get for trusty...
 RUN (echo y;echo o conf prerequisites_policy follow;echo o conf commit)|cpan -e force install CJFIELDS/BioPerl-1.6.924.tar.gz
-RUN apt-get update \
     #&& apt-get install -yq bioperl=1.6.923-1 \
     && rm -rf /var/lib/apt/lists/*
 
@@ -51,7 +52,6 @@ RUN apt-get update \
     && apt-get install -yq python-matplotlib \
     && update-alternatives --set java /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/java \
     && rm -rf /var/lib/apt/lists/*
-
 
 ## Python dependencies and bioservices. Using version 1.3.5 because script doesn't work with latest version
 RUN mkdir -p /home/imp/tmp /home/imp/lib \
