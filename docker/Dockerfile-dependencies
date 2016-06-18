@@ -30,7 +30,7 @@ RUN  apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 #bioperl needs to be 1.6.924 for amphora2 # not available through apt-get for trusty...
-RUN (echo y;echo o conf prerequisites_policy follow;echo o conf commit)|cpan -e force install CJFIELDS/BioPerl-1.6.924.tar.gz
+RUN (echo y;echo o conf prerequisites_policy follow;echo o conf commit)|cpan -f -i CJFIELDS/BioPerl-1.6.924.tar.gz \
     #&& apt-get install -yq bioperl=1.6.923-1 \
     && rm -rf /var/lib/apt/lists/*
 
