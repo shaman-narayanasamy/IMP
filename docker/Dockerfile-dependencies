@@ -15,10 +15,6 @@ RUN echo "deb ftp://ftp.halifax.rwth-aachen.de/ubuntu trusty main restricted uni
     && apt-get install -yq python-software-properties software-properties-common \
     && add-apt-repository "deb http://cran.stat.ucla.edu/bin/linux/ubuntu trusty/" \
     && gpg --keyserver keyserver.ubuntu.com --recv-key E084DAB9 \
-<<<<<<< HEAD
-   # && apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv-keys E084DAB9 \
-=======
->>>>>>> eda1801f37571c4bb4c1672e30909711252662a8
     && gpg -a --export E084DAB9 | apt-key add - \
     && apt-get update \
     && apt-get -yq upgrade \
@@ -33,7 +29,7 @@ RUN  apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 #bioperl needs to be 1.6.924 for amphora2 # not available through apt-get for trusty...
-RUN (echo y;echo o conf prerequisites_policy follow;echo o conf commit)|cpan -f -i CJFIELDS/BioPerl-1.6.924.tar.gz
+RUN (echo y;echo o conf prerequisites_policy follow;echo o conf commit)|cpan -f -i CJFIELDS/BioPerl-1.6.924.tar.gz \
     #&& apt-get install -yq bioperl=1.6.923-1 \
     && rm -rf /var/lib/apt/lists/*
 
