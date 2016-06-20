@@ -31,7 +31,7 @@ include:
 # master command
 rule BINNING:
     input:
-        expand("Binning/clusterFiles/contigs2clusters{pk}{nn}.tsv",pk=config["binning"]["pk"],nn=config["binning"]["nn"]),
+        expand("Binning/contigs2clusters.{pk}.{nn}.tsv",pk=config["binning"]["pk"],nn=config["binning"]["nn"]),
         dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.contigids"),
         dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.gff"),
         dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.protids"),
