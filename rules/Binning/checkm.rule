@@ -9,7 +9,7 @@ rule binning_run_checkm:
        EXT="faa"
        GENES="--genes"
        INDIR=Binning/clusterFiles/checkM_input
-       OUTDIR=Binning/clusterFiles/checkM_output
+       OUTDIR=Binning/checkM_output
        
        mkdir -p $INDIR 
        cd $INDIR
