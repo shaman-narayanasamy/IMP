@@ -1,28 +1,24 @@
 rule binning_run_checkm:
-    #in:indir outdir threads
     input:
-       "Binning/separate_bins.done"
+       expand("Binning/finalClusterMap.{pk}.{nn}.pdf".split(),pk=config["binning"]["pk"],nn=config["binning"]["nn"])
     output:
-       "Binning/checkM/checkm_table.tsv",
+       "Binning/checkM_output/checkm_table.tsv",
        "Binning/run_checkM.done"
     shell:
        """
-#	src/run_checkm.sh Binning/clusterFiles/preparedproteins Binning/clusterFiles/checkm {THREADS}
-#       module load bio/HMMER
-#
-#       source /home/users/mherold/TOOLS/CHECKM/env/bin/activate
-#       PATH=/home/users/mherold/TOOLS/pplacer/pplacer-Linux-v1.1.alpha17:$PATH
-#       
        EXT="faa"
        GENES="--genes"
-       INDIR=Binning/clusterFiles/
-       OUTDIR=Binning/clusterFiles/checkM
+       INDIR=Binning/clusterFiles/checkM_input
+       OUTDIR=Binning/clusterFiles/checkM_output
        
+       mkdir -p $INDIR 
+       cd $INDIR
+       ln -fs ../../clusterFiles/*/*.faa .
+       cd ../../..
+
        CMD="checkm lineage_wf -t {THREADS} -x ${{EXT}} ${{GENES}} ${{INDIR}} ${{OUTDIR}} -f {output[0]} --tab_table"
        echo "${{CMD}}"
        eval "${{CMD}}"
        
- #     deactivate
-
        touch {output[1]}
        """

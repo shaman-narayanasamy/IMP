@@ -37,7 +37,8 @@ rule BINNING:
         dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.protids"),
         dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.fa"),
         dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.faa"),
-        dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}_prepared.faa"),
-        dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.amphora2_res.tsv")
+        "Binning/checkM_output/checkm_table.tsv",
+        "Binning/run_checkM.done"
+        #dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.amphora2_res.tsv")
     output:
         touch('binning.done')

@@ -108,11 +108,15 @@ RUN cd /home/imp/code \
 # R with checkpoint libraries
 ADD dependencies.R /home/imp/lib/
 RUN mkdir -p /home/imp/lib/.checkpoint \
-    && echo "r <- getOption('repos'); r['CRAN'] <- 'http://cran.us.r-project.org'; options(repos = r);" > /root/.Rprofile \
+    && echo "r <- getOption('repos'); r['CRAN'] <- 'http://cran.us.r-project.org'; options(repos = r);" > /home/imp/.Rprofile \
     && Rscript -e "install.packages('checkpoint')" \
     && Rscript -e "library(checkpoint);checkpoint('2016-06-20', project='/home/imp/lib', checkpointLocation='/home/imp/lib')" \
-    && Rscript -e "source('http://bioconductor.org/biocLite.R');biocLite('genomeIntervals')"\
-    && chmod -R 777 /root/.checkpoint /root/.Rprofile
+    && Rscript -e "source('http://bioconductor.org/biocLite.R');biocLite('genomeIntervals')"
+
+RUN wget https://webdav-r3lab.uni.lu/public/R3lab/IMP/linux64.tbl2asn.gz -O /tmp/tbl2asn.gz \
+    && gzip -d /tmp/tbl2asn.gz \
+    && chmod +x /tmp/tbl2asn \
+    && sudo mv /tmp/tbl2asn /usr/bin
 
 ######################
 # runtime parameters #

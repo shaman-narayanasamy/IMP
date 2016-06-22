@@ -6,7 +6,9 @@ rule binning_essential_genes:
     output:
         "Binning/ORFS.hmmer.essential.out",
         "Binning/ORFS.hmm.orfs.essential.hits",
-        "Binning/ORFS-contig_links.bed"
+        "Binning/ORFS-contig_links.bed",
+        "Binning/ORFS.hmm.orfs.essential.hits.protids",
+        "Binning/ORFS.hmm.orfs.essential.hits.faa"
     shell:
         """
         TBL_TMP=$(mktemp --tmpdir={TMPDIR} -t "XXXX_hmmer.essential.hits")
@@ -19,4 +21,8 @@ rule binning_essential_genes:
         # Prepare file that links contigs to genes (using .gff file)
         grep CDS --line-buffered {input[1]} | awk '{{printf("%s\\t%s\\t%s\\t%s\\t0\\t%s\\n",$1,$4,$5,$9,$7)}}' > $BED_TMP
         awk '{{gsub(/ID=/,""); gsub(/;.*\t0/,"\t0");print}}' $BED_TMP > {output[2]}
+
+        protids={output[3]}
+        cut -f1 {output[1]} > {output[3]}
+        pullseq -i {input[0]} -n ${{protids}} > {output[4]}
         """
