@@ -3,7 +3,7 @@ print("Loading required R libraries")
 require(genomeIntervals)
 
 require(checkpoint)
-checkpoint('2015-04-27', scanForPackages=FALSE)
+checkpoint('2016-06-20', scanForPackages=FALSE, checkpointLocation="~/lib", project="~/lib")
 
 args=commandArgs(trailingOnly=TRUE)
 data_file = args[1]

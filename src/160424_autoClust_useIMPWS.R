@@ -260,7 +260,7 @@ for(bb in unique(clusterRes$cluster[grep("B",clusterRes$cluster)])){
       plot(sknBB)
       abline(h=estBB)
       
-      write.table(t(c(bb,estBB)),paste("Binning/clusterFiles/reachabilityDistanceEstimates",pk,nn,"tsv",sep="."),row.names=F,col.names=F,quote=F,sep="\t",append=T)
+      write.table(t(c(bb,estBB)),paste("Binning/reachabilityDistanceEstimates",pk,nn,"tsv",sep="."),row.names=F,col.names=F,quote=F,sep="\t",append=T)
       BBcdb <- dbscan(bbInfo[,coco],estBB,pk4)
       
       plot(bbInfo[,coco],pch=16,cex=0.25,ann=F)
