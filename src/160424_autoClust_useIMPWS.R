@@ -2,7 +2,7 @@
 
 #libraries
 require(checkpoint)
-checkpoint('2016-06-20', scanForPackages=FALSE, checkpointLocation="/root")
+checkpoint('2016-06-20', scanForPackages=FALSE, checkpointLocation="~/lib", project="~/lib")
 
 #libraries
 library(caTools)
@@ -135,7 +135,7 @@ for(i in names(table(cdb$cluster))) {
 box()
 dev.off()
 
-write.table(cdbTab,paste("Binning/clusterFiles/clusterFirstScan",pk,nn,"tsv", sep="."),sep="\t",row.names=F,quote=F)
+write.table(cdbTab,paste("Binning/clusterFirstScan",pk,nn,"tsv", sep="."),sep="\t",row.names=F,quote=F)
 write.table(t(c("clusterName","cutoff")),paste("Binning/bimodalClusterCutoffs",pk,nn,"tsv",sep="."),sep="\t",row.names=F,col.names=F,quote=F)
 
 #assign clusters to contigs 
@@ -466,12 +466,3 @@ axis(2,seq(from=1,to=11000/100,length.out=6),labels=c(0,20,40,60,80,100),las=1)
 mtext("% completeness",2,2)
 mtext("clusters",1,2)
 dev.off()
-
-
-
-
-
-
-
-
-

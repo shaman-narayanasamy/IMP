@@ -9,9 +9,11 @@ rule binning_clustering:
         Binning/bimodalClusterCutoffs.{pk}.{nn}.tsv \
         Binning/contigs2clusters.{pk}.{nn}.tsv \
         Binning/contigs2clusters.{pk}.{nn}.RDS \
+        Binning/clusteringWS.{pk}.{nn}.Rdata \
         Binning/finalClusterMap.{pk}.{nn}.pdf".split(),pk=config["binning"]["pk"],nn=config["binning"]["nn"])
     shell:
         """
+        mkdir -p Binning/clusterFiles
         ## Run the R script for clustering the contigs
-        sudo Rscript {SRCDIR}/binny.R {input} {config[binning][pk]} {config[binning][nn]}
+        Rscript {SRCDIR}/binny.R {input} {config[binning][pk]} {config[binning][nn]}
         """
