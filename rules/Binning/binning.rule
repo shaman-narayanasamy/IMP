@@ -1,7 +1,7 @@
 rule binning_clustering:
     input:
         "Analysis/results/MGMT_results.Rdat",
-        "Binning/ORFS.hmm.orfs.essential.hits",
+        "Binning/ORFS.hmm.orfs.essential.hits_reduced",
         "Binning/ORFS-contig_links.bed"
     output:
         expand("Binning/reachabilityDistanceEstimates.{pk}.{nn}.tsv \

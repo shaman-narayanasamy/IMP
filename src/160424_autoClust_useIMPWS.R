@@ -88,12 +88,13 @@ contigInfo$MG_depth[is.na(contigInfo$MG_depth)] <- 0
 
 #read essential genes (essential genes were searched using findEssentialGenesInPredictions.sh)
 print("Reading essential genes")
-essGenes <- read.delim(PID, header=F, stringsAsFactors=F, quote="", strip.white=T, skip=3, colClasses=c("character","NULL","character","NULL","numeric",rep("NULL",14)))
-#essGenes <- read.table(PID,header=F,stringsAsFactors=F,quote="",strip.white=T,skip=3,colClasses=c("character","NULL","character","NULL","numeric",rep("NULL",14)))
+#essGenes <- read.delim(PID, header=F, stringsAsFactors=F, quote="", strip.white=T, skip=3, colClasses=c("character","NULL","character","NULL","numeric",rep("NULL",14)))
+essGenes <- read.delim(PID, header=F, stringsAsFactors=F, colClasses=c("character", "NULL", "character", "character", "numeric"))
+#essGenes <- read.delim(PID, header=F, stringsAsFactors=F)
 dupliEss <- unique(names(table(essGenes$V1)[table(essGenes$V1)>1]))
 dupliID <- dupliEss
 for(dupGenes in dupliEss) dupliID[which(dupliID==dupGenes)] <- essGenes$V3[essGenes$V1==dupGenes][which.min(essGenes$V5[essGenes$V1==dupGenes])]
-essGenes <- rbind(essGenes[!(essGenes$V1 %in% dupliEss),-3],data.frame("V1"=dupliEss,"V3"=dupliID,stringsAsFactors=F))
+essGenes <- rbind(essGenes[!(essGenes$V1 %in% dupliEss),-c(3,4)],data.frame("V1"=dupliEss,"V3"=dupliID,stringsAsFactors=F))
 colnames(essGenes) <- c("gene","essentialGene")
 
 #read link Genes-Contigs
