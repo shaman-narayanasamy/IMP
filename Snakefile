@@ -46,6 +46,8 @@ elif MG:
     include:
         "workflows/single_omics/mg/Analysis"
     include:
+        "workflows/single_omics/mg/Binning"
+    include:
         "workflows/single_omics/mg/Report"
 
 
@@ -56,6 +58,8 @@ elif MT:
         "workflows/single_omics/mt/Assembly"
     include:
         "workflows/single_omics/mt/Analysis"
+    include:
+        "workflows/single_omics/mt/Binning"
     include:
         "workflows/single_omics/mt/Report"
 
@@ -68,6 +72,7 @@ rule ALL:
         "preprocessing.done",
         "assembly.done",
         "analysis.done",
-        "report.done"
+        "report.done",
+        "binning.done"
     output:
         touch('workflow.done')
