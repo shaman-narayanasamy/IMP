@@ -1,6 +1,6 @@
 rule binning_clustering:
     input:
-        "Analysis/results/MGMT_results.Rdat",
+        "Analysis/results/{type}_results.Rdat".format(type=ASS.upper()),
         "Binning/ORFS.hmm.orfs.essential.hits_reduced",
         "Binning/ORFS-contig_links.bed"
     output:

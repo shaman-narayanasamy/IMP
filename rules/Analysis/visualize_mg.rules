@@ -23,6 +23,7 @@ rule visualize:
         "Analysis/results/MG.read_stats.txt",
         "Analysis/results/MG_mapping_stats.html",
         "Analysis/results/MG_mapping_stats.txt",
+        "Analysis/results/MG_results.Rdat",
     shell:
         """
         PLOT_SCRIPT="{SRCDIR}/IMP_visualize_mg.R"

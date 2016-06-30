@@ -71,6 +71,7 @@ rule ANALYSIS:
         "Analysis/results/MT.read_stats.txt",
         "Analysis/results/MT_mapping_stats.html",
         "Analysis/results/MT_mapping_stats.txt"
+        "Analysis/results/MT_results.Rdat",
 
     output:
         touch('analysis.done')
