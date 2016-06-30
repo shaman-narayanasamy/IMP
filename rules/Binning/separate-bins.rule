@@ -7,10 +7,6 @@ rule binning_separate_bins:
         "Analysis/annotation/annotation.filt.gff"
     output:
         dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.contigids"),
-        #dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.gff"),
-        #dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.protids"),
-        #dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.fa"),
-        #dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.faa")
     shell:
         """
         for cluster in $(tail -n+2 {input[0]} | cut -f2 | sort | uniq)
