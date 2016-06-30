@@ -33,10 +33,10 @@ rule BINNING:
     input:
         expand("Binning/contigs2clusters.{pk}.{nn}.tsv",pk=config["binning"]["pk"],nn=config["binning"]["nn"]),
         dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.contigids"),
-        dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.gff"),
-        dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.protids"),
-        dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.fa"),
-        dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.faa"),
+        #dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.gff"),
+        #dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.protids"),
+        #dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.fa"),
+        #dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.faa"),
         "Binning/checkM_output/checkm_table.tsv",
         "Binning/run_checkM.done"
         #dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.amphora2_res.tsv")
