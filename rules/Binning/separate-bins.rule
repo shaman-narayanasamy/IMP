@@ -6,14 +6,15 @@ rule binning_separate_bins:
         "Analysis/annotation/prokka.faa",
         "Analysis/annotation/annotation.filt.gff"
     output:
-        dynamic("Binning/clusterFiles/{cluster}/cluster.{cluster}.contigids"),
+        dynamic("Binning/clusters/{cluster}.clt")
     shell:
         """
+        mkdir Binning/clusters
         for cluster in $(tail -n+2 {input[0]} | cut -f2 | sort | uniq)
         do
             # Create directory for the cluster
             mkdir -p Binning/clusterFiles/${{cluster}}
-            
+
             # Define headerfiles
             headerfile="Binning/clusterFiles/${{cluster}}/cluster.${{cluster}}.contigids"
             protids="Binning/clusterFiles/${{cluster}}/cluster.${{cluster}}.protids"
@@ -28,6 +29,7 @@ rule binning_separate_bins:
 
             echo "Obtaining functional annotations (gff format) for cluster/bin ${{cluster}}"
             grep -wFf ${{headerfile}} {input[4]} > Binning/clusterFiles/${{cluster}}/cluster.${{cluster}}.gff
+            touch Binning/clusters/${{cluster}}.clt
         done
         echo "Complete separating bins"
         """
