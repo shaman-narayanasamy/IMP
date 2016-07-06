@@ -9,7 +9,7 @@ rule binning_separate_bins:
         dynamic("Binning/clusters/{cluster}.clt")
     shell:
         """
-        mkdir Binning/clusters
+        mkdir -p Binning/clusters
         for cluster in $(tail -n+2 {input[0]} | cut -f2 | sort | uniq)
         do
             # Create directory for the cluster
