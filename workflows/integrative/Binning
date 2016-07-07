@@ -31,7 +31,6 @@ include:
 # master command
 rule BINNING:
     input:
-        expand("Binning/contigs2clusters.{pk}.{nn}.tsv",pk=config["binning"]["pk"],nn=config["binning"]["nn"]),
         dynamic("Binning/clusters/{cluster}.clt"),
         "Binning/checkM_output/checkm_table.tsv",
         "Binning/run_checkM.done"
