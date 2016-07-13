@@ -27,7 +27,17 @@ rule no_filtering:
         'Preprocessing/{type}.se.preprocessed.fq'
     shell:
         """
-        ln -fs {input[0]} {output[0]} && touch -h {output[0]}
-        ln -fs {input[1]} {output[1]} && touch -h {output[1]}
-        ln -fs {input[2]} {output[2]} && touch -h {output[2]}
+        R1=`echo {input[0]} | sed 's/Preprocessing\///g'`
+        R2=`echo {input[1]} | sed 's/Preprocessing\///g'`
+        SE=`echo {input[2]} | sed 's/Preprocessing\///g'`
+
+        L_R1=`echo {output[0]} | sed 's/Preprocessing\///g'`
+        L_R2=`echo {output[1]} | sed 's/Preprocessing\///g'`
+        L_SE=`echo {output[2]} | sed 's/Preprocessing\///g'`
+
+        cd Preprocessing
+        ln -fs ${{R1}} ${{L_R1}} && touch -h ${{L_R1}}
+        ln -fs ${{R2}} ${{L_R2}} && touch -h ${{L_R2}}
+        ln -fs ${{SE}} ${{L_SE}} && touch -h ${{L_SE}}
+        cd ..
         """
