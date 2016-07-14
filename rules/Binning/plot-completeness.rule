@@ -5,7 +5,7 @@ rule binning_plot_completeness:
         "Binning/analysis_essential_genes.pdf"
     shell:
         """
-      #  module load lang/R/3.2.0-ictce-7.3.5-bare
+        #  module load lang/R/3.2.0-ictce-7.3.5-bare
         Rscript {SRCDIR}/plotting_completenessresults.R {input} Binning/
         """
 

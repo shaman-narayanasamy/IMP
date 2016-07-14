@@ -1,5 +1,4 @@
 # include rules for the Binning part of the workflow
-
 include:
     '../../rules/Binning/find-essential-genes.rule'
 
@@ -10,22 +9,7 @@ include:
     '../../rules/Binning/separate-bins.rule'
 
 include:
-    '../../rules/Binning/prepare-proteins.rule'
-
-include:
     '../../rules/Binning/checkm.rule'
-
-include:
-    '../../rules/Binning/bin-analysis.amphora.rule'
-
-include:
-    '../../rules/Binning/split-completeness.rule'
-
-include:
-    '../../rules/Binning/summarize-completeness.rule'
-
-include:
-    '../../rules/Binning/plot-completeness.rule'
 
 include:
     '../../rules/essential-gene_info.rule'
