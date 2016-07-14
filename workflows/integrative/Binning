@@ -27,6 +27,11 @@ include:
 include:
     '../../rules/Binning/plot-completeness.rule'
 
+include:
+    '../rules/essential-gene_info.rule'
+
+include:
+    '../rules/extract-essential-genes.rule'
 
 # master command
 rule BINNING:
