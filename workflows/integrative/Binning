@@ -12,10 +12,10 @@ include:
     '../../rules/Binning/checkm.rule'
 
 include:
-    '../../rules/essential-gene_info.rule'
+    '../../rules/Binning/essential-gene_info.rule'
 
 include:
-    '../../rules/extract-essential-genes.rule'
+    '../../rules/Binning/extract-essential-genes.rule'
 
 # master command
 rule BINNING:

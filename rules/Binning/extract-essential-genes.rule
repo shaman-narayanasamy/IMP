@@ -1,7 +1,7 @@
 rule extract_essential_genes:
     input:
         "Binning/essMarkerGenes/markersAll.tsv",
-        "Binning/prokka.faa",
+        "Analysis/annotation/{p}.faa".format(p=config['prokka']['prefix']),
     output:
         "Binning/getMarkerGenes.done"
     shell:
@@ -19,7 +19,7 @@ rule extract_essential_genes:
         if [[ -s "Binning/essMarkerGenes/marker-${{marker}}.tsv" ]]
         then 
             echo "Extracting genes for essential gene ID: ${{marker}}"
-            perl /home/users/snarayanasamy/repositories/LAO_TS_binning/src/fastaProteinExtractAddSampleCluster.pl {input[1]} Binning/essMarkerGenes/marker-${{marker}}.tsv > Binning/essMarkerGenes/marker-${{marker}}.faa
+            perl src/fastaProteinExtractAddSampleCluster.pl {input[1]} Binning/essMarkerGenes/marker-${{marker}}.tsv > Binning/essMarkerGenes/marker-${{marker}}.faa
         else
             echo "${{marker}} not present! Generating fake files..."
             touch Binning/essMarkerGenes/marker-${{marker}}.tsv

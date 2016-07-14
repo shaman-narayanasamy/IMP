@@ -11,12 +11,10 @@ input_no_filtering = {
     ]
 }
 
-
 def no_filtering_input(wildcards):
     if wildcards.type in TYPES:
         return input_no_filtering[wildcards.type]
     return ''
-
 
 rule no_filtering:
     input:

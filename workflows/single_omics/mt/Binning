@@ -1,0 +1,6 @@
+# include rules for the Binning part of the workflow
+# This step is (or should be) common for all the omic analyses. So just include the same workflow
+# for the integrative analyses
+
+include:
+    '../../integrative/Binning'
