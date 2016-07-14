@@ -28,16 +28,19 @@ include:
     '../../rules/Binning/plot-completeness.rule'
 
 include:
-    '../rules/essential-gene_info.rule'
+    '../../rules/essential-gene_info.rule'
 
 include:
-    '../rules/extract-essential-genes.rule'
+    '../../rules/extract-essential-genes.rule'
 
 # master command
 rule BINNING:
     input:
-        dynamic("Binning/clusters/{cluster}.clt"),
+        expand("Binning/contigs2clusters.{pk}.{nn}.tsv",pk=config["binning"]["pk"],nn=config["binning"]["nn"]),
         "Binning/checkM_output/checkm_table.tsv",
-        "Binning/run_checkM.done"
+        "Binning/run_checkM.done",
+        "Binning/separate_bins.done",
+        "Binning/essMarkerGenes/markersAll.tsv",
+        "Binning/getMarkerGenes.done"
     output:
         touch('binning.done')
