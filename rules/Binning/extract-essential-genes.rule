@@ -1,0 +1,30 @@
+rule extract_essential_genes:
+    input:
+        "Binning/essMarkerGenes/markersAll.tsv",
+        "Binning/prokka.faa",
+    output:
+        "Binning/getMarkerGenes.done"
+    shell:
+        """
+        declare -a MARKER=("TIGR01011" "TIGR01049" "TIGR01169" "TIGR00487" "TIGR01044" "TIGR00959" \
+                           "PF00573.18" "TIGR01171" "PF00380.15" "PF00297.18" \
+                           "TIGR00472" "TIGR01067" "TIGR01021" "TIGR01050" "TIGR01029" \
+                           "TIGR01164" "PF00416.18" "TIGR00468" "TIGR01071" "PF00276.16" \
+                           "PF00347.19" "TIGR01632" "PF00281.15" "TIGR00981" "TIGR00012" \
+                           "TIGR01009" "PF00411.15" "PF00466.16" "PF00410.15" "TIGR00060" \
+                           "TIGR00952" "PF00366.16" "TIGR01066" "TIGR01079" "TIGR02013")
+        
+        for marker in ${{MARKER[@]}}
+        do 
+        if [[ -s "Binning/essMarkerGenes/marker-${{marker}}.tsv" ]]
+        then 
+            echo "Extracting genes for essential gene ID: ${{marker}}"
+            perl /home/users/snarayanasamy/repositories/LAO_TS_binning/src/fastaProteinExtractAddSampleCluster.pl {input[1]} Binning/essMarkerGenes/marker-${{marker}}.tsv > Binning/essMarkerGenes/marker-${{marker}}.faa
+        else
+            echo "${{marker}} not present! Generating fake files..."
+            touch Binning/essMarkerGenes/marker-${{marker}}.tsv
+            touch Binning/essMarkerGenes/marker-${{marker}}.faa
+        fi
+        done
+        touch Binning/getMarkerGenes.done
+        """
