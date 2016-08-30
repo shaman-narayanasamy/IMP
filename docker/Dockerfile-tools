@@ -192,19 +192,6 @@ RUN cd /home/imp/lib \
     && cp pplacer-Linux-v1.1.alpha17/pplacer /usr/bin \
     && rm -r pplacer-Linux-v1.1.alpha17
 
-##CheckM Data
-RUN cd /home/imp/lib \
-    && wget https://data.ace.uq.edu.au/public/CheckM_databases/checkm_data_v1.0.6.tar.gz
-
-RUN cd /home/imp/lib \
-    && mkdir checkm_data_v1.0.6 \
-    && tar -xf checkm_data_v1.0.6.tar.gz -C checkm_data_v1.0.6 \
-    #echo used for interactive prompt
-    && echo checkm_data_v1.0.6 | checkm data setRoot checkm_data_v1.0.6/
-
-
-
-
 ##pullseq
 RUN cd /home/imp/lib \
     && git clone https://github.com/bcthomas/pullseq \
