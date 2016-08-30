@@ -11,9 +11,12 @@ import tempfile
 import sys
 import re
 
+CURRENT_DIRECTORY = Path(__file__).parent.abspath()
 IMP_VERSION = '1.4.1'
 IMP_DEFAULT_TAR_REPOSITORY = 'https://webdav-r3lab.uni.lu/public/R3lab/IMP/dist'
 IMP_IMAGE_NAME = 'docker-r3lab.uni.lu/imp/imp'
+IMP_DEFAULT_DB_DIR = CURRENT_DIRECTORY / 'db'
+
 
 __doc__ = """Integrated Metaomic Pipeline.
  ____  __  __  ____
@@ -41,7 +44,7 @@ Options:
   -h --help         Show this help and exit
   -m MG             Path to the metagenomics paired files (must be 2 files).
   -t MT             Path to the metatranscriptomic paired files (2 files).
-  -d DBPATH         Path to the databases [default: db]
+  -d DBPATH         Path to the databases [default: {db}]
   -i IMAGENAME      Name of the docker image. Useful when you want to run your own built container. [default: {name}]
   -v VERSION        Version of the docker image. Useful when you want to run your own built container. [default: {version}]
   -o OUTPUT         Path to the output directory
@@ -75,7 +78,8 @@ Advanced use:
 """.format(
     name=IMP_IMAGE_NAME,
     version=IMP_VERSION,
-    repo=IMP_DEFAULT_TAR_REPOSITORY
+    repo=IMP_DEFAULT_TAR_REPOSITORY,
+    db=IMP_DEFAULT_DB_DIR
 )
 
 _IMP_OUTPUT_DIR = '/home/imp/output'
