@@ -424,7 +424,7 @@ png(name_plot("IMP-MG_var_count.png") ,width=350, height=700)
 par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
 beanplot(var1 ~ var2, data= MG_variant_count,  side = "both",log="auto", 
 what=c(1,1,1,0), border = NA, col = list("blue", c("red", "white")),
-main="MG variant (SNPs & INDELS)", ylab=expression(log[10]*~count))
+bw="nrd0", main="MG variant (SNPs & INDELS)", ylab=expression(log[10]*~count))
 legend("bottomleft", fill =c("blue", "red"), legend = c("No. of variants", "Variant density"))
 dev.off()
 
