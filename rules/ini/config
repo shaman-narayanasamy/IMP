@@ -50,6 +50,7 @@ MG = os.environ.get("MG", config['raws']['Metagenomics']).split()
 MT = os.environ.get("MT", config['raws']['Metatranscriptomics']).split()
 SAMPLE = os.environ.get("SAMPLE", config['sample'])
 DBPATH = os.environ.get("DBPATH", config['db_path'])
+IMP_SUDO = os.environ.get("IMP_SUDO", '')
 
 if not os.path.exists(DBPATH):
     os.makedirs(DBPATH)
