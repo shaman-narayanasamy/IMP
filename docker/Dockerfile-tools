@@ -212,7 +212,6 @@ RUN wget -c --no-check-certificate https://webdav-r3lab-server.uni.lu/public/R3l
     && cd .. \
     && rm -rf MaxBin* \
     && wget -c --no-check-certificate https://webdav-r3lab-server.uni.lu/public/R3lab/IMP/bowtie2-2.2.9-source.zip \
-    && tar -xvzf bowtie2-2.2.9-source.zip \
     && unzip bowtie2-2.2.9-source.zip \
     && cd bowtie2-2.2.9 \
     && make \
