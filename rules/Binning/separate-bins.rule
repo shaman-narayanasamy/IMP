@@ -3,7 +3,7 @@ rule binning_separate_bins:
         expand("Binning/contigs2clusters.{pk}.{nn}.tsv",pk=config["binning"]["pk"],nn=config["binning"]["nn"]),
         "Assembly/mgmt.assembly.merged.fa",
         "Binning/ORFS-contig_links.bed",
-        "Binning/prokka.faa",
+        "Analysis/annotation/{p}.faa".format(p=config['prokka']['prefix']),
         "Analysis/annotation/annotation.filt.gff"
     output:
         "Binning/separate_bins.done"
@@ -13,7 +13,7 @@ rule binning_separate_bins:
         do
             # Create directory for the cluster
             mkdir -p Binning/clusterFiles/${{cluster}}
-            
+
             # Define headerfiles
             headerfile="Binning/clusterFiles/${{cluster}}/cluster.${{cluster}}.contigids"
             protids="Binning/clusterFiles/${{cluster}}/cluster.${{cluster}}.protids"
