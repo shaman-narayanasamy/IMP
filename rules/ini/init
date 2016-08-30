@@ -25,4 +25,4 @@ rule ALL:
             ext=['bursttrie_0.dat', 'kmer_0.dat', 'pos_0.dat', 'stats']),
         "ec2pathway.txt",
         "pathway2hierarchy.txt",
-        "checkM/selected_marker_sets.tsv"
+        "%s/checkM/selected_marker_sets.tsv" % DBPATH
