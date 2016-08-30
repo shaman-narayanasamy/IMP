@@ -30,5 +30,5 @@ rule visualize:
 
         echo "[x] PLOT `date +"%Y/%m/%d %H:%M:%S"`"
         mkdir -p Analysis/results
-        sudo Rscript $PLOT_SCRIPT Analysis/results {input} {SRCDIR}/IMP_plot_functions.R
+        {IMP_SUDO}Rscript $PLOT_SCRIPT Analysis/results {input} {SRCDIR}/IMP_plot_functions.R
         """
