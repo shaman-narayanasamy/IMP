@@ -203,33 +203,7 @@ RUN cd /home/imp/lib \
     && echo checkm_data_v1.0.6 | checkm data setRoot checkm_data_v1.0.6/
 
 
-##Amphora2
-RUN cd /home/imp/lib \
-    && git clone https://github.com/mherold1/AMPHORA2 \
-    && wget https://github.com/stamatak/standard-RAxML/archive/v8.2.8.tar.gz -O stamatak-standard-RAxML.tar.gz \
-    && tar xf stamatak-standard-RAxML.tar.gz \
-    && cd standard-RAxML-8.2.8; make -f Makefile.gcc; make -f Makefile.PTHREADS.gcc; cp raxmlHPC* /usr/bin/. \
-    && cd .. \
-    && (echo y;echo o conf prerequisites_policy follow;echo o conf commit)|cpan -f -i Parallel::ForkManager
-#    && wget ftp://emboss.open-bio.org/pub/EMBOSS/old/6.5.0/EMBOSS-6.5.7.tar.gz \
-#    && tar -xf EMBOSS-6.5.7.tar.gz \
-#    && cd EMBOSS-6.5.7 \
-#    && ./configure \
-#    && make \
-#    && make install
-#    FOR NOW: using apt-get install emboss
-#    && apt-get install emboss
-RUN cd /home/imp/lib \
-    && apt-get update \
-    && echo y|apt-get install emboss
-   # && wget ftp://emboss.open-bio.org/pub/EMBOSS/old/6.5.0/EMBOSS-6.5.7.tar.gz \
-   # && tar -xf EMBOSS-6.5.7.tar.gz \
-   # && cd EMBOSS-6.5.7 \
-  #  && ./configure --without-mysql --without-postgresql --without-axis2c --without-hpdf --without-x\
- #   && make \
-    #&& make install \
-    #&& ldconfig \
-#    && make install 
+
 
 ##pullseq
 RUN cd /home/imp/lib \
@@ -240,19 +214,6 @@ RUN cd /home/imp/lib \
     && make \
     && make install
 
-##Phylophlan, removed for now maybe revisit at a later timepoint, MH 16.6.2016
-#RUN cd /home/imp/lib \
-##    && wget https://bitbucket.org/nsegata/phylophlan/get/default.tar.gz \
-##    && tar -xf default.tar.gz \
-#    && pip install mercurial \
-#    && hg clone https://bitbucket.org/nsegata/phylophlan \
-##    && cd phylophlan \
-##for development version: (stick to old one for now)
-##    && hg pull && hg update dev \ 
-#    && wget http://www.microbesonline.org/fasttree/FastTree \
-#    && chmod +x FastTree \
-#    && cp FastTree /usr/bin \
-##usearch binary copied from gaia for now and put in imp code -> need to solve this 
 
 #
 #    #move usearch binary to webdav? this uses my downloadlink, from 2.5.2016 , not sure how long this works.
@@ -260,5 +221,3 @@ RUN cd /home/imp/lib \
 # #   && chmod +x usearch8.1.1861_i86linux32 \
 #  #  && cp usearch8.1.1861_i86linux32 /usr/bin/usearch \
 ##    && cd  \
-
-

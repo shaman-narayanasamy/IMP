@@ -113,3 +113,15 @@ rule prokka_databases:
         prokka --setupdb
         wget {config[prokka][essentials_genes_db_url]} --no-check-certificate -O {DBPATH}/hmm/essentials_genes.hmm
         """
+
+rule checkm_data:
+    output:
+        "checkm_data_v1"
+    shell:
+        """
+        wget -c --no-check-certificate {config[checkm][data_url]} -O checkm_data.tgz
+        mkdir -p {DBPATH}/checkM
+        tar -xvzf checkm_data.tgz -C {DBPATH}/checkM
+        rm checkm_data.tgz
+        checkm data setRoot {DBPATH}/checkM
+        """
