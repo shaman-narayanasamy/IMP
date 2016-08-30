@@ -90,7 +90,7 @@ rule kegg_information:
 rule prokka_databases:
     output:
         expand("{db}", db=config["prokka"]["databases"]),
-        "%s/hmm/essentials_genes.hmm" % DBPATH
+        "hmm/essentials_genes.hmm"
     shell:
         """
         ### prokka by default will look databases where is located the binary.
@@ -116,7 +116,7 @@ rule prokka_databases:
 
 rule checkm_data:
     output:
-        "%s/checkM/selected_marker_sets.tsv" % DBPATH
+        "checkM/selected_marker_sets.tsv"
     shell:
         """
         wget -c --no-check-certificate {config[checkm][data_url]} -O checkm_data.tgz
