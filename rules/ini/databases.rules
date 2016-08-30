@@ -116,7 +116,7 @@ rule prokka_databases:
 
 rule checkm_data:
     output:
-        "checkm_data_v1"
+        "%s/checkM/selected_marker_sets.tsv" % DBPATH
     shell:
         """
         wget -c --no-check-certificate {config[checkm][data_url]} -O checkm_data.tgz
