@@ -180,7 +180,7 @@ print("DONE: Merging data")
 ###################################################################################################
 # Calculate and merge data
 print("Perform calculations")
-save.image(name_plot("results.Rdat"))
+save.image(name_plot("mt_results.Rdat"))
 # Get new column numbers
 newcols <- ncol(all.dat) + 1
 all.dat <- cbind(all.dat,
@@ -442,6 +442,6 @@ theme_nothing()
 dev.off()
 
 ## Save the R workspace
-save.image(name_plot("results.Rdat"))
+save.image(name_plot("mt_results.Rdat"))
 
 

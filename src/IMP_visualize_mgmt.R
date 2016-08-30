@@ -200,7 +200,7 @@ annot.1 <- as.data.frame(cbind(annot.1, annot.1$end - annot.1$start + 1))
 colnames(annot.1)[ncol(annot.1)] <- "gene_length"
 
 # aggregate table and calculate total gene lengths within contig
-save.image(name_plot("MGMT_results.Rdat"))
+save.image(name_plot("mgmt_results.Rdat"))
 print("Calculating coding density of contigs")
 # Create temporary table
 total_gene_length <- aggregate(gene_length~contig, data=annot.1, FUN=sum)
@@ -308,7 +308,7 @@ print("Computing query coverage of contigs against reference genomes")
 all.dat$query_cov <- all.dat$query_align_len / all.dat$length * 100
 all.dat$query_cov[na.omit(all.dat$query_cov > 100)] = 100
 
-save.image(name_plot("MGMT_results.Rdat"))
+save.image(name_plot("mgmt_results.Rdat"))
 print("DONE: Performing calculations")
 ###################################################################################################
 ## Organize filtering statistics and create table
@@ -457,7 +457,7 @@ vb_dat$log_depth_ratio <- outliers(vb_dat$log_depth_ratio,2)
 vb_dat$log_rpkm_ratio <- outliers(vb_dat$log_rpkm_ratio,2)
 vb_dat$log_var_ratio <- outliers(vb_dat$log_var_ratio,2)
 
-save.image(name_plot("MGMT_results.Rdat"))
+save.image(name_plot("mgmt_results.Rdat"))
 print("DONE: Incorporating VizBin data")
 ####################################################################
 ## ASSEMBLY STATISTICS AND VISUALIZATIONS
@@ -467,21 +467,21 @@ print("START: Visualizing")
 
 ## Output mapping stats table
 print("Print metagenomic mapping statistics table")
-sink(name_plot("MG_mapping_stats.html"))
+sink(name_plot("mg_mapping_stats.html"))
 print(xtable(MG.map.summary, html.table.attributes=""), type="html")
 sink()
 
-write.table(MG.map.summary, name_plot("MG_mapping_stats.txt"),
+write.table(MG.map.summary, name_plot("mg_mapping_stats.txt"),
 	    sep="\t", quote=F,
 	    row.names=F)
 
 ## Output mapping stats table
 print("Print metatranscriptomics mapping statistics table")
-sink(name_plot("MT_mapping_stats.html"))
+sink(name_plot("mt_mapping_stats.html"))
 print(xtable(MT.map.summary, html.table.attributes=""), type="html")
 sink()
 
-write.table(MT.map.summary, name_plot("MT_mapping_stats.txt"),
+write.table(MT.map.summary, name_plot("mt_mapping_stats.txt"),
 	    sep="\t", quote=F,
 	    row.names=F)
 
@@ -528,25 +528,25 @@ theme_gray()
 print("Generating mapped reads density plot")
 
 png(name_plot("IMP-reads_density.png"), width=plotWidth, height=plotHeight)
-MGMT.beanplot(all.dat$MG_reads, all.dat$MT_reads)
+mgmt.beanplot(all.dat$MG_reads, all.dat$MT_reads)
 dev.off()
 
 ## Plot RPKM density
 print("Generating RPKM density plot")
 png(name_plot("IMP-rpkm_density.png"), width=plotWidth, height=plotHeight)
-MGMT.beanplot(all.dat$MG_rpkm, all.dat$MT_rpkm, ylabel = expression(log[10]*~"RPKM"))
+mgmt.beanplot(all.dat$MG_rpkm, all.dat$MT_rpkm, ylabel = expression(log[10]*~"RPKM"))
 dev.off()
 
 ## Plot coverage density
 print("Generating coverage density plot")
 png(name_plot("IMP-coverage_density.png"), width=plotWidth, height=plotHeight)
-MGMT.beanplot(all.dat$MG_cov, all.dat$MT_cov, ylabel = "fraction")
+mgmt.beanplot(all.dat$MG_cov, all.dat$MT_cov, ylabel = "fraction")
 dev.off()
 
 ## Plot depth density
 print("Generating depth density plot")
 png(name_plot("IMP-depth_density.png"), width=plotWidth, height=plotHeight)
-MGMT.beanplot(all.dat$MG_depth, all.dat$MT_depth, ylabel = expression(log[10]*~"avg. depth"))
+mgmt.beanplot(all.dat$MG_depth, all.dat$MT_depth, ylabel = expression(log[10]*~"avg. depth"))
 dev.off()
 
 ## Plot vizbin scatter plot with length and MG coverage info
@@ -591,13 +591,13 @@ theme_nothing()
 ## Plot variant count
 print("Generating variant count density plot")
 png(name_plot("IMP-var_count.png"), width=plotWidth, height=plotHeight)
-MGMT.beanplot(all.dat$MG_var, all.dat$MT_var)
+mgmt.beanplot(all.dat$MG_var, all.dat$MT_var)
 dev.off()
 
 ## Plot variant density
 print("Generating variant density density plot")
 png(name_plot("IMP-var_density.png"), width=plotWidth, height=plotHeight)
-MGMT.beanplot(all.dat$MG_var_dens, all.dat$MT_var_dens, ylabel = "count / RPKM")
+mgmt.beanplot(all.dat$MG_var_dens, all.dat$MT_var_dens, ylabel = "count / RPKM")
 dev.off()
 
 ## Plot vizbin scatter plot with length and MG variant info
@@ -775,7 +775,7 @@ print("DONE: Visualizing")
 ## Save the R workspace
 ####################################################################
 
-print("START: Saving R image: MGMT_results.Rdat")
-save.image(name_plot("MGMT_results.Rdat"))
-print("DONE: Saving R image: MGMT_results.Rdat")
+print("START: Saving R image: mgmt_results.Rdat")
+save.image(name_plot("mgmt_results.Rdat"))
+print("DONE: Saving R image: mgmt_results.Rdat")
 

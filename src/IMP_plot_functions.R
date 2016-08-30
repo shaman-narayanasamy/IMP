@@ -197,7 +197,7 @@ theme_gray <- function(base_size = 12, base_family = "Helvetica")
 }
 
 ## Function for beanplot
-MGMT.beanplot <- function(MG.dat, MT.dat, ylabel = expression(log[10]*~"count")) {
+mgmt.beanplot <- function(MG.dat, MT.dat, ylabel = expression(log[10]*~"count")) {
 	var1 <-log10(c(MG.dat, MT.dat))
 	var1[is.infinite(var1)]=NA
 	var2 <- c(rep("MG", length(MG.dat)), rep("MT", length(MT.dat)))
