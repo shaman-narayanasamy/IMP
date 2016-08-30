@@ -12,7 +12,7 @@ import sys
 import re
 
 CURRENT_DIRECTORY = Path(__file__).parent.abspath()
-IMP_VERSION = '1.4.1'
+IMP_VERSION = '1.4'
 IMP_DEFAULT_TAR_REPOSITORY = 'https://webdav-r3lab.uni.lu/public/R3lab/IMP/dist'
 IMP_IMAGE_NAME = 'docker-r3lab.uni.lu/imp/imp'
 IMP_DEFAULT_DB_DIR = CURRENT_DIRECTORY / 'db'
