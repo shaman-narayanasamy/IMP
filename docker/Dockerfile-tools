@@ -223,7 +223,7 @@ RUN wget -c --no-check-certificate https://webdav-r3lab-server.uni.lu/public/R3l
     && tar -xvzf FragGeneScan1.30.tar.gz \
     && cd FragGeneScan1.30 \
     && make clean \
-    && make fgs
+    && make fgs \
     && mv FragGeneScan /usr/bin/. \
     && cd .. \
     && rm -rf FragGeneScan*
