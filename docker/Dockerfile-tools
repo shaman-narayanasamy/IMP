@@ -185,26 +185,45 @@ RUN cd /home/imp/lib \
     && cd CheckM-1.0.6/ \
     && python2.7 setup.py install \
     && cd .. \
-    && rm -r CheckM-1.0.6/ \
+    && rm -rf CheckM-1.0.6/ \
     && wget https://github.com/matsen/pplacer/releases/download/v1.1.alpha17/pplacer-Linux-v1.1.alpha17.zip \
     && unzip pplacer-Linux-v1.1.alpha17.zip \
     && cp pplacer-Linux-v1.1.alpha17/guppy /usr/bin \
     && cp pplacer-Linux-v1.1.alpha17/pplacer /usr/bin \
     && rm -r pplacer-Linux-v1.1.alpha17
 
-##pullseq
+## pullseq
 RUN cd /home/imp/lib \
     && git clone https://github.com/bcthomas/pullseq \
     && cd pullseq \
     && ./bootstrap \
     && ./configure \
     && make \
-    && make install
+    && make install \
+    && cd .. \
+    && rm -rf pullseq
 
-
-#
-#    #move usearch binary to webdav? this uses my downloadlink, from 2.5.2016 , not sure how long this works.
-##    && wget --user-agent=Mozilla --content-disposition -E -c http://drive5.com/cgi-bin/upload3.py?license=2016050205235811143 \
-# #   && chmod +x usearch8.1.1861_i86linux32 \
-#  #  && cp usearch8.1.1861_i86linux32 /usr/bin/usearch \
-##    && cd  \
+## MaxBin & deps
+RUN wget -c --no-check-certificate https://webdav-r3lab-server.uni.lu/public/R3lab/IMP/MaxBin-2.2.1.tar.gz \
+    && tar -xvzf MaxBin-2.2.1.tar.gz \
+    && cd MaxBin-2.2.1/src \
+    && make \
+    && mv MaxBin /usr/bin/.
+    && cd .. \
+    && rm -rf MaxBin* \
+    && wget -c --no-check-certificate https://webdav-r3lab-server.uni.lu/public/R3lab/IMP/bowtie2-2.2.9-source.zip \
+    && tar -xvzf bowtie2-2.2.9-source.zip \
+    && unzip bowtie2-2.2.9-source.zip \
+    && cd bowtie2-2.2.9 \
+    && make \
+    && make install \
+    && cd .. \
+    && rm -rf bowtie2* \
+    && wget -c --no-check-certificate https://webdav-r3lab-server.uni.lu/public/R3lab/IMP/FragGeneScan1.30.tar.gz \
+    && tar -xvzf FragGeneScan1.30.tar.gz \
+    && cd FragGeneScan1.30 \
+    && make clean \
+    && make fgs
+    && mv FragGeneScan /usr/bin/. \
+    && cd .. \
+    && rm -rf FragGeneScan*
