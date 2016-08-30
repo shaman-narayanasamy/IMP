@@ -14,7 +14,7 @@ input_no_filtering = {
 def no_filtering_input(wildcards):
     if wildcards.type in TYPES:
         return input_no_filtering[wildcards.type]
-    return ''
+    return 'no_filtering_input_no_file_here'
 
 rule no_filtering:
     input:
