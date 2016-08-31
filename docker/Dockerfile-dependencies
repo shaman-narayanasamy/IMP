@@ -59,7 +59,7 @@ RUN mkdir -p /home/imp/tmp /home/imp/lib \
     && wget https://bootstrap.pypa.io/get-pip.py \
     && python3 get-pip.py \
     && python2.7 get-pip.py \
-    && pip3 install snakemake docopt \
+    && pip3 install snakemake==3.7.1 docopt \
     #&& pip2.7 install numpy \
     #&& pip2.7 install scipy scikit-learn docopt \
     && pip install -Iv https://pypi.python.org/packages/source/b/bioservices/bioservices-1.3.5.tar.gz \
