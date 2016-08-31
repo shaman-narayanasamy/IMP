@@ -13,7 +13,7 @@ import re
 
 CURRENT_DIRECTORY = Path(__file__).parent.abspath()
 IMP_VERSION = '1.4'
-IMP_DEFAULT_TAR_REPOSITORY = 'https://webdav-r3lab.uni.lu/public/R3lab/IMP/dist'
+IMP_DEFAULT_TAR_REPOSITORY = 'https://webdav-r3lab.uni.lu/public/R3lab/IMP/dist/imp-%s.tar.gz' % IMP_VERSION
 IMP_IMAGE_NAME = 'docker-r3lab.uni.lu/imp/imp'
 IMP_DEFAULT_DB_DIR = CURRENT_DIRECTORY / 'db'
 
@@ -141,8 +141,7 @@ def install_imp(repo, version):
     else:
         # copy
         print("[x] Copying IMP TARBALL '%s'" % repo)
-        download_name = '{r}/imp-{v}.tar.gz'.format(r=repo, v=version)
-        subprocess.check_output(['cp', download_name, fname])
+        subprocess.check_output(['cp', repo, fname])
     # load
     print("[x] Loading IMP TARBALL into docker")
     subprocess.check_output(['docker', 'load', '-i', fname])
