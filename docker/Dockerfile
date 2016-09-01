@@ -44,6 +44,9 @@ RUN mkdir /root/.checkpoint \
     && Rscript -e "source('http://bioconductor.org/biocLite.R');biocLite('genomeIntervals')"\
     && chmod -R 777 /root/.checkpoint /root/.Rprofile
 
+# add Snakemake
+RUN pip3 install snakemake==3.7.1
+
 #### Add gosu
 ENV GOSU_VERSION 1.7
 RUN set -x \
