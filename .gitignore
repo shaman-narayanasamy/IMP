@@ -1,5 +1,6 @@
 .*
 !.gitignore
+!.gitlab-ci.yml
 *~
 conf/userconfig.imp.json
 output/*
