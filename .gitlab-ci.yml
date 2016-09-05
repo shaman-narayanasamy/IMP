@@ -1,5 +1,8 @@
 image: docker-r3lab.uni.lu/imp/imp:1.4
 
+before_script:
+  - apt-get update
+
 test:
   script:
     - ls
