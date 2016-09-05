@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 IMP_VERSION=$1
 docker build -t docker-r3lab.uni.lu/imp/imp-deps:$IMP_VERSION -f Dockerfile-dependencies .
