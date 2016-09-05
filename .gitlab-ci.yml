@@ -1,0 +1,8 @@
+image: imp:1.4
+
+build:
+    stage: build
+    script:
+        - ls
+        - pwd
+        - snakemake -np
