@@ -1,4 +1,4 @@
-image: imp:1.4
+image: docker-r3lab.uni.lu/imp/imp:1.4
 
 build:
     stage: build
