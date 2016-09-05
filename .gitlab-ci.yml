@@ -1,7 +1,7 @@
 image: docker-r3lab.uni.lu/imp/imp:1.4
 
 test:
-    script:
-        - ls
-        - pwd
-        - snakemake -np
+  script:
+    - ls
+    - pwd
+    - snakemake -np
