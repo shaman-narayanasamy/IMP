@@ -124,12 +124,14 @@ RUN cd /home/imp/tmp \
     && mv sortmerna indexdb_rna /usr/bin/. \
     && mv scripts/*.sh /home/imp/lib/. \
     && cd .. && rm -rf sortmerna*
+
 ## bedtools2
 RUN cd /home/imp/tmp \
     && wget --no-check-certificate https://webdav-r3lab.uni.lu/public/R3lab/IMP/bedtools-2.24.0.tar.gz -O bedtools-2.24.0.tar.gz -nv \
     && tar -xzf bedtools-2.24.0.tar.gz \
     && cd bedtools2 \
-    && make
+    && make && make install \
+    && cd /home/imp/tmp && rm -rf *
 
 
 ## Install KronaPlot
@@ -137,7 +139,8 @@ RUN cd /home/imp/tmp \
     && wget --no-check-certificate https://webdav-r3lab.uni.lu/public/R3lab/IMP/KronaTools-2.5.tar -nv \
     && tar -xvf KronaTools-2.5.tar \
     && cd KronaTools-2.5 \
-    && perl install.pl
+    && perl install.pl \
+    && cd /home/imp/tmp && rm -rf *
 
 
 ## htslib
@@ -146,7 +149,7 @@ RUN cd /home/imp/tmp \
     && tar -jxvf htslib-1.2.1.tar.bz2 \
     && cd htslib-1.2.1 \
     && ./configure && make && make install \
-    && cd .. && rm -rf htslib-1.2.1
+    && cd /home/imp/tmp && rm -rf *
 
 ## Platypus
 RUN cd /home/imp/lib \
