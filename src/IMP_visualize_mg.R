@@ -108,7 +108,7 @@ colnames(GC.dat) <- c("contig", "GC")
 
 ## gff annotation file
 print("Read in gff3 annotation file")
-annot <- readGff3(annot_file)
+annot <- readGff3(annot_file, isRightOpen=T)
 
 # extract only interesting information
 print("Processing gff3 annotation file")
@@ -138,11 +138,18 @@ colnames(annot.2)[ncol(annot.2)] <- "total_gene_length"
 # create annotation table
 print("Creating annotation table")
 annot.3 <- as.data.frame.matrix(table(annot.1[,c(1,4)]))[,-1]
-annot.3 <- cbind(rownames(annot.3), annot.3, rowSums(annot.3[,c(2:ncol(annot.3))]))
-rownames(annot.3) <- NULL
-colnames(annot.3)[c(1, ncol(annot.3))] <- c("contig", "all_annotations")
 
-annot.4 <- merge(annot.2, annot.3, by="contig")
+if (is.null(ncol(annot.3)))
+{
+    print("Skipping annotation count")
+    annot.4 <- annot.2
+}else{
+    annot.3 <- cbind(rownames(annot.3), annot.3, rowSums(annot.3[,c(2:ncol(annot.3))]))
+    rownames(annot.3) <- NULL
+    colnames(annot.3)[c(1, ncol(annot.3))] <- c("contig", "all_annotations")
+    annot.4 <- merge(annot.2, annot.3, by="contig")
+}
+
 
 # vizbin points, the contig names are usually not included in this file,
 # concatenate it before reading in
