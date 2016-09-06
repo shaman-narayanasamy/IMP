@@ -4,7 +4,7 @@ variables:
     ROOT_DIR: "/home/imp/code"
     SRCDIR: "/home/imp/src"
     LIBDIR: "/home/imp/lib"
-    OUTPUTDIR: "/output"
+    OUTPUTDIR: "$CI_PROJECT_DIR/test/output"
     MG: "/input/mg.r1.fq /input/mg.r2.fq"
     MT: "/input/mt.r1.fq /input/mt.r2.fq"
     SAMPLE: "test"
