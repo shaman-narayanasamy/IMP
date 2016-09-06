@@ -213,6 +213,7 @@ RUN cd /home/imp/lib \
     && tar -xvzf MaxBin-2.2.1.tar.gz \
     && cd MaxBin-2.2.1/src \
     && make \
+    && rm /home/imp/lib/MaxBin-2.2.1.tar.gz \
     && cd /home/imp/lib \
     && wget -c --no-check-certificate https://webdav-r3lab-server.uni.lu/public/R3lab/IMP/bowtie2-2.2.9-source.zip \
     && unzip bowtie2-2.2.9-source.zip \
@@ -226,7 +227,8 @@ RUN cd /home/imp/lib \
     && tar -xvzf FragGeneScan1.30.tar.gz \
     && cd FragGeneScan1.30 \
     && make clean \
-    && make fgs
+    && make fgs \
+    && rm /home/imp/lib/FragGeneScan1.30.tar.gz
 
 RUN wget https://webdav-r3lab.uni.lu/public/R3lab/IMP/linux64.tbl2asn.gz -O /tmp/tbl2asn.gz \
     && gzip -f -d /tmp/tbl2asn.gz \
