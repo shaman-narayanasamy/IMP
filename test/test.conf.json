@@ -6,6 +6,6 @@
     "vizbin": {
         "dimension": 5,
         "perp": 1,
-        "cutoff": 100,
+        "cutoff": 100
     }
 }
