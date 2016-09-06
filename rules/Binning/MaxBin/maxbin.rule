@@ -10,7 +10,7 @@ rule maxbin:
         mkdir -p Binning/MaxBin
         
         ## Run MaxBin
-        MaxBin -fasta {input[0]} \
+        perl run_maxbin -contigs {input[0]} \
         -abund {input[1]} \
         -out maxbin_res \
         -thread {THREADS} 
