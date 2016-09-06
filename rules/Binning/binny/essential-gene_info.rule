@@ -10,6 +10,6 @@ rule essential_gene_info:
         mkdir -p Binning/essMarkerGenes
 
         ## Run the R script to extract the table
-        Rscript /home/users/snarayanasamy/repositories/LAO_TS_binning/src/get_essGeneInfo.R {input} {SAMPLE}
+        Rscript {SRCDIR}/get_essGeneInfo.R {input} {SAMPLE}
         """
  

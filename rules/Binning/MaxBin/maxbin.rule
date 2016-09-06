@@ -7,7 +7,7 @@ rule maxbin:
     shell:
         """
         ## Create MaxBin dir
-        mkdir Binning/MaxBin
+        mkdir -p Binning/MaxBin
         
         ## Run MaxBin
         MaxBin -fasta {input[0]} \

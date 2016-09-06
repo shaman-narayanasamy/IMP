@@ -38,9 +38,9 @@ RUN mkdir -p /home/imp/code /home/imp/output /home/imp/data /home/imp/bin /home/
 # R with checkpoint libraries
 ADD dependencies.R /home/imp/lib/
 RUN mkdir /home/imp/lib/.checkpoint \
-    && echo "r <- getOption('repos'); r['CRAN'] <- 'http://cran.us.r-project.org'; options(repos = r);" > /home/imp/.Rprofile \
+    && echo "r <- getOption('repos'); r['CRAN'] <- 'https://cloud.r-project.org/'; options(repos = r);" > /home/imp/.Rprofile \
     && Rscript -e "install.packages('checkpoint', repos='https://cloud.r-project.org/')" \
-    && Rscript -e "library(checkpoint);checkpoint('2015-04-27', project='/home/imp/lib', checkpointLocation='/home/imp/lib')" \
+    && Rscript -e "library(checkpoint);checkpoint('2016-06-20', checkpointLocation='/home/imp/lib', project='/home/imp/lib')" \
     && Rscript -e "source('http://bioconductor.org/biocLite.R');biocLite('genomeIntervals')"\
     && chmod -R 777 /home/imp/lib/.checkpoint /home/imp/.Rprofile
 
