@@ -19,3 +19,8 @@ init:
   stage: test
   script:
     - snakemake -nps $CI_PROJECT_DIR/rules/ini/init
+
+preprocessing:
+    stage: test
+    script:
+      - snakemake -nps $CI_PROJECT_DIR/Snakefile
