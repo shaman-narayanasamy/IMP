@@ -1,4 +1,4 @@
-rule binning_clustering:
+rule maxbin:
     input:
        "Analysis/%s.vizbin.filtered.fa" % ASS,
        "Analysis/mg.assembly.contig_depth.txt"
