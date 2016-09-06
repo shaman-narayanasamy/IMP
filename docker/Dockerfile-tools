@@ -130,7 +130,8 @@ RUN cd /home/imp/tmp \
     && wget --no-check-certificate https://webdav-r3lab.uni.lu/public/R3lab/IMP/bedtools-2.18.0.tar.gz -O bedtools-2.18.0.tar.gz -nv \
     && tar -xzf bedtools-2.18.0.tar.gz \
     && cd bedtools-2.18.0 \
-    && make && make install \
+    && make \
+    && cp bin/* /usr/bin/. \
     && cd /home/imp/tmp && rm -rf *
 
 
