@@ -127,8 +127,8 @@ RUN cd /home/imp/tmp \
 
 ## bedtools2
 RUN cd /home/imp/tmp \
-    && wget --no-check-certificate https://webdav-r3lab.uni.lu/public/R3lab/IMP/bedtools-2.24.0.tar.gz -O bedtools-2.24.0.tar.gz -nv \
-    && tar -xzf bedtools-2.24.0.tar.gz \
+    && wget --no-check-certificate https://webdav-r3lab.uni.lu/public/R3lab/IMP/bedtools-2.18.0.tar.gz -O bedtools-2.18.0.tar.gz -nv \
+    && tar -xzf bedtools-2.18.0.tar.gz \
     && cd bedtools2 \
     && make && make install \
     && cd /home/imp/tmp && rm -rf *
@@ -234,4 +234,3 @@ RUN wget https://webdav-r3lab.uni.lu/public/R3lab/IMP/linux64.tbl2asn.gz -O /tmp
     && gzip -f -d /tmp/tbl2asn.gz \
     && chmod +x /tmp/tbl2asn \
     && mv /tmp/tbl2asn /usr/bin
-
