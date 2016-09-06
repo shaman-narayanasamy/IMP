@@ -8,7 +8,7 @@ print("Loading required R libraries")
 require(genomeIntervals)
 
 require(checkpoint)
-checkpoint('2016-06-20', scanForPackages=FALSE, checkpointLocation="~/lib", project="~/lib")
+checkpoint('2016-06-20', scanForPackages=FALSE, checkpointLocation="/root", project="/root")
 
 require(ggplot2)
 require(gtools)
