@@ -9,13 +9,16 @@ include:
     '../../rules/Binning/binny/separate-bins.rule'
 
 include:
-    '../../rules/Binning/binny/checkm.rule'
-
-include:
     '../../rules/Binning/binny/essential-gene_info.rule'
 
 include:
     '../../rules/Binning/binny/extract-essential-genes.rule'
+
+include:
+    '../../rules/Binning/MaxBin/maxbin.rule'
+
+include:
+    '../../rules/Binning/checkm.rule'
 
 # master command
 rule BINNING:
@@ -25,6 +28,7 @@ rule BINNING:
         "Binning/run_checkM.done",
         "Binning/separate_bins.done",
         "Binning/essMarkerGenes/markersAll.tsv",
-        "Binning/getMarkerGenes.done"
+        "Binning/getMarkerGenes.done",
+        "Binning/MaxBin/maxbin_res.log"
     output:
         touch('binning.done')
