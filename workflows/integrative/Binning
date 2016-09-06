@@ -1,21 +1,21 @@
 # include rules for the Binning part of the workflow
 include:
-    '../../rules/Binning/find-essential-genes.rule'
+    '../../rules/Binning/binny/find-essential-genes.rule'
 
 include:
-    '../../rules/Binning/binning.rule'
+    '../../rules/Binning/binny/binning.rule'
 
 include:
-    '../../rules/Binning/separate-bins.rule'
+    '../../rules/Binning/binny/separate-bins.rule'
 
 include:
-    '../../rules/Binning/checkm.rule'
+    '../../rules/Binning/binny/checkm.rule'
 
 include:
-    '../../rules/Binning/essential-gene_info.rule'
+    '../../rules/Binning/binny/essential-gene_info.rule'
 
 include:
-    '../../rules/Binning/extract-essential-genes.rule'
+    '../../rules/Binning/binny/extract-essential-genes.rule'
 
 # master command
 rule BINNING:
