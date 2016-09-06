@@ -17,4 +17,4 @@ variables:
 init:
   stage: test
   script:
-    - snakemake -s $CI_PROJECT_DI/rules/ini/init
+    - snakemake -s $CI_PROJECT_DIR/rules/ini/init
