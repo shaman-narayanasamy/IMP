@@ -72,7 +72,7 @@ ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 ######################
 # runtime parameters #
 ######################
-ENV PATH /home/imp/lib/FragGeneScan1.30:/home/lib/MaxBin-2.2.1:/home/imp/lib/pullseq/src:/home/imp/lib/Platypus_0.8.1:/home/imp/lib/megahit:/home/imp/lib/fastqc/FastQC:$PATH
+ENV PATH /home/imp/lib/FragGeneScan1.30:/home/imp/lib/MaxBin-2.2.1:/home/imp/lib/pullseq/src:/home/imp/lib/Platypus_0.8.1:/home/imp/lib/megahit:/home/imp/lib/fastqc/FastQC:$PATH
 ENV LD_LIBRARY_PATH /usr/local/lib/:/home/imp/lib/Platypus_0.8.1
 VOLUME ["/home/imp/data", "/home/imp/output", "/home/imp/databases", "/home/imp/code"]
 WORKDIR /home/imp/code
