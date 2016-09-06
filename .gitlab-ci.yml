@@ -4,15 +4,16 @@ variables:
     ROOT_DIR: "/home/imp/code"
     SRCDIR: "/home/imp/src"
     LIBDIR: "/home/imp/lib"
-    OUTPUTDIR: "$CI_PROJECT_DIR/test/output"
+    OUTPUTDIR: "$CI_PROJECT_DIR/testing/output"
     MG: "/input/mg.r1.fq /input/mg.r2.fq"
     MT: "/input/mt.r1.fq /input/mt.r2.fq"
     SAMPLE: "test"
-    DBPATH: "$CI_PROJECT_DIR/test/databases"
+    DBPATH: "$CI_PROJECT_DIR/testing/databases"
     IMP_SUDO: "sudo"
     THREADS: "4"
     MEMTOTAL: "8"
     MEMCORE: "2"
+    CONFIGFILE: "$CI_PROJECT_DIR/test/test.conf.json"
 
 init:
   stage: test
