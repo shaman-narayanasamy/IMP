@@ -8,7 +8,7 @@ variables:
     MG: "/input/mg.r1.fq /input/mg.r2.fq"
     MT: "/input/mt.r1.fq /input/mt.r2.fq"
     SAMPLE: "test"
-    DBPATH: "/databases"
+    DBPATH: "$CI_PROJECT_DIR/test/databases"
     IMP_SUDO: "sudo"
     THREADS: "4"
     MEMTOTAL: "8"
