@@ -31,7 +31,7 @@ RUN useradd -d /home/imp imp \
 
 RUN mkdir -p /home/imp/code /home/imp/output /home/imp/data /home/imp/bin /home/imp/databases \
     && cd /home/imp/code \
-    && git clone --branch 1.4 --single-branch https://git-r3lab.uni.lu/IMP/IMP.git . \
+    && git clone --branch 1.3 --single-branch https://git-r3lab.uni.lu/IMP/IMP.git . \
     && cd /usr && ln -s /home/imp/databases db
 
 
@@ -72,8 +72,7 @@ ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 ######################
 # runtime parameters #
 ######################
-ENV AMPHORA2_home /home/imp/lib/AMPHORA2  ###CHECK IF THIS IS CORRECT?
-ENV PATH /home/imp/lib/pullseq/src:/home/imp/lib/trinityrnaseq_r20140717:/home/imp/lib/Platypus_0.8.1:/home/imp/lib/megahit:/home/imp/lib/fastqc/FastQC:$PATH
+ENV PATH /home/imp/lib/pullseq/src:/home/imp/lib/Platypus_0.8.1:/home/imp/lib/megahit:/home/imp/lib/fastqc/FastQC:$PATH
 ENV LD_LIBRARY_PATH /usr/local/lib/:/home/imp/lib/Platypus_0.8.1
 VOLUME ["/home/imp/data", "/home/imp/output", "/home/imp/databases", "/home/imp/code"]
 WORKDIR /home/imp/code

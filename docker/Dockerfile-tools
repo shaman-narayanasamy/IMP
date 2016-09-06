@@ -229,3 +229,9 @@ RUN wget -c --no-check-certificate https://webdav-r3lab-server.uni.lu/public/R3l
     && mv FragGeneScan /usr/bin/. \
     && cd .. \
     && rm -rf FragGeneScan*
+
+RUN wget https://webdav-r3lab.uni.lu/public/R3lab/IMP/linux64.tbl2asn.gz -O /tmp/tbl2asn.gz \
+    && gzip -f -d /tmp/tbl2asn.gz \
+    && chmod +x /tmp/tbl2asn \
+    && mv /tmp/tbl2asn /usr/bin
+
