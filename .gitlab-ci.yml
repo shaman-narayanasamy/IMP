@@ -10,14 +10,13 @@ variables:
     SAMPLE: "test"
     DBPATH: "/databases"
     IMP_SUDO: "sudo"
-    THREADS: 4
-    MEMTOTAL: 8
-    MEMCORE: 2
+    THREADS: "4"
+    MEMTOTAL: "8"
+    MEMCORE: "2"
 
 init:
+  stage: test
   script:
-      stage: test
-      script:
-          ls /home/imp/
-          ls $CI_PROJECT_DIR
-          snakemake -s /home/imp/code/rules/ini/init
+    ls /home/imp/
+    ls $CI_PROJECT_DIR
+    snakemake -s /home/imp/code/rules/ini/init
