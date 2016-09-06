@@ -2,7 +2,7 @@ image: docker-r3lab.uni.lu/imp/imp:1.4
 
 variables:
     ROOT_DIR: "/home/imp/code"
-    SRCDIR: "/home/imp/src"
+    SRCDIR: "$CI_PROJECT_DIR"
     LIBDIR: "/home/imp/lib"
     OUTPUTDIR: "$CI_PROJECT_DIR/testing/output"
     MG: "/input/mg.r1.fq /input/mg.r2.fq"
