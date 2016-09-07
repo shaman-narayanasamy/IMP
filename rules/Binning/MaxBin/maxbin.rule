@@ -1,6 +1,6 @@
 rule maxbin:
     input:
-       "Analysis/%s.vizbin.filtered.fa" % ASS,
+       "Assembly/%s.assembly.merged.fa" % ASS,
        "Analysis/mg.assembly.contig_depth.txt"
     output:
        "Binning/MaxBin/maxbin_res.log"
@@ -10,8 +10,9 @@ rule maxbin:
         mkdir -p Binning/MaxBin
         
         ## Run MaxBin
-        perl run_maxbin -contigs {input[0]} \
+        run_MaxBin.pl -contig {input[0]} \
         -abund {input[1]} \
-        -out maxbin_res \
-        -thread {THREADS} 
+        -out Binning/MaxBin/maxbin_res \
+        -thread {THREADS} \
+        -min_contig_length {config[vizbin][cutoff]}
         """
