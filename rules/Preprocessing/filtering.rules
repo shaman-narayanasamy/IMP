@@ -25,6 +25,7 @@ ln -fs $(echo {input[1]} | cut -f 2 -d /) {output[1]} && touch -h {output[1]}
 ln -fs $(echo {input[2]} | cut -f 2 -d /) {output[2]} && touch -h {output[2]}
 """
 
+
 rule mg_filtering:
     input:
         'Preprocessing/mg.r1.trimmed.rna_filtered.fq',
