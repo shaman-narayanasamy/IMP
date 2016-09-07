@@ -20,7 +20,8 @@ init:
   script:
     - snakemake -nps $CI_PROJECT_DIR/rules/ini/init
 
-preprocessing:
+full-dag:
     stage: test
     script:
+      - wget https://webdav-r3lab.uni.lu/public/R3lab/IMP/test/db -O ~/databases
       - snakemake -nps $CI_PROJECT_DIR/Snakefile
