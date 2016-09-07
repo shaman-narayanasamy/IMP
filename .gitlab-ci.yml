@@ -23,5 +23,5 @@ init:
 full-dag:
     stage: test
     script:
-      - wget https://webdav-r3lab.uni.lu/public/R3lab/IMP/test/db -O ~/databases
+      - wget -r https://webdav-r3lab.uni.lu/public/R3lab/IMP/test/db -O ~/databases/.
       - snakemake -nps $CI_PROJECT_DIR/Snakefile
