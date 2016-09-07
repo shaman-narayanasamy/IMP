@@ -19,19 +19,10 @@ variables:
 stages:
   - dag
   - preprocessing
-  - download
   - assembly
   - analysis
   - binning
   - report
-
-get_preprocessed_files:
-  stage: download
-  script:
-    - mv /home/imp/preprocessed/* ${OUTPUTDIR}/Preprocessing/.
-  artifacts:
-    paths:
-      - ${OUTPUTDIR}/Preprocessing/*.preprocessed.fq
 
 init:
   stage: dag
@@ -169,10 +160,8 @@ assembly-mgmt-idba:
     stage: assembly
     variables:
         IMP_ASSEMBLER: "idba"
-    artifacts:
-      paths:
-        - ${OUTPUTDIR}
     script:
+      - cp /home/imp/preprocessed/* ${OUTPUTDIR}/Preprocessing/.
       - snakemake -s $CI_PROJECT_DIR/Snakefile assembly.done
 
 assembly-mgmt-megahit:
@@ -181,93 +170,78 @@ assembly-mgmt-megahit:
         OUTPUTDIR: "$CI_PROJECT_DIR/testing/megahit"
         IMP_ASSEMBLER: "megahit"
     script:
+      - cp /home/imp/preprocessed/* ${OUTPUTDIR}/Preprocessing/.
       - snakemake -s $CI_PROJECT_DIR/Snakefile assembly.done
 
 
 assembly-mg:
     stage: assembly
-    artifacts:
-      paths:
-        - ${OUTPUTDIR}
     variables:
         MG: "$CI_PROJECT_DIR/test/MG.R1.small.fq $CI_PROJECT_DIR/test/MG.R2.small.fq"
         MT: ""
         OUTPUTDIR: "$CI_PROJECT_DIR/testing/mg-only"
     script:
+      - cp /home/imp/preprocessed/* ${OUTPUTDIR}/Preprocessing/.
       - snakemake -s $CI_PROJECT_DIR/Snakefile assembly.done
 
 assembly-mt:
     stage: assembly
-    artifacts:
-      paths:
-        - ${OUTPUTDIR}
     variables:
         OUTPUTDIR: "$CI_PROJECT_DIR/testing/mt-only"
         MG: ""
         MT: "$CI_PROJECT_DIR/test/MT.R1.small.fq $CI_PROJECT_DIR/test/MT.R2.small.fq"
     script:
+      - cp /home/imp/preprocessed/* ${OUTPUTDIR}/Preprocessing/.
       - snakemake -s $CI_PROJECT_DIR/Snakefile assembly.done
 
 analysis-mgmt:
     stage: analysis
-    artifacts:
-      paths:
-        - ${OUTPUTDIR}
     script:
+      - cp /home/imp/preprocessed/* ${OUTPUTDIR}/Preprocessing/.
       - snakemake -s $CI_PROJECT_DIR/Snakefile analysis.done
 
 analysis-mg:
     stage: analysis
-    artifacts:
-      paths:
-        - ${OUTPUTDIR}
     variables:
         MG: "$CI_PROJECT_DIR/test/MG.R1.small.fq $CI_PROJECT_DIR/test/MG.R2.small.fq"
         MT: ""
         OUTPUTDIR: "$CI_PROJECT_DIR/testing/mg-only"
     script:
+      - cp /home/imp/preprocessed/* ${OUTPUTDIR}/Preprocessing/.
       - snakemake -s $CI_PROJECT_DIR/Snakefile analysis.done
 
 analysis-mt:
     stage: analysis
-    artifacts:
-      paths:
-        - ${OUTPUTDIR}
     variables:
         OUTPUTDIR: "$CI_PROJECT_DIR/testing/mt-only"
         MG: ""
         MT: "$CI_PROJECT_DIR/test/MT.R1.small.fq $CI_PROJECT_DIR/test/MT.R2.small.fq"
     script:
+      - cp /home/imp/preprocessed/* ${OUTPUTDIR}/Preprocessing/.
       - snakemake -s $CI_PROJECT_DIR/Snakefile analysis.done
 
 binning-mgmt:
     stage: binning
-    artifacts:
-      paths:
-        - ${OUTPUTDIR}
     script:
+      - cp /home/imp/preprocessed/* ${OUTPUTDIR}/Preprocessing/.
       - snakemake -s $CI_PROJECT_DIR/Snakefile binning.done
 
 binning-mg:
     stage: binning
-    artifacts:
-      paths:
-        - ${OUTPUTDIR}
     variables:
         MG: "$CI_PROJECT_DIR/test/MG.R1.small.fq $CI_PROJECT_DIR/test/MG.R2.small.fq"
         MT: ""
         OUTPUTDIR: "$CI_PROJECT_DIR/testing/mg-only"
     script:
+      - cp /home/imp/preprocessed/* ${OUTPUTDIR}/Preprocessing/.
       - snakemake -s $CI_PROJECT_DIR/Snakefile binning.done
 
 binning-mt:
     stage: binning
-    artifacts:
-      paths:
-        - ${OUTPUTDIR}
     variables:
         OUTPUTDIR: "$CI_PROJECT_DIR/testing/mt-only"
         MG: ""
         MT: "$CI_PROJECT_DIR/test/MT.R1.small.fq $CI_PROJECT_DIR/test/MT.R2.small.fq"
     script:
+      - cp /home/imp/preprocessed/* ${OUTPUTDIR}/Preprocessing/.
       - snakemake -s $CI_PROJECT_DIR/Snakefile binning.done
