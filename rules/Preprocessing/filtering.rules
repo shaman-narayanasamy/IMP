@@ -60,9 +60,9 @@ rule mt_filtering:
 
 rule symlink_mt_preprocessed_files:
     input:
-        'Preprocessing/mg.r1.trimmed.%s_filtered.fq' % config["filtering"]["filter"],
-        'Preprocessing/mg.r2.trimmed.%s_filtered.fq' % config["filtering"]["filter"],
-        'Preprocessing/mg.se.trimmed.%s_filtered.fq' % config["filtering"]["filter"]
+        'Preprocessing/mt.r1.trimmed.%s_filtered.fq' % config["filtering"]["filter"],
+        'Preprocessing/mt.r2.trimmed.%s_filtered.fq' % config["filtering"]["filter"],
+        'Preprocessing/mt.se.trimmed.%s_filtered.fq' % config["filtering"]["filter"]
     output:
         'Preprocessing/mt.r1.preprocessed.fq',
         'Preprocessing/mt.r2.preprocessed.fq',
@@ -72,9 +72,9 @@ rule symlink_mt_preprocessed_files:
 
 rule symlink_mg_preprocessed_files:
     input:
-        'Preprocessing/mt.r1.trimmed.rna_filtered.%s_filtered.fq' % config["filtering"]["filter"],
-        'Preprocessing/mt.r2.trimmed.rna_filtered.%s_filtered.fq' % config["filtering"]["filter"],
-        'Preprocessing/mt.se.trimmed.rna_filtered.%s_filtered.fq' % config["filtering"]["filter"]
+        'Preprocessing/mg.r1.trimmed.rna_filtered.%s_filtered.fq' % config["filtering"]["filter"],
+        'Preprocessing/mg.r2.trimmed.rna_filtered.%s_filtered.fq' % config["filtering"]["filter"],
+        'Preprocessing/mg.se.trimmed.rna_filtered.%s_filtered.fq' % config["filtering"]["filter"]
     output:
         'Preprocessing/mg.r1.preprocessed.fq',
         'Preprocessing/mg.r2.preprocessed.fq',
