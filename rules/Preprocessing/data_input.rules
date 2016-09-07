@@ -76,28 +76,48 @@ def datainput(wildcards):
 
 
 if config['skip_preprocessing']:
-    rule prepare_data_input:
+    rule prepare_mg_data:
         input:
-            datainput
+            MG
         output:
-            "Preprocessing/{type}.r1.fq",
-            "Preprocessing/{type}.r2.fq",
-            "Preprocessing/{type}.se.fq",
-            "Preprocessing/{type}.r1.preprocessed.fq",
-            "Preprocessing/{type}.r2.preprocessed.fq",
-            "Preprocessing/{type}.se.preprocessed.fq",
-        params:
-            type = '{wildcards.type}'
+            "Preprocessing/mg.r1.fq",
+            "Preprocessing/mg.r2.fq",
+            "Preprocessing/mg.se.fq",
+            "Preprocessing/mg.r1.preprocessed.fq",
+            "Preprocessing/mg.r2.preprocessed.fq",
+            "Preprocessing/mg.se.preprocessed.fq",
         run:
-            prepare_input_files(input, wildcards.type)
+            prepare_input_files(input, 'mg')
+
+    rule prepare_mt_data:
+        input:
+            MT
+        output:
+            "Preprocessing/mt.r1.fq",
+            "Preprocessing/mt.r2.fq",
+            "Preprocessing/mt.se.fq",
+            "Preprocessing/mt.r1.preprocessed.fq",
+            "Preprocessing/mt.r2.preprocessed.fq",
+            "Preprocessing/mt.se.preprocessed.fq",
+        run:
+            prepare_input_files(input, 'mg')
+
+
 else:
-    rule prepare_data_input:
+    rule prepare_mg_data:
         input:
-            datainput
+            MG
         output:
-            "Preprocessing/{type}.r1.fq",
-            "Preprocessing/{type}.r2.fq"
-        params:
-            type = '{wildcards.type}'
+            "Preprocessing/mg.r1.fq",
+            "Preprocessing/mg.r2.fq"
         run:
-            prepare_input_files(input, wildcards.type)
+            prepare_input_files(input, 'mg')
+
+    rule prepare_mt_data:
+        input:
+            MT
+        output:
+            "Preprocessing/mt.r1.fq",
+            "Preprocessing/mt.r2.fq"
+        run:
+            prepare_input_files(input, 'mt')
