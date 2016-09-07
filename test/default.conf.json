@@ -1,0 +1,19 @@
+{
+    "filtering": {
+        "filter": "chrM_human",
+       	"url": "http://hgdownload.cse.ucsc.edu/goldenPath/hg38/chromosomes/chrM.fa.gz"
+    },
+    "vizbin": {
+        "dimension": 5,
+        "perp": 1,
+        "cutoff": 100
+    },
+    "trimmomatic": {
+        "leading": 1,
+        "minlen": 1,
+        "window_size": 1,
+        "window_quality": 1,
+        "strictness": 0,
+        "target_length": 5
+   }
+}
