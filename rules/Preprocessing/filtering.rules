@@ -1,47 +1,4 @@
-input_filtering = {
-    'mg': [
-        'Preprocessing/mg.r1.trimmed.fq',
-        'Preprocessing/mg.r2.trimmed.fq',
-        'Preprocessing/mg.se.trimmed.fq'
-    ],
-    'mt': [
-        'Preprocessing/mt.r1.trimmed.rna_filtered.fq',
-        'Preprocessing/mt.r2.trimmed.rna_filtered.fq',
-        'Preprocessing/mt.se.trimmed.rna_filtered.fq'
-    ]
-}
-
-input_symlinking = {
-    'mg': [
-        'Preprocessing/mg.r1.trimmed.{filter}_filtered.fq',
-        'Preprocessing/mg.r2.trimmed.{filter}_filtered.fq',
-        'Preprocessing/mg.se.trimmed.{filter}_filtered.fq'
-    ],
-    'mt': [
-        'Preprocessing/mt.r1.trimmed.rna_filtered.{filter}_filtered.fq',
-        'Preprocessing/mt.r2.trimmed.rna_filtered.{filter}_filtered.fq',
-        'Preprocessing/mt.se.trimmed.rna_filtered.{filter}_filtered.fq'
-    ]
-}
-
-def filtering_input(wildcards):
-    if wildcards.type in TYPES:
-        return input_filtering[wildcards.type]
-    return "filtering-input-no-file-here"
-
-rule filtering:
-    input:
-        filtering_input,
-        '{dir}/{ref}.fa'.format(dir=DBPATH + "/filtering", ref=config['filtering']['filter']),
-        expand(
-            "{p}/filtering/{filter}.{ext}", filter=config["filtering"]["filter"],
-            ext=['fa', 'fa.amb', 'fa.ann', 'fa.bwt', 'fa.pac', 'fa.sa'], p=DBPATH)
-    output:
-        'Preprocessing/{type}.r1.{prefix}.{filter}_filtered.fq',
-        'Preprocessing/{type}.r2.{prefix}.{filter}_filtered.fq',
-        'Preprocessing/{type}.se.{prefix}.{filter}_filtered.fq'
-    shell:
-        """
+FILTERING_CMD = """
         TMP_FILE=$(mktemp --tmpdir={TMPDIR} -t "alignment_XXXXXX.bam")
         BUFFER=$(mktemp --tmpdir={TMPDIR} -t "alignment_XXXXXX.bam")
         bwa mem -v 1 -t {THREADS} {input[3]} {input[0]} {input[1]} | samtools view -@ {THREADS} -bS - > $TMP_FILE
@@ -62,12 +19,44 @@ rule filtering:
         rm -rf $BUFFER* $TMP_FILE
         """
 
-
 SYMLINK_CMD = """
 ln -fs $(echo {input[0]} | cut -f 2 -d /) {output[0]} && touch -h {output[0]}
 ln -fs $(echo {input[1]} | cut -f 2 -d /) {output[1]} && touch -h {output[1]}
 ln -fs $(echo {input[2]} | cut -f 2 -d /) {output[2]} && touch -h {output[2]}
 """
+
+rule mg_filtering:
+    input:
+        'Preprocessing/mt.r1.trimmed.rna_filtered.fq',
+        'Preprocessing/mt.r2.trimmed.rna_filtered.fq',
+        'Preprocessing/mt.se.trimmed.rna_filtered.fq',
+        '{dir}/{ref}.fa'.format(dir=DBPATH + "/filtering", ref=config['filtering']['filter']),
+        expand(
+            "{p}/filtering/{filter}.{ext}", filter=config["filtering"]["filter"],
+            ext=['fa', 'fa.amb', 'fa.ann', 'fa.bwt', 'fa.pac', 'fa.sa'], p=DBPATH)
+    output:
+        'Preprocessing/mg.r1.{prefix}.{filter}_filtered.fq',
+        'Preprocessing/mg.r2.{prefix}.{filter}_filtered.fq',
+        'Preprocessing/mg.se.{prefix}.{filter}_filtered.fq'
+    shell:
+        FILTERING_CMD
+
+rule mt_filtering:
+    input:
+        'Preprocessing/mt.r1.trimmed.fq',
+        'Preprocessing/mt.r2.trimmed.fq',
+        'Preprocessing/mt.se.trimmed.fq',
+        '{dir}/{ref}.fa'.format(dir=DBPATH + "/filtering", ref=config['filtering']['filter']),
+        expand(
+            "{p}/filtering/{filter}.{ext}", filter=config["filtering"]["filter"],
+            ext=['fa', 'fa.amb', 'fa.ann', 'fa.bwt', 'fa.pac', 'fa.sa'], p=DBPATH)
+    output:
+        'Preprocessing/mt.r1.{prefix}.{filter}_filtered.fq',
+        'Preprocessing/mt.r2.{prefix}.{filter}_filtered.fq',
+        'Preprocessing/mt.se.{prefix}.{filter}_filtered.fq'
+    shell:
+        FILTERING_CMD
+
 
 rule symlink_mt_preprocessed_files:
     input:
