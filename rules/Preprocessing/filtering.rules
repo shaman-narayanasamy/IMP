@@ -29,7 +29,7 @@ rule mg_filtering:
     input:
         'Preprocessing/mg.r1.trimmed.rna_filtered.fq',
         'Preprocessing/mg.r2.trimmed.rna_filtered.fq',
-        'Preprocessing/{type}.se.trimmed.rna_filtered.fq',
+        'Preprocessing/mg.se.trimmed.rna_filtered.fq',
         '{dir}/{ref}.fa'.format(dir=DBPATH + "/filtering", ref=config['filtering']['filter']),
         expand(
             "{p}/filtering/{filter}.{ext}", filter=config["filtering"]["filter"],
@@ -37,7 +37,7 @@ rule mg_filtering:
     output:
         'Preprocessing/mg.r1.{prefix}.%s_filtered.fq' % config["filtering"]["filter"],
         'Preprocessing/mg.r2.{prefix}.%s_filtered.fq' % config["filtering"]["filter"],
-        'Preprocessing/{type}.se.{prefix}.%s_filtered.fq' % config["filtering"]["filter"]
+        'Preprocessing/mg.se.{prefix}.%s_filtered.fq' % config["filtering"]["filter"]
     shell:
         FILTERING_CMD
 
