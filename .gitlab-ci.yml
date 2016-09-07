@@ -15,6 +15,9 @@ variables:
     MEMCORE: "2"
     CONFIGFILE: "$CI_PROJECT_DIR/test/test.conf.json"
 
+before_script:
+    - sudo apt-get update && sudo apt-get -yq install curl
+
 init:
   stage: test
   script:
