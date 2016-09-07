@@ -38,7 +38,7 @@ databases:
   script:
     - sudo apt-get update
     - sudo apt-get -yq install curl
-    - curl https://webdav-r3lab.uni.lu/public/R3lab/IMP/test/db.tgz | tar xzf -C $DBPATH --strip-components=1
+    - curl https://webdav-r3lab.uni.lu/public/R3lab/IMP/test/db.tgz | tar xz -C ${DBPATH} --strip-components=1
 
 init:
   stage: test_init
