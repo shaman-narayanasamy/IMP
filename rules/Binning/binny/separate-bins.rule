@@ -1,7 +1,7 @@
 rule binning_separate_bins:
     input:
         expand("Binning/contigs2clusters.{pk}.{nn}.tsv",pk=config["binning"]["pk"],nn=config["binning"]["nn"]),
-        "Assembly/mgmt.assembly.merged.fa",
+        "Assembly/%s.assembly.merged.fa" % ASS,
         "Binning/ORFS-contig_links.bed",
         "Analysis/annotation/{p}.faa".format(p=config['prokka']['prefix']),
         "Analysis/annotation/annotation.filt.gff"
