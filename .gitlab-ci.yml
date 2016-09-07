@@ -24,11 +24,11 @@ init:
 mgmt-preprocessing:
     stage: test
     script:
-      - mkdir -p ~/databases/filtering
-      - wget https://webdav-r3lab.uni.lu/public/R3lab/IMP/test/db/filtering/chrM_human.fa -O ~/databases/filtering/chrM_human.fa
-      - wget https://webdav-r3lab.uni.lu/public/R3lab/IMP/test/db/filtering/chrM_human.fa.amb -O ~/databases/filtering/chrM_human.fa.amb
-      - wget https://webdav-r3lab.uni.lu/public/R3lab/IMP/test/db/filtering/chrM_human.fa.ann -O ~/databases/filtering/chrM_human.fa.ann
-      - wget https://webdav-r3lab.uni.lu/public/R3lab/IMP/test/db/filtering/chrM_human.fa.bwt -O ~/databases/filtering/chrM_human.fa.bwt
-      - wget https://webdav-r3lab.uni.lu/public/R3lab/IMP/test/db/filtering/chrM_human.fa.pac -O ~/databases/filtering/chrM_human.fa.pac
-      - wget https://webdav-r3lab.uni.lu/public/R3lab/IMP/test/db/filtering/chrM_human.fa.sa -O ~/databases/filtering/chrM_human.fa.sa
+      - mkdir -p $DBPATH/filtering
+      - wget https://webdav-r3lab.uni.lu/public/R3lab/IMP/test/db/filtering/chrM_human.fa -O $DBPATH/filtering/chrM_human.fa
+      - wget https://webdav-r3lab.uni.lu/public/R3lab/IMP/test/db/filtering/chrM_human.fa.amb -O $DBPATH/filtering/chrM_human.fa.amb
+      - wget https://webdav-r3lab.uni.lu/public/R3lab/IMP/test/db/filtering/chrM_human.fa.ann -O $DBPATH/filtering/chrM_human.fa.ann
+      - wget https://webdav-r3lab.uni.lu/public/R3lab/IMP/test/db/filtering/chrM_human.fa.bwt -O $DBPATH/filtering/chrM_human.fa.bwt
+      - wget https://webdav-r3lab.uni.lu/public/R3lab/IMP/test/db/filtering/chrM_human.fa.pac -O $DBPATH/filtering/chrM_human.fa.pac
+      - wget https://webdav-r3lab.uni.lu/public/R3lab/IMP/test/db/filtering/chrM_human.fa.sa -O $DBPATH/filtering/chrM_human.fa.sa
       - snakemake -s $CI_PROJECT_DIR/Snakefile Preprocessing/mg.r1.preprocessed.fq Preprocessing/mg.r2.preprocessed.fq Preprocessing/mg.se.preprocessed.fq Preprocessing/mt.r1.preprocessed.fq Preprocessing/mt.r2.preprocessed.fq Preprocessing/mt.se.preprocessed.fq -np
