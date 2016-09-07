@@ -27,7 +27,6 @@ rule filter_rna:
             db=DBPATH)
     output:
         'Preprocessing/{type}.r1.trimmed.rna_filtered.fq',
-        'Preprocessing/{type}.r1.trimmed.rna_filtered.fq'
         'Preprocessing/{type}.r2.trimmed.rna_filtered.fq',
         'Preprocessing/{type}.se.trimmed.rna_filtered.fq',
         'Preprocessing/{type}.r1.trimmed.rna.fq',
