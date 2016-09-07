@@ -29,9 +29,6 @@ get_preprocessed_files:
   stage: download
   script:
     - mv /home/imp/preprocessed/* ${OUTPUTDIR}/Preprocessing/.
-  artifacts:
-    paths:
-      - ${OUTPUTDIR}
   cache:
     key: "$CI_BUILD_REF_NAME"
     untracked: true
