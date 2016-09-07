@@ -21,9 +21,15 @@ init:
   script:
     - snakemake -nps $CI_PROJECT_DIR/rules/ini/init
 
-full-dag:
+mgmt-preprocessing:
     stage: test
     script:
-      - sudo apt-get update && sudo apt-get -yq install curl
-      - curl https://webdav-r3lab.uni.lu/public/R3lab/IMP/test/db.tgz | tar xz -C ~/databases/. --strip-components=1
-      - snakemake -nps $CI_PROJECT_DIR/Snakefile
+      - mkdir -p ~/databases/filtering
+      - wget https://webdav-r3lab.uni.lu/public/R3lab/IMP/test/db/filtering/chr1_human.fa -O ~/databases/filtering/.
+      - https://webdav-r3lab.uni.lu/public/R3lab/IMP/test/db/filtering/chr1_human.fa -O ~/databases/filtering/.
+      - https://webdav-r3lab.uni.lu/public/R3lab/IMP/test/db/filtering/chr1_human.fa.amb -O ~/databases/filtering/.
+      - https://webdav-r3lab.uni.lu/public/R3lab/IMP/test/db/filtering/chr1_human.fa.ann -O ~/databases/filtering/.
+      - https://webdav-r3lab.uni.lu/public/R3lab/IMP/test/db/filtering/chr1_human.fa.bwt -O ~/databases/filtering/.
+      - https://webdav-r3lab.uni.lu/public/R3lab/IMP/test/db/filtering/chr1_human.fa.pac -O ~/databases/filtering/.
+      - https://webdav-r3lab.uni.lu/public/R3lab/IMP/test/db/filtering/chr1_human.fa.sa -O ~/databases/filtering/.
+      - snakemake -s $CI_PROJECT_DIR/Snakefile Preprocessing/mg.r1.preprocessed.fq Preprocessing/mg.r2.preprocessed.fq Preprocessing/mg.se.preprocessed.fq Preprocessing/mt.r1.preprocessed.fq Preprocessing/mt.r2.preprocessed.fq Preprocessing/mt.se.preprocessed.fq -np
