@@ -28,12 +28,7 @@ stages:
 get_preprocessed_files:
   stage: download
   script:
-    - wget -c https://webdav-r3lab.uni.lu/public/R3lab/IMP/test/mg.r1.preprocessed.fq -O ${OUTPUTDIR}/Preprocessing/mg.r1.preprocessed.fq
-    - wget -c https://webdav-r3lab.uni.lu/public/R3lab/IMP/test/mg.r2.preprocessed.fq -O ${OUTPUTDIR}/Preprocessing/mg.r2.preprocessed.fq
-    - wget -c https://webdav-r3lab.uni.lu/public/R3lab/IMP/test/mg.se.preprocessed.fq -O ${OUTPUTDIR}/Preprocessing/mg.se.preprocessed.fq
-    - wget -c https://webdav-r3lab.uni.lu/public/R3lab/IMP/test/mt.r1.preprocessed.fq -O ${OUTPUTDIR}/Preprocessing/mt.r1.preprocessed.fq
-    - wget -c https://webdav-r3lab.uni.lu/public/R3lab/IMP/test/mt.r2.preprocessed.fq -O ${OUTPUTDIR}/Preprocessing/mt.r2.preprocessed.fq
-    - wget -c https://webdav-r3lab.uni.lu/public/R3lab/IMP/test/mt.se.preprocessed.fq -O ${OUTPUTDIR}/Preprocessing/mt.se.preprocessed.fq
+    - mv /home/imp/preprocessed/* ${OUTPUTDIR}/Preprocessing/.
   artifacts:
     paths:
       - ${OUTPUTDIR}
