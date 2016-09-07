@@ -100,7 +100,7 @@ if config['skip_preprocessing']:
             "Preprocessing/mt.r2.preprocessed.fq",
             "Preprocessing/mt.se.preprocessed.fq",
         run:
-            prepare_input_files(input, 'mg')
+            prepare_input_files(input, 'mt')
 
 
 else:
