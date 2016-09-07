@@ -19,8 +19,8 @@ stages:
   - dag
   - preprocessing
   - assembly
-  - binning
   - analysis
+  - binning
   - report
 
 init:
@@ -111,6 +111,54 @@ mt:
         MT: "$CI_PROJECT_DIR/test/MT.R1.small.fq $CI_PROJECT_DIR/test/MT.R2.small.fq"
     script:
       - snakemake -s $CI_PROJECT_DIR/Snakefile assembly.done
+
+
+
+
+
+mgmt:
+    stage: analysis
+    artifacts:
+      paths:
+        - ${OUTPUTDIR}
+    script:
+      - snakemake -s $CI_PROJECT_DIR/Snakefile analysis.done
+
+mg:
+    stage: analysis
+    artifacts:
+      paths:
+        - ${OUTPUTDIR}
+    variables:
+        MG: "$CI_PROJECT_DIR/test/MG.R1.small.fq $CI_PROJECT_DIR/test/MG.R2.small.fq"
+        MT: ""
+        OUTPUTDIR: "$CI_PROJECT_DIR/testing/mg-only"
+    script:
+      - snakemake -s $CI_PROJECT_DIR/Snakefile analysis.done
+
+mt:
+    stage: analysis
+    artifacts:
+      paths:
+        - ${OUTPUTDIR}
+    variables:
+        OUTPUTDIR: "$CI_PROJECT_DIR/testing/mt-only"
+        MG: ""
+        MT: "$CI_PROJECT_DIR/test/MT.R1.small.fq $CI_PROJECT_DIR/test/MT.R2.small.fq"
+    script:
+      - snakemake -s $CI_PROJECT_DIR/Snakefile analysis.done
+
+
+
+
+
+
+
+
+
+
+
+
 
 mgmt:
     stage: binning
