@@ -1,4 +1,4 @@
-image: docker-r3lab.uni.lu/imp/imp-with:1.4
+image: docker-r3lab.uni.lu/imp/imp-with-db:1.4
 
 variables:
     ROOT_DIR: "/home/imp/code"
@@ -18,6 +18,7 @@ variables:
 stages:
   - dag
   - preprocessing
+  - assembly
 
 init:
   stage: dag
@@ -71,3 +72,35 @@ mgmt-no-filtering:
         CONFIGFILE: "$CI_PROJECT_DIR/test/no_filtering.conf.json"
     script:
       - snakemake -s $CI_PROJECT_DIR/Snakefile Preprocessing/mg.r1.preprocessed.fq Preprocessing/mg.r2.preprocessed.fq Preprocessing/mg.se.preprocessed.fq Preprocessing/mt.r1.preprocessed.fq Preprocessing/mt.r2.preprocessed.fq Preprocessing/mt.se.preprocessed.fq
+
+mgmt:
+    stage: assembly
+    artifacts:
+      paths:
+        - ${OUTPUTDIR}
+    script:
+      - snakemake -s $CI_PROJECT_DIR/Snakefile assembly.done
+
+mg:
+    stage: assembly
+    artifacts:
+      paths:
+        - ${OUTPUTDIR}
+    variables:
+        MG: "$CI_PROJECT_DIR/test/MG.R1.small.fq $CI_PROJECT_DIR/test/MG.R2.small.fq"
+        MT: ""
+        OUTPUTDIR: "$CI_PROJECT_DIR/testing/mg-only"
+    script:
+      - snakemake -s $CI_PROJECT_DIR/Snakefile assembly.done
+
+mt:
+    stage: assembly
+    artifacts:
+      paths:
+        - ${OUTPUTDIR}
+    variables:
+        OUTPUTDIR: "$CI_PROJECT_DIR/testing/mt-only"
+        MG: ""
+        MT: "$CI_PROJECT_DIR/test/MT.R1.small.fq $CI_PROJECT_DIR/test/MT.R2.small.fq"
+    script:
+      - snakemake -s $CI_PROJECT_DIR/Snakefile assembly.done
