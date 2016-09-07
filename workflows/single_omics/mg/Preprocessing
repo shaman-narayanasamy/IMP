@@ -7,7 +7,6 @@ include:
 # include only if user don't skip preprocessing
 if not config['skip_preprocessing']:
     # trimming rules
-    print('including trimming', TYPES)
     include:
         "../../../rules/Preprocessing/trimming.rules"
 

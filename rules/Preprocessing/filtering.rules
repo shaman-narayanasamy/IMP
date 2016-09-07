@@ -27,9 +27,9 @@ ln -fs $(echo {input[2]} | cut -f 2 -d /) {output[2]} && touch -h {output[2]}
 
 rule mg_filtering:
     input:
-        'Preprocessing/mt.r1.trimmed.rna_filtered.fq',
-        'Preprocessing/mt.r2.trimmed.rna_filtered.fq',
-        'Preprocessing/mt.se.trimmed.rna_filtered.fq',
+        'Preprocessing/mg.r1.trimmed.rna_filtered.fq',
+        'Preprocessing/mg.r2.trimmed.rna_filtered.fq',
+        'Preprocessing/mg.se.trimmed.rna_filtered.fq',
         '{dir}/{ref}.fa'.format(dir=DBPATH + "/filtering", ref=config['filtering']['filter']),
         expand(
             "{p}/filtering/{filter}.{ext}", filter=config["filtering"]["filter"],
