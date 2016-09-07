@@ -14,6 +14,7 @@ variables:
     MEMTOTAL: "8"
     MEMCORE: "2"
     CONFIGFILE: "$CI_PROJECT_DIR/test/default.conf.json"
+    IMP_ASSEMBLER: "idba"
 
 stages:
   - dag
@@ -80,13 +81,24 @@ mgmt-no-filtering:
     script:
       - snakemake -s $CI_PROJECT_DIR/Snakefile preprocessing.done
 
-assembly-mgmt:
+assembly-mgmt-idba:
     stage: assembly
+    variables:
+        IMP_ASSEMBLER: "idba"
     artifacts:
       paths:
         - ${OUTPUTDIR}
     script:
       - snakemake -s $CI_PROJECT_DIR/Snakefile assembly.done
+
+assembly-mgmt-megahit:
+    stage: assembly
+    variables:
+        OUTPUTDIR: "$CI_PROJECT_DIR/testing/megahit"
+        IMP_ASSEMBLER: "megahit"
+    script:
+      - snakemake -s $CI_PROJECT_DIR/Snakefile assembly.done
+
 
 assembly-mg:
     stage: assembly
