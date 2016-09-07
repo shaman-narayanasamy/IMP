@@ -1,4 +1,4 @@
-image: docker-r3lab.uni.lu/imp/imp-withdb:1.4
+image: docker-r3lab.uni.lu/imp/imp-with:1.4
 
 variables:
     ROOT_DIR: "/home/imp/code"
@@ -8,7 +8,7 @@ variables:
     MG: "$CI_PROJECT_DIR/test/MG.R1.small.fq $CI_PROJECT_DIR/test/MG.R2.small.fq"
     MT: "$CI_PROJECT_DIR/test/MT.R1.small.fq $CI_PROJECT_DIR/test/MT.R2.small.fq"
     SAMPLE: "test"
-    DBPATH: "/home/imp/databases"
+    DBPATH: "/home/imp/db"
     IMP_SUDO: "sudo"
     THREADS: "4"
     MEMTOTAL: "8"
@@ -16,13 +16,38 @@ variables:
     CONFIGFILE: "$CI_PROJECT_DIR/test/default.conf.json"
 
 stages:
-  - test_init
+  - dag
   - preprocessing
 
 init:
-  stage: test_init
+  stage: dag
   script:
     - snakemake -nps $CI_PROJECT_DIR/rules/ini/init
+
+preprocessing:
+  stage: dag
+  script:
+    - snakemake -np PREPROCESSING
+
+assembly:
+  stage: dag
+  script:
+    - snakemake -np ASSEMBLY
+
+binning:
+  stage: dag
+  script:
+    - snakemake -np BINNING
+
+analysis:
+  stage: dag
+  script:
+    - snakemake -np ANALYSIS
+
+report:
+  stage: dag
+  script:
+    - snakemake -np REPORT
 
 default:
     stage: preprocessing
