@@ -61,6 +61,8 @@ default:
 mgmt-no-preprocessing:
     stage: preprocessing
     variables:
+        MG: "$CI_PROJECT_DIR/test/MG.R1.small.fq $CI_PROJECT_DIR/test/MG.R2.small.fq $CI_PROJECT_DIR/test/MG.R2.small.fq"
+        MT: "$CI_PROJECT_DIR/test/MT.R1.small.fq $CI_PROJECT_DIR/test/MT.R2.small.fq $CI_PROJECT_DIR/test/MT.R2.small.fq"
         OUTPUTDIR: "$CI_PROJECT_DIR/testing/no-preprocessing"
         CONFIGFILE: "$CI_PROJECT_DIR/test/no_preprocessing.conf.json"
     script:
