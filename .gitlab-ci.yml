@@ -28,6 +28,9 @@ default:
     stage: preprocessing
     script:
       - snakemake -s $CI_PROJECT_DIR/Snakefile Preprocessing/mg.r1.preprocessed.fq Preprocessing/mg.r2.preprocessed.fq Preprocessing/mg.se.preprocessed.fq Preprocessing/mt.r1.preprocessed.fq Preprocessing/mt.r2.preprocessed.fq Preprocessing/mt.se.preprocessed.fq
+    artifacts:
+      paths:
+        - ${OUTPUTDIR}
 
 mgmt-no-preprocessing:
     stage: preprocessing
