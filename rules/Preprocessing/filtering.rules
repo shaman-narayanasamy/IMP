@@ -29,11 +29,6 @@ def filtering_input(wildcards):
         return input_filtering[wildcards.type]
     return "filtering-input-no-file-here"
 
-def symlink_input(wildcards):
-    if wildcards.type in TYPES:
-        return expand(input_symlinking[wildcards.type], filter=config["filtering"]["filter"])
-    return "symlink-input-no-file-here"
-
 rule filtering:
     input:
         filtering_input,
@@ -67,16 +62,33 @@ rule filtering:
         rm -rf $BUFFER* $TMP_FILE
         """
 
-rule symlink_preprocessed_files:
+
+SYMLINK_CMD = """
+ln -fs $(echo {input[0]} | cut -f 2 -d /) {output[0]} && touch -h {output[0]}
+ln -fs $(echo {input[1]} | cut -f 2 -d /) {output[1]} && touch -h {output[1]}
+ln -fs $(echo {input[2]} | cut -f 2 -d /) {output[2]} && touch -h {output[2]}
+"""
+
+rule symlink_mt_preprocessed_files:
     input:
-        symlink_input
+        'Preprocessing/mg.r1.trimmed.%s_filtered.fq' % config["filtering"]["filter"],
+        'Preprocessing/mg.r2.trimmed.%s_filtered.fq' % config["filtering"]["filter"],
+        'Preprocessing/mg.se.trimmed.%s_filtered.fq' % config["filtering"]["filter"]
     output:
-        'Preprocessing/{type}.r1.preprocessed.fq',
-        'Preprocessing/{type}.r2.preprocessed.fq',
-        'Preprocessing/{type}.se.preprocessed.fq'
+        'Preprocessing/mt.r1.preprocessed.fq',
+        'Preprocessing/mt.r2.preprocessed.fq',
+        'Preprocessing/mt.se.preprocessed.fq'
     shell:
-        """
-        ln -fs $(echo {input[0]} | cut -f 2 -d /) {output[0]} && touch -h {output[0]}
-        ln -fs $(echo {input[1]} | cut -f 2 -d /) {output[1]} && touch -h {output[1]}
-        ln -fs $(echo {input[2]} | cut -f 2 -d /) {output[2]} && touch -h {output[2]}
-        """
+        SYMLINK_CMD
+
+rule symlink_mg_preprocessed_files:
+    input:
+        'Preprocessing/mt.r1.trimmed.rna_filtered.%s_filtered.fq' % config["filtering"]["filter"],
+        'Preprocessing/mt.r2.trimmed.rna_filtered.%s_filtered.fq' % config["filtering"]["filter"],
+        'Preprocessing/mt.se.trimmed.rna_filtered.%s_filtered.fq' % config["filtering"]["filter"]
+    output:
+        'Preprocessing/mg.r1.preprocessed.fq',
+        'Preprocessing/mg.r2.preprocessed.fq',
+        'Preprocessing/mg.se.preprocessed.fq'
+    shell:
+        SYMLINK_CMD
