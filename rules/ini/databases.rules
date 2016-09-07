@@ -123,5 +123,4 @@ rule checkm_data:
         mkdir -p {DBPATH}/checkM
         tar -xvzf checkm_data.tgz -C {DBPATH}/checkM
         rm checkm_data.tgz
-        {IMP_SUDO} checkm data setRoot {DBPATH}/checkM
         """
