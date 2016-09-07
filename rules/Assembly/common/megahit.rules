@@ -18,6 +18,8 @@ megahit -1 {input[0]} \
 ln -fs $(echo {output[0]} | cut -f 2,3 -d /) {output[1]} && touch -h {output[1]}
 """
 
+print(TYPES, ASS)
+
 rule megahit_assembly_from_preprocessing:
     input:
         'Preprocessing/{type}.r1.preprocessed.fq',
