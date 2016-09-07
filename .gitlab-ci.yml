@@ -53,7 +53,7 @@ report:
 default:
     stage: preprocessing
     script:
-      - snakemake -s $CI_PROJECT_DIR/Snakefile Preprocessing/mg.r1.preprocessed.fq Preprocessing/mg.r2.preprocessed.fq Preprocessing/mg.se.preprocessed.fq Preprocessing/mt.r1.preprocessed.fq Preprocessing/mt.r2.preprocessed.fq Preprocessing/mt.se.preprocessed.fq
+      - snakemake -s $CI_PROJECT_DIR/Snakefile preprocessing.done
     artifacts:
       paths:
         - ${OUTPUTDIR}
@@ -61,17 +61,19 @@ default:
 mgmt-no-preprocessing:
     stage: preprocessing
     variables:
+        OUTPUTDIR: "$CI_PROJECT_DIR/testing/no-preprocessing"
         CONFIGFILE: "$CI_PROJECT_DIR/test/no_preprocessing.conf.json"
     script:
-      - snakemake -s $CI_PROJECT_DIR/Snakefile Preprocessing/mg.r1.preprocessed.fq Preprocessing/mg.r2.preprocessed.fq Preprocessing/mg.se.preprocessed.fq Preprocessing/mt.r1.preprocessed.fq Preprocessing/mt.r2.preprocessed.fq Preprocessing/mt.se.preprocessed.fq
+      - snakemake -s $CI_PROJECT_DIR/Snakefile preprocessing.done
 
 
 mgmt-no-filtering:
     stage: preprocessing
     variables:
+        OUTPUTDIR: "$CI_PROJECT_DIR/testing/no-filtering"
         CONFIGFILE: "$CI_PROJECT_DIR/test/no_filtering.conf.json"
     script:
-      - snakemake -s $CI_PROJECT_DIR/Snakefile Preprocessing/mg.r1.preprocessed.fq Preprocessing/mg.r2.preprocessed.fq Preprocessing/mg.se.preprocessed.fq Preprocessing/mt.r1.preprocessed.fq Preprocessing/mt.r2.preprocessed.fq Preprocessing/mt.se.preprocessed.fq
+      - snakemake -s $CI_PROJECT_DIR/Snakefile preprocessing.done
 
 mgmt:
     stage: assembly
