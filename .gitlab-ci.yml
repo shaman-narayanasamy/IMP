@@ -32,27 +32,43 @@ init:
 preprocessing:
   stage: dag
   script:
-    - snakemake -np PREPROCESSING
+    - snakemake -np preprocessing.done
+
+preprocessing-mt-only:
+  stage: dag
+  script:
+    - snakemake -np preprocessing.done
+    variables:
+        MT: "$CI_PROJECT_DIR/test/MT.R1.small.fq $CI_PROJECT_DIR/test/MT.R2.small.fq"
+        MG: ""
+
+preprocessing-mg-only:
+  stage: dag
+  script:
+    - snakemake -np preprocessing.done
+    variables:
+        MG: "$CI_PROJECT_DIR/test/MG.R1.small.fq $CI_PROJECT_DIR/test/MG.R2.small.fq"
+        MT: ""
 
 assembly:
   stage: dag
   script:
-    - snakemake -np ASSEMBLY
+    - snakemake -np assembly.done
 
 binning:
   stage: dag
   script:
-    - snakemake -np BINNING
+    - snakemake -np binning.done
 
 analysis:
   stage: dag
   script:
-    - snakemake -np ANALYSIS
+    - snakemake -np analysis.done
 
 report:
   stage: dag
   script:
-    - snakemake -np REPORT
+    - snakemake -np report.done
 
 mgmt-default-preprocessing:
     stage: preprocessing
