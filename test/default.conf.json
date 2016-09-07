@@ -8,6 +8,9 @@
         "perp": 1,
         "cutoff": 100
     },
+    "sortmerna": {
+        "mem": 1000
+    },
     "trimmomatic": {
         "leading": 1,
         "minlen": 1,
