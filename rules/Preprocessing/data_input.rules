@@ -69,12 +69,6 @@ data_input = {
 }
 
 
-def datainput(wildcards):
-    if wildcards.type in TYPES:
-        return data_input[wildcards.type]
-    return 'datainput-no-file-here'
-
-
 if config['skip_preprocessing']:
     if MG:
         rule prepare_mg_data:

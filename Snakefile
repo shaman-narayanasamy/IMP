@@ -13,7 +13,6 @@ elif MT:
     TYPES = ['mt']
     ASS = 'mt'
 
-print(TYPES)
 
 workdir:
     OUTPUTDIR
