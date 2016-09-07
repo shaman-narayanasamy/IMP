@@ -45,7 +45,7 @@ rule mt_filtering:
     input:
         'Preprocessing/mt.r1.trimmed.fq',
         'Preprocessing/mt.r2.trimmed.fq',
-        'Preprocessing/{type}.se.trimmed.fq',
+        'Preprocessing/mt.se.trimmed.fq',
         '{dir}/{ref}.fa'.format(dir=DBPATH + "/filtering", ref=config['filtering']['filter']),
         expand(
             "{p}/filtering/{filter}.{ext}", filter=config["filtering"]["filter"],
@@ -53,7 +53,7 @@ rule mt_filtering:
     output:
         'Preprocessing/mt.r1.{prefix}.%s_filtered.fq' % config["filtering"]["filter"],
         'Preprocessing/mt.r2.{prefix}.%s_filtered.fq'% config["filtering"]["filter"] ,
-        'Preprocessing/{type}.se.{prefix}.%s_filtered.fq' % config["filtering"]["filter"]
+        'Preprocessing/mt.se.{prefix}.%s_filtered.fq' % config["filtering"]["filter"]
     shell:
         FILTERING_CMD
 
@@ -62,11 +62,11 @@ rule symlink_mt_preprocessed_files:
     input:
         'Preprocessing/mt.r1.trimmed.%s_filtered.fq' % config["filtering"]["filter"],
         'Preprocessing/mt.r2.trimmed.%s_filtered.fq' % config["filtering"]["filter"],
-        'Preprocessing/{type}.se.trimmed.%s_filtered.fq' % config["filtering"]["filter"]
+        'Preprocessing/mt.se.trimmed.%s_filtered.fq' % config["filtering"]["filter"]
     output:
         'Preprocessing/mt.r1.preprocessed.fq',
         'Preprocessing/mt.r2.preprocessed.fq',
-        'Preprocessing/{type}.se.preprocessed.fq'
+        'Preprocessing/mt.se.preprocessed.fq'
     shell:
         SYMLINK_CMD
 
@@ -74,10 +74,10 @@ rule symlink_mg_preprocessed_files:
     input:
         'Preprocessing/mg.r1.trimmed.rna_filtered.%s_filtered.fq' % config["filtering"]["filter"],
         'Preprocessing/mg.r2.trimmed.rna_filtered.%s_filtered.fq' % config["filtering"]["filter"],
-        'Preprocessing/{type}.se.trimmed.rna_filtered.%s_filtered.fq' % config["filtering"]["filter"]
+        'Preprocessing/mg.se.trimmed.rna_filtered.%s_filtered.fq' % config["filtering"]["filter"]
     output:
         'Preprocessing/mg.r1.preprocessed.fq',
         'Preprocessing/mg.r2.preprocessed.fq',
-        'Preprocessing/{type}.se.preprocessed.fq'
+        'Preprocessing/mg.se.preprocessed.fq'
     shell:
         SYMLINK_CMD
