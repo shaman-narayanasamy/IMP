@@ -4,10 +4,9 @@ variables:
     ROOT_DIR: "/home/imp/code"
     SRCDIR: "$CI_PROJECT_DIR"
     LIBDIR: "/home/imp/lib"
-    INPUTDIR: "/input"
     OUTPUTDIR: "$CI_PROJECT_DIR/testing/output"
-    MG: "/input/mg.r1.fq /input/mg.r2.fq"
-    MT: "/input/mt.r1.fq /input/mt.r2.fq"
+    MG: "$CI_PROJECT_DIR/test/mg.r1.fq $CI_PROJECT_DIR/test/mg.r2.fq"
+    MT: "$CI_PROJECT_DIR/test/mt.r1.fq $CI_PROJECT_DIR/test/mt.r2.fq"
     SAMPLE: "test"
     DBPATH: "$CI_PROJECT_DIR/testing/databases"
     IMP_SUDO: "sudo"
@@ -24,7 +23,7 @@ cache:
 
 stages:
   - inputs
-  - init
+  - test_init
   - preprocessing
 
 databases:
@@ -37,26 +36,12 @@ databases:
     paths:
       - ${DBPATH}
   script:
-    - apt-get update
-    - apt-get -yq install curl
-    - curl https://webdav-r3lab.uni.lu/public/R3lab/IMP/test/db.tgz | tar xzf -C $DBPATH --strip-components=1
-
-raw_data:
-  stage: inputs
-  cache:
-    key: ${CI_BUILD_REF_NAME}
-    paths:
-      - ${INPUTDIR}
-  artifacts:
-    paths:
-      - ${INPUTDIR}
-  script:
-    - apt-get update
-    - apt-get -yq install curl
+    - sudo apt-get update
+    - sudo apt-get -yq install curl
     - curl https://webdav-r3lab.uni.lu/public/R3lab/IMP/test/db.tgz | tar xzf -C $DBPATH --strip-components=1
 
 init:
-  stage: init
+  stage: test_init
   script:
     - snakemake -nps $CI_PROJECT_DIR/rules/ini/init
 
