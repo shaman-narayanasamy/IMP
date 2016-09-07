@@ -65,7 +65,7 @@ mgmt-default-preprocessing:
 mg-default-preprocessing:
     stage: preprocessing
     variables:
-        MG: "$CI_PROJECT_DIR/test/MG.R1.small.fq $CI_PROJECT_DIR/test/MG.R2.small.fq $CI_PROJECT_DIR/test/MG.R2.small.fq"
+        MG: "$CI_PROJECT_DIR/test/MG.R1.small.fq $CI_PROJECT_DIR/test/MG.R2.small.fq"
         MT: ""
         OUTPUTDIR: "$CI_PROJECT_DIR/testing/mg-default-preprocessing"
     script:
@@ -74,7 +74,7 @@ mg-default-preprocessing:
 mt-default-preprocessing:
     stage: preprocessing
     variables:
-        MT: "$CI_PROJECT_DIR/test/MT.R1.small.fq $CI_PROJECT_DIR/test/MT.R2.small.fq $CI_PROJECT_DIR/test/MT.R2.small.fq"
+        MT: "$CI_PROJECT_DIR/test/MT.R1.small.fq $CI_PROJECT_DIR/test/MT.R2.small.fq"
         MG: ""
         OUTPUTDIR: "$CI_PROJECT_DIR/testing/mt-default-preprocessing"
     script:
@@ -124,7 +124,7 @@ mg-no-filtering:
     variables:
         OUTPUTDIR: "$CI_PROJECT_DIR/testing/mgno-filtering"
         CONFIGFILE: "$CI_PROJECT_DIR/test/no_filtering.conf.json"
-        MG: "$CI_PROJECT_DIR/test/MG.R1.small.fq $CI_PROJECT_DIR/test/MG.R2.small.fq $CI_PROJECT_DIR/test/MG.R2.small.fq"
+        MG: "$CI_PROJECT_DIR/test/MG.R1.small.fq $CI_PROJECT_DIR/test/MG.R2.small.fq"
         MT: ""
     script:
       - snakemake -s $CI_PROJECT_DIR/Snakefile preprocessing.done
@@ -134,7 +134,7 @@ mt-no-filtering:
     variables:
         OUTPUTDIR: "$CI_PROJECT_DIR/testing/mtno-filtering"
         CONFIGFILE: "$CI_PROJECT_DIR/test/no_filtering.conf.json"
-        MT: "$CI_PROJECT_DIR/test/MT.R1.small.fq $CI_PROJECT_DIR/test/MT.R2.small.fq $CI_PROJECT_DIR/test/MT.R2.small.fq"
+        MT: "$CI_PROJECT_DIR/test/MT.R1.small.fq $CI_PROJECT_DIR/test/MT.R2.small.fq"
         MG: ""
     script:
       - snakemake -s $CI_PROJECT_DIR/Snakefile preprocessing.done
