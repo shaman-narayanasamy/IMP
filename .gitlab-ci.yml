@@ -81,6 +81,47 @@ mgmt-no-filtering:
     script:
       - snakemake -s $CI_PROJECT_DIR/Snakefile preprocessing.done
 
+mg-no-preprocessing:
+    stage: preprocessing
+    variables:
+        MG: "$CI_PROJECT_DIR/test/MG.R1.small.fq $CI_PROJECT_DIR/test/MG.R2.small.fq $CI_PROJECT_DIR/test/MG.R2.small.fq"
+        MT: ""
+        OUTPUTDIR: "$CI_PROJECT_DIR/testing/no-preprocessing"
+        CONFIGFILE: "$CI_PROJECT_DIR/test/no_preprocessing.conf.json"
+    script:
+      - snakemake -s $CI_PROJECT_DIR/Snakefile preprocessing.done
+
+mt-no-preprocessing:
+    stage: preprocessing
+    variables:
+        MT: "$CI_PROJECT_DIR/test/MT.R1.small.fq $CI_PROJECT_DIR/test/MT.R2.small.fq $CI_PROJECT_DIR/test/MT.R2.small.fq"
+        MG: ""
+        OUTPUTDIR: "$CI_PROJECT_DIR/testing/no-preprocessing"
+        CONFIGFILE: "$CI_PROJECT_DIR/test/no_preprocessing.conf.json"
+    script:
+      - snakemake -s $CI_PROJECT_DIR/Snakefile preprocessing.done
+
+mg-no-filtering:
+    stage: preprocessing
+    variables:
+        OUTPUTDIR: "$CI_PROJECT_DIR/testing/mgno-filtering"
+        CONFIGFILE: "$CI_PROJECT_DIR/test/no_filtering.conf.json"
+        MG: "$CI_PROJECT_DIR/test/MG.R1.small.fq $CI_PROJECT_DIR/test/MG.R2.small.fq $CI_PROJECT_DIR/test/MG.R2.small.fq"
+        MT: ""
+    script:
+      - snakemake -s $CI_PROJECT_DIR/Snakefile preprocessing.done
+
+mt-no-filtering:
+    stage: preprocessing
+    variables:
+        OUTPUTDIR: "$CI_PROJECT_DIR/testing/mtno-filtering"
+        CONFIGFILE: "$CI_PROJECT_DIR/test/no_filtering.conf.json"
+        MT: "$CI_PROJECT_DIR/test/MT.R1.small.fq $CI_PROJECT_DIR/test/MT.R2.small.fq $CI_PROJECT_DIR/test/MT.R2.small.fq"
+        MG: ""
+    script:
+      - snakemake -s $CI_PROJECT_DIR/Snakefile preprocessing.done
+
+
 assembly-mgmt-idba:
     stage: assembly
     variables:
