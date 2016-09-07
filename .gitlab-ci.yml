@@ -15,8 +15,6 @@ variables:
     MEMCORE: "2"
     CONFIGFILE: "$CI_PROJECT_DIR/test/test.conf.json"
 
-before_script:
-    - sudo apt-get update && sudo apt-get -yq install curl
 
 init:
   stage: test
@@ -26,5 +24,6 @@ init:
 full-dag:
     stage: test
     script:
+      - sudo apt-get update && sudo apt-get -yq install curl
       - curl https://webdav-r3lab.uni.lu/public/R3lab/IMP/test/db.tgz | tar xz -C ~/databases/. --strip-components=1
       - snakemake -nps $CI_PROJECT_DIR/Snakefile
