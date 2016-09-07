@@ -21,9 +21,8 @@ if not config['skip_preprocessing']:
 # master command
 rule PREPROCESSING:
     input:
-        expand([
-        'Preprocessing/{type}.r1.preprocessed.fq',
-        'Preprocessing/{type}.r2.preprocessed.fq',
-        'Preprocessing/{type}.se.preprocessed.fq'], type=TYPES)
+        'Preprocessing/mg.r1.preprocessed.fq',
+        'Preprocessing/mg.r2.preprocessed.fq',
+        'Preprocessing/mg.se.preprocessed.fq'
     output:
         touch('preprocessing.done')
