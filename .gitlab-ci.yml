@@ -80,7 +80,7 @@ mgmt-no-filtering:
     script:
       - snakemake -s $CI_PROJECT_DIR/Snakefile preprocessing.done
 
-mgmt:
+assembly-mgmt:
     stage: assembly
     artifacts:
       paths:
@@ -88,7 +88,7 @@ mgmt:
     script:
       - snakemake -s $CI_PROJECT_DIR/Snakefile assembly.done
 
-mg:
+assembly-mg:
     stage: assembly
     artifacts:
       paths:
@@ -100,7 +100,7 @@ mg:
     script:
       - snakemake -s $CI_PROJECT_DIR/Snakefile assembly.done
 
-mt:
+assembly-mt:
     stage: assembly
     artifacts:
       paths:
@@ -112,11 +112,7 @@ mt:
     script:
       - snakemake -s $CI_PROJECT_DIR/Snakefile assembly.done
 
-
-
-
-
-mgmt:
+analysis-mgmt:
     stage: analysis
     artifacts:
       paths:
@@ -124,7 +120,7 @@ mgmt:
     script:
       - snakemake -s $CI_PROJECT_DIR/Snakefile analysis.done
 
-mg:
+analysis-mg:
     stage: analysis
     artifacts:
       paths:
@@ -136,7 +132,7 @@ mg:
     script:
       - snakemake -s $CI_PROJECT_DIR/Snakefile analysis.done
 
-mt:
+analysis-mt:
     stage: analysis
     artifacts:
       paths:
@@ -148,19 +144,7 @@ mt:
     script:
       - snakemake -s $CI_PROJECT_DIR/Snakefile analysis.done
 
-
-
-
-
-
-
-
-
-
-
-
-
-mgmt:
+binning-mgmt:
     stage: binning
     artifacts:
       paths:
@@ -168,7 +152,7 @@ mgmt:
     script:
       - snakemake -s $CI_PROJECT_DIR/Snakefile binning.done
 
-mg:
+binning-mg:
     stage: binning
     artifacts:
       paths:
@@ -180,7 +164,7 @@ mg:
     script:
       - snakemake -s $CI_PROJECT_DIR/Snakefile binning.done
 
-mt:
+binning-mt:
     stage: binning
     artifacts:
       paths:
