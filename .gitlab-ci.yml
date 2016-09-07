@@ -1,4 +1,4 @@
-image: docker-r3lab.uni.lu/imp/imp:1.4
+image: docker-r3lab.uni.lu/imp/imp-withdb:1.4
 
 variables:
     ROOT_DIR: "/home/imp/code"
@@ -8,36 +8,16 @@ variables:
     MG: "$CI_PROJECT_DIR/test/mg.r1.fq $CI_PROJECT_DIR/test/mg.r2.fq"
     MT: "$CI_PROJECT_DIR/test/mt.r1.fq $CI_PROJECT_DIR/test/mt.r2.fq"
     SAMPLE: "test"
-    DBPATH: "$CI_PROJECT_DIR/testing/databases"
+    DBPATH: "/home/imp/databases"
     IMP_SUDO: "sudo"
     THREADS: "4"
     MEMTOTAL: "8"
     MEMCORE: "2"
     CONFIGFILE: "$CI_PROJECT_DIR/test/default.conf.json"
 
-cache:
-  key: "$CI_BUILD_NAME"
-  untracked: true
-  paths:
-    - $DBPATH
-
 stages:
-  - inputs
   - test_init
   - preprocessing
-
-databases:
-  stage: inputs
-  cache:
-    key: ${CI_BUILD_REF_NAME}
-    paths:
-      - ${DBPATH}
-  artifacts:
-    paths:
-      - ${DBPATH}
-  script:
-    - mkdir -p ${DBPATH}
-    - wget -qO - https://webdav-r3lab.uni.lu/public/R3lab/IMP/test/db.tgz | tar xz -C ${DBPATH} --strip-components=1
 
 init:
   stage: test_init
@@ -47,14 +27,14 @@ init:
 default:
     stage: preprocessing
     script:
-      - snakemake -s $CI_PROJECT_DIR/Snakefile Preprocessing/mg.r1.preprocessed.fq Preprocessing/mg.r2.preprocessed.fq Preprocessing/mg.se.preprocessed.fq Preprocessing/mt.r1.preprocessed.fq Preprocessing/mt.r2.preprocessed.fq Preprocessing/mt.se.preprocessed.fq -np
+      - snakemake -s $CI_PROJECT_DIR/Snakefile Preprocessing/mg.r1.preprocessed.fq Preprocessing/mg.r2.preprocessed.fq Preprocessing/mg.se.preprocessed.fq Preprocessing/mt.r1.preprocessed.fq Preprocessing/mt.r2.preprocessed.fq Preprocessing/mt.se.preprocessed.fq
 
 mgmt-no-preprocessing:
     stage: preprocessing
     variables:
         CONFIGFILE: "$CI_PROJECT_DIR/test/no_preprocessing.conf.json"
     script:
-      - snakemake -s $CI_PROJECT_DIR/Snakefile Preprocessing/mg.r1.preprocessed.fq Preprocessing/mg.r2.preprocessed.fq Preprocessing/mg.se.preprocessed.fq Preprocessing/mt.r1.preprocessed.fq Preprocessing/mt.r2.preprocessed.fq Preprocessing/mt.se.preprocessed.fq -np
+      - snakemake -s $CI_PROJECT_DIR/Snakefile Preprocessing/mg.r1.preprocessed.fq Preprocessing/mg.r2.preprocessed.fq Preprocessing/mg.se.preprocessed.fq Preprocessing/mt.r1.preprocessed.fq Preprocessing/mt.r2.preprocessed.fq Preprocessing/mt.se.preprocessed.fq
 
 
 mgmt-no-filtering:
@@ -62,4 +42,4 @@ mgmt-no-filtering:
     variables:
         CONFIGFILE: "$CI_PROJECT_DIR/test/no_filtering.conf.json"
     script:
-      - snakemake -s $CI_PROJECT_DIR/Snakefile Preprocessing/mg.r1.preprocessed.fq Preprocessing/mg.r2.preprocessed.fq Preprocessing/mg.se.preprocessed.fq Preprocessing/mt.r1.preprocessed.fq Preprocessing/mt.r2.preprocessed.fq Preprocessing/mt.se.preprocessed.fq -np
+      - snakemake -s $CI_PROJECT_DIR/Snakefile Preprocessing/mg.r1.preprocessed.fq Preprocessing/mg.r2.preprocessed.fq Preprocessing/mg.se.preprocessed.fq Preprocessing/mt.r1.preprocessed.fq Preprocessing/mt.r2.preprocessed.fq Preprocessing/mt.se.preprocessed.fq
