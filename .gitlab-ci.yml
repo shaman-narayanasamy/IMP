@@ -141,7 +141,7 @@ a-mgmt-megahit:
     stage: assembly
     script:
         - mkdir -p $CI_PROJECT_DIR/output-mgmt-megahit/Preprocessing
-        - cp -a /mnt/data/input/assembly-megahit/* $CI_PROJECT_DIR/output-mgmt-megahit/Preprocessing/.
+        - cp /mnt/data/input/assembly-megahit/* $CI_PROJECT_DIR/output-mgmt-megahit/Preprocessing/.
         - ./IMP -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -m $CI_PROJECT_DIR/test/MG.R1.small.fq -a megahit -m $CI_PROJECT_DIR/test/MG.R2.small.fq -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mgmt-megahit --current "snakemake assembly.done"
 
 a-mg-megahit:
