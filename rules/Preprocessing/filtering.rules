@@ -36,9 +36,9 @@ rule mg_filtering:
             "{p}/filtering/{filter}.{ext}", filter=config["filtering"]["filter"],
             ext=['fa', 'fa.amb', 'fa.ann', 'fa.bwt', 'fa.pac', 'fa.sa'], p=DBPATH)
     output:
-        'Preprocessing/mg.r1.{prefix}.%s_filtered.fq' % config["filtering"]["filter"],
-        'Preprocessing/mg.r2.{prefix}.%s_filtered.fq' % config["filtering"]["filter"],
-        'Preprocessing/mg.se.{prefix}.%s_filtered.fq' % config["filtering"]["filter"]
+        'Preprocessing/mg.r1.%s_filtered.fq' % config["filtering"]["filter"],
+        'Preprocessing/mg.r2.%s_filtered.fq' % config["filtering"]["filter"],
+        'Preprocessing/mg.se.%s_filtered.fq' % config["filtering"]["filter"]
     shell:
         FILTERING_CMD
 
@@ -73,9 +73,9 @@ rule symlink_mt_preprocessed_files:
 
 rule symlink_mg_preprocessed_files:
     input:
-        'Preprocessing/mg.r1.trimmed.rna_filtered.%s_filtered.fq' % config["filtering"]["filter"],
-        'Preprocessing/mg.r2.trimmed.rna_filtered.%s_filtered.fq' % config["filtering"]["filter"],
-        'Preprocessing/mg.se.trimmed.rna_filtered.%s_filtered.fq' % config["filtering"]["filter"]
+        'Preprocessing/mg.r1.trimmed.%s_filtered.fq' % config["filtering"]["filter"],
+        'Preprocessing/mg.r2.trimmed.%s_filtered.fq' % config["filtering"]["filter"],
+        'Preprocessing/mg.se.trimmed.%s_filtered.fq' % config["filtering"]["filter"]
     output:
         'Preprocessing/mg.r1.preprocessed.fq',
         'Preprocessing/mg.r2.preprocessed.fq',
