@@ -18,5 +18,11 @@
         "window_quality": 1,
         "strictness": 0,
         "target_length": 5
+   },
+   "idba_ud": {
+       "mink": 10,
+       "maxk": 30,
+       "step": 10,
+       "perid": 0.98
    }
 }
