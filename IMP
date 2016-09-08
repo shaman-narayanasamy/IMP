@@ -355,13 +355,14 @@ def _call(cmd, container_name):
     print("Executing", '"', cmd, '"')
     try:
         p = subprocess.Popen(cmd, shell=True)
-        return p.wait()
+        p.wait()
+        return p.returncode
     except KeyboardInterrupt:
         print('Killing container...')
         k = subprocess.Popen("docker kill %s" % container_name, shell=True)
         k.wait()
         print('Terminated')
-        p.terminate()
+        return p.terminate()
 
 if __name__ == '__main__':
     check_installation()
