@@ -356,7 +356,8 @@ def _call(cmd, container_name):
     try:
         p = subprocess.Popen(cmd, shell=True)
         p.wait()
-        p.check_returncode()
+        if p.returncode != 0:
+            raise Exception()
     except KeyboardInterrupt:
         print('Killing container...')
         k = subprocess.Popen("docker kill %s" % container_name, shell=True)
