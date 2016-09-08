@@ -356,6 +356,8 @@ def _call(cmd, container_name):
     try:
         p = subprocess.Popen(cmd, shell=True)
         p.wait()
+        print('EXXECUTED')
+        print(p.returncode)
         return p.returncode
     except KeyboardInterrupt:
         print('Killing container...')
