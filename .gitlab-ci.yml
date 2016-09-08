@@ -13,22 +13,13 @@ dag-mgmt:
   stage: dag
   script:
     - ./test/scripts/mgmt-dag.sh
-  artifacts:
-    paths:
-        - ${CI_PROJECT_DIR}/output/*.pdf
 
 dag-mg:
   stage: dag
   script:
     - ./test/scripts/mg-dag.sh
-  artifacts:
-    paths:
-        - ${CI_PROJECT_DIR}/output-mg/*.pdf
 
 dag-mt:
   stage: dag
   script:
     - ./test/scripts/mt-dag.sh
-  artifacts:
-    paths:
-        - ${CI_PROJECT_DIR}/output-mt/*.pdf
