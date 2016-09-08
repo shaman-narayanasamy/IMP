@@ -2,10 +2,10 @@ stages:
   - dag
   - preprocessing
   - assembly
-  - init
+  - manual
 
 databases:
-    stage: init
+    stage: manual
     when: manual
     script:
         - ./test/scripts/init.sh
@@ -113,21 +113,27 @@ p-mt-np:
 
 
 a-mgmt-idba:
-    stage: assembly
+    stage: manual
+    when: manual
     script:
         - mkdir -p $CI_PROJECT_DIR/output-mgmt-idba/Preprocessing
-        - cp /mnt/data/input/*.preprocessed.fq $CI_PROJECT_DIR/output-mgmt-idba/Preprocessing
         - cp /mnt/data/input/mg.r1.150000.preprocessed.fq $CI_PROJECT_DIR/output-mgmt-idba/Preprocessing/mg.r1.preprocessed.fq
         - cp /mnt/data/input/mg.r2.150000.preprocessed.fq $CI_PROJECT_DIR/output-mgmt-idba/Preprocessing/mg.r2.preprocessed.fq
         - cp /mnt/data/input/mg.se.150000.preprocessed.fq $CI_PROJECT_DIR/output-mgmt-idba/Preprocessing/mg.se.preprocessed.fq
+        - cp /mnt/data/input/mt.r1.150000.preprocessed.fq $CI_PROJECT_DIR/output-mgmt-idba/Preprocessing/mt.r1.preprocessed.fq
+        - cp /mnt/data/input/mt.r2.150000.preprocessed.fq $CI_PROJECT_DIR/output-mgmt-idba/Preprocessing/mt.r2.preprocessed.fq
+        - cp /mnt/data/input/mt.se.150000.preprocessed.fq $CI_PROJECT_DIR/output-mgmt-idba/Preprocessing/mt.se.preprocessed.fq
+
         - ./IMP -m $CI_PROJECT_DIR/test/MG.R1.small.fq -a idba -m $CI_PROJECT_DIR/test/MG.R2.small.fq -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mgmt-idba --current "snakemake assembly.done"
 
 a-mgmt-megahit:
     stage: assembly
     script:
         - mkdir -p $CI_PROJECT_DIR/output-mgmt-megahit/Preprocessing
-        - cp /mnt/data/input/*.preprocessed.fq $CI_PROJECT_DIR/output-mgmt-megahit/Preprocessing
         - cp /mnt/data/input/mg.r1.25000.preprocessed.fq $CI_PROJECT_DIR/output-mgmt-megahit/Preprocessing/mg.r1.preprocessed.fq
         - cp /mnt/data/input/mg.r2.25000.preprocessed.fq $CI_PROJECT_DIR/output-mgmt-megahit/Preprocessing/mg.r2.preprocessed.fq
         - cp /mnt/data/input/mg.se.25000.preprocessed.fq $CI_PROJECT_DIR/output-mgmt-megahit/Preprocessing/mg.se.preprocessed.fq
+        - cp /mnt/data/input/mt.r1.25000.preprocessed.fq $CI_PROJECT_DIR/output-mgmt-megahit/Preprocessing/mt.r1.preprocessed.fq
+        - cp /mnt/data/input/mt.r2.25000.preprocessed.fq $CI_PROJECT_DIR/output-mgmt-megahit/Preprocessing/mt.r2.preprocessed.fq
+        - cp /mnt/data/input/mt.se.25000.preprocessed.fq $CI_PROJECT_DIR/output-mgmt-megahit/Preprocessing/mt.se.preprocessed.fq
         - ./IMP -m $CI_PROJECT_DIR/test/MG.R1.small.fq -a megahit -m $CI_PROJECT_DIR/test/MG.R2.small.fq -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mgmt-megahit --current "snakemake assembly.done"
