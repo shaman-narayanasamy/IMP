@@ -1,7 +1,7 @@
 rule maxbin:
     input:
        "Assembly/%s.assembly.merged.fa" % ASS,
-       "Analysis/mg.assembly.contig_depth.txt"
+       "Analysis/%s.assembly.contig_depth.txt" % ASS
     output:
        "Binning/MaxBin/maxbin_res.log"
     shell:
