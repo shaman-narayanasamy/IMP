@@ -136,12 +136,12 @@ RUN cd /home/imp/tmp \
 
 
 ## Install KronaPlot
-RUN cd /home/imp/tmp \
+RUN cd /home/imp/lib \
     && wget --no-check-certificate https://webdav-r3lab.uni.lu/public/R3lab/IMP/KronaTools-2.5.tar -nv \
     && tar -xvf KronaTools-2.5.tar \
     && cd KronaTools-2.5 \
     && perl install.pl \
-    && cd /home/imp/tmp && rm -rf *
+    && cd /home/imp/lib && rm -rf KronaTools-2.5.tar
 
 
 ## htslib
