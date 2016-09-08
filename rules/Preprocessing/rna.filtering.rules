@@ -10,28 +10,28 @@ sortmerna --ref {params.ref} --reads $TMP_R12.fq --fastx --aligned $TMP_R12.rrna
 --other $TMP_R12.rrna_filt -a {THREADS} --paired_in -m {params.mem}
 {config[sortmerna][scripts_path]}/unmerge-paired-reads.sh $TMP_R12.rrna.fq {output[3]} {output[4]}
 {config[sortmerna][scripts_path]}/unmerge-paired-reads.sh $TMP_R12.rrna_filt.fq {output[0]} {output[1]}
-sortmerna --ref {ref} --reads {input[2]} --fastx --aligned Preprocessing/{wildcards.type}.se.trimmed.rna \
---other Preprocessing/{wildcards.type}.se.trimmed.rna_filtered -a {THREADS} -m {params.mem}
+sortmerna --ref {ref} --reads {input[2]} --fastx --aligned Preprocessing/mt.se.trimmed.rna \
+--other Preprocessing/mt.se.trimmed.rna_filtered -a {THREADS} -m {params.mem}
 rm $TMP_R12*
 """
 
 rule filter_rna:
     input:
-        'Preprocessing/{type}.r1.trimmed.fq',
-        'Preprocessing/{type}.r2.trimmed.fq',
-        'Preprocessing/{type}.se.trimmed.fq',
+        'Preprocessing/mt.r1.trimmed.fq',
+        'Preprocessing/mt.r2.trimmed.fq',
+        'Preprocessing/mt.se.trimmed.fq',
         expand(
             "{db}/sortmerna/idx/{files}.{ext}",
             files=config["sortmerna"]["files"],
             ext=['bursttrie_0.dat', 'kmer_0.dat', 'pos_0.dat', 'stats'],
             db=DBPATH)
     output:
-        'Preprocessing/{type}.r1.trimmed.rna_filtered.fq',
-        'Preprocessing/{type}.r2.trimmed.rna_filtered.fq',
-        'Preprocessing/{type}.se.trimmed.rna_filtered.fq',
-        'Preprocessing/{type}.r1.trimmed.rna.fq',
-        'Preprocessing/{type}.r2.trimmed.rna.fq',
-        'Preprocessing/{type}.se.trimmed.rna.fq',
+        'Preprocessing/mt.r1.trimmed.rna_filtered.fq',
+        'Preprocessing/mt.r2.trimmed.rna_filtered.fq',
+        'Preprocessing/mt.se.trimmed.rna_filtered.fq',
+        'Preprocessing/mt.r1.trimmed.rna.fq',
+        'Preprocessing/mt.r2.trimmed.rna.fq',
+        'Preprocessing/mt.se.trimmed.rna.fq',
     params:
         ref = ref, mem = str(config["sortmerna"]["mem"])
     shell:
