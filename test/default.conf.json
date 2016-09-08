@@ -21,7 +21,7 @@
    },
    "idba_ud": {
        "mink": 15,
-       "maxk": 30,
+       "maxk": 33,
        "step": 10,
        "perid": 0.50
    }
