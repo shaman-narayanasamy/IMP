@@ -23,7 +23,7 @@ dag-mgmt-nf:
 dag-mgmt-np:
   stage: dag
   script:
-      - ./IMP -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -c $CI_PROJECT_DIR/test/no_preprocessing.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output --current "snakemake -n"
+      - ./IMP -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -m $CI_PROJECT_DIR/test/MG.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -c $CI_PROJECT_DIR/test/no_preprocessing.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output --current "snakemake -n"
 
 
 dag-mg-default:
@@ -39,7 +39,7 @@ dag-mg-nf:
 dag-mg-np:
   stage: dag
   script:
-      - ./IMP -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -c $CI_PROJECT_DIR/test/no_preprocessing.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mg --current "snakemake -n"
+      - ./IMP -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -m $CI_PROJECT_DIR/test/MG.R1.small.fq -c $CI_PROJECT_DIR/test/no_preprocessing.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mg --current "snakemake -n"
 
 
 dag-mt-default:
@@ -50,7 +50,7 @@ dag-mt-default:
 dag-mt-np:
   stage: dag
   script:
-    - ./IMP -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -c $CI_PROJECT_DIR/test/no_filtering.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mt --current "snakemake -n"
+    - ./IMP -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -t $CI_PROJECT_DIR/test/MT.R1.small.fq -c $CI_PROJECT_DIR/test/no_filtering.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mt --current "snakemake -n"
 
 dag-mt-nf:
   stage: dag
@@ -73,7 +73,7 @@ p-mgmt-nf:
 p-mgmt-np:
     stage: preprocessing
     script:
-        - ./IMP -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -c $CI_PROJECT_DIR/test/no_preprocessing.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-np --current "snakemake preprocessing.done"
+        - ./IMP -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -m $CI_PROJECT_DIR/test/MG.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -t $CI_PROJECT_DIR/test/MT.R1.small.fq -c $CI_PROJECT_DIR/test/no_preprocessing.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-np --current "snakemake preprocessing.done"
 
 
 p-mg-default:
@@ -91,7 +91,7 @@ p-mg-nf:
 p-mg-np:
     stage: preprocessing
     script:
-        - ./IMP -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -c $CI_PROJECT_DIR/test/no_preprocessing.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mg --current "snakemake preprocessing.done"
+        - ./IMP -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -m $CI_PROJECT_DIR/test/MG.R1.small.fq -c $CI_PROJECT_DIR/test/no_preprocessing.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mg --current "snakemake preprocessing.done"
 
 
 p-mt-default:
@@ -109,7 +109,7 @@ p-mt-nf:
 p-mt-np:
     stage: preprocessing
     script:
-        - ../IMP -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -c $CI_PROJECT_DIR/test/no_preprocessing.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mt-nf --current "snakemake preprocessing.done"
+        - ../IMP -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -t $CI_PROJECT_DIR/test/MT.R1.small.fq -c $CI_PROJECT_DIR/test/no_preprocessing.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mt-nf --current "snakemake preprocessing.done"
 
 
 a-mgmt-idba:
