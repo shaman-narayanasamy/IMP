@@ -20,7 +20,7 @@
         "target_length": 5
    },
    "idba_ud": {
-       "mink": 10,
+       "mink": 15,
        "maxk": 30,
        "step": 10,
        "perid": 0.50
