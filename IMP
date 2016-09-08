@@ -319,9 +319,7 @@ def run(args):
     else:
         # put default command if not specified
         if not args['COMMANDS']:
-            args['COMMANDS'] = ['snakemake', 'ALL']
-        # add the workflow file
-        args['COMMANDS'] = ['-s', workflow_file] + args['COMMANDS']
+            args['COMMANDS'] = ['snakemake', '-s', workflow_file, 'ALL']
         cmd += args['COMMANDS']
         cmd = ' '.join(cmd)
         # cmd = ' '.join(cmd) + map_user(' '.join(args['COMMANDS']), '{cont_out}')
