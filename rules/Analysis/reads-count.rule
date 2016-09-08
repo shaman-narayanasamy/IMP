@@ -24,8 +24,8 @@ def reads_input_files(wildcards):
     base = raw_fq_files
     if not config['skip_preprocessing']:
         base += preprocessed_fq_files
-    if config['preprocessing_filtering']:
-        base += trimmed_fq_files
+        if config['preprocessing_filtering']:
+            base += trimmed_fq_files
     if wildcards.type == 'mt' and not config['skip_preprocessing']:
         base += rna_filtered_fq_mt_files
     return expand(base, type=wildcards.type)
