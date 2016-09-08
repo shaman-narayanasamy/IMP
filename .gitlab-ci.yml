@@ -30,6 +30,16 @@ p-mgmt:
     script:
         - ./test/scripts/mgmt-p.sh
 
+p-mgmt-nf:
+    stage: preprocessing
+    script:
+        - ./test/scripts/mgmt-p-nf.sh
+
+p-mgmt-np:
+    stage: preprocessing
+    script:
+        - ./test/scripts/mgmt-p-np.sh
+
 p-mg:
     stage: preprocessing
     script:
