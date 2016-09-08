@@ -14,10 +14,30 @@ databases:
         - ./test/script/init.sh
 
 
-init:
+dag-mgmt:
   stage: dag
   script:
-    - snakemake -nps $CI_PROJECT_DIR/rules/ini/init
+    - ./test/script/mgmt-dag.sh
+  artifacts:
+    path:
+        - ${CI_PROJECT_DIR}/output/*.pdf
+
+dag-mg:
+  stage: dag
+  script:
+    - ./test/script/mg-dag.sh
+  artifacts:
+    path:
+        - ${CI_PROJECT_DIR}/output-mg/*.pdf
+
+dag-mt:
+  stage: dag
+  script:
+    - ./test/script/mt-dag.sh
+  artifacts:
+    path:
+        - ${CI_PROJECT_DIR}/output-mt/*.pdf
+
 
 preprocessing:
   stage: dag
