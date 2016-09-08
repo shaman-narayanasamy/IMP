@@ -1,5 +1,6 @@
 stages:
   - dag
+  - preprocessing
   - init
 
 databases:
@@ -23,3 +24,18 @@ dag-mt:
   stage: dag
   script:
     - ./test/scripts/mt-dag.sh
+
+p-mgmt:
+    stage: preprocessing
+    script:
+        - ./test/scripts/mgmt-p.sh
+
+p-mg:
+    stage: preprocessing
+    script:
+        - ./test/scripts/mg-p.sh
+
+p-mt:
+    stage: preprocessing
+    script:
+        - ./test/scripts/mt-p.sh
