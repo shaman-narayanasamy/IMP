@@ -118,12 +118,7 @@ a-mgmt-idba:
     when: manual
     script:
         - mkdir -p $CI_PROJECT_DIR/output-mgmt-idba/Preprocessing
-        - cp /mnt/data/input/preprocessed/mg.r1.150000.preprocessed.fq $CI_PROJECT_DIR/output-mgmt-idba/Preprocessing/mg.r1.preprocessed.fq
-        - cp /mnt/data/input/preprocessed/mg.r2.150000.preprocessed.fq $CI_PROJECT_DIR/output-mgmt-idba/Preprocessing/mg.r2.preprocessed.fq
-        - cp /mnt/data/input/preprocessed/mg.se.150000.preprocessed.fq $CI_PROJECT_DIR/output-mgmt-idba/Preprocessing/mg.se.preprocessed.fq
-        - cp /mnt/data/input/preprocessed/mt.r1.150000.preprocessed.fq $CI_PROJECT_DIR/output-mgmt-idba/Preprocessing/mt.r1.preprocessed.fq
-        - cp /mnt/data/input/preprocessed/mt.r2.150000.preprocessed.fq $CI_PROJECT_DIR/output-mgmt-idba/Preprocessing/mt.r2.preprocessed.fq
-        - cp /mnt/data/input/preprocessed/mt.se.150000.preprocessed.fq $CI_PROJECT_DIR/output-mgmt-idba/Preprocessing/mt.se.preprocessed.fq
+        - cp -a /mnt/data/input/assembly-idba/* $CI_PROJECT_DIR/output-mgmt-idba/Preprocessing/.
         - ./IMP -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -m $CI_PROJECT_DIR/test/MG.R1.small.fq -a idba -m $CI_PROJECT_DIR/test/MG.R2.small.fq -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mgmt-idba --current "snakemake assembly.done"
 
 a-mg-idba:
@@ -131,9 +126,7 @@ a-mg-idba:
     when: manual
     script:
         - mkdir -p $CI_PROJECT_DIR/output-mg-idba/Preprocessing
-        - cp /mnt/data/input/preprocessed/mg.r1.150000.preprocessed.fq $CI_PROJECT_DIR/output-mg-idba/Preprocessing/mg.r1.preprocessed.fq
-        - cp /mnt/data/input/preprocessed/mg.r2.150000.preprocessed.fq $CI_PROJECT_DIR/output-mg-idba/Preprocessing/mg.r2.preprocessed.fq
-        - cp /mnt/data/input/preprocessed/mg.se.150000.preprocessed.fq $CI_PROJECT_DIR/output-mg-idba/Preprocessing/mg.se.preprocessed.fq
+        - cp -a /mnt/data/input/assembly-idba/mg* $CI_PROJECT_DIR/output-mgmt-idba/Preprocessing/.
         - ./IMP -m $CI_PROJECT_DIR/test/MG.R1.small.fq -a idba -m $CI_PROJECT_DIR/test/MG.R2.small.fq -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mg-idba --current "snakemake assembly.done"
 
 a-mt-idba:
@@ -141,64 +134,47 @@ a-mt-idba:
     when: manual
     script:
         - mkdir -p $CI_PROJECT_DIR/output-mt-idba/Preprocessing
-        - cp /mnt/data/input/preprocessed/mt.r1.150000.preprocessed.fq $CI_PROJECT_DIR/output-mt-idba/Preprocessing/mt.r1.preprocessed.fq
-        - cp /mnt/data/input/preprocessed/mt.r2.150000.preprocessed.fq $CI_PROJECT_DIR/output-mt-idba/Preprocessing/mt.r2.preprocessed.fq
-        - cp /mnt/data/input/preprocessed/mt.se.150000.preprocessed.fq $CI_PROJECT_DIR/output-mt-idba/Preprocessing/mt.se.preprocessed.fq
+        - cp -a /mnt/data/input/assembly-idba/mt* $CI_PROJECT_DIR/output-mgmt-idba/Preprocessing/.
         - ./IMP -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -a idba -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mt-idba --current "snakemake assembly.done"
 
 a-mgmt-megahit:
     stage: assembly
     script:
         - mkdir -p $CI_PROJECT_DIR/output-mgmt-megahit/Preprocessing
-        - cp /mnt/data/input/preprocessed/mg.r1.25000.preprocessed.fq $CI_PROJECT_DIR/output-mgmt-megahit/Preprocessing/mg.r1.preprocessed.fq
-        - cp /mnt/data/input/preprocessed/mg.r2.25000.preprocessed.fq $CI_PROJECT_DIR/output-mgmt-megahit/Preprocessing/mg.r2.preprocessed.fq
-        - cp /mnt/data/input/preprocessed/mg.se.25000.preprocessed.fq $CI_PROJECT_DIR/output-mgmt-megahit/Preprocessing/mg.se.preprocessed.fq
-        - cp /mnt/data/input/preprocessed/mt.r1.25000.preprocessed.fq $CI_PROJECT_DIR/output-mgmt-megahit/Preprocessing/mt.r1.preprocessed.fq
-        - cp /mnt/data/input/preprocessed/mt.r2.25000.preprocessed.fq $CI_PROJECT_DIR/output-mgmt-megahit/Preprocessing/mt.r2.preprocessed.fq
-        - cp /mnt/data/input/preprocessed/mt.se.25000.preprocessed.fq $CI_PROJECT_DIR/output-mgmt-megahit/Preprocessing/mt.se.preprocessed.fq
+        - cp -a /mnt/data/input/assembly-megahit/* $CI_PROJECT_DIR/output-mgmt-idba/Preprocessing/.
         - ./IMP -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -m $CI_PROJECT_DIR/test/MG.R1.small.fq -a megahit -m $CI_PROJECT_DIR/test/MG.R2.small.fq -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mgmt-megahit --current "snakemake assembly.done"
 
 a-mg-megahit:
     stage: assembly
     script:
         - mkdir -p $CI_PROJECT_DIR/output-mg-megahit/Preprocessing
-        - cp /mnt/data/input/preprocessed/mg.r1.25000.preprocessed.fq $CI_PROJECT_DIR/output-mg-megahit/Preprocessing/mg.r1.preprocessed.fq
-        - cp /mnt/data/input/preprocessed/mg.r2.25000.preprocessed.fq $CI_PROJECT_DIR/output-mg-megahit/Preprocessing/mg.r2.preprocessed.fq
-        - cp /mnt/data/input/preprocessed/mg.se.25000.preprocessed.fq $CI_PROJECT_DIR/output-mg-megahit/Preprocessing/mg.se.preprocessed.fq
+        - cp -a /mnt/data/input/assembly-megahit/mg* $CI_PROJECT_DIR/output-mgmt-idba/Preprocessing/.
         - ./IMP -m $CI_PROJECT_DIR/test/MG.R1.small.fq -a megahit -m $CI_PROJECT_DIR/test/MG.R2.small.fq -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mg-megahit --current "snakemake assembly.done"
 
 a-mt-megahit:
     stage: assembly
     script:
         - mkdir -p $CI_PROJECT_DIR/output-mt-megahit/Preprocessing
-        - cp /mnt/data/input/preprocessed/mt.r1.25000.preprocessed.fq $CI_PROJECT_DIR/output-mt-megahit/Preprocessing/mt.r1.preprocessed.fq
-        - cp /mnt/data/input/preprocessed/mt.r2.25000.preprocessed.fq $CI_PROJECT_DIR/output-mt-megahit/Preprocessing/mt.r2.preprocessed.fq
-        - cp /mnt/data/input/preprocessed/mt.se.25000.preprocessed.fq $CI_PROJECT_DIR/output-mt-megahit/Preprocessing/mt.se.preprocessed.fq
+        - cp -a /mnt/data/input/assembly-megahit/mt* $CI_PROJECT_DIR/output-mgmt-idba/Preprocessing/.
         - ./IMP -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -a megahit -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mt-megahit --current "snakemake assembly.done"
 
 an-mgmt:
     stage: analysis
     script:
         - mkdir -p $CI_PROJECT_DIR/output-mgmt/Assembly
-        - cp /mnt/data/input/assembly-mgmt/mg.reads.sorted.bam* $CI_PROJECT_DIR/output-mgmt/Assembly
-        - cp /mnt/data/input/assembly-mgmt/mt.reads.sorted.bam* $CI_PROJECT_DIR/output-mgmt/Assembly
-        - cp /mnt/data/input/assembly-mgmt/mgmt.assembly.merged.fa* $CI_PROJECT_DIR/output-mgmt/Assembly
+        - cp -a /mnt/data/input/analysis-mgmt/* $CI_PROJECT_DIR/output-mgmt/.
         - ./IMP -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mgmt --current "snakemake analysis.done"
 
 an-mg:
     stage: analysis
     script:
         - mkdir -p $CI_PROJECT_DIR/output-mg/Assembly
-        - cp /mnt/data/input/assembly-mgmt/mg.reads.sorted.bam* $CI_PROJECT_DIR/output-mgmt/Assembly
-        - cp /mnt/data/input/assembly-mgmt/mt.reads.sorted.bam* $CI_PROJECT_DIR/output-mgmt/Assembly
-        - cp /mnt/data/input/assembly-mgmt/mgmt.assembly.merged.fa* $CI_PROJECT_DIR/output-mgmt/Assembly
+        - cp -a /mnt/data/input/analysis-mgmt/* $CI_PROJECT_DIR/output-mg/.
         - ./IMP -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mgmt --current "snakemake analysis.done"
 
 an-mt:
     stage: analysis
     script:
         - mkdir -p $CI_PROJECT_DIR/output-mt/Assembly
-        - cp /mnt/data/input/assembly-mgmt/mg.reads.sorted.bam* $CI_PROJECT_DIR/output-mgmt/Assembly
-        - cp /mnt/data/input/assembly-mgmt/mt.reads.sorted.bam* $CI_PROJECT_DIR/output-mgmt/Assembly
-        - cp /mnt/data/input/assembly-mgmt/mgmt.assembly.merged.fa* $CI_PROJECT_DIR/output-mgmt/Assembly
+        - cp -a /mnt/data/input/analysis-mgmt/* $CI_PROJECT_DIR/output-mt/.
         - ./IMP -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mgmt --current "snakemake analysis.done"
