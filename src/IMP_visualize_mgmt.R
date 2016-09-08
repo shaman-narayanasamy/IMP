@@ -462,6 +462,7 @@ print("DONE: Incorporating VizBin data")
 ####################################################################
 ## ASSEMBLY STATISTICS AND VISUALIZATIONS
 ####################################################################
+pdf(NULL)
 print("START: Visualizing")
 ## Output filtering statistics table (text and tsv)
 
@@ -708,6 +709,7 @@ gB <- ggplotGrob(vb.MTcov)
 
 gB$widhts <- gA$widths
 grid.newpage()
+
 
 png(name_plot("IMP-vizbin_standard.png"), width=plotWidth, height=plotHeight)
 vb.std
