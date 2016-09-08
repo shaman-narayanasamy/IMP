@@ -1,5 +1,11 @@
 image: docker-r3lab.uni.lu/imp/imp-with-db:1.4
 
+
+# TODO change pipelines
+# preprocessing is fine
+# we should copy all the data from a successful run in the image
+# and test all function one by one
+
 variables:
     ROOT_DIR: "/home/imp/code"
     SRCDIR: "$CI_PROJECT_DIR"
@@ -161,6 +167,7 @@ assembly-mgmt-idba:
     variables:
         IMP_ASSEMBLER: "idba"
     script:
+      - mkdir -p ${OUTPUTDIR}/Preprocessing
       - cp /home/imp/preprocessed/* ${OUTPUTDIR}/Preprocessing/.
       - snakemake -s $CI_PROJECT_DIR/Snakefile assembly.done
 
@@ -170,6 +177,7 @@ assembly-mgmt-megahit:
         OUTPUTDIR: "$CI_PROJECT_DIR/testing/megahit"
         IMP_ASSEMBLER: "megahit"
     script:
+      - mkdir -p ${OUTPUTDIR}/Preprocessing
       - cp /home/imp/preprocessed/* ${OUTPUTDIR}/Preprocessing/.
       - snakemake -s $CI_PROJECT_DIR/Snakefile assembly.done
 
@@ -181,6 +189,7 @@ assembly-mg:
         MT: ""
         OUTPUTDIR: "$CI_PROJECT_DIR/testing/mg-only"
     script:
+      - mkdir -p ${OUTPUTDIR}/Preprocessing
       - cp /home/imp/preprocessed/* ${OUTPUTDIR}/Preprocessing/.
       - snakemake -s $CI_PROJECT_DIR/Snakefile assembly.done
 
@@ -191,13 +200,13 @@ assembly-mt:
         MG: ""
         MT: "$CI_PROJECT_DIR/test/MT.R1.small.fq $CI_PROJECT_DIR/test/MT.R2.small.fq"
     script:
+      - mkdir -p ${OUTPUTDIR}/Preprocessing
       - cp /home/imp/preprocessed/* ${OUTPUTDIR}/Preprocessing/.
       - snakemake -s $CI_PROJECT_DIR/Snakefile assembly.done
 
 analysis-mgmt:
     stage: analysis
     script:
-      - cp /home/imp/preprocessed/* ${OUTPUTDIR}/Preprocessing/.
       - snakemake -s $CI_PROJECT_DIR/Snakefile analysis.done
 
 analysis-mg:
@@ -207,7 +216,6 @@ analysis-mg:
         MT: ""
         OUTPUTDIR: "$CI_PROJECT_DIR/testing/mg-only"
     script:
-      - cp /home/imp/preprocessed/* ${OUTPUTDIR}/Preprocessing/.
       - snakemake -s $CI_PROJECT_DIR/Snakefile analysis.done
 
 analysis-mt:
@@ -217,13 +225,11 @@ analysis-mt:
         MG: ""
         MT: "$CI_PROJECT_DIR/test/MT.R1.small.fq $CI_PROJECT_DIR/test/MT.R2.small.fq"
     script:
-      - cp /home/imp/preprocessed/* ${OUTPUTDIR}/Preprocessing/.
       - snakemake -s $CI_PROJECT_DIR/Snakefile analysis.done
 
 binning-mgmt:
     stage: binning
     script:
-      - cp /home/imp/preprocessed/* ${OUTPUTDIR}/Preprocessing/.
       - snakemake -s $CI_PROJECT_DIR/Snakefile binning.done
 
 binning-mg:
@@ -233,7 +239,6 @@ binning-mg:
         MT: ""
         OUTPUTDIR: "$CI_PROJECT_DIR/testing/mg-only"
     script:
-      - cp /home/imp/preprocessed/* ${OUTPUTDIR}/Preprocessing/.
       - snakemake -s $CI_PROJECT_DIR/Snakefile binning.done
 
 binning-mt:
@@ -243,5 +248,4 @@ binning-mt:
         MG: ""
         MT: "$CI_PROJECT_DIR/test/MT.R1.small.fq $CI_PROJECT_DIR/test/MT.R2.small.fq"
     script:
-      - cp /home/imp/preprocessed/* ${OUTPUTDIR}/Preprocessing/.
       - snakemake -s $CI_PROJECT_DIR/Snakefile binning.done
