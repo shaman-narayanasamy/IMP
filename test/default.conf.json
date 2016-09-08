@@ -23,6 +23,6 @@
        "mink": 10,
        "maxk": 30,
        "step": 10,
-       "perid": 0.98
+       "perid": 0.50
    }
 }
