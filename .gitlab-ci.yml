@@ -18,6 +18,7 @@ dag-mgmt:
   stage: dag
   script:
     - ./test/script/mgmt-dag.sh
+  when: always
   artifacts:
     paths:
         - ${CI_PROJECT_DIR}/output/*.pdf
@@ -26,6 +27,7 @@ dag-mg:
   stage: dag
   script:
     - ./test/script/mg-dag.sh
+  when: manual
   artifacts:
     paths:
         - ${CI_PROJECT_DIR}/output-mg/*.pdf
