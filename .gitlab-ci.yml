@@ -1,6 +1,7 @@
 stages:
   - dag
   - preprocessing
+  - assembly
   - init
 
 databases:
