@@ -129,7 +129,7 @@ a-mg-idba:
     stage: manual
     when: manual
     script:
-        - mkdir -p $CI_PROJECT_DIR/output-mgmt-idba/Preprocessing
+        - mkdir -p $CI_PROJECT_DIR/output-mg-idba/Preprocessing
         - cp /mnt/data/input/mg.r1.150000.preprocessed.fq $CI_PROJECT_DIR/output-mg-idba/Preprocessing/mg.r1.preprocessed.fq
         - cp /mnt/data/input/mg.r2.150000.preprocessed.fq $CI_PROJECT_DIR/output-mg-idba/Preprocessing/mg.r2.preprocessed.fq
         - cp /mnt/data/input/mg.se.150000.preprocessed.fq $CI_PROJECT_DIR/output-mg-idba/Preprocessing/mg.se.preprocessed.fq
@@ -139,7 +139,7 @@ a-mt-idba:
     stage: manual
     when: manual
     script:
-        - mkdir -p $CI_PROJECT_DIR/output-mgmt-idba/Preprocessing
+        - mkdir -p $CI_PROJECT_DIR/output-mt-idba/Preprocessing
         - cp /mnt/data/input/mt.r1.150000.preprocessed.fq $CI_PROJECT_DIR/output-mt-idba/Preprocessing/mt.r1.preprocessed.fq
         - cp /mnt/data/input/mt.r2.150000.preprocessed.fq $CI_PROJECT_DIR/output-mt-idba/Preprocessing/mt.r2.preprocessed.fq
         - cp /mnt/data/input/mt.se.150000.preprocessed.fq $CI_PROJECT_DIR/output-mt-idba/Preprocessing/mt.se.preprocessed.fq
@@ -160,7 +160,7 @@ a-mgmt-megahit:
 a-mg-megahit:
     stage: assembly
     script:
-        - mkdir -p $CI_PROJECT_DIR/output-mgmt-megahit/Preprocessing
+        - mkdir -p $CI_PROJECT_DIR/output-mg-megahit/Preprocessing
         - cp /mnt/data/input/mg.r1.25000.preprocessed.fq $CI_PROJECT_DIR/output-mg-megahit/Preprocessing/mg.r1.preprocessed.fq
         - cp /mnt/data/input/mg.r2.25000.preprocessed.fq $CI_PROJECT_DIR/output-mg-megahit/Preprocessing/mg.r2.preprocessed.fq
         - cp /mnt/data/input/mg.se.25000.preprocessed.fq $CI_PROJECT_DIR/output-mg-megahit/Preprocessing/mg.se.preprocessed.fq
@@ -169,7 +169,7 @@ a-mg-megahit:
 a-mt-megahit:
     stage: assembly
     script:
-        - mkdir -p $CI_PROJECT_DIR/output-mgmt-megahit/Preprocessing
+        - mkdir -p $CI_PROJECT_DIR/output-mt-megahit/Preprocessing
         - cp /mnt/data/input/mt.r1.25000.preprocessed.fq $CI_PROJECT_DIR/output-mt-megahit/Preprocessing/mt.r1.preprocessed.fq
         - cp /mnt/data/input/mt.r2.25000.preprocessed.fq $CI_PROJECT_DIR/output-mt-megahit/Preprocessing/mt.r2.preprocessed.fq
         - cp /mnt/data/input/mt.se.25000.preprocessed.fq $CI_PROJECT_DIR/output-mt-megahit/Preprocessing/mt.se.preprocessed.fq
