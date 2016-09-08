@@ -70,3 +70,13 @@ p-mt-np:
     stage: preprocessing
     script:
         - ./test/scripts/mt-p-np.sh
+
+a-mgmt-idba:
+    stage: assembly
+    script:
+        - ./test/scripts/mgmt-ass-idba.sh
+
+a-mgmt-megahit:
+    stage: assembly
+    script:
+        - ./test/scripts/mgmt-ass-megahit.sh
