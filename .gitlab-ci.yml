@@ -6,13 +6,13 @@ databases:
     stage: init
     when: manual
     script:
-        - ./test/script/init.sh
+        - ./test/scripts/init.sh
 
 
 dag-mgmt:
   stage: dag
   script:
-    - ./test/script/mgmt-dag.sh
+    - ./test/scripts/mgmt-dag.sh
   artifacts:
     paths:
         - ${CI_PROJECT_DIR}/output/*.pdf
@@ -20,7 +20,7 @@ dag-mgmt:
 dag-mg:
   stage: dag
   script:
-    - ./test/script/mg-dag.sh
+    - ./test/scripts/mg-dag.sh
   artifacts:
     paths:
         - ${CI_PROJECT_DIR}/output-mg/*.pdf
@@ -28,7 +28,7 @@ dag-mg:
 dag-mt:
   stage: dag
   script:
-    - ./test/script/mt-dag.sh
+    - ./test/scripts/mt-dag.sh
   artifacts:
     paths:
         - ${CI_PROJECT_DIR}/output-mt/*.pdf
