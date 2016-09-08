@@ -321,7 +321,7 @@ def run(args):
         if not args['COMMANDS']:
             args['COMMANDS'] = ['snakemake', 'ALL']
         # add the workflow file
-        args['COMMANDS'] += ['-s', workflow_file]
+        args['COMMANDS'] = ['-s', workflow_file] + args['COMMANDS']
         cmd += args['COMMANDS']
         cmd = ' '.join(cmd)
         # cmd = ' '.join(cmd) + map_user(' '.join(args['COMMANDS']), '{cont_out}')

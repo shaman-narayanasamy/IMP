@@ -1,34 +1,18 @@
-image: docker-r3lab.uni.lu/imp/imp-with-db:1.4
-
-
-# TODO change pipelines
-# preprocessing is fine
-# we should copy all the data from a successful run in the image
-# and test all function one by one
-
-variables:
-    ROOT_DIR: "/home/imp/code"
-    SRCDIR: "$CI_PROJECT_DIR"
-    LIBDIR: "/home/imp/lib"
-    OUTPUTDIR: "$CI_PROJECT_DIR/testing/output"
-    MG: "$CI_PROJECT_DIR/test/MG.R1.small.fq $CI_PROJECT_DIR/test/MG.R2.small.fq"
-    MT: "$CI_PROJECT_DIR/test/MT.R1.small.fq $CI_PROJECT_DIR/test/MT.R2.small.fq"
-    SAMPLE: "test"
-    DBPATH: "/home/imp/db"
-    IMP_SUDO: "sudo"
-    THREADS: "4"
-    MEMTOTAL: "8"
-    MEMCORE: "2"
-    CONFIGFILE: "$CI_PROJECT_DIR/test/default.conf.json"
-    IMP_ASSEMBLER: "idba"
-
 stages:
+  - init
   - dag
   - preprocessing
   - assembly
   - analysis
   - binning
   - report
+
+databases:
+    stage: init
+    when: manual
+    script:
+        - ./test/script/init.sh
+
 
 init:
   stage: dag
