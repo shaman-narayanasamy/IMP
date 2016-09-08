@@ -19,7 +19,7 @@ dag-mgmt:
   script:
     - ./test/script/mgmt-dag.sh
   artifacts:
-    path:
+    paths:
         - ${CI_PROJECT_DIR}/output/*.pdf
 
 dag-mg:
@@ -27,7 +27,7 @@ dag-mg:
   script:
     - ./test/script/mg-dag.sh
   artifacts:
-    path:
+    paths:
         - ${CI_PROJECT_DIR}/output-mg/*.pdf
 
 dag-mt:
@@ -35,5 +35,5 @@ dag-mt:
   script:
     - ./test/script/mt-dag.sh
   artifacts:
-    path:
+    paths:
         - ${CI_PROJECT_DIR}/output-mt/*.pdf
