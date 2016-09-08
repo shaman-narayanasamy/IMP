@@ -45,7 +45,27 @@ p-mg:
     script:
         - ./test/scripts/mg-p.sh
 
+p-mg-nf:
+    stage: preprocessing
+    script:
+        - ./test/scripts/mg-p-nf.sh
+
+p-mg-np:
+    stage: preprocessing
+    script:
+        - ./test/scripts/mg-p-np.sh
+
 p-mt:
     stage: preprocessing
     script:
         - ./test/scripts/mt-p.sh
+
+p-mt-nf:
+    stage: preprocessing
+    script:
+        - ./test/scripts/mt-p-nf.sh
+
+p-mt-np:
+    stage: preprocessing
+    script:
+        - ./test/scripts/mt-p-np.sh
