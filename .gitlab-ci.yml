@@ -173,7 +173,8 @@ an-mg:
         - mkdir -p $CI_PROJECT_DIR/output-mg/{Assembly,Preprocessing}
         - cp /mnt/data/input/analysis-mgmt/Assembly/mg* $CI_PROJECT_DIR/output-mg/Assembly
         - cp /mnt/data/input/analysis-mgmt/Preprocessing/mg* $CI_PROJECT_DIR/output-mg/Preprocessing
-        - ./IMP -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mg --current "snakemake --nt analysis.done"
+        - ./IMP -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mg --current "snakemake --nt --touch"
+        - ./IMP -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mg --current "snakemake --nt --touch analysis.done"
 
 an-mt:
     stage: analysis
