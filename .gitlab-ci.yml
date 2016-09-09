@@ -3,6 +3,7 @@ stages:
   - preprocessing
   - assembly
   - analysis
+  - binning
   - manual
 
 databases:
@@ -181,3 +182,9 @@ an-mt:
         - cp /mnt/data/input/analysis-mgmt/Assembly/mt* $CI_PROJECT_DIR/output-mt/Assembly
         - cp /mnt/data/input/analysis-mgmt/Preprocessing/mt* $CI_PROJECT_DIR/output-mt/Preprocessing
         - ./IMP -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mt --current "snakemake analysis.done"
+
+bin-mgmt:
+    stage: binning
+    script:
+        - mkdir -p $CI_PROJECT_DIR/output-mgmt/{Assembly,Preprocessing,Analysis}
+        - ./IMP -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mgmt --current "snakemake -np binning.done"
