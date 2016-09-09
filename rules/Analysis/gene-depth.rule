@@ -10,7 +10,7 @@ rule call_gene_depth:
         "Analysis/{type}.prokkaID2ec.txt"
     shell:
         """
-        coverageBed -hist -abam {input[1]} -b {input[0]} | grep -v "^all" > {output[0]}
+        coverageBed -hist -abam {input[1]} -b <(awk '$4 < $5' {input[0]}) | grep -v "^all" > {output[0]}
         paste <(cat {output[0]} | cut -f9 | cut -f1 -d \";\" | sed -e \"s/ID=//g\") \
         <(cut -f10,11,12,13 {output[0]}) > {output[1]}
         ## This code was adapted and modified from the CONCOCT script to calculate depth
