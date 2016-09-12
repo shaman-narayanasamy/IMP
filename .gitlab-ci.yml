@@ -104,14 +104,13 @@ p-mt-nf:
 
 
 #
-# a-mgmt-idba:
-#     stage: manual
-#     when: manual
-#     script:
-#         - mkdir -p $CI_PROJECT_DIR/output-mgmt-idba/Preprocessing
-#         - cp /mnt/data/input/assembly-idba/* $CI_PROJECT_DIR/output-mgmt-idba/Preprocessing/.
-#         - ./IMP -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -m $CI_PROJECT_DIR/test/MG.R1.small.fq -a idba -m $CI_PROJECT_DIR/test/MG.R2.small.fq -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mgmt-idba --current "snakemake assembly.done"
-#
+a-mgmt-idba:
+    stage: manual
+    when: manual
+    script:
+        - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db run -a idba -m /mnt/data/input/assembly-megahit/mg.r1.preprocessed.fq -m /mnt/data/input/assembly-megahit/mg.r2.preprocessed.fq -m /mnt/data/input/assembly-megahit/mg.se.preprocessed.fq -t /mnt/data/input/assembly-megahit/mt.r1.preprocessed.fq -t /mnt/data/input/assembly-megahit/mt.r2.preprocessed.fq -t /mnt/data/input/assembly-megahit/mt.se.preprocessed.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID -w assembly
+
+
 # a-mg-idba:
 #     stage: manual
 #     when: manual
