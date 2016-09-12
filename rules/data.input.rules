@@ -46,7 +46,7 @@ def prepare_input_files(inputs, outputs):
 
 def symlink_input_files(inputs, outputs):
     if len(inputs) != len(outputs):
-        raise OSError("//Inputs and outputs are not of the same length: %s <> %s" % (', '.join(inputs), ', '.join(outputs)))
+        raise OSError("//Outputs and symlinks are not of the same length: %s <> %s" % (', '.join(inputs), ', '.join(outputs)))
     for infilename, outfilename in zip(inputs, outputs):
         _, fname1 = os.path.split(infilename)
         print('symlink',  infilename, '=>', outfilename)
@@ -87,6 +87,6 @@ rule prepare_input_data:
         outputs,
         symlinks
     run:
-        prepare_input_files(input, output)
+        prepare_input_files(input, outputs)
         if symlinks:
             symlink_input_files(outputs, symlinks)
