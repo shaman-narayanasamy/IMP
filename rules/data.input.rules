@@ -3,6 +3,7 @@ import shutil
 
 
 outputs = []
+symlinks = []
 
 if 'preprocessing' in IMP_STEPS:
     if MG:
@@ -16,13 +17,19 @@ elif 'assembly' in IMP_STEPS:
     # here there are no preprocessing
     # we take the pipeline directly to the assembly part.
     if MG:
-        outputs.append("Preprocessing/mg.r1.preprocessed.fq")
-        outputs.append("Preprocessing/mg.r2.preprocessed.fq")
-        outputs.append("Preprocessing/mg.se.preprocessed.fq")
+        outputs.append("Preprocessing/mg.r1.fq")
+        outputs.append("Preprocessing/mg.r2.fq")
+        outputs.append("Preprocessing/mg.se.fq")
+        symlinks.append("Preprocessing/mg.r1.preprocessed.fq")
+        symlinks.append("Preprocessing/mg.r2.preprocessed.fq")
+        symlinks.append("Preprocessing/mg.se.preprocessed.fq")
     if MT:
-        outputs.append("Preprocessing/mt.r1.preprocessed.fq")
-        outputs.append("Preprocessing/mt.r2.preprocessed.fq")
-        outputs.append("Preprocessing/mt.se.preprocessed.fq")
+        outputs.append("Preprocessing/mt.r1.fq")
+        outputs.append("Preprocessing/mt.r2.fq")
+        outputs.append("Preprocessing/mt.se.fq")
+        symlinks.append("Preprocessing/mt.r1.preprocessed.fq")
+        symlinks.append("Preprocessing/mt.r2.preprocessed.fq")
+        symlinks.append("Preprocessing/mt.se.preprocessed.fq")
 
 
 def prepare_input_files(inputs, outputs):
@@ -90,3 +97,5 @@ rule prepare_input_data:
         outputs
     run:
         prepare_input_files(input, output)
+        if symlinks:
+            symlink_input_files(output, symlinks)
