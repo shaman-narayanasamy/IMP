@@ -55,9 +55,9 @@ def cli(ctx, image_name, image_tag, image_repo, database_path, config_file_path,
     ctx.obj['image-name'] = image_name
     ctx.obj['image-tag'] = image_tag
     ctx.obj['image-repo'] = image_repo
-    ctx.obj['database-path'] = database_path
-    ctx.obj['config-file-path'] = config_file_path
-    ctx.obj['source-code'] = source_code
+    ctx.obj['database-path'] = Path(database_path).abspath()
+    ctx.obj['config-file-path'] = Path(config_file_path).abspath()
+    ctx.obj['source-code'] = Path(source_code).abspath()
     ctx.obj['enter'] = enter
     # validate
     if source_code is not None:
