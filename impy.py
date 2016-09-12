@@ -191,40 +191,29 @@ def generate_docker_cmd(container_name, database_path, configuration_file_path,
     configuration_file_dir = Path(configuration_file_path).parent.abspath()
 
     # prepare general command
-    cmd = """docker run --rm --name {container_name} \\n
-    """.format(container_name=container_name)
+    cmd = "docker run --rm --name {container_name}".format(container_name=container_name)
 
     # add volumes
-    volumes = """
-    -v {database_path}:{container_database_dir} \
-    -v {configuration_file_dir}:{container_configuration_file_dir} \
-    """.format(
+    volumes = " -v {database_path}:{container_database_dir} -v {configuration_file_dir}:{container_configuration_file_dir}".format(
         database_path=database_path,
         container_database_dir=CONTAINER_DB_DIR,
         container_configuration_file_dir=CONTAINER_CONF_DIR,
         configuration_file_dir=configuration_file_dir,
     )
     if source_code is not None:
-        volumes += """
-        -v {source_code}:{container_source_code_dir} \
-        """.format(
+        volumes += " -v {source_code}:{container_source_code_dir}".format(
             source_code=source_code,
             container_source_code_dir=CONTAINER_CODE_DIR
         )
     if output_directory is not None:
-        volumes += """
-        -v {output_directory}:{container_output_dir} \
-        """.format(
+        volumes += " -v {output_directory}:{container_output_dir}".format(
             output_directory=output_directory,
             container_output_dir=CONTAINER_OUTPUT_DIR
         )
     cmd += volumes
 
     # add environment variables
-    environments = """
-    -e "LOCAL_USER_ID=`id -u $USER`" -e "LOCAL_GROUP_ID=`id -g $USER`" \
-    -e CONFIGFILE={container_configuration_file_dir}/{configuration_file_name} \
-    """.format(
+    environments = """ -e "LOCAL_USER_ID=`id -u $USER`" -e "LOCAL_GROUP_ID=`id -g $USER`" -e CONFIGFILE={container_configuration_file_dir}/{configuration_file_name}""".format(
         container_database_dir=CONTAINER_DB_DIR,
         container_configuration_file_dir=CONTAINER_CONF_DIR,
         configuration_file_path=configuration_file_path,
@@ -232,9 +221,7 @@ def generate_docker_cmd(container_name, database_path, configuration_file_path,
     )
     if environment is not None:
         for k, v in environment.items():
-            environments += """
-            -e {key}="{value}" \
-            """.format(
+            environments += """ -e {key}="{value}"""".format(
                 key=k,
                 value=v
             )
@@ -244,7 +231,7 @@ def generate_docker_cmd(container_name, database_path, configuration_file_path,
     if interactive:
         cmd += " -it"
     # add container name:tag
-    cmd += "{image_name}:{image_tag}".format(
+    cmd += " {image_name}:{image_tag}".format(
         image_name=image_name,
         image_tag=image_tag
     )
