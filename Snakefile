@@ -89,13 +89,22 @@ elif MT:
 else:
     raise Exception('No input data.')
 
+inputs = []
+if 'preprocessing' in IMP_STEPS:
+    inputs.append('preprocessing.done')
+if 'assembly' in IMP_STEPS:
+    inputs.append('assembly.done')
+if 'analysis' in IMP_STEPS:
+    inputs.append('analysis.done')
+if 'binning' in IMP_STEPS:
+    inputs.append('binning.done')
+if 'report' in IMP_STEPS:
+    inputs.append('report.done')
+
+
 # master command
 rule ALL:
     input:
-        "preprocessing.done",
-        "assembly.done",
-        "analysis.done",
-        "report.done",
-        "binning.done"
+        inputs
     output:
         touch('workflow.done')
