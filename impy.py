@@ -284,6 +284,8 @@ def init(ctx):
 
 
 
+
+
 @cli.command()
 @click.option('-m', '--metagenomic', help="Path to the Metagenomic files.", multiple=True)
 @click.option('-t', '--metranscriptomic', help="Path to the Metatranscriptomic files.", multiple=True)
@@ -309,42 +311,6 @@ def run(ctx, metagenomic, metranscriptomic,
 
     Preprocessing --> Assembly --> Analysis --> Binning --> Report
     """
-    # find minimum common path between the data files
-    # inorder to mount them in the container
-    mg_data = [Path(p).abspath() for p in metagenomic]
-    mt_data = [Path(p).abspath() for p in metranscriptomic]
-    # check if paths exists
-    for pth in mg_data + mt_data:
-        if not pth.exists():
-            click.secho('Path provided does not exists: `%s`.' % pth, fg='red', bold=True)
-            ctx.abort()
-    common_path = Path(os.path.commonprefix(mg_data + mt_data)).dirname()
-
-    # update data paths to remove the 'common path' from it.
-    mg_data = [p.partition(common_path)[-1][1:] for p in mg_data]
-    mt_data = [p.partition(common_path)[-1][1:] for p in mt_data]
-    # update data path to put the container path before
-    mg_data = [CONTAINER_DATA_DIR + '/' + d for d in mg_data]
-    mt_data = [CONTAINER_DATA_DIR + '/' + d for d in mt_data]
-
-    # validate data input
-    if single_omics:
-        if mg_data and mt_data:
-            click.secho('In `single omics` you should only provide `metagenomics` or `metatranscriptomics` data.', fg='red', bold=True)
-            ctx.abort()
-        if not mg_data and not mt_data:
-            click.secho('In `single omics` you should provide `metagenomics` or `metatranscriptomics` data.', fg='red', bold=True)
-            ctx.abort()
-    else:
-        if not mg_data or not mt_data:
-            click.secho('You should provide `metagenomics` and `metatranscriptomics` data.', fg='red', bold=True)
-            ctx.abort()
-    if mg_data and len(mg_data) < 2:
-        click.secho('Metagenomic data should be 2 paired files with or without single end', fg='red', bold=True)
-        ctx.abort()
-    if mt_data and len(mt_data) < 2:
-        click.secho('Metatranscriptomic data should be 2 paired files with or without single end', fg='red', bold=True)
-        ctx.abort()
 
     # database path
     database_path = Path(ctx.obj['database-path']).abspath()
@@ -356,6 +322,49 @@ def run(ctx, metagenomic, metranscriptomic,
             steps = steps[steps.index(workflow_step):]
         else:
             steps = [workflow_step]
+
+    data_directory = None
+    # <-- preprocessing validation
+    if 'preprocessing' in steps:
+        # find minimum common path between the data files
+        # inorder to mount them in the container
+        mg_data = [Path(p).abspath() for p in metagenomic]
+        mt_data = [Path(p).abspath() for p in metranscriptomic]
+        # check if paths exists
+        for pth in mg_data + mt_data:
+            if not pth.exists():
+                click.secho('Path provided does not exists: `%s`.' % pth, fg='red', bold=True)
+                ctx.abort()
+        common_path = Path(os.path.commonprefix(mg_data + mt_data)).dirname()
+
+        # update data paths to remove the 'common path' from it.
+        mg_data = [p.partition(common_path)[-1][1:] for p in mg_data]
+        mt_data = [p.partition(common_path)[-1][1:] for p in mt_data]
+        # update data path to put the container path before
+        mg_data = [CONTAINER_DATA_DIR + '/' + d for d in mg_data]
+        mt_data = [CONTAINER_DATA_DIR + '/' + d for d in mt_data]
+
+        # validate data input
+        if single_omics:
+            if mg_data and mt_data:
+                click.secho('In `single omics` you should only provide `metagenomics` or `metatranscriptomics` data.', fg='red', bold=True)
+                ctx.abort()
+            if not mg_data and not mt_data:
+                click.secho('In `single omics` you should provide `metagenomics` or `metatranscriptomics` data.', fg='red', bold=True)
+                ctx.abort()
+        else:
+            if not mg_data or not mt_data:
+                click.secho('You should provide `metagenomics` and `metatranscriptomics` data.', fg='red', bold=True)
+                ctx.abort()
+        if mg_data and len(mg_data) < 2:
+            click.secho('Metagenomic data should be 2 paired files with or without single end', fg='red', bold=True)
+            ctx.abort()
+        if mt_data and len(mt_data) < 2:
+            click.secho('Metatranscriptomic data should be 2 paired files with or without single end', fg='red', bold=True)
+            ctx.abort()
+        data_directory = common_path
+    # <-- end preprocessing validation
+
 
     ev = {
         'MG': ' '.join(mg_data),
@@ -385,7 +394,7 @@ def run(ctx, metagenomic, metranscriptomic,
         container_name,
         ctx.obj['database-path'],
         ctx.obj['config-file-path'],
-        data_directory=common_path,
+        data_directory=data_directory,
         image_name=ctx.obj['image-name'],
         image_tag=ctx.obj['image-tag'],
         interactive=ctx.obj['enter'],
