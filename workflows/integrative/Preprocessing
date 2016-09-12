@@ -1,8 +1,8 @@
 # include rules for the Preprocessing part of the workflow
 
 # data input preparation
-include:
-    "../../rules/Preprocessing/data_input.rules"
+# include:
+#     "../../rules/Preprocessing/data_input.rules"
 
 # include only if user don't skip preprocessing
 if not config['skip_preprocessing']:

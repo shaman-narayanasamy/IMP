@@ -1,0 +1,92 @@
+import os
+import shutil
+
+
+outputs = []
+
+if 'preprocessing' in IMP_STEPS:
+    if MG:
+        outputs.append("Preprocessing/mg.r1.fq")
+        outputs.append("Preprocessing/mg.r2.fq")
+    if MT:
+        outputs.append("Preprocessing/mt.r1.fq")
+        outputs.append("Preprocessing/mt.r2.fq")
+
+elif 'assembly' in IMP_STEPS:
+    # here there are no preprocessing
+    # we take the pipeline directly to the assembly part.
+    if MG:
+        outputs.append("Preprocessing/mg.r1.preprocessed.fq")
+        outputs.append("Preprocessing/mg.r2.preprocessed.fq")
+        outputs.append("Preprocessing/mg.se.preprocessed.fq")
+    if MT:
+        outputs.append("Preprocessing/mt.r1.preprocessed.fq")
+        outputs.append("Preprocessing/mt.r2.preprocessed.fq")
+        outputs.append("Preprocessing/mt.se.preprocessed.fq")
+
+
+def prepare_input_files(inputs, outputs):
+    """
+    Prepare file names from input.
+    Will copy and/or ungzip paired input files into output directory named as '{type}.R1.fq' and '{type}.R2.fq'.
+    If user provides R1, R2 and SE file, we rname the file as there were already preprocessed.
+    input: input names from the user
+    type: MG or MT
+    """
+    if len(inputs) != len(outputs):
+        raise OSError("""//Inputs and outputs are not of the same length:
+        %s
+        %s
+        """ % ', '.join(inputs), ', '.join(outputs))
+
+    for infilename, outfilename in zip(inputs, outputs):
+        _, fname1 = os.path.split(infilename)
+        _process_file(fname1, infilename, outfilename)
+
+def symlink_input_files(inputs, outputs):
+    if len(inputs) != len(outputs):
+        raise OSError("""//Inputs and outputs are not of the same length:
+        %s
+        %s
+        """ % ', '.join(inputs), ', '.join(outputs))
+    for infilename, outfilename in zip(inputs, outputs):
+        _, fname1 = os.path.split(infilename)
+        print('symlink',  infilename, '=>', outfilename)
+        os.symlink(infilename, outfilename)
+
+
+CHUNK_SIZE = 1024
+
+def _process_file(fname, inp, outfilename):
+    """
+    Write the input to the output. Handle raw, zip, or bzip input files.
+    """
+    print(inp, '=>', outfilename)
+    import bz2
+    # ungunzip
+    if os.path.splitext(fname)[-1] in ['.gz', '.gzip']:
+        with open(outfilename, 'wb') as whandle, gzip.open(inp, 'rb') as rhandle:
+            whandle.write(rhandle.read())
+    # unbzip2
+    elif os.path.splitext(fname)[-1] in ['.bz2', '.bzip2']:
+        shell("bzip2 -dc {i} > {o}".format(i=inp, o=outfilename))
+        #dec = bz2.BZ2Decompressor()
+        #with open(outfilename, 'wb') as whandle, bz2.open(inp, 'rb') as rhandle:
+            #whandle.write(bz2.decompress(rhandle.read()))
+        #    whandle.write(rhandle.read())
+            # for data in iter(lambda: rhandle.read(CHUNK_SIZE), b''):
+            #     whandle.write(bz2.decompress(data))
+    # copy
+    else:
+        shutil.copy(inp, outfilename)
+
+
+
+
+prepare_input_data:
+    input:
+        MG, MT
+    output:
+        outputs
+    run:
+        prepare_input_files(input, output)

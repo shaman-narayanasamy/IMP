@@ -18,7 +18,8 @@ workdir:
     OUTPUTDIR
 
 # include rules for the workflow based on the input parameters
-
+include:
+    "rules/data.input.rules"
 
 # INTEGRATIVE MG-MT workflow
 if MG and MT:

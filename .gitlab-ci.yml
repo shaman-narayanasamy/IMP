@@ -128,13 +128,11 @@ p-mt-nf:
 #         - cp /mnt/data/input/assembly-idba/mt* $CI_PROJECT_DIR/output-mt-idba/Preprocessing/.
 #         - ./IMP -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -a idba -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mt-idba --current "snakemake assembly.done"
 #
-# a-mgmt-megahit:
-#     stage: assembly
-#     script:
-#         - mkdir -p $CI_PROJECT_DIR/output-mgmt-megahit/Preprocessing
-#         - cp /mnt/data/input/assembly-megahit/* $CI_PROJECT_DIR/output-mgmt-megahit/Preprocessing/.
-#         - ./IMP -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -m $CI_PROJECT_DIR/test/MG.R1.small.fq -a megahit -m $CI_PROJECT_DIR/test/MG.R2.small.fq -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mgmt-megahit --current "snakemake assembly.done"
-#
+a-mgmt-megahit:
+    stage: assembly
+    script:
+        - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db run -m /mnt/data/input/assembly-megahit/mg.r1.preprocessed.fq -m /mnt/data/input/assembly-megahit/mg.r2.preprocessed.fq -m /mnt/data/input/assembly-megahit/mg.se.preprocessed.fq -t /mnt/data/input/assembly-megahit/mt.r1.preprocessed.fq -t /mnt/data/input/assembly-megahit/mt.r2.preprocessed.fq -t /mnt/data/input/assembly-megahit/mt.se.preprocessed.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID -w assembly
+
 # a-mg-megahit:
 #     stage: assembly
 #     script:
