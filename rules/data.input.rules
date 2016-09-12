@@ -34,17 +34,13 @@ elif 'assembly' in IMP_STEPS:
 
 def prepare_input_files(inputs, outputs):
     """
-    Prepare file names from input.
-    Will copy and/or ungzip paired input files into output directory named as '{type}.R1.fq' and '{type}.R2.fq'.
-    If user provides R1, R2 and SE file, we rname the file as there were already preprocessed.
-    input: input names from the user
-    type: MG or MT
+    Prepare file names from input into snakemake pipeline.
     """
     if len(inputs) != len(outputs):
         raise OSError("""//Inputs and outputs are not of the same length:
         %s
         %s
-        """ % inputs and ', '.join(inputs) or 'no input', outputs and ', '.join(outputs) or 'no output')
+        """ % (inputs and ', '.join(inputs) or 'no input', outputs and ', '.join(outputs) or 'no output')
 
     for infilename, outfilename in zip(inputs, outputs):
         _, fname1 = os.path.split(infilename)
@@ -56,7 +52,7 @@ def symlink_input_files(inputs, outputs):
         raise OSError("""//Inputs and outputs are not of the same length:
         %s
         %s
-        """ % ', '.join(inputs), ', '.join(outputs))
+        """ % (', '.join(inputs), ', '.join(outputs))
     for infilename, outfilename in zip(inputs, outputs):
         _, fname1 = os.path.split(infilename)
         print('symlink',  infilename, '=>', outfilename)
