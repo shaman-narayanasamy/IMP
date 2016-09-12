@@ -28,7 +28,7 @@ dag-mgmt-nf:
 dag-mgmt-np:
   stage: dag
   script:
-    - impy -s . -c $CI_PROJECT_DIR/test/no_preprocessing.conf.json -d /mnt/data/db run -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID -x "snakemake -n"
+    - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db run -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID -w assembly --to-the-end -x "snakemake -n"
 
 
 dag-mg-default:
@@ -46,7 +46,7 @@ dag-mg-nf:
 dag-mg-np:
   stage: dag
   script:
-    - impy -s . -c $CI_PROJECT_DIR/test/no_preprocessing.conf.json -d /mnt/data/db run -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID --single-omics -x "snakemake -n"
+    - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db run -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID -w assembly --to-the-end --single-omics -x "snakemake -n"
 
 
 dag-mt-default:
@@ -57,7 +57,7 @@ dag-mt-default:
 dag-mt-np:
   stage: dag
   script:
-    - impy -s . -c $CI_PROJECT_DIR/test/no_preprocessing.conf.json -d /mnt/data/db run -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID --single-omics -x "snakemake -n"
+    - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db run -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID -w assembly --to-the-end --single-omics -x "snakemake -n"
 
 dag-mt-nf:
   stage: dag
