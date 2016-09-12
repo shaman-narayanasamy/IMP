@@ -17,7 +17,7 @@ rule maxbin:
         mkdir -p Binning/MaxBin
         
         ## Run MaxBin
-        run_MaxBin.pl -contig {input[0]} \
+        run_MaxBin.pl -contig {input[2]} \
         -reads $TMPD/merged_MG.fa \
         -out Binning/MaxBin/maxbin_res \
         -thread {THREADS} \

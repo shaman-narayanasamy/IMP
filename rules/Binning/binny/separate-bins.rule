@@ -2,11 +2,11 @@ rule binning_separate_bins:
     input:
         expand("Binning/contigs2clusters.{pk}.{nn}.tsv",pk=config["binning"]["pk"],nn=config["binning"]["nn"]),
         "Assembly/%s.assembly.merged.fa" % ASS,
-        "Binning/ORFS-contig_links.bed",
+        "Binning/binny/ORFS-contig_links.bed",
         "Analysis/annotation/{p}.faa".format(p=config['prokka']['prefix']),
         "Analysis/annotation/annotation.filt.gff"
     output:
-        "Binning/separate_bins.done"
+        "Binning/binny/separate_bins.done"
     shell:
         """
         {SRCDIR}/separate-bins.sh {input[0]} {input[1]} {input[2]} {input[3]} {input[4]}

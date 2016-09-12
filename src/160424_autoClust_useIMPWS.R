@@ -117,12 +117,12 @@ skn <- sort(knn.dist(contigInfo[,coco],pk)[,pk])
 sdkn <- runsd(skn,10)
 est <- sort(skn)[min(which(sdkn>quantile(sdkn,0.975)&skn>median(skn)))]
 #document estimated reachability distances
-write.table(t(c("scan","reachabilityDist")),paste("Binning/reachabilityDistanceEstimates",pk,nn,"tsv",sep="."),row.names=F,col.names=F,quote=F,sep="\t")
-write.table(t(c("first",est)),paste("Binning/reachabilityDistanceEstimates",pk,nn,"tsv",sep="."),row.names=F,col.names=F,quote=F,sep="\t",append=T)
+write.table(t(c("scan","reachabilityDist")),paste("Binning/binny/reachabilityDistanceEstimates",pk,nn,"tsv",sep="."),row.names=F,col.names=F,quote=F,sep="\t")
+write.table(t(c("first",est)),paste("Binning/binny/reachabilityDistanceEstimates",pk,nn,"tsv",sep="."),row.names=F,col.names=F,quote=F,sep="\t",append=T)
 #DBscan
 cdb <- dbscan(contigInfo[,coco],est,pk)
 #count contigs in clusters and document clustering steps
-pdf(paste("Binning/scatterPlot1",pk,pk,"pdf",sep="."))
+pdf(paste("Binning/binny/scatterPlot1",pk,pk,"pdf",sep="."))
 plot(contigInfo[,coco],pch=16,cex=0.25,ann=F,axes=F)
 j <- 1
 cdbTab <- data.frame("cluster"=names(table(cdb$cluster)),"contigs"=0,"numberEss"=0,"uniqueEss"=0,stringsAsFactors=F)
@@ -136,8 +136,8 @@ for(i in names(table(cdb$cluster))) {
 box()
 dev.off()
 
-write.table(cdbTab,paste("Binning/clusterFirstScan",pk,nn,"tsv", sep="."),sep="\t",row.names=F,quote=F)
-write.table(t(c("clusterName","cutoff")),paste("Binning/bimodalClusterCutoffs",pk,nn,"tsv",sep="."),sep="\t",row.names=F,col.names=F,quote=F)
+write.table(cdbTab,paste("Binning/binny/clusterFirstScan",pk,nn,"tsv", sep="."),sep="\t",row.names=F,quote=F)
+write.table(t(c("clusterName","cutoff")),paste("Binning/binny/bimodalClusterCutoffs",pk,nn,"tsv",sep="."),sep="\t",row.names=F,col.names=F,quote=F)
 
 #assign clusters to contigs 
 ### names are "N" for contigs recognized as noise
@@ -157,16 +157,16 @@ duClus <- cdbTab$cluster[cdbTab$numberEss/cdbTab$uniqueEss>1.2&cdbTab$cluster!=0
 clusterRes$cluster[cdb$cluster %in% duClus] <- paste("D",cdb$cluster[cdb$cluster %in% duClus],sep="")
 
 #cut clusters by metagenomic coverage depth, document cut-offs
-write.table(t(c("cluster","cutoff")),paste("Binning/bimodalClusterCutoffs",pk,nn,"tsv",sep="."),sep="\t",col.names=F,row.names=F,quote=F)
+write.table(t(c("cluster","cutoff")),paste("Binning/binny/bimodalClusterCutoffs",pk,nn,"tsv",sep="."),sep="\t",col.names=F,row.names=F,quote=F)
 for(ds in unique(clusterRes$cluster[grep("D",clusterRes$cluster)])){
-  clusterRes <- muClus(ds,clusterRes,paste("Binning/bimodalClusterCutoffs",pk,nn,"tsv",sep="."))
+  clusterRes <- muClus(ds,clusterRes,paste("Binning/binny/bimodalClusterCutoffs",pk,nn,"tsv",sep="."))
 }
 
 #second iteration of clustering on clusters with more than 20% duplicated essential genes 
 ### - reachability estimates are based on nth nearest neighbour (independent of number of neighbouring points)
 ### - neighbouring points are increased by 2
 pk2 <- pk + 2
-pdf(paste("Binning/scatterPlots2",pk,nn,"pdf",sep="."))
+pdf(paste("Binning/binny/scatterPlots2",pk,nn,"pdf",sep="."))
 for(bb in unique(clusterRes$cluster[grep("B",clusterRes$cluster)])){
   bbInfo <- contigInfo[clusterRes$cluster==bb,]
   if(nrow(bbInfo)>nn){  
@@ -184,7 +184,7 @@ for(bb in unique(clusterRes$cluster[grep("B",clusterRes$cluster)])){
       plot(sknBB)
       abline(h=estBB)
       
-      write.table(t(c(bb,estBB)),paste("Binning/reachabilityDistanceEstimates",pk,nn,"tsv",sep="."),row.names=F,col.names=F,quote=F,sep="\t",append=T)
+      write.table(t(c(bb,estBB)),paste("Binning/binny/reachabilityDistanceEstimates",pk,nn,"tsv",sep="."),row.names=F,col.names=F,quote=F,sep="\t",append=T)
       BBcdb <- dbscan(bbInfo[,coco],estBB,pk2)
       
       plot(bbInfo[,coco],pch=16,cex=0.25,ann=F)
@@ -197,7 +197,7 @@ for(bb in unique(clusterRes$cluster[grep("B",clusterRes$cluster)])){
         BBcdbTab$uniqueEss[BBcdbTab$cluster==i] <- length(unique(unlist(sapply(bbInfo$essentialGene[bbInfo$essentialGene!="notEssential"&BBcdb$cluster==i],function(x) unlist(strsplit(x,split=";"))))))
         j<-j+1
       }
-      write.table(BBcdbTab,paste("Binning/clusterFiles/blob1Cluster",pk,nn,bb,"tsv",sep="."),sep="\t",row.names=F,quote=F)
+      write.table(BBcdbTab,paste("Binning/binny/clusterFiles/blob1Cluster",pk,nn,bb,"tsv",sep="."),sep="\t",row.names=F,quote=F)
       
       BBclusterRes <- data.frame("contig"=bbInfo$contig,"cluster"="x",stringsAsFactors=F)
       BBclusterRes$cluster[BBcdb$cluster==0] <- "N"
@@ -228,7 +228,7 @@ for(bb in unique(clusterRes$cluster[grep("B",clusterRes$cluster)])){
                                                                    gsub("D","",unlist(sapply(clusterRes$contig[clusterRes$contig %in% BBduCont],function(x)BBclusterRes$cluster[BBclusterRes$contig==x]))),
                                                                    sep=".")
       for(bds in uniD){
-        clusterRes <- muClus(bds,clusterRes,paste("Binning/bimodalClusterCutoffs",pk,nn,"tsv",sep="."))
+        clusterRes <- muClus(bds,clusterRes,paste("Binning/binny/bimodalClusterCutoffs",pk,nn,"tsv",sep="."))
       }
     }else{
       print(paste("Cluster",bb,"too small for knn-approach.\n"))
@@ -243,7 +243,7 @@ dev.off()
 ### - reachability estimates are based on nth nearest neighbour (independent of number of neighbouring points)
 ### - neighbouring points are increased by 2 again
 pk4 <- pk + 4
-pdf(paste("Binning/scatterPlots3",pk,nn,"pdf",sep="."))
+pdf(paste("Binning/binny/scatterPlots3",pk,nn,"pdf",sep="."))
 for(bb in unique(clusterRes$cluster[grep("B",clusterRes$cluster)])){
   bbInfo <- contigInfo[clusterRes$cluster==bb,]
   if(nrow(bbInfo)>nn){  
@@ -261,7 +261,7 @@ for(bb in unique(clusterRes$cluster[grep("B",clusterRes$cluster)])){
       plot(sknBB)
       abline(h=estBB)
       
-      write.table(t(c(bb,estBB)),paste("Binning/reachabilityDistanceEstimates",pk,nn,"tsv",sep="."),row.names=F,col.names=F,quote=F,sep="\t",append=T)
+      write.table(t(c(bb,estBB)),paste("Binning/binny/reachabilityDistanceEstimates",pk,nn,"tsv",sep="."),row.names=F,col.names=F,quote=F,sep="\t",append=T)
       BBcdb <- dbscan(bbInfo[,coco],estBB,pk4)
       
       plot(bbInfo[,coco],pch=16,cex=0.25,ann=F)
@@ -274,7 +274,7 @@ for(bb in unique(clusterRes$cluster[grep("B",clusterRes$cluster)])){
         BBcdbTab$uniqueEss[BBcdbTab$cluster==i] <- length(unique(unlist(sapply(bbInfo$essentialGene[bbInfo$essentialGene!="notEssential"&BBcdb$cluster==i],function(x) unlist(strsplit(x,split=";"))))))
         j<-j+1
       }
-      write.table(BBcdbTab,paste("Binning/clusterFiles/blob2Cluster",pk,nn,bb,"tsv",sep="."),sep="\t",row.names=F,quote=F)
+      write.table(BBcdbTab,paste("Binning/binny/clusterFiles/blob2Cluster",pk,nn,bb,"tsv",sep="."),sep="\t",row.names=F,quote=F)
       
       BBclusterRes <- data.frame("contig"=bbInfo$contig,"cluster"="x",stringsAsFactors=F)
       BBclusterRes$cluster[BBcdb$cluster==0] <- "N"
@@ -320,7 +320,7 @@ dev.off()
 ### - reachability estimates are based on nth nearest neighbour (independent of number of neighbouring points)
 ### - neighbouring points are increased by 2 again
 pk6 <- pk + 6
-pdf(paste("Binning/scatterPlots4",pk,nn,"pdf",sep="."))
+pdf(paste("Binning/binny/scatterPlots4",pk,nn,"pdf",sep="."))
 for(bb in unique(clusterRes$cluster[grep("B",clusterRes$cluster)])){
   bbInfo <- contigInfo[clusterRes$cluster==bb,]
   if(nrow(bbInfo)>nn){  
@@ -338,7 +338,7 @@ for(bb in unique(clusterRes$cluster[grep("B",clusterRes$cluster)])){
       plot(sknBB)
       abline(h=estBB)
       
-      write.table(t(c(bb,estBB)),paste("Binning/reachabilityDistanceEstimates",pk,nn,"tsv",sep="."),row.names=F,col.names=F,quote=F,sep="\t",append=T)
+      write.table(t(c(bb,estBB)),paste("Binning/binny/reachabilityDistanceEstimates",pk,nn,"tsv",sep="."),row.names=F,col.names=F,quote=F,sep="\t",append=T)
       BBcdb <- dbscan(bbInfo[,coco],estBB,pk6)
       
       plot(bbInfo[,coco],pch=16,cex=0.25,ann=F)
@@ -351,7 +351,7 @@ for(bb in unique(clusterRes$cluster[grep("B",clusterRes$cluster)])){
         BBcdbTab$uniqueEss[BBcdbTab$cluster==i] <- length(unique(unlist(sapply(bbInfo$essentialGene[bbInfo$essentialGene!="notEssential"&BBcdb$cluster==i],function(x) unlist(strsplit(x,split=";"))))))
         j<-j+1
       }
-      write.table(BBcdbTab,paste("Binning/clusterFiles/blob3Cluster",pk,nn,bb,"tsv",sep="."),sep="\t",row.names=F,quote=F)
+      write.table(BBcdbTab,paste("Binning/binny/clusterFiles/blob3Cluster",pk,nn,bb,"tsv",sep="."),sep="\t",row.names=F,quote=F)
       
       BBclusterRes <- data.frame("contig"=bbInfo$contig,"cluster"="x",stringsAsFactors=F)
       BBclusterRes$cluster[BBcdb$cluster==0] <- "N"
@@ -382,7 +382,7 @@ for(bb in unique(clusterRes$cluster[grep("B",clusterRes$cluster)])){
                                                                    gsub("D","",unlist(sapply(clusterRes$contig[clusterRes$contig %in% BBduCont],function(x)BBclusterRes$cluster[BBclusterRes$contig==x]))),
                                                                    sep=".")
       for(bds in uniD){
-        clusterRes <- muClus(bds,clusterRes,paste("Binning/bimodalClusterCutoffs",pk,nn,"tsv",sep="."))
+        clusterRes <- muClus(bds,clusterRes,paste("Binning/binny/bimodalClusterCutoffs",pk,nn,"tsv",sep="."))
       }
     }else{
       print(paste("Cluster",bb,"too small for knn-approach.\n"))
@@ -418,14 +418,14 @@ for(clus in grep("C",unique(clusterRes$cluster),value=T)){
 }
 
 #save results
-write.table(clusterRes,paste("Binning/contigs2clusters",pk,nn,"tsv",sep="."),sep="\t",row.names=F,quote=F)
-save(list=c("contigInfo","coco","pk","nn","essAnno","LIB","PID","args","find.cutoff","muClus","clusterRes"),file=paste("Binning/clusteringWS",pk,nn,"Rdata",sep="."))
-saveRDS(clusterRes,paste("Binning/contigs2clusters",pk,nn,"RDS",sep="."))
+write.table(clusterRes,paste("Binning/binny/contigs2clusters",pk,nn,"tsv",sep="."),sep="\t",row.names=F,quote=F)
+save(list=c("contigInfo","coco","pk","nn","essAnno","LIB","PID","args","find.cutoff","muClus","clusterRes"),file=paste("Binning/binny/clusteringWS",pk,nn,"Rdata",sep="."))
+saveRDS(clusterRes,paste("Binning/binny/contigs2clusters",pk,nn,"RDS",sep="."))
 
 print("Saved tables. Plotting final map now.")
 #plot final map
 essPal <- colorRampPalette(brewer.pal(11,"Spectral"))(111)[111:1]
-pdf(paste("Binning/finalClusterMap",pk,nn,"pdf",sep="."),width=6,height=5,pointsize=8)
+pdf(paste("Binning/binny/finalClusterMap",pk,nn,"pdf",sep="."),width=6,height=5,pointsize=8)
 layout(matrix(1:2,nrow=1,ncol=2),c(5/6,1/6))
 par(mar=rep(1,4),pty="s")
 plot(contigInfo[,coco],pch=16,cex=0.25,ann=F,axes=F,bty="o")
