@@ -102,8 +102,6 @@ p-mt-nf:
         - impy -s . -c $CI_PROJECT_DIR/test/no_filtering.conf.json -d /mnt/data/db run -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID --single-omics -w preprocessing
 
 
-
-#
 a-mgmt-idba:
     stage: manual
     when: manual
@@ -132,19 +130,17 @@ a-mgmt-megahit:
     script:
         - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db run -m /mnt/data/input/assembly-megahit/mg.r1.preprocessed.fq -m /mnt/data/input/assembly-megahit/mg.r2.preprocessed.fq -m /mnt/data/input/assembly-megahit/mg.se.preprocessed.fq -t /mnt/data/input/assembly-megahit/mt.r1.preprocessed.fq -t /mnt/data/input/assembly-megahit/mt.r2.preprocessed.fq -t /mnt/data/input/assembly-megahit/mt.se.preprocessed.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID -w assembly
 
-# a-mg-megahit:
-#     stage: assembly
-#     script:
-#         - mkdir -p $CI_PROJECT_DIR/output-mg-megahit/Preprocessing
-#         - cp /mnt/data/input/assembly-megahit/mg* $CI_PROJECT_DIR/output-mg-megahit/Preprocessing/.
-#         - ./IMP -m $CI_PROJECT_DIR/test/MG.R1.small.fq -a megahit -m $CI_PROJECT_DIR/test/MG.R2.small.fq -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mg-megahit --current "snakemake assembly.done"
-#
-# a-mt-megahit:
-#     stage: assembly
-#     script:
-#         - mkdir -p $CI_PROJECT_DIR/output-mt-megahit/Preprocessing
-#         - cp /mnt/data/input/assembly-megahit/mt* $CI_PROJECT_DIR/output-mt-megahit/Preprocessing/.
-#         - ./IMP -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -a megahit -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mt-megahit --current "snakemake assembly.done"
+a-mg-megahit:
+    stage: assembly
+    script:
+        - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db run -m /mnt/data/input/assembly-megahit/mg.r1.preprocessed.fq -m /mnt/data/input/assembly-megahit/mg.r2.preprocessed.fq -m /mnt/data/input/assembly-megahit/mg.se.preprocessed.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID -w assembly --single-omics
+
+
+a-mt-megahit:
+    stage: assembly
+    script:
+        - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db run -t /mnt/data/input/assembly-megahit/mt.r2.preprocessed.fq -t /mnt/data/input/assembly-megahit/mt.se.preprocessed.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID -w assembly --single-omics
+
 
 # test:
 #     stage: analysis

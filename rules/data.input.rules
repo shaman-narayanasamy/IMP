@@ -20,16 +20,16 @@ elif 'assembly' in IMP_STEPS:
         outputs.append("Preprocessing/mg.r1.fq")
         outputs.append("Preprocessing/mg.r2.fq")
         outputs.append("Preprocessing/mg.se.fq")
-        symlinks.append("Preprocessing/mg.r1.preprocessed.fq")
-        symlinks.append("Preprocessing/mg.r2.preprocessed.fq")
-        symlinks.append("Preprocessing/mg.se.preprocessed.fq")
+        symlinks.append(("mg.r1.fq", "Preprocessing/mg.r1.preprocessed.fq")
+        symlinks.append(("mg.r2.fq", "Preprocessing/mg.r2.preprocessed.fq")
+        symlinks.append(("mg.se.fq", "Preprocessing/mg.se.preprocessed.fq")
     if MT:
         outputs.append("Preprocessing/mt.r1.fq")
         outputs.append("Preprocessing/mt.r2.fq")
         outputs.append("Preprocessing/mt.se.fq")
-        symlinks.append("Preprocessing/mt.r1.preprocessed.fq")
-        symlinks.append("Preprocessing/mt.r2.preprocessed.fq")
-        symlinks.append("Preprocessing/mt.se.preprocessed.fq")
+        symlinks.append(("mt.r1.fq", "Preprocessing/mt.r1.preprocessed.fq")
+        symlinks.append(("mt.r2.fq", "Preprocessing/mt.r2.preprocessed.fq")
+        symlinks.append(("mt.se.fq", "Preprocessing/mt.se.preprocessed.fq")
 
 
 def prepare_input_files(inputs, outputs):
@@ -44,10 +44,8 @@ def prepare_input_files(inputs, outputs):
         _process_file(fname1, infilename, outfilename)
 
 
-def symlink_input_files(inputs, outputs):
-    if len(inputs) != len(outputs):
-        raise OSError("//Outputs and symlinks are not of the same length: %s <> %s" % (', '.join(inputs), ', '.join(outputs)))
-    for infilename, outfilename in zip(inputs, outputs):
+def symlink_input_files(data):
+    for infilename, outfilename in data:
         _, fname1 = os.path.split(infilename)
         print('symlink',  infilename, '=>', outfilename)
         os.symlink(infilename, outfilename)
@@ -89,4 +87,4 @@ rule prepare_input_data:
     run:
         prepare_input_files(input, outputs)
         if symlinks:
-            symlink_input_files(outputs, symlinks)
+            symlink_input_files(symlinks)
