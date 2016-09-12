@@ -12,11 +12,15 @@ databases:
     script:
         - ./test/scripts/init.sh
 
-# dag-mgmt-default:
-#   stage: dag
-#   script:
-#       - ./IMP -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output --current "snakemake -n"
-#
+before_script:
+  - pip install --editable .
+
+dag-mgmt-default:
+  stage: dag
+  script:
+      - impy -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db run -o $CI_PROJECT_DIR/output -s . -x "snakemake -n"
+      #- ./IMP -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output --current "snakemake -n"
+
 # dag-mgmt-nf:
 #   stage: dag
 #   script:
@@ -159,14 +163,14 @@ databases:
 #         - cp /mnt/data/input/assembly-megahit/mt* $CI_PROJECT_DIR/output-mt-megahit/Preprocessing/.
 #         - ./IMP -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -a megahit -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mt-megahit --current "snakemake assembly.done"
 
-test:
-    stage: analysis
-    script:
-        - mkdir -p $CI_PROJECT_DIR/output-mgmt/{Assembly,Preprocessing}
-        - cp /mnt/data/input/analysis-mgmt/Assembly/* $CI_PROJECT_DIR/output-mgmt/Assembly
-        - cp /mnt/data/input/analysis-mgmt/Preprocessing/* $CI_PROJECT_DIR/output-mgmt/Preprocessing
-        - ./IMP -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mgmt --current "ls -hRalt /home/imp/output/"
-        - ./IMP -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mgmt --current "snakemake Analysis/mgmt.assembly.length.txt"
+# test:
+#     stage: analysis
+#     script:
+#         - mkdir -p $CI_PROJECT_DIR/output-mgmt/{Assembly,Preprocessing}
+#         - cp /mnt/data/input/analysis-mgmt/Assembly/* $CI_PROJECT_DIR/output-mgmt/Assembly
+#         - cp /mnt/data/input/analysis-mgmt/Preprocessing/* $CI_PROJECT_DIR/output-mgmt/Preprocessing
+#         - ./IMP -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mgmt --current "ls -hRalt /home/imp/output/"
+#         - ./IMP -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mgmt --current "snakemake Analysis/mgmt.assembly.length.txt"
 
 
 
