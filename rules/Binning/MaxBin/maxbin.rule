@@ -1,18 +1,28 @@
 rule maxbin:
     input:
+       'Preprocessing/mg.r1.preprocessed.fq',
+       'Preprocessing/mg.r2.preprocessed.fq'
        "Assembly/%s.assembly.merged.fa" % ASS,
        "Analysis/mg.assembly.contig_depth.txt"
     output:
        "Binning/MaxBin/maxbin_res.log"
     shell:
         """
+        ## Interleave fastq files
+        echo "[x] Interleave MG reads"
+        TMPD=$(mktemp -d -t --tmpdir={TMPDIR} "XXXXXX")
+        fq2fa --merge {input[0]} {input[1]} $TMPD/merged_MG.fa
+
         ## Create MaxBin dir
         mkdir -p Binning/MaxBin
         
         ## Run MaxBin
         run_MaxBin.pl -contig {input[0]} \
-        -abund {input[1]} \
+        -reads $TMPD/merged_MG.fa \
         -out Binning/MaxBin/maxbin_res \
         -thread {THREADS} \
         -min_contig_length {config[vizbin][cutoff]}
+
+        ## Remove temporary files
+        rm -rf $TMPD/merged_MG.fa
         """
