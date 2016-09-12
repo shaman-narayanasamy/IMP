@@ -357,17 +357,17 @@ def run(ctx, metagenomic, metranscriptomic,
             if not mg_data or not mt_data:
                 click.secho('You should provide `metagenomics` and `metatranscriptomics` data.', fg='red', bold=True)
                 ctx.abort()
-        if mg_data and len(mg_data) < 2:
-            click.secho('Metagenomic data should be 2 paired files with or without single end', fg='red', bold=True)
+        if mg_data and len(mg_data) != 2:
+            click.secho('Metagenomic data should be 2 paired files.', fg='red', bold=True)
             ctx.abort()
-        if mt_data and len(mt_data) < 2:
-            click.secho('Metatranscriptomic data should be 2 paired files with or without single end', fg='red', bold=True)
+        if mt_data and len(mt_data) != 2:
+            click.secho('Metatranscriptomic data should be 2 paired files.', fg='red', bold=True)
             ctx.abort()
         data_directory = common_path
     # <-- end preprocessing validation
 
     # <-- assembly without preprocessing validation
-    if steps.index('assembly' ) == 0:
+    if 'assembly' in steps and steps.index('assembly') == 0:
         if single_omics:
             if mg_data and mt_data:
                 click.secho('In `single omics` you should only provide `metagenomics` or `metatranscriptomics` data.', fg='red', bold=True)

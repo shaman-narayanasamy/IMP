@@ -43,6 +43,7 @@ def prepare_input_files(inputs, outputs):
         _, fname1 = os.path.split(infilename)
         _process_file(fname1, infilename, outfilename)
 
+
 def symlink_input_files(inputs, outputs):
     if len(inputs) != len(outputs):
         raise OSError("""//Inputs and outputs are not of the same length:
@@ -70,20 +71,19 @@ def _process_file(fname, inp, outfilename):
     # unbzip2
     elif os.path.splitext(fname)[-1] in ['.bz2', '.bzip2']:
         shell("bzip2 -dc {i} > {o}".format(i=inp, o=outfilename))
-        #dec = bz2.BZ2Decompressor()
-        #with open(outfilename, 'wb') as whandle, bz2.open(inp, 'rb') as rhandle:
-            #whandle.write(bz2.decompress(rhandle.read()))
-        #    whandle.write(rhandle.read())
-            # for data in iter(lambda: rhandle.read(CHUNK_SIZE), b''):
-            #     whandle.write(bz2.decompress(data))
+
+        # dec = bz2.BZ2Decompressor()
+        # with open(outfilename, 'wb') as whandle, bz2.open(inp, 'rb') as rhandle:
+        # whandle.write(bz2.decompress(rhandle.read()))
+        # whandle.write(rhandle.read())
+        # for data in iter(lambda: rhandle.read(CHUNK_SIZE), b''):
+        # whandle.write(bz2.decompress(data))
     # copy
     else:
         shutil.copy(inp, outfilename)
 
 
-
-
-prepare_input_data:
+rule prepare_input_data:
     input:
         MG, MT
     output:
