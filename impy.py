@@ -195,7 +195,7 @@ def generate_docker_cmd(container_name, database_path, configuration_file_path,
                         command=None, source_code=None,
                         output_directory=None, environment=None):
 
-    configuration_file_path = Path(configuration_file_path).parent.abspath()
+    configuration_file_path = Path(configuration_file_path)
     configuration_file_name = str(Path(configuration_file_path).name)
     configuration_file_dir = Path(configuration_file_path).parent.abspath()
 
@@ -260,7 +260,7 @@ def init(ctx):
     if not is_imp_container_installed(ctx.obj['image-name'], ctx.obj['image-tag']):
         click.secho('IMP image not installed. Please run `impy install_imp_container` first.', bold=True)
 
-    container_name = generate_container_name( ctx.obj['database-path'])
+    container_name = generate_container_name(ctx.obj['database-path'])
 
     init_cmd = "snakemake -s {container_source_code_dir}/rules/ini/init".format(
         container_source_code_dir=CONTAINER_CODE_DIR
