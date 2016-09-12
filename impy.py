@@ -113,6 +113,15 @@ def call(cmd, container_name):
     """ % cmd, fg='green')
     try:
         p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # Poll process for new output until finished
+        while True:
+            nextline = process.stdout.readline()
+            if nextline == '' and process.poll() is not None:
+                break
+            click.secho(str(nextline, 'utf-8'))
+            # sys.stdout.write(nextline)
+            # sys.stdout.flush()
+
         outs, errs = p.communicate()
         click.secho(str(outs, 'utf-8'))
         click.secho(str(errs, 'utf-8'), fg='red')
