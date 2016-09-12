@@ -22,11 +22,11 @@ def reads_input_files(wildcards):
     if wildcards.type not in TYPES:
         return 'reads_input_files-no-file-here'
     base = raw_fq_files
-    if not config['skip_preprocessing']:
+    if 'preprocessing' in IMP_STEPS:
         base += preprocessed_fq_files
         if config['preprocessing_filtering']:
             base += trimmed_fq_files
-    if wildcards.type == 'mt' and not config['skip_preprocessing']:
+    if wildcards.type == 'mt' and 'preprocessing' in IMP_STEPS:
         base += rna_filtered_fq_mt_files
     return expand(base, type=wildcards.type)
 
