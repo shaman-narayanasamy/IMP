@@ -219,7 +219,7 @@ def generate_docker_cmd(container_name, database_path, configuration_file_path,
         )
     if data_directory is not None:
         volumes += " -v {data_directory}:{container_data_dir}".format(
-            data_directory=data,
+            data_directory=data_directory,
             container_data_dir=CONTAINER_DATA_DIR
         )
     cmd += volumes
