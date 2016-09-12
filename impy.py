@@ -372,7 +372,8 @@ def run(ctx, metagenomic, metranscriptomic,
     run_cmd = "snakemake -s {container_source_code_dir}/Snakefile".format(
         container_source_code_dir=CONTAINER_CODE_DIR
     )
-
+    if execute:
+        run_cmd = execute
     # docker command
     docker_cmd = generate_docker_cmd(
         container_name,
