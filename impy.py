@@ -92,7 +92,7 @@ def requirements():
     good = True
     # docker
     try:
-        subprocess.check_output(['hash', 'docker'])
+        subprocess.check_output(['which', 'docker'])
     except subprocess.CalledProcessError:
         good = False
         click.secho("Docker must be installed. Please see https://docs.docker.com/installation.", fg='red', bold=True)
