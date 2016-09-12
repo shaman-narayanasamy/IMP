@@ -1,0 +1,24 @@
+rule binning_run_checkm:
+    input:
+       expand("Binning/binny/finalClusterMap.{pk}.{nn}.pdf".split(),pk=config["binning"]["pk"],nn=config["binning"]["nn"])
+    output:
+       "Binning/binny/checkM_output/checkm_table.tsv",
+       "Binning/binny/run_checkM.done"
+    shell:
+       """
+       EXT="faa"
+       GENES="--genes"
+       INDIR=Binning/binny/clusterFiles/checkM_input
+       OUTDIR=Binning/binny/checkM_output
+       
+       mkdir -p $INDIR 
+       cd $INDIR
+       ln -fs ../../clusterFiles/*/*.faa .
+       cd ../../..
+
+       CMD="checkm lineage_wf -t {THREADS} -x ${{EXT}} ${{GENES}} ${{INDIR}} ${{OUTDIR}} -f {output[0]} --tab_table"
+       echo "${{CMD}}"
+       eval "${{CMD}}"
+       
+       touch {output[1]}
+       """
