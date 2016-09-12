@@ -6,6 +6,7 @@ setup(
     py_modules=['impy'],
     install_requires=[
         'Click',
+        'Path.py'
     ],
     entry_points='''
         [console_scripts]
