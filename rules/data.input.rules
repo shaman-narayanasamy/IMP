@@ -14,6 +14,7 @@ if 'preprocessing' in IMP_STEPS:
         outputs.append("Preprocessing/mt.r2.fq")
 
 elif 'assembly' in IMP_STEPS:
+    print('ASSEMBLY THERE')
     # here there are no preprocessing
     # we take the pipeline directly to the assembly part.
     if MG:
