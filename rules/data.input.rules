@@ -37,7 +37,7 @@ def prepare_input_files(inputs, outputs):
     Prepare file names from input into snakemake pipeline.
     """
     if len(inputs) != len(outputs):
-        raise OSError("""//Inputs and outputs are not of the same length: %s <> %s""" % (', '.join(inputs), ', '.join(outputs))
+        raise OSError("//Inputs and outputs are not of the same length: %s <> %s" % (', '.join(inputs), ', '.join(outputs)))
 
     for infilename, outfilename in zip(inputs, outputs):
         _, fname1 = os.path.split(infilename)
@@ -46,7 +46,7 @@ def prepare_input_files(inputs, outputs):
 
 def symlink_input_files(inputs, outputs):
     if len(inputs) != len(outputs):
-        raise OSError("""//Inputs and outputs are not of the same length: %s <> %s""" % (', '.join(inputs), ', '.join(outputs))
+        raise OSError("//Inputs and outputs are not of the same length: %s <> %s" % (', '.join(inputs), ', '.join(outputs)))
     for infilename, outfilename in zip(inputs, outputs):
         _, fname1 = os.path.split(infilename)
         print('symlink',  infilename, '=>', outfilename)
