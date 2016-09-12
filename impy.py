@@ -65,7 +65,7 @@ def cli(ctx, image_name, image_tag, image_repo, database_path, config_file_path,
         if not source_code.isdir():
             click.secho("`source code` must be a directory.", fg='red', bold=True)
             ctx.abort()
-
+    database_path = Path(database_path)
     if not database_path.exists():
         database_path.makedirs()
     if not database_path.isdir():
