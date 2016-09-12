@@ -14,7 +14,6 @@ if 'preprocessing' in IMP_STEPS:
         outputs.append("Preprocessing/mt.r2.fq")
 
 elif 'assembly' in IMP_STEPS:
-    print('ASSEMBLY THERE')
     # here there are no preprocessing
     # we take the pipeline directly to the assembly part.
     if MG:
@@ -41,7 +40,6 @@ def prepare_input_files(inputs, outputs):
     input: input names from the user
     type: MG or MT
     """
-    print("INPUTS ", inputs, " TO ", outputs)
     if len(inputs) != len(outputs):
         raise OSError("""//Inputs and outputs are not of the same length:
         %s
@@ -54,7 +52,6 @@ def prepare_input_files(inputs, outputs):
 
 
 def symlink_input_files(inputs, outputs):
-    print("SYM ", inputs, " TO ", outputs)
     if len(inputs) != len(outputs):
         raise OSError("""//Inputs and outputs are not of the same length:
         %s
@@ -97,8 +94,9 @@ rule prepare_input_data:
     input:
         MG, MT
     output:
-        outputs
+        outputs,
+        symlinks
     run:
         prepare_input_files(input, output)
-        if len(symlinks) > 0:
+        if symlinks:
             symlink_input_files(outputs, symlinks)
