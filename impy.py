@@ -1,5 +1,5 @@
 import click
-import Path
+from path import Path
 import subprocess
 import os
 import getpass
