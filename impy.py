@@ -191,7 +191,7 @@ def generate_docker_cmd(container_name, database_path, configuration_file_path,
     configuration_file_dir = Path(configuration_file_path).parent.abspath()
 
     # prepare general command
-    cmd = """docker run --rm --name {container_name} \
+    cmd = """docker run --rm --name {container_name}
     """.format(container_name=container_name)
 
     # add volumes
