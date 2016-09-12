@@ -115,7 +115,7 @@ def call(cmd, container_name):
         p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         # Poll process for new output until finished
         while True:
-            nextline = process.stdout.readline()
+            nextline = p.stdout.readline()
             if nextline == '' and p.poll() is not None:
                 break
             click.secho(str(nextline, 'utf-8'))
