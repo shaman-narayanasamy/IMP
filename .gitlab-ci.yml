@@ -18,7 +18,7 @@ before_script:
 dag-mgmt-default:
   stage: dag
   script:
-      - impy -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db run -o $CI_PROJECT_DIR/output -s . -x "snakemake -n"
+      - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db run -o $CI_PROJECT_DIR/output -x "snakemake -n"
 
 # dag-mgmt-nf:
 #   stage: dag
