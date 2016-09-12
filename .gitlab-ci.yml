@@ -13,7 +13,7 @@ databases:
         - ./test/scripts/init.sh
 
 before_script:
-  - pip install --editable . --user
+  - pip3.4 install --editable . --user
 
 dag-mgmt-default:
   stage: dag
