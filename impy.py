@@ -118,9 +118,9 @@ def call(cmd, container_name):
             nextline = p.stdout.readline()
             if not nextline and p.poll() is not None:
                 break
-            # click.secho(str(nextline, 'utf-8'))
-            sys.stdout.write(nextline)
-            sys.stdout.flush()
+            click.secho(str(nextline, 'utf-8'))
+            # sys.stdout.write(nextline)
+            # sys.stdout.flush()
 
         outs, errs = p.communicate()
         click.secho(str(outs, 'utf-8'))
