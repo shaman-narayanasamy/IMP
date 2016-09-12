@@ -245,7 +245,7 @@ def generate_docker_cmd(container_name, database_path, configuration_file_path,
         image_tag=image_tag
     )
     # add command
-    if command is None and interactive:
+    if interactive:
         command = '/bin/bash'
     cmd += ' %s' % command
     return cmd
