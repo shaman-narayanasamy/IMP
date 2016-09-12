@@ -272,8 +272,8 @@ def init(ctx):
 
     docker_cmd = generate_docker_cmd(
         container_name,
-         ctx.obj['database-path'],
-        configuration_file_path,
+        ctx.obj['database-path'],
+        ctx.obj['config-file-path'],
         imagename=ctx.obj['image-name'],
         image_tag=ctx.obj['image-tag'],
         command=init_cmd,
