@@ -127,8 +127,7 @@ def call(cmd, container_name):
         click.secho(str(errs, 'utf-8'), fg='red')
     except KeyboardInterrupt:
         click.secho('Keyboard interruption. Killing container...', fg='green')
-        k = subprocess.Popen("docker kill %s" % container_name, shell=True)
-        k = subprocess.Popen("docker rm %s" % container_name, shell=True)
+        k = subprocess.Popen("docker rm -f %s" % container_name, shell=True)
         click.secho('killed.', fg='green')
         return p.terminate()
 
