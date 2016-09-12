@@ -114,7 +114,7 @@ def call(cmd, container_name):
     try:
         p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         outs, errs = p.communicate()
-        click.secho(str(outs, 'utf-8')
+        click.secho(str(outs, 'utf-8'))
         click.secho(str(errs, 'utf-8'), fg='red')
     except KeyboardInterrupt:
         click.secho('Keyboard interruption. Killing container...', fg='green')
