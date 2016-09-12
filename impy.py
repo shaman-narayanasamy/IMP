@@ -274,7 +274,7 @@ def init(ctx):
         container_name,
         ctx.obj['database-path'],
         ctx.obj['config-file-path'],
-        imagename=ctx.obj['image-name'],
+        image_name=ctx.obj['image-name'],
         image_tag=ctx.obj['image-tag'],
         command=init_cmd,
         interactive=ctx.obj['enter'],
