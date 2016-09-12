@@ -116,7 +116,7 @@ def call(cmd, container_name):
         # Poll process for new output until finished
         while True:
             nextline = p.stdout.readline()
-            if nextline == '' and p.poll() is not None:
+            if not nextline and p.poll() is not None:
                 break
             click.secho(str(nextline, 'utf-8'))
             # sys.stdout.write(nextline)
