@@ -114,13 +114,13 @@ def call(cmd, container_name):
     try:
         p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         # Poll process for new output until finished
-        while True:
-            nextline = p.stdout.readline()
-            if not nextline and p.poll() is not None:
-                break
-            click.secho(str(nextline, 'utf-8'))
-            # sys.stdout.write(nextline)
-            # sys.stdout.flush()
+        # while True:
+        #     nextline = p.stdout.readline()
+        #     if not nextline and p.poll() is not None:
+        #         break
+        #     click.secho(str(nextline, 'utf-8'))
+        #     # sys.stdout.write(nextline)
+        #     # sys.stdout.flush()
         p.wait()
     except KeyboardInterrupt:
         click.secho('Keyboard interruption. Killing container...', fg='green')
