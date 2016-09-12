@@ -4,6 +4,7 @@ import shutil
 
 outputs = []
 symlinks = []
+symlinked_output = []
 
 if 'preprocessing' in IMP_STEPS:
     if MG:
@@ -20,6 +21,9 @@ elif 'assembly' in IMP_STEPS:
         outputs.append("Preprocessing/mg.r1.fq")
         outputs.append("Preprocessing/mg.r2.fq")
         outputs.append("Preprocessing/mg.se.fq")
+        symlinked_output.append("Preprocessing/mg.r1.preprocessed.fq")
+        symlinked_output.append("Preprocessing/mg.r2.preprocessed.fq")
+        symlinked_output.append("Preprocessing/mg.se.preprocessed.fq")
         symlinks.append(("mg.r1.fq", "Preprocessing/mg.r1.preprocessed.fq"))
         symlinks.append(("mg.r2.fq", "Preprocessing/mg.r2.preprocessed.fq"))
         symlinks.append(("mg.se.fq", "Preprocessing/mg.se.preprocessed.fq"))
@@ -27,6 +31,9 @@ elif 'assembly' in IMP_STEPS:
         outputs.append("Preprocessing/mt.r1.fq")
         outputs.append("Preprocessing/mt.r2.fq")
         outputs.append("Preprocessing/mt.se.fq")
+        symlinked_output.append("Preprocessing/mt.r1.preprocessed.fq")
+        symlinked_output.append("Preprocessing/mt.r2.preprocessed.fq")
+        symlinked_output.append("Preprocessing/mt.se.preprocessed.fq")
         symlinks.append(("mt.r1.fq", "Preprocessing/mt.r1.preprocessed.fq"))
         symlinks.append(("mt.r2.fq", "Preprocessing/mt.r2.preprocessed.fq"))
         symlinks.append(("mt.se.fq", "Preprocessing/mt.se.preprocessed.fq"))
@@ -83,7 +90,7 @@ rule prepare_input_data:
         MG, MT
     output:
         outputs,
-        symlinks
+        symlinked_output
     run:
         prepare_input_files(input, outputs)
         if symlinks:
