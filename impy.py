@@ -189,7 +189,7 @@ def generate_container_name(directory):
 
 def generate_docker_cmd(container_name, database_path, configuration_file_path,
                         image_name, image_tag, interactive,
-                        data=None,
+                        data_directory=None,
                         command=None, source_code=None,
                         output_directory=None, environment=None):
 
@@ -217,9 +217,9 @@ def generate_docker_cmd(container_name, database_path, configuration_file_path,
             output_directory=output_directory,
             container_output_dir=CONTAINER_OUTPUT_DIR
         )
-    if data is not None:
-        volumes += " -v {data_dir}:{container_data_dir}".format(
-            data_dir=data,
+    if data_directory is not None:
+        volumes += " -v {data_directory}:{container_data_dir}".format(
+            data_directory=data,
             container_data_dir=CONTAINER_DATA_DIR
         )
     cmd += volumes
@@ -385,6 +385,7 @@ def run(ctx, metagenomic, metranscriptomic,
         container_name,
         ctx.obj['database-path'],
         ctx.obj['config-file-path'],
+        data_directory=common_path,
         image_name=ctx.obj['image-name'],
         image_tag=ctx.obj['image-tag'],
         interactive=ctx.obj['enter'],
