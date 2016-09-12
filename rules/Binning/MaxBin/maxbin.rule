@@ -1,7 +1,7 @@
 rule maxbin:
     input:
        'Preprocessing/mg.r1.preprocessed.fq',
-       'Preprocessing/mg.r2.preprocessed.fq'
+       'Preprocessing/mg.r2.preprocessed.fq',
        "Assembly/%s.assembly.merged.fa" % ASS,
        "Analysis/mg.assembly.contig_depth.txt"
     output:
