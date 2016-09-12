@@ -44,7 +44,7 @@ def prepare_input_files(inputs, outputs):
         raise OSError("""//Inputs and outputs are not of the same length:
         %s
         %s
-        """ % ', '.join(inputs), ', '.join(outputs))
+        """ % inputs and ', '.join(inputs) or 'no input', outputs and ', '.join(outputs) or 'no output')
 
     for infilename, outfilename in zip(inputs, outputs):
         _, fname1 = os.path.split(infilename)
