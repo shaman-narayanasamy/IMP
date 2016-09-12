@@ -52,6 +52,7 @@ SAMPLE = os.environ.get("SAMPLE", config['sample'])
 DBPATH = os.environ.get("DBPATH", config['db_path'])
 IMP_SUDO = os.environ.get("IMP_SUDO", '')
 
+IMP_STEPS = os.environ.get("IMP_STEPS", 'preprocessing assembly analysis binning report').split()
 if not os.path.exists(DBPATH):
     os.makedirs(DBPATH)
 

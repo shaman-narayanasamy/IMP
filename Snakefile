@@ -22,47 +22,69 @@ workdir:
 
 # INTEGRATIVE MG-MT workflow
 if MG and MT:
-    include:
-        "workflows/integrative/Preprocessing"
+    if 'preprocessing' in IMP_STEPS:
+        include:
+            "workflows/integrative/Preprocessing"
 
-    include:
-        "workflows/integrative/Assembly"
+    if 'assembly' in IMP_STEPS:
+        include:
+            "workflows/integrative/Assembly"
 
-    include:
-        "workflows/integrative/Analysis"
+    if 'analysis' in IMP_STEPS:
+        include:
+            "workflows/integrative/Analysis"
 
-    include:
-        "workflows/integrative/Binning"
+    if 'binning' in IMP_STEPS:
+        include:
+            "workflows/integrative/Binning"
 
-    include:
-        "workflows/integrative/Report"
+    if 'report' in IMP_STEPS:
+        include:
+            "workflows/integrative/Report"
 
 
 # Single omics MG workflow
 elif MG:
-    include:
-        "workflows/single_omics/mg/Preprocessing"
-    include:
-        "workflows/single_omics/mg/Assembly"
-    include:
-        "workflows/single_omics/mg/Analysis"
-    include:
-        "workflows/single_omics/mg/Binning"
-    include:
-        "workflows/single_omics/mg/Report"
+    if 'preprocessing' in IMP_STEPS:
+        include:
+            "workflows/single_omics/mg/Preprocessing"
 
+    if 'assembly' in IMP_STEPS:
+        include:
+            "workflows/single_omics/mg/Assembly"
+
+    if 'analysis' in IMP_STEPS:
+        include:
+            "workflows/single_omics/mg/Analysis"
+
+    if 'binning' in IMP_STEPS:
+        include:
+            "workflows/single_omics/mg/Binning"
+
+    if 'report' in IMP_STEPS:
+        include:
+            "workflows/single_omics/mg/Report"
 
 elif MT:
-    include:
-        "workflows/single_omics/mt/Preprocessing"
-    include:
-        "workflows/single_omics/mt/Assembly"
-    include:
-        "workflows/single_omics/mt/Analysis"
-    include:
-        "workflows/single_omics/mt/Binning"
-    include:
-        "workflows/single_omics/mt/Report"
+    if 'preprocessing' in IMP_STEPS:
+        include:
+            "workflows/single_omics/mt/Preprocessing"
+
+    if 'assembly' in IMP_STEPS:
+        include:
+            "workflows/single_omics/mt/Assembly"
+
+    if 'analysis' in IMP_STEPS:
+        include:
+            "workflows/single_omics/mt/Analysis"
+
+    if 'binning' in IMP_STEPS:
+        include:
+            "workflows/single_omics/mt/Binning"
+
+    if 'report' in IMP_STEPS:
+        include:
+            "workflows/single_omics/mt/Report"
 
 else:
     raise Exception('No input data.')
