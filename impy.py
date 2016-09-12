@@ -221,7 +221,7 @@ def generate_docker_cmd(container_name, database_path, configuration_file_path,
     )
     if environment is not None:
         for k, v in environment.items():
-            environments += """ -e {key}="{value}"""".format(
+            environments += """ -e {key}="{value}" """.format(
                 key=k,
                 value=v
             )
