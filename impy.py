@@ -189,6 +189,7 @@ def generate_container_name(directory):
 
 def generate_docker_cmd(container_name, database_path, configuration_file_path,
                         image_name, image_tag, interactive,
+                        data=None,
                         command=None, source_code=None,
                         output_directory=None, environment=None):
 
@@ -215,6 +216,11 @@ def generate_docker_cmd(container_name, database_path, configuration_file_path,
         volumes += " -v {output_directory}:{container_output_dir}".format(
             output_directory=output_directory,
             container_output_dir=CONTAINER_OUTPUT_DIR
+        )
+    if data is not None:
+        volumes += " -v {data_dir}:{container_data_dir}".format(
+            data_dir=data,
+            container_data_dir=CONTAINER_DATA_DIR
         )
     cmd += volumes
 
