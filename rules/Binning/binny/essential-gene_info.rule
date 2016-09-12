@@ -4,7 +4,7 @@ rule essential_gene_info:
         "Binning/ORFS-contig_links.bed",
         "Binning/ORFS.hmm.orfs.essential.hits_reduced"
     output:
-        "Binning/essMarkerGenes/markersAll.tsv",
+        "Binning/binny/essMarkerGenes/markersAll.tsv",
     shell:
         """
         mkdir -p Binning/essMarkerGenes

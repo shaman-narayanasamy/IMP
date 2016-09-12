@@ -22,8 +22,8 @@ rule extract_essential_genes:
             perl src/fastaProteinExtractAddSampleCluster.pl {input[1]} Binning/essMarkerGenes/marker-${{marker}}.tsv > Binning/essMarkerGenes/marker-${{marker}}.faa
         else
             echo "${{marker}} not present! Generating fake files..."
-            touch Binning/essMarkerGenes/marker-${{marker}}.tsv
-            touch Binning/essMarkerGenes/marker-${{marker}}.faa
+            touch Binning/binny/essMarkerGenes/marker-${{marker}}.tsv
+            touch Binning/binny/essMarkerGenes/marker-${{marker}}.faa
         fi
         done
         touch Binning/getMarkerGenes.done
