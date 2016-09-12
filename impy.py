@@ -281,7 +281,7 @@ def init(ctx):
         source_code=ctx.obj['source-code'],
         )
 
-    call(cmd, container_name)
+    call(docker_cmd, container_name)
 
 
 
