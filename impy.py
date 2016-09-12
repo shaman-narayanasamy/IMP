@@ -122,6 +122,7 @@ def call(cmd, container_name):
             # sys.stdout.write(nextline)
             # sys.stdout.flush()
         p.wait()
+        return p.returncode
     except KeyboardInterrupt:
         click.secho('Keyboard interruption. Killing container...', fg='green')
         k = subprocess.Popen("docker rm -f %s" % container_name, shell=True)
