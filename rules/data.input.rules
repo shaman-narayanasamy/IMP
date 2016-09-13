@@ -1,9 +1,11 @@
 import os
 import shutil
 
-
+# outputs to be generated (in rule)
 outputs = []
+# symlinks to be generated (from , to)
 symlinks = []
+# symlinks to output to be generated (in rule)
 symlinked_output = []
 
 if 'preprocessing' in IMP_STEPS:

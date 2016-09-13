@@ -431,5 +431,231 @@ def run(ctx, metagenomic, metranscriptomic,
     call(docker_cmd, container_name)
 
 
+@cli.command()
+@click.option('-m', '--metagenomic', help="Path to the Metagenomic files.", multiple=True)
+@click.option('-t', '--metranscriptomic', help="Path to the Metatranscriptomic files.", multiple=True)
+@click.option('-o', '--output-directory', help="Output directory.", default=IMP_DEFAULT_OUTPUT_DIR)
+@click.option('-a', '--assembler', help="Assembler to use.",  type=click.Choice(['idba', 'megahit']), default='megahit')
+@click.option('--single-omics', is_flag=True, default=False, help='Activate single omics mode.')
+@click.option('-x', '--execute',
+              help="Command to execute.",
+              default="snakemake -s {container_source_code_dir}/Snakefile".format(
+              container_source_code_dir=CONTAINER_CODE_DIR))
+@click.option('--single-step', help="Only execute preprocessing.", is_flag=True)
+@click.pass_context
+def preprocessing(ctx, metagenomic, metranscriptomic,
+        assembler, output_directory, single_omics,
+        execute, workflow_step, single_step):
+    """
+    Run IMP workflow.
+
+    Preprocessing --> Assembly --> Analysis --> Binning --> Report
+    """
+
+    # database path
+    database_path = Path(ctx.obj['database-path']).abspath()
+
+    # environment variable
+    steps = ['preprocessing', 'assembly', 'analysis', 'binning', 'report']
+    if single_step:
+        steps = ['preprocessing']
+
+    data_directory = None
+
+    # find minimum common path between the data files
+    # inorder to mount them in the container
+    mg_data = [Path(p).abspath() for p in metagenomic]
+    mt_data = [Path(p).abspath() for p in metranscriptomic]
+    # check if paths exists
+    for pth in mg_data + mt_data:
+        if not pth.exists():
+            click.secho('Path provided does not exists: `%s`.' % pth, fg='red', bold=True)
+            ctx.abort()
+    common_path = Path(os.path.commonprefix(mg_data + mt_data)).dirname()
+
+    # update data paths to remove the 'common path' from it.
+    mg_data = [p.partition(common_path)[-1][1:] for p in mg_data]
+    mt_data = [p.partition(common_path)[-1][1:] for p in mt_data]
+    # update data path to put the container path before
+    mg_data = [CONTAINER_DATA_DIR + '/' + d for d in mg_data]
+    mt_data = [CONTAINER_DATA_DIR + '/' + d for d in mt_data]
+
+    # validate data input
+    if single_omics:
+        if mg_data and mt_data:
+            click.secho('In `single omics` you should only provide `metagenomics` or `metatranscriptomics` data.', fg='red', bold=True)
+            ctx.abort()
+        if not mg_data and not mt_data:
+            click.secho('In `single omics` you should provide `metagenomics` or `metatranscriptomics` data.', fg='red', bold=True)
+            ctx.abort()
+    else:
+        if not mg_data or not mt_data:
+            click.secho('You should provide `metagenomics` and `metatranscriptomics` data.', fg='red', bold=True)
+            ctx.abort()
+    if mg_data and len(mg_data) != 2:
+        click.secho('Metagenomic data should be 2 paired files.', fg='red', bold=True)
+        ctx.abort()
+    if mt_data and len(mt_data) != 2:
+        click.secho('Metatranscriptomic data should be 2 paired files.', fg='red', bold=True)
+        ctx.abort()
+
+
+    ev = {
+        'MG': ' '.join(mg_data),
+        'MT': ' '.join(mt_data),
+        'IMP_ASSEMBLER': assembler,
+        'IMP_STEPS': ' '.join(steps)
+    }
+
+    # output directory
+    output_directory = Path(output_directory).abspath()
+
+    if not output_directory.exists():
+        output_directory.makedirs()
+    if not output_directory.isdir():
+        click.secho("`output directory` must be a directory.", fg='red', bold=True)
+        ctx.abort()
+
+    container_name = generate_container_name(output_directory)
+
+    run_cmd = "snakemake -s {container_source_code_dir}/Snakefile".format(
+        container_source_code_dir=CONTAINER_CODE_DIR
+    )
+    if execute:
+        run_cmd = execute
+    # docker command
+    docker_cmd = generate_docker_cmd(
+        container_name,
+        ctx.obj['database-path'],
+        ctx.obj['config-file-path'],
+        data_directory=common_path,
+        image_name=ctx.obj['image-name'],
+        image_tag=ctx.obj['image-tag'],
+        interactive=ctx.obj['enter'],
+        source_code=ctx.obj['source-code'],
+        command=run_cmd,
+        output_directory=output_directory,
+        environment=ev
+        )
+
+    # execute the command
+    call(docker_cmd, container_name)
+
+
+
+
+@cli.command()
+@click.option('-m', '--metagenomic', help="Path to the Metagenomic files.", multiple=True)
+@click.option('-t', '--metranscriptomic', help="Path to the Metatranscriptomic files.", multiple=True)
+@click.option('-o', '--output-directory', help="Output directory.", default=IMP_DEFAULT_OUTPUT_DIR)
+@click.option('-a', '--assembler', help="Assembler to use.",  type=click.Choice(['idba', 'megahit']), default='megahit')
+@click.option('--single-omics', is_flag=True, default=False, help='Activate single omics mode.')
+@click.option('-x', '--execute',
+              help="Command to execute.",
+              default="snakemake -s {container_source_code_dir}/Snakefile".format(
+              container_source_code_dir=CONTAINER_CODE_DIR))
+@click.option('--single-step', help="Only execute preprocessing.", is_flag=True)
+@click.pass_context
+def assembly(ctx, metagenomic, metranscriptomic,
+        assembler, output_directory, single_omics,
+        execute, workflow_step, to_the_end):
+    """
+    Run IMP workflow.
+
+    Preprocessing --> Assembly --> Analysis --> Binning --> Report
+    """
+
+    # database path
+    database_path = Path(ctx.obj['database-path']).abspath()
+
+    # environment variable
+    steps = ['assembly', 'analysis', 'binning', 'report']
+    if single_step:
+        steps = ['assembly']
+
+    data_directory = None
+
+    # find minimum common path between the data files
+    # inorder to mount them in the container
+    mg_data = [Path(p).abspath() for p in metagenomic]
+    mt_data = [Path(p).abspath() for p in metranscriptomic]
+    # check if paths exists
+    for pth in mg_data + mt_data:
+        if not pth.exists():
+            click.secho('Path provided does not exists: `%s`.' % pth, fg='red', bold=True)
+            ctx.abort()
+    common_path = Path(os.path.commonprefix(mg_data + mt_data)).dirname()
+
+    # update data paths to remove the 'common path' from it.
+    mg_data = [p.partition(common_path)[-1][1:] for p in mg_data]
+    mt_data = [p.partition(common_path)[-1][1:] for p in mt_data]
+    # update data path to put the container path before
+    mg_data = [CONTAINER_DATA_DIR + '/' + d for d in mg_data]
+    mt_data = [CONTAINER_DATA_DIR + '/' + d for d in mt_data]
+
+
+    if single_omics:
+        if mg_data and mt_data:
+            click.secho('In `single omics` you should only provide `metagenomics` or `metatranscriptomics` data.', fg='red', bold=True)
+            ctx.abort()
+        if not mg_data and not mt_data:
+            click.secho('In `single omics` you should provide `metagenomics` or `metatranscriptomics` data.', fg='red', bold=True)
+            ctx.abort()
+    else:
+        if not mg_data or not mt_data:
+            click.secho('You should provide `metagenomics` and `metatranscriptomics` data.', fg='red', bold=True)
+            ctx.abort()
+    if mg_data and len(mg_data) != 3:
+        click.secho('Metagenomic data should be 2 paired files and single end', fg='red', bold=True)
+        ctx.abort()
+    if mt_data and len(mt_data) != 3:
+        click.secho('Metatranscriptomic data should be 2 paired files and single end', fg='red', bold=True)
+        ctx.abort()
+
+    # <-- end assembly validation
+
+    ev = {
+        'MG': ' '.join(mg_data),
+        'MT': ' '.join(mt_data),
+        'IMP_ASSEMBLER': assembler,
+        'IMP_STEPS': ' '.join(steps)
+    }
+
+    # output directory
+    output_directory = Path(output_directory).abspath()
+
+    if not output_directory.exists():
+        output_directory.makedirs()
+    if not output_directory.isdir():
+        click.secho("`output directory` must be a directory.", fg='red', bold=True)
+        ctx.abort()
+
+    container_name = generate_container_name(output_directory)
+
+    run_cmd = "snakemake -s {container_source_code_dir}/Snakefile".format(
+        container_source_code_dir=CONTAINER_CODE_DIR
+    )
+    if execute:
+        run_cmd = execute
+    # docker command
+    docker_cmd = generate_docker_cmd(
+        container_name,
+        ctx.obj['database-path'],
+        ctx.obj['config-file-path'],
+        data_directory=common_path,
+        image_name=ctx.obj['image-name'],
+        image_tag=ctx.obj['image-tag'],
+        interactive=ctx.obj['enter'],
+        source_code=ctx.obj['source-code'],
+        command=run_cmd,
+        output_directory=output_directory,
+        environment=ev
+        )
+
+    # execute the command
+    call(docker_cmd, container_name)
+
+
+
 if __name__ == '__main__':
     cli(obj={})
