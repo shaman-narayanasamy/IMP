@@ -17,7 +17,7 @@ before_script:
 
 
 # DAG
-see if the snakemake graph is resolving to the end
+# see if the snakemake graph is resolving to the end
 dag-mgmt-default:
   stage: dag
   script:
