@@ -708,7 +708,7 @@ def analysis(ctx, data_dir, output_directory, single_omics,
             # click.secho("`Preprocessing directory` must contains '%s'." % f, fg='red', bold=True)
             # ctx.abort()
     for f in mt_preprocessing_files:
-        if not preprocessing_dir.files(f)
+        if not preprocessing_dir.files(f):
             got_mt = False
             break
             # click.secho("`Preprocessing directory` must contains '%s'." % f, fg='red', bold=True)
