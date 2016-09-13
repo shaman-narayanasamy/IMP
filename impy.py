@@ -558,7 +558,7 @@ def preprocessing(ctx, metagenomic, metranscriptomic,
 @click.pass_context
 def assembly(ctx, metagenomic, metranscriptomic,
         assembler, output_directory, single_omics,
-        execute, workflow_step, to_the_end):
+        execute, workflow_step, single_step):
     """
     Run IMP workflow.
 
