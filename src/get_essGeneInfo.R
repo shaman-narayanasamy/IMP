@@ -57,13 +57,13 @@ clusterRes <- clusterRes[-c(grep("^[NB]", clusterRes$cluster, perl = TRUE)),]
 clusterRes <- unique(clusterRes)
 
 ## Write out table
-write.table(clusterRes, "Binning/essMarkerGenes/markersAll.tsv", quote=F, row.names=F, sep="\t", col.names=F)
+write.table(clusterRes, "Binning/binny/essMarkerGenes/markersAll.tsv", quote=F, row.names=F, sep="\t", col.names=F)
 
 ## Write out separate tables for the cluster of genes
 invisible(
 lapply(markerGenes, 
        FUN=function(x){write.table(subset(clusterRes, gene_name==x, drop=FALSE),
-                                   paste("Binning/essMarkerGenes/marker-", x, ".tsv", sep=""),
+                                   paste("Binning/binny/essMarkerGenes/marker-", x, ".tsv", sep=""),
                                    quote=F, row.names=F, sep="\t", col.names=F 
                                    )}
        )

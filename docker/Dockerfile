@@ -63,7 +63,7 @@ RUN set -x \
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
 
-RUN chown imp:imp -R /home/imp
+RUN sudo chown imp:imp -R /home/imp/
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
