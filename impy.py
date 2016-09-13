@@ -724,9 +724,12 @@ def analysis(ctx, data_dir, output_directory, single_omics,
         ctx.abort()
     if single_omics:
         if not (assembly_dir.files('mg.assembly.merged.fa') and assembly_dir.files('mg.reads.sorted.bam')):
+            mg_data = []
             if not (assembly_dir.files('mt.assembly.merged.fa') and assembly_dir.files('mt.reads.sorted.bam')):
                 click.secho("`Assembly directory` must contains mg or mt data. e.g: mg.assembly.merged.fa, mg.reads.sorted.bam", fg='red', bold=True)
                 ctx.abort()
+            else:
+                mt_data = []
     elif not (assembly_dir.files('mgmt.assembly.merged.fa')
               and assembly_dir.files('mt.assembly.merged.fa')
               and assembly_dir.files('mt.reads.sorted.bam')):
