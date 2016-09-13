@@ -554,7 +554,7 @@ def preprocessing(ctx, metagenomic, metranscriptomic,
               help="Command to execute.",
               default="snakemake -s {container_source_code_dir}/Snakefile".format(
               container_source_code_dir=CONTAINER_CODE_DIR))
-@click.option('--single-step', help="Only execute preprocessing.", is_flag=True)
+@click.option('--single-step', help="Only execute assembly step.", is_flag=True)
 @click.pass_context
 def assembly(ctx, metagenomic, metranscriptomic,
         assembler, output_directory, single_omics,
@@ -562,7 +562,7 @@ def assembly(ctx, metagenomic, metranscriptomic,
     """
     Run IMP workflow.
 
-    Preprocessing --> Assembly --> Analysis --> Binning --> Report
+    Assembly --> Analysis --> Binning --> Report
     """
 
     # database path
@@ -655,6 +655,134 @@ def assembly(ctx, metagenomic, metranscriptomic,
     # execute the command
     call(docker_cmd, container_name)
 
+
+@cli.command()
+@click.option('--data-dir', help="Path to the data directory containing output files from previous IMP step.")
+@click.option('-o', '--output-directory', help="Output directory.", default=IMP_DEFAULT_OUTPUT_DIR)
+@click.option('--single-omics', is_flag=True, default=False, help='Activate single omics mode.')
+@click.option('-x', '--execute',
+              help="Command to execute.",
+              default="snakemake -s {container_source_code_dir}/Snakefile".format(
+              container_source_code_dir=CONTAINER_CODE_DIR))
+@click.option('--single-step', help="Only execute analysis step.", is_flag=True)
+@click.pass_context
+def analysis(ctx, data_dir, output_directory, single_omics,
+             execute, single_step):
+    """
+    Run IMP workflow.
+
+    Analysis --> Binning --> Report
+    """
+
+    # database path
+    database_path = Path(ctx.obj['database-path']).abspath()
+
+    # environment variable
+    steps = ['analysis', 'binning', 'report']
+    if single_step:
+        steps = ['analysis']
+
+
+    data_dir = Path(data_dir).abspath()
+    if not common_path.isdir():
+        click.secho('--data-dir must be a directtory.', fg='red', bold=True)
+        ctx.abort()
+
+    # look for mg and mt data
+    # PREPROCESSING
+    preprocessing_dir = data_dir.dirs('Preprocessing')
+    if preprocessing_dir:
+        preprocessing_dir = preprocessing_dir[0]
+    else:
+        click.secho("`Preprocessing directory` not present.", fg='red', bold=True)
+        ctx.abort()
+    mg_preprocessing_files = ('mg.r1.fq', 'mg.r1.preprocessed.fq', 'mg.r2.fq', 'mg.r2.preprocessed.fq', 'mg.se.preprocessed.fq')
+    mt_preprocessing_files = ('mt.r1.fq', 'mt.r1.preprocessed.fq','mt.r2.fq', 'mt.r2.preprocessed.fq', 'mt.se.preprocessed.fq')
+
+    got_mg = True
+    got_mt = True
+    for f in mg_preprocessing_files:
+        if not f preprocessing_dir.files(f):
+            got_mg = False
+            break
+            # click.secho("`Preprocessing directory` must contains '%s'." % f, fg='red', bold=True)
+            # ctx.abort()
+    for f in mt_preprocessing_files:
+        if not f preprocessing_dir.files(f)
+            got_mt = False
+            break
+            # click.secho("`Preprocessing directory` must contains '%s'." % f, fg='red', bold=True)
+            # ctx.abort()
+    if single_omics:
+        if not got_mg and not got_mt:
+            click.secho("`Preprocessing directory` must contains mg or mt data. e.g: %s" % (', '.join(mg_preprocessing_files)), fg='red', bold=True)
+            ctx.abort()
+    else:
+        if not got_mg or not got_mt:
+            click.secho("`Preprocessing directory` must contains mg and mt data e.g: %s" % (', '.join(mg_preprocessing_files + mt_preprocessing_files)), fg='red', bold=True)
+            ctx.abort()
+    # update data path
+    mg_data = [CONTAINER_DATA_DIR + '/' + d for d in mg_preprocessing_files]
+    mt_data = [CONTAINER_DATA_DIR + '/' + d for d in mt_preprocessing_files]
+
+
+    # ASSEMBLY
+    assembly_dir = data_dir.dirs('Assembly')
+    if assembly_dir:
+        assembly_dir = preprocessing_dir[0]
+    else:
+        click.secho("`Assembly directory` not present.", fg='red', bold=True)
+        ctx.abort()
+    if single_omics:
+        if not (assembly_dir.files('mg.assembly.merged.fa') and assembly_dir.files('mg.reads.sorted.bam')):
+            if not (assembly_dir.files('mt.assembly.merged.fa') and assembly_dir.files('mt.reads.sorted.bam')):
+                click.secho("`Assembly directory` must contains mg or mt data. e.g: mg.assembly.merged.fa, mg.reads.sorted.bam" , fg='red', bold=True)
+                ctx.abort()
+    else:
+        if not (assembly_dir.files('mgmt.assembly.merged.fa') and assembly_dir.files('mt.assembly.merged.fa') and assembly_dir.files('mt.reads.sorted.bam')):
+                click.secho("`Assembly directory` must contains mg and mt data. e.g: mgmt.assembly.merged.fa, mg.reads.sorted.bam, mg.reads.sorted.bam" , fg='red', bold=True)
+                ctx.abort()
+
+    ev = {
+        'MG': ' '.join(mg_data),
+        'MT': ' '.join(mt_data),
+        'IMP_ASSEMBLER': assembler,
+        'IMP_STEPS': ' '.join(steps)
+    }
+
+    # output directory
+    output_directory = Path(output_directory).abspath()
+
+    if not output_directory.exists():
+        output_directory.makedirs()
+    if not output_directory.isdir():
+        click.secho("`output directory` must be a directory.", fg='red', bold=True)
+        ctx.abort()
+
+    container_name = generate_container_name(output_directory)
+
+    run_cmd = "snakemake -s {container_source_code_dir}/Snakefile".format(
+        container_source_code_dir=CONTAINER_CODE_DIR
+    )
+    if execute:
+        run_cmd = execute
+    # docker command
+    docker_cmd = generate_docker_cmd(
+        container_name,
+        ctx.obj['database-path'],
+        ctx.obj['config-file-path'],
+        data_directory=common_path,
+        image_name=ctx.obj['image-name'],
+        image_tag=ctx.obj['image-tag'],
+        interactive=ctx.obj['enter'],
+        source_code=ctx.obj['source-code'],
+        command=run_cmd,
+        output_directory=output_directory,
+        environment=ev
+        )
+
+    # execute the command
+    call(docker_cmd, container_name)
 
 
 if __name__ == '__main__':

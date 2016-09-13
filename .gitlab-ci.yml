@@ -160,6 +160,7 @@ an-mgmt:
     script:
         - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db run --data-dir /mnt/data/input/analysis-mgmt -o $CI_PROJECT_DIR/$CI_BUILD_ID -w analysis
     when: manual
+
 # an-mg:
 #     stage: analysis
 #     script:
