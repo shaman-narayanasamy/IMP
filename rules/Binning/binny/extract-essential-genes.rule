@@ -1,9 +1,9 @@
 rule extract_essential_genes:
     input:
-        "Binning/essMarkerGenes/markersAll.tsv",
+        "Binning/binny/essMarkerGenes/markersAll.tsv",
         "Analysis/annotation/{p}.faa".format(p=config['prokka']['prefix']),
     output:
-        "Binning/getMarkerGenes.done"
+        "Binning/binny/getMarkerGenes.done"
     shell:
         """
         declare -a MARKER=("TIGR01011" "TIGR01049" "TIGR01169" "TIGR00487" "TIGR01044" "TIGR00959" \

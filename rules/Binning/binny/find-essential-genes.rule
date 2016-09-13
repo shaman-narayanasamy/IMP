@@ -4,12 +4,12 @@ rule binning_essential_genes:
         "Analysis/annotation/annotation.filt.gff",
         "%s/hmm/essentials_genes.hmm" % DBPATH
     output:
-        "Binning/ORFS.hmmer.essential.out",
-        "Binning/ORFS.hmm.orfs.essential.hits",
-        "Binning/ORFS.hmm.orfs.essential.hits_reduced",
-        "Binning/ORFS-contig_links.bed",
-        "Binning/ORFS.hmm.orfs.essential.hits.protids",
-        "Binning/ORFS.hmm.orfs.essential.hits.faa"
+        "Binning/binny/ORFS.hmmer.essential.out",
+        "Binning/binny/ORFS.hmm.orfs.essential.hits",
+        "Binning/binny/ORFS.hmm.orfs.essential.hits_reduced",
+        "Binning/binny/ORFS-contig_links.bed",
+        "Binning/binny/ORFS.hmm.orfs.essential.hits.protids",
+        "Binning/binny/ORFS.hmm.orfs.essential.hits.faa"
     shell:
         """
         TBL_TMP=$(mktemp --tmpdir={TMPDIR} -t "XXXX_hmmer.essential.hits")

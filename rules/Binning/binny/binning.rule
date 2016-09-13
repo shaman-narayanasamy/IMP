@@ -1,16 +1,16 @@
 rule binning_clustering:
     input:
         "Analysis/results/{type}_results.Rdat".format(type=ASS),
-        "Binning/ORFS.hmm.orfs.essential.hits_reduced",
-        "Binning/ORFS-contig_links.bed"
+        "Binning/binny/ORFS.hmm.orfs.essential.hits_reduced",
+        "Binning/binny/ORFS-contig_links.bed"
     output:
-        expand("Binning/reachabilityDistanceEstimates.{pk}.{nn}.tsv \
-        Binning/clusterFirstScan.{pk}.{nn}.tsv \
-        Binning/bimodalClusterCutoffs.{pk}.{nn}.tsv \
-        Binning/contigs2clusters.{pk}.{nn}.tsv \
-        Binning/contigs2clusters.{pk}.{nn}.RDS \
-        Binning/clusteringWS.{pk}.{nn}.Rdata \
-        Binning/finalClusterMap.{pk}.{nn}.pdf".split(),pk=config["binning"]["pk"],nn=config["binning"]["nn"])
+        expand("Binning/binny/reachabilityDistanceEstimates.{pk}.{nn}.tsv \
+        Binning/binny/clusterFirstScan.{pk}.{nn}.tsv \
+        Binning/binny/bimodalClusterCutoffs.{pk}.{nn}.tsv \
+        Binning/binny/contigs2clusters.{pk}.{nn}.tsv \
+        Binning/binny/contigs2clusters.{pk}.{nn}.RDS \
+        Binning/binny/clusteringWS.{pk}.{nn}.Rdata \
+        Binning/binny/finalClusterMap.{pk}.{nn}.pdf".split(),pk=config["binning"]["pk"],nn=config["binning"]["nn"])
     shell:
         """
         mkdir -p Binning/clusterFiles

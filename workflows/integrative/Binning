@@ -18,17 +18,17 @@ include:
     '../../rules/Binning/MaxBin/maxbin.rule'
 
 include:
-    '../../rules/Binning/checkm.rule'
+    '../../rules/Binning/binny/checkm.rule'
 
 # master command
 rule BINNING:
     input:
-        expand("Binning/contigs2clusters.{pk}.{nn}.tsv",pk=config["binning"]["pk"],nn=config["binning"]["nn"]),
-        "Binning/checkM_output/checkm_table.tsv",
-        "Binning/run_checkM.done",
-        "Binning/separate_bins.done",
-        "Binning/essMarkerGenes/markersAll.tsv",
-        "Binning/getMarkerGenes.done",
+        expand("Binning/binny/contigs2clusters.{pk}.{nn}.tsv",pk=config["binning"]["pk"],nn=config["binning"]["nn"]),
+        "Binning/binny/checkM_output/checkm_table.tsv",
+        "Binning/binny/run_checkM.done",
+        "Binning/binny/separate_bins.done",
+        "Binning/binny/essMarkerGenes/markersAll.tsv",
+        "Binning/binny/getMarkerGenes.done",
         "Binning/MaxBin/maxbin_res.log"
     output:
         touch('binning.done')
