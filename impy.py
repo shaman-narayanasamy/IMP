@@ -46,9 +46,11 @@ def pass_obj(f):
 @click.option('-d', '--database-path', help='Set different database path.', default=IMP_DEFAULT_DB_DIR)
 @click.option('-c', '--config-file-path', help='Set different config file path.', default=IMP_DEFAULT_CONFIG_FILE)
 @click.option('-s', '--source-code', help='Use IMP source code at the file path specified instead of the one shipped inside the image.')
-@click.option('--threads', default=1, help='Number of threads to use')
+@click.option('--threads', default=4, help='Number of threads to use')
+@click.option('--memtotal', default=8, help='Cap of memory to use for megahit. (GB)')
+@click.option('--memcore', default=2, help='Memory aloowed per core fo samtools. (GB)')
 @click.pass_context
-def cli(ctx, image_name, image_tag, image_repo, threads, database_path, config_file_path, source_code, enter):
+def cli(ctx, image_name, image_tag, image_repo, threads, memtotal, memcore, database_path, config_file_path, source_code, enter):
     """Integrated Metaomic Pipeline"""
     if not ctx.obj:
         ctx.obj = {}
@@ -61,6 +63,8 @@ def cli(ctx, image_name, image_tag, image_repo, threads, database_path, config_f
     ctx.obj['source-code'] = Path(source_code).abspath()
     ctx.obj['enter'] = enter
     ctx.obj['threads'] = threads
+    ctx.obj['memtotal'] = memtotal
+    ctx.obj['memcore'] = memcore
     # validate
     if source_code is not None:
         source_code = Path(source_code)
@@ -381,6 +385,8 @@ def run(ctx, metagenomic, metranscriptomic,
     # <-- end assembly validation
 
     ev = {
+        'MEMTOTAL': ctx.obj['memtotal'],
+        'MEMCORE': ctx.obj['memcore'],
         'THREADS': ctx.obj['threads'],
         'MG': ' '.join(mg_data),
         'MT': ' '.join(mt_data),
@@ -493,6 +499,8 @@ def preprocessing(ctx, metagenomic, metranscriptomic,
 
 
     ev = {
+        'MEMTOTAL': ctx.obj['memtotal'],
+        'MEMCORE': ctx.obj['memcore'],
         'THREADS': ctx.obj['threads'],
         'MG': ' '.join(mg_data),
         'MT': ' '.join(mt_data),
@@ -608,6 +616,8 @@ def assembly(ctx, metagenomic, metranscriptomic,
     # <-- end assembly validation
 
     ev = {
+        'MEMTOTAL': ctx.obj['memtotal'],
+        'MEMCORE': ctx.obj['memcore'],
         'THREADS': ctx.obj['threads'],
         'IMP_ASSEMBLER': assembler,
         'IMP_STEPS': ' '.join(steps)
@@ -654,7 +664,6 @@ def assembly(ctx, metagenomic, metranscriptomic,
 
 @cli.command()
 @click.option('--data-dir', help="Path to the data directory containing output files from previous IMP step.")
-@click.option('-o', '--output-directory', help="Output directory.", default=IMP_DEFAULT_OUTPUT_DIR)
 @click.option('--single-omics', is_flag=True, default=False, help='Activate single omics mode.')
 @click.option('-x', '--execute',
               help="Command to execute.",
@@ -662,7 +671,7 @@ def assembly(ctx, metagenomic, metranscriptomic,
               container_source_code_dir=CONTAINER_CODE_DIR))
 @click.option('--single-step', help="Only execute analysis step.", is_flag=True)
 @click.pass_context
-def analysis(ctx, data_dir, output_directory, single_omics,
+def analysis(ctx, data_dir, single_omics,
              execute, single_step):
     """
     Run IMP workflow.
@@ -744,6 +753,8 @@ def analysis(ctx, data_dir, output_directory, single_omics,
         ctx.abort()
 
     ev = {
+        'MEMTOTAL': ctx.obj['memtotal'],
+        'MEMCORE': ctx.obj['memcore'],
         'THREADS': ctx.obj['threads'],
         'IMP_STEPS': ' '.join(steps)
     }
@@ -751,14 +762,6 @@ def analysis(ctx, data_dir, output_directory, single_omics,
         ev['MG'] = ' '.join(mg_data)
     if mt_data:
         ev['MT'] = ' '.join(mt_data)
-    # output directory
-    output_directory = Path(output_directory).abspath()
-
-    if not output_directory.exists():
-        output_directory.makedirs()
-    if not output_directory.isdir():
-        click.secho("`output directory` must be a directory.", fg='red', bold=True)
-        ctx.abort()
 
     container_name = generate_container_name(output_directory)
 
@@ -772,13 +775,12 @@ def analysis(ctx, data_dir, output_directory, single_omics,
         container_name,
         ctx.obj['database-path'],
         ctx.obj['config-file-path'],
-        data_directory=data_dir,
         image_name=ctx.obj['image-name'],
         image_tag=ctx.obj['image-tag'],
         interactive=ctx.obj['enter'],
         source_code=ctx.obj['source-code'],
         command=run_cmd,
-        output_directory=output_directory,
+        output_directory=data_dir,
         environment=ev
         )
 
