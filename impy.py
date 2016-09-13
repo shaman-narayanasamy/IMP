@@ -304,7 +304,7 @@ def init(ctx):
               help="if `--workflow-step` is specified, include also all folowing steps.",
               is_flag=True)
 @click.pass_context
-def run(ctx, metagenomic, metranscriptomic,
+def RUN(ctx, metagenomic, metranscriptomic,
         assembler, output_directory, single_omics,
         execute, workflow_step, to_the_end):
     """
@@ -443,7 +443,7 @@ def run(ctx, metagenomic, metranscriptomic,
               container_source_code_dir=CONTAINER_CODE_DIR))
 @click.option('--single-step', help="Only execute preprocessing.", is_flag=True)
 @click.pass_context
-def preprocessing(ctx, metagenomic, metranscriptomic,
+def PREPROCESSING(ctx, metagenomic, metranscriptomic,
         assembler, output_directory, single_omics,
         execute, single_step):
     """
@@ -556,7 +556,7 @@ def preprocessing(ctx, metagenomic, metranscriptomic,
               container_source_code_dir=CONTAINER_CODE_DIR))
 @click.option('--single-step', help="Only execute assembly step.", is_flag=True)
 @click.pass_context
-def assembly(ctx, metagenomic, metranscriptomic,
+def ASSEMBLY(ctx, metagenomic, metranscriptomic,
         assembler, output_directory, single_omics,
         execute, single_step):
     """
@@ -666,7 +666,7 @@ def assembly(ctx, metagenomic, metranscriptomic,
               container_source_code_dir=CONTAINER_CODE_DIR))
 @click.option('--single-step', help="Only execute analysis step.", is_flag=True)
 @click.pass_context
-def analysis(ctx, data_dir, output_directory, single_omics,
+def ANALYSIS(ctx, data_dir, output_directory, single_omics,
              execute, single_step):
     """
     Run IMP workflow.
