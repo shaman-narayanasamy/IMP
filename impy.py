@@ -763,7 +763,7 @@ def analysis(ctx, data_dir, single_omics,
     if mt_data:
         ev['MT'] = ' '.join(mt_data)
 
-    container_name = generate_container_name(output_directory)
+    container_name = generate_container_name(data_dir)
 
     run_cmd = "snakemake -s {container_source_code_dir}/Snakefile".format(
         container_source_code_dir=CONTAINER_CODE_DIR
