@@ -134,7 +134,7 @@ colnames(annot.2)[ncol(annot.2)] <- "total_gene_length"
 # create annotation table
 print("Creating annotation table")
 annot.3 <- as.data.frame.matrix(table(annot.1[,c(1,4)]))[,-1]
-annot.3 <- cbind(rownames(annot.3), annot.3, rowSums(annot.3[,c(2:ncol(annot.3))]))
+annot.3 <- cbind(rownames(annot.3), annot.3, rowSums(annot.3[,c(1:ncol(annot.3))]))
 rownames(annot.3) <- NULL
 colnames(annot.3)[c(1, ncol(annot.3))] <- c("contig", "all_annotations")
 
@@ -151,13 +151,13 @@ print("Reading in nucmer results")
 nucmer_try <- try(read.table(nucmer_file, header=F), silent=T)
 if(inherits(nucmer_try, "try-error")){
   print("WARNING: Nucmer file empty. No taxanomy was assigned to contigs")
-  nucmer_res <- read.table(text = "", 
-			   col.names = c("ref_start", "ref_end", "query_start", "query_end", 
-					 "ref_align_len", "query_align_len", "identity", 
+  nucmer_res <- read.table(text = "",
+			   col.names = c("ref_start", "ref_end", "query_start", "query_end",
+					 "ref_align_len", "query_align_len", "identity",
 					 "ref_id", "contig")
 	     )
-}else{ 
-  nucmer_res <- read.table(nucmer_file, header=F) 
+}else{
+  nucmer_res <- read.table(nucmer_file, header=F)
   colnames(nucmer_res) <- c("ref_start", "ref_end", "query_start", "query_end", "ref_align_len",
 			  "query_align_len", "identity", "ref_id", "contig")
 }
@@ -361,11 +361,11 @@ print("Generating mapped reads plot")
 var1 <-log10(c(all.dat$MT_reads,all.dat$MT_rpkm))
 var1[is.infinite(var1)]=NA
 var2 <- c(rep("MT",nrow(all.dat)),rep("MT",nrow(all.dat)))
-MT_mapped_reads<-data.frame(var1,var2) 
+MT_mapped_reads<-data.frame(var1,var2)
 
 png(name_plot("IMP-mt_reads_density.png"), width=350, height=700)
 par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
-beanplot(var1 ~ var2, data= MT_mapped_reads,  side = "both",log="auto", 
+beanplot(var1 ~ var2, data= MT_mapped_reads,  side = "both",log="auto",
 what=c(1,1,1,0), border = NA, col = list("blue", c("red", "white")),
 bw="nrd0", main="Mappable reads", ylab=expression(log[10]*~"count"))
 legend("bottomleft", fill =c("blue", "red"), legend = c("No of reads mapped", "RPKM normalized"))
@@ -375,11 +375,11 @@ dev.off()
 print("Generating MT coverage plot")
 var1 <-c(all.dat$MT_cov,all.dat$MT_depth)
 var2 <- c(rep("MT",nrow(all.dat)),rep("MT",nrow(all.dat)))
-MT_coverage<-data.frame(var1,var2) 
+MT_coverage<-data.frame(var1,var2)
 
 png(name_plot("IMP-mt_coverage_density.png"), width=350, height=700)
 par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
-beanplot(var1 ~ var2, data= MT_coverage,  side = "both",log="auto", 
+beanplot(var1 ~ var2, data= MT_coverage,  side = "both",log="auto",
 what=c(1,1,1,0), border = NA, col = list("blue", c("red", "white")),
 bw="nrd0", main="Coverage", ylab="fraction")
 legend("bottomleft", fill =c("blue", "red"), legend = c("Coverage", "depth"))
@@ -414,13 +414,13 @@ dev.off()
 var1 <-log10(c(all.dat$MT_var,all.dat$MT_dens))
 var1[is.infinite(var1)]=NA
 var2 <- c(rep("MT",nrow(all.dat)),rep("MT",nrow(all.dat)))
-MT_variant_count<-data.frame(var1,var2) 
+MT_variant_count<-data.frame(var1,var2)
 
 print("Generating variant count plots")
 png(name_plot("IMP-mt_var_count.png") ,width=350, height=700)
 
 par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
-beanplot(var1 ~ var2, data= MT_variant_count,  side = "both",log="auto", 
+beanplot(var1 ~ var2, data= MT_variant_count,  side = "both",log="auto",
 what=c(1,1,1,0), border = NA, col = list("blue", c("red", "white")),
 main="MT variant (SNPs & INDELS)", ylab=expression(log[10]*~count))
 legend("bottomleft", fill =c("blue", "red"), legend = c("No. of variants", "Variant density"))
@@ -443,5 +443,3 @@ dev.off()
 
 ## Save the R workspace
 save.image(name_plot("mt_results.Rdat"))
-
-

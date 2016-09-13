@@ -163,10 +163,10 @@ annot <- readGff3(annot_file, isRightOpen = FALSE)
 print("Processing gff3 annotation file")
 annot.1 <- as.data.frame(
 			 cbind(
-			       as.character(annot@annotation$seq_name), 
+			       as.character(annot@annotation$seq_name),
 			       annot@.Data,
 			       str_split_fixed(str_split_fixed(
-							       getGffAttribute(annot, "inference"), 
+							       getGffAttribute(annot, "inference"),
 							       ",", 2)[,2], ":", 3)[,2]
 			       )
 			 )
@@ -205,9 +205,9 @@ print("Calculating coding density of contigs")
 # Create temporary table
 total_gene_length <- aggregate(gene_length~contig, data=annot.1, FUN=sum)
 colnames(total_gene_length)[ncol(total_gene_length)] <- "total_gene_length"
-annot.2 <- merge(annot.2, 
+annot.2 <- merge(annot.2,
 		 total_gene_length,
-		 by="contig", 
+		 by="contig",
 		 all.y=FALSE)
 
 # remove temporary table
@@ -216,7 +216,7 @@ rm(total_gene_length)
 # create annotation table
 print("Creating annotation table")
 annot.3 <- as.data.frame.matrix(table(annot.1[,c(1,4)]))[,-1]
-annot.3 <- cbind(rownames(annot.3), annot.3, rowSums(annot.3[,c(2:ncol(annot.3))]))
+annot.3 <- cbind(rownames(annot.3), annot.3, rowSums(annot.3[,c(1:ncol(annot.3))]))
 rownames(annot.3) <- NULL
 colnames(annot.3)[c(1, ncol(annot.3))] <- c("contig", "all_annotations")
 
@@ -233,13 +233,13 @@ print("Reading in nucmer results")
 nucmer_try <- try(read.table(nucmer_file, header=F), silent=T)
 if(inherits(nucmer_try, "try-error")){
   print("WARNING: Nucmer file empty. No taxanomy was assigned to contigs")
-  nucmer_res <- read.table(text = "", 
-			   col.names = c("ref_start", "ref_end", "query_start", "query_end", 
-					 "ref_align_len", "query_align_len", "identity", 
+  nucmer_res <- read.table(text = "",
+			   col.names = c("ref_start", "ref_end", "query_start", "query_end",
+					 "ref_align_len", "query_align_len", "identity",
 					 "ref_id", "contig")
 	     )
-}else{ 
-  nucmer_res <- read.table(nucmer_file, header=F) 
+}else{
+  nucmer_res <- read.table(nucmer_file, header=F)
   colnames(nucmer_res) <- c("ref_start", "ref_end", "query_start", "query_end", "ref_align_len",
 			  "query_align_len", "identity", "ref_id", "contig")
 }
@@ -780,4 +780,3 @@ print("DONE: Visualizing")
 print("START: Saving R image: mgmt_results.Rdat")
 save.image(name_plot("mgmt_results.Rdat"))
 print("DONE: Saving R image: mgmt_results.Rdat")
-
