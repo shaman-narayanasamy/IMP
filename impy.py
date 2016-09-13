@@ -684,7 +684,7 @@ def analysis(ctx, data_dir, output_directory, single_omics,
 
 
     data_dir = Path(data_dir).abspath()
-    if not common_path.isdir():
+    if not data_dir.isdir():
         click.secho('--data-dir must be a directtory.', fg='red', bold=True)
         ctx.abort()
 
@@ -771,7 +771,7 @@ def analysis(ctx, data_dir, output_directory, single_omics,
         container_name,
         ctx.obj['database-path'],
         ctx.obj['config-file-path'],
-        data_directory=common_path,
+        data_directory=data_dir,
         image_name=ctx.obj['image-name'],
         image_tag=ctx.obj['image-tag'],
         interactive=ctx.obj['enter'],
