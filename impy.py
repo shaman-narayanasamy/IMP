@@ -727,8 +727,8 @@ def analysis(ctx, data_dir, single_omics,
             click.secho("`Preprocessing directory` must contains mg and mt data e.g: %s" % (', '.join(mg_preprocessing_files + mt_preprocessing_files)), fg='red', bold=True)
             ctx.abort()
     # update data path
-    mg_data = [CONTAINER_DATA_DIR + '/' + d for d in mg_preprocessing_files]
-    mt_data = [CONTAINER_DATA_DIR + '/' + d for d in mt_preprocessing_files]
+    mg_data = [CONTAINER_DATA_DIR + '/' + d for d in ('mg.r1.fq', 'mg.r2.fq')]
+    mt_data = [CONTAINER_DATA_DIR + '/' + d for d in ('mt.r1.fq', 'mt.r2.fq')]
 
 
     # ASSEMBLY
