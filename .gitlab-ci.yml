@@ -141,7 +141,6 @@ an-mgmt:
     script:
         - mkdir -p $CI_PROJECT_DIR/$CI_BUILD_ID
         - cp -r /mnt/data/input/analysis-mgmt/* $CI_PROJECT_DIR/$CI_BUILD_ID
-        - ls -Rhalt $CI_PROJECT_DIR/$CI_BUILD_ID
         - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db analysis --data-dir $CI_PROJECT_DIR/$CI_BUILD_ID --single-step
 
 an-mg:
@@ -149,7 +148,6 @@ an-mg:
     script:
         - mkdir -p $CI_PROJECT_DIR/$CI_BUILD_ID
         - cp -r /mnt/data/input/analysis-mg/* $CI_PROJECT_DIR/$CI_BUILD_ID
-        - ls -Rhalt $CI_PROJECT_DIR/$CI_BUILD_ID
         - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db analysis --data-dir $CI_PROJECT_DIR/$CI_BUILD_ID --single-step --single-omics
 
 an-mt:
@@ -157,7 +155,6 @@ an-mt:
     script:
         - mkdir -p $CI_PROJECT_DIR/$CI_BUILD_ID
         - cp -r /mnt/data/input/analysis-mt/* $CI_PROJECT_DIR/$CI_BUILD_ID
-        - ls -Rhalt $CI_PROJECT_DIR/$CI_BUILD_ID
         - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db analysis --data-dir $CI_PROJECT_DIR/$CI_BUILD_ID --single-step --single-omics
 
 # an-mg:
