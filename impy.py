@@ -718,7 +718,7 @@ def analysis(ctx, data_dir, output_directory, single_omics,
     # ASSEMBLY
     assembly_dir = data_dir.dirs('Assembly')
     if assembly_dir:
-        assembly_dir = preprocessing_dir[0]
+        assembly_dir = assembly_dir[0]
     else:
         click.secho("`Assembly directory` not present.", fg='red', bold=True)
         ctx.abort()
@@ -727,10 +727,9 @@ def analysis(ctx, data_dir, output_directory, single_omics,
             if not (assembly_dir.files('mt.assembly.merged.fa') and assembly_dir.files('mt.reads.sorted.bam')):
                 click.secho("`Assembly directory` must contains mg or mt data. e.g: mg.assembly.merged.fa, mg.reads.sorted.bam" , fg='red', bold=True)
                 ctx.abort()
-    else:
-        if not (assembly_dir.files('mgmt.assembly.merged.fa') and assembly_dir.files('mt.assembly.merged.fa') and assembly_dir.files('mt.reads.sorted.bam')):
-                click.secho("`Assembly directory` must contains mg and mt data. e.g: mgmt.assembly.merged.fa, mg.reads.sorted.bam, mg.reads.sorted.bam" , fg='red', bold=True)
-                ctx.abort()
+    elif not (assembly_dir.files('mgmt.assembly.merged.fa') and assembly_dir.files('mt.assembly.merged.fa') and assembly_dir.files('mt.reads.sorted.bam')):
+        click.secho("`Assembly directory` must contains mg and mt data. e.g: mgmt.assembly.merged.fa, mg.reads.sorted.bam, mg.reads.sorted.bam" , fg='red', bold=True)
+        ctx.abort()
 
     ev = {
         'MG': ' '.join(mg_data),
