@@ -56,7 +56,7 @@ dag-mt-nf:
 p-mgmt-default:
     stage: preprocessing
     script:
-        - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db preprocessing -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID
+        - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db preprocessing -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID --single-step
 
 
 
@@ -93,7 +93,6 @@ p-mt-nf:
 # Assembly
 a-mgmt-idba:
     stage: manual
-    when: manual
     script:
         - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db assembly -a idba -m /mnt/data/input/assembly-megahit/mg.r1.preprocessed.fq -m /mnt/data/input/assembly-megahit/mg.r2.preprocessed.fq -m /mnt/data/input/assembly-megahit/mg.se.preprocessed.fq -t /mnt/data/input/assembly-megahit/mt.r1.preprocessed.fq -t /mnt/data/input/assembly-megahit/mt.r2.preprocessed.fq -t /mnt/data/input/assembly-megahit/mt.se.preprocessed.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID --single-step
 
@@ -112,20 +111,17 @@ a-mt-idba:
 
 a-mgmt-megahit:
     stage: assembly
-    when: manual
     script:
         - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db assembly -m /mnt/data/input/assembly-megahit/mg.r1.preprocessed.fq -m /mnt/data/input/assembly-megahit/mg.r2.preprocessed.fq -m /mnt/data/input/assembly-megahit/mg.se.preprocessed.fq -t /mnt/data/input/assembly-megahit/mt.r1.preprocessed.fq -t /mnt/data/input/assembly-megahit/mt.r2.preprocessed.fq -t /mnt/data/input/assembly-megahit/mt.se.preprocessed.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID --single-step
 
 a-mg-megahit:
     stage: assembly
-    when: manual
     script:
         - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db assembly -m /mnt/data/input/assembly-megahit/mg.r1.preprocessed.fq -m /mnt/data/input/assembly-megahit/mg.r2.preprocessed.fq -m /mnt/data/input/assembly-megahit/mg.se.preprocessed.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID --single-step --single-omics
 
 
 a-mt-megahit:
     stage: assembly
-    when: manual
     script:
         - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db assembly -t /mnt/data/input/assembly-megahit/mt.r1.preprocessed.fq -t /mnt/data/input/assembly-megahit/mt.r2.preprocessed.fq -t /mnt/data/input/assembly-megahit/mt.se.preprocessed.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID --single-step --single-omics
 
