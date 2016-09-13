@@ -140,7 +140,16 @@ an-mgmt:
     stage: analysis
     script:
         - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db analysis --data-dir /mnt/data/input/analysis-mgmt -o $CI_PROJECT_DIR/$CI_BUILD_ID --single-step
-    when: manual
+
+an-mg:
+    stage: analysis
+    script:
+        - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db analysis --data-dir /mnt/data/input/analysis-mg -o $CI_PROJECT_DIR/$CI_BUILD_ID --single-step --single-omics
+
+an-mt:
+    stage: analysis
+    script:
+        - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db analysis --data-dir /mnt/data/input/analysis-mt -o $CI_PROJECT_DIR/$CI_BUILD_ID --single-step --single-omics
 
 # an-mg:
 #     stage: analysis
