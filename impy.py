@@ -297,16 +297,10 @@ def init(ctx):
               help="Command to execute.",
               default="snakemake -s {container_source_code_dir}/Snakefile".format(
               container_source_code_dir=CONTAINER_CODE_DIR))
-@click.option('-w', '--workflow-step',
-              help="Workflow step to execute.",
-              type=click.Choice(['preprocessing', 'assembly', 'analysis', 'binning', 'report']))
-@click.option('--to-the-end',
-              help="if `--workflow-step` is specified, include also all folowing steps.",
-              is_flag=True)
 @click.pass_context
 def run(ctx, metagenomic, metranscriptomic,
         assembler, output_directory, single_omics,
-        execute, workflow_step, to_the_end):
+        execute):
     """
     Run IMP workflow.
 
@@ -318,11 +312,6 @@ def run(ctx, metagenomic, metranscriptomic,
 
     # environment variable
     steps = ['preprocessing', 'assembly', 'analysis', 'binning', 'report']
-    if workflow_step is not None:
-        if to_the_end:
-            steps = steps[steps.index(workflow_step):]
-        else:
-            steps = [workflow_step]
 
     data_directory = None
 
