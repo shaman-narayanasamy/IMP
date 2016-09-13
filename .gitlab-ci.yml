@@ -56,38 +56,38 @@ dag-mt-nf:
 p-mgmt-default:
     stage: preprocessing
     script:
-        - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db run -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID -w preprocessing
+        - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db run -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID
 
 
 
 p-mgmt-nf:
     stage: preprocessing
     script:
-        - impy -s . -c $CI_PROJECT_DIR/test/no_filtering.conf.json -d /mnt/data/db run -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID -w preprocessing
+        - impy -s . -c $CI_PROJECT_DIR/test/no_filtering.conf.json -d /mnt/data/db preprocessing -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID --single-step
 
 
 p-mg-default:
     stage: preprocessing
     script:
-        - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db run -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq  -o $CI_PROJECT_DIR/$CI_BUILD_ID --single-omics -w preprocessing
+        - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db preprocessing -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq  -o $CI_PROJECT_DIR/$CI_BUILD_ID --single-omics --single-step
 
 
 p-mg-nf:
     stage: preprocessing
     script:
-        - impy -s . -c $CI_PROJECT_DIR/test/no_filtering.conf.json -d /mnt/data/db run -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID --single-omics -w preprocessing
+        - impy -s . -c $CI_PROJECT_DIR/test/no_filtering.conf.json -d /mnt/data/db preprocessing -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID --single-omics --single-step
 
 
 p-mt-default:
     stage: preprocessing
     script:
-        - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db run -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID --single-omics -w preprocessing
+        - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db preprocessing -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID --single-omics --single-step
 
 
 p-mt-nf:
     stage: preprocessing
     script:
-        - impy -s . -c $CI_PROJECT_DIR/test/no_filtering.conf.json -d /mnt/data/db run -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID --single-omics -w preprocessing
+        - impy -s . -c $CI_PROJECT_DIR/test/no_filtering.conf.json -d /mnt/data/db preprocessing -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID --single-omics --single-step
 
 
 # Assembly
