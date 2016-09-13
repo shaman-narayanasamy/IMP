@@ -15,6 +15,9 @@ databases:
 before_script:
   - pip3.4 install --editable . --user
 
+
+# # DAG
+# see if the snakemake graph is resolving to the end
 dag-mgmt-default:
   stage: dag
   script:
@@ -64,7 +67,7 @@ dag-mt-nf:
   script:
     - impy -s . -c $CI_PROJECT_DIR/test/no_filtering.conf.json -d /mnt/data/db run -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID --single-omics -x "snakemake -n"
 
-
+# PREPROCESSING
 p-mgmt-default:
     stage: preprocessing
     script:
@@ -102,6 +105,7 @@ p-mt-nf:
         - impy -s . -c $CI_PROJECT_DIR/test/no_filtering.conf.json -d /mnt/data/db run -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID --single-omics -w preprocessing
 
 
+# Assembly
 a-mgmt-idba:
     stage: manual
     when: manual
@@ -109,22 +113,18 @@ a-mgmt-idba:
         - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db run -a idba -m /mnt/data/input/assembly-megahit/mg.r1.preprocessed.fq -m /mnt/data/input/assembly-megahit/mg.r2.preprocessed.fq -m /mnt/data/input/assembly-megahit/mg.se.preprocessed.fq -t /mnt/data/input/assembly-megahit/mt.r1.preprocessed.fq -t /mnt/data/input/assembly-megahit/mt.r2.preprocessed.fq -t /mnt/data/input/assembly-megahit/mt.se.preprocessed.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID -w assembly
 
 
-# a-mg-idba:
-#     stage: manual
-#     when: manual
-#     script:
-#         - mkdir -p $CI_PROJECT_DIR/output-mg-idba/Preprocessing
-#         - cp /mnt/data/input/assembly-idba/mg* $CI_PROJECT_DIR/output-mg-idba/Preprocessing/.
-#         - ./IMP -m $CI_PROJECT_DIR/test/MG.R1.small.fq -a idba -m $CI_PROJECT_DIR/test/MG.R2.small.fq -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mg-idba --current "snakemake assembly.done"
-#
-# a-mt-idba:
-#     stage: manual
-#     when: manual
-#     script:
-#         - mkdir -p $CI_PROJECT_DIR/output-mt-idba/Preprocessing
-#         - cp /mnt/data/input/assembly-idba/mt* $CI_PROJECT_DIR/output-mt-idba/Preprocessing/.
-#         - ./IMP -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -a idba -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mt-idba --current "snakemake assembly.done"
-#
+a-mg-idba:
+    stage: manual
+    when: manual
+    script:
+        - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db run -a idba -m /mnt/data/input/assembly-megahit/mg.r1.preprocessed.fq -m /mnt/data/input/assembly-megahit/mg.r2.preprocessed.fq -m /mnt/data/input/assembly-megahit/mg.se.preprocessed.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID -w assembly --single-omics
+
+a-mt-idba:
+    stage: manual
+    when: manual
+    script:
+        - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db run -a idba -t /mnt/data/input/assembly-megahit/mt.r1.preprocessed.fq -t /mnt/data/input/assembly-megahit/mt.r2.preprocessed.fq -t /mnt/data/input/assembly-megahit/mt.se.preprocessed.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID -w assembly --single-omics
+
 a-mgmt-megahit:
     stage: assembly
     script:
