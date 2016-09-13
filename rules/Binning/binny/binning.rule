@@ -13,7 +13,7 @@ rule binning_clustering:
         Binning/binny/finalClusterMap.{pk}.{nn}.pdf".split(),pk=config["binning"]["pk"],nn=config["binning"]["nn"])
     shell:
         """
-        mkdir -p Binning/clusterFiles
+        mkdir -p Binning/binny/clusterFiles
         ## Run the R script for clustering the contigs
         Rscript {SRCDIR}/binny.R {input} {config[binning][pk]} {config[binning][nn]}
         """
