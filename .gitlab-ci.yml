@@ -139,17 +139,23 @@ a-mt-megahit:
 an-mgmt:
     stage: analysis
     script:
-        - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db analysis --data-dir /mnt/data/input/analysis-mgmt -o $CI_PROJECT_DIR/$CI_BUILD_ID --single-step
+        - mkdir -p $CI_PROJECT_DIR/$CI_BUILD_ID
+        - cp -r /mnt/data/input/analysis-mgmt $CI_PROJECT_DIR/$CI_BUILD_ID
+        - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db analysis --data-dir $CI_PROJECT_DIR/$CI_BUILD_ID --single-step
 
 an-mg:
     stage: analysis
     script:
-        - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db analysis --data-dir /mnt/data/input/analysis-mg -o $CI_PROJECT_DIR/$CI_BUILD_ID --single-step --single-omics
+        - mkdir -p $CI_PROJECT_DIR/$CI_BUILD_ID
+        - cp -r /mnt/data/input/analysis-mg $CI_PROJECT_DIR/$CI_BUILD_ID
+        - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db analysis --data-dir $CI_PROJECT_DIR/$CI_BUILD_ID --single-step --single-omics
 
 an-mt:
     stage: analysis
     script:
-        - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db analysis --data-dir /mnt/data/input/analysis-mt -o $CI_PROJECT_DIR/$CI_BUILD_ID --single-step --single-omics
+        - mkdir -p $CI_PROJECT_DIR/$CI_BUILD_ID
+        - cp -r /mnt/data/input/analysis-mt $CI_PROJECT_DIR/$CI_BUILD_ID
+        - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db analysis --data-dir $CI_PROJECT_DIR/$CI_BUILD_ID --single-step --single-omics
 
 # an-mg:
 #     stage: analysis
