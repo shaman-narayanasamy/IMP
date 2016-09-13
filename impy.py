@@ -609,11 +609,13 @@ def assembly(ctx, metagenomic, metranscriptomic,
 
     ev = {
         'THREADS': ctx.obj['threads'],
-        'MG': ' '.join(mg_data),
-        'MT': ' '.join(mt_data),
         'IMP_ASSEMBLER': assembler,
         'IMP_STEPS': ' '.join(steps)
     }
+    if mg_data:
+        ev['MG'] = ' '.join(mg_data)
+    if mt_data:
+        ev['MT'] = ' '.join(mt_data)
 
     # output directory
     output_directory = Path(output_directory).abspath()
@@ -733,8 +735,8 @@ def analysis(ctx, data_dir, output_directory, single_omics,
             if not (assembly_dir.files('mt.assembly.merged.fa') and assembly_dir.files('mt.reads.sorted.bam')):
                 click.secho("`Assembly directory` must contains mg or mt data. e.g: mg.assembly.merged.fa, mg.reads.sorted.bam", fg='red', bold=True)
                 ctx.abort()
-            else:
-                mt_data = []
+        else:
+            mt_data = []
     elif not (assembly_dir.files('mgmt.assembly.merged.fa')
               and assembly_dir.files('mt.assembly.merged.fa')
               and assembly_dir.files('mt.reads.sorted.bam')):
@@ -743,11 +745,12 @@ def analysis(ctx, data_dir, output_directory, single_omics,
 
     ev = {
         'THREADS': ctx.obj['threads'],
-        'MG': ' '.join(mg_data),
-        'MT': ' '.join(mt_data),
         'IMP_STEPS': ' '.join(steps)
     }
-
+    if mg_data:
+        ev['MG'] = ' '.join(mg_data)
+    if mt_data:
+        ev['MT'] = ' '.join(mt_data)
     # output directory
     output_directory = Path(output_directory).abspath()
 
