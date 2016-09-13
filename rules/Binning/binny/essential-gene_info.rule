@@ -1,13 +1,13 @@
 rule essential_gene_info:
     input:
-        expand("Binning/clusteringWS.{pk}.{nn}.Rdata".split(),pk=config["binning"]["pk"],nn=config["binning"]["nn"]),
-        "Binning/ORFS-contig_links.bed",
-        "Binning/ORFS.hmm.orfs.essential.hits_reduced"
+        expand("Binning/binny/clusteringWS.{pk}.{nn}.Rdata".split(),pk=config["binning"]["pk"],nn=config["binning"]["nn"]),
+        "Binning/binny/ORFS-contig_links.bed",
+        "Binning/binny/ORFS.hmm.orfs.essential.hits_reduced"
     output:
         "Binning/binny/essMarkerGenes/markersAll.tsv",
     shell:
         """
-        mkdir -p Binning/essMarkerGenes
+        mkdir -p Binning/binny/essMarkerGenes
 
         ## Run the R script to extract the table
         Rscript {SRCDIR}/get_essGeneInfo.R {input} {SAMPLE}
