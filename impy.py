@@ -46,8 +46,9 @@ def pass_obj(f):
 @click.option('-d', '--database-path', help='Set different database path.', default=IMP_DEFAULT_DB_DIR)
 @click.option('-c', '--config-file-path', help='Set different config file path.', default=IMP_DEFAULT_CONFIG_FILE)
 @click.option('-s', '--source-code', help='Use IMP source code at the file path specified instead of the one shipped inside the image.')
+@click.option('--threads', default=1, help='Number of threads to use')
 @click.pass_context
-def cli(ctx, image_name, image_tag, image_repo, database_path, config_file_path, source_code, enter):
+def cli(ctx, image_name, image_tag, image_repo, threads, database_path, config_file_path, source_code, enter):
     """Integrated Metaomic Pipeline"""
     if not ctx.obj:
         ctx.obj = {}
@@ -59,6 +60,7 @@ def cli(ctx, image_name, image_tag, image_repo, database_path, config_file_path,
     ctx.obj['config-file-path'] = Path(config_file_path).abspath()
     ctx.obj['source-code'] = Path(source_code).abspath()
     ctx.obj['enter'] = enter
+    ctx.obj['threads'] = threads
     # validate
     if source_code is not None:
         source_code = Path(source_code)
@@ -379,6 +381,7 @@ def run(ctx, metagenomic, metranscriptomic,
     # <-- end assembly validation
 
     ev = {
+        'THREADS': ctx.obj['threads'],
         'MG': ' '.join(mg_data),
         'MT': ' '.join(mt_data),
         'IMP_ASSEMBLER': assembler,
@@ -490,6 +493,7 @@ def preprocessing(ctx, metagenomic, metranscriptomic,
 
 
     ev = {
+        'THREADS': ctx.obj['threads'],
         'MG': ' '.join(mg_data),
         'MT': ' '.join(mt_data),
         'IMP_ASSEMBLER': assembler,
@@ -604,6 +608,7 @@ def assembly(ctx, metagenomic, metranscriptomic,
     # <-- end assembly validation
 
     ev = {
+        'THREADS': ctx.obj['threads'],
         'MG': ' '.join(mg_data),
         'MT': ' '.join(mt_data),
         'IMP_ASSEMBLER': assembler,
@@ -737,6 +742,7 @@ def analysis(ctx, data_dir, output_directory, single_omics,
         ctx.abort()
 
     ev = {
+        'THREADS': ctx.obj['threads'],
         'MG': ' '.join(mg_data),
         'MT': ' '.join(mt_data),
         'IMP_STEPS': ' '.join(steps)
