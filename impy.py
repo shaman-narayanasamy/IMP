@@ -796,7 +796,6 @@ def analysis(ctx, data_dir, single_omics,
 @cli.command()
 @click.option('--data-dir', help="Path to the data directory containing output files from previous IMP step.")
 @click.option('--single-omics', is_flag=True, default=False, help='Activate single omics mode.')
-@click.option('--binning-method', default='binny', type=click.Choice(['binny', 'maxbin']))
 @click.option('-x', '--execute',
               help="Command to execute.",
               default="snakemake -s {container_source_code_dir}/Snakefile".format(
@@ -827,7 +826,7 @@ def binning(ctx, data_dir, single_omics,
         ctx.abort()
 
     # BINNY
-    if binning_method == 'binny':
+    if ctx.obj['binning-method'] == 'binny':
         if not single_omics:
             binning_input_files = ('Analysis/results/mgmt_results.Rdat',
                                    'Analysis/annotation/%s.faa' % prokka_prefix,
@@ -840,7 +839,7 @@ def binning(ctx, data_dir, single_omics,
                                    'Assembly/mg.assembly.merged.fa')
 
     # MAXBIN
-    elif binning_method == 'maxbin':
+elif ctx.obj['binning-method'] == 'maxbin':
         if not single_omics:
             binning_input_files = ('Preprocessing/mg.r1.preprocessed.fq',
                                    'Preprocessing/mg.r2.preprocessed.fq',
@@ -853,7 +852,8 @@ def binning(ctx, data_dir, single_omics,
                                    'Analysis/mg.assembly.contig_depth.txt')
 
     for f in binning_input_files:
-        if not Path(f).exists():
+        p = data_dir / f
+        if not Path(p).exists():
             click.secho("`%s` not present." % f, fg='red', bold=True)
             ctx.abort()
 
