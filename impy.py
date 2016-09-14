@@ -839,7 +839,7 @@ def binning(ctx, data_dir, single_omics,
                                    'Assembly/mg.assembly.merged.fa')
 
     # MAXBIN
-elif ctx.obj['binning-method'] == 'maxbin':
+    elif ctx.obj['binning-method'] == 'maxbin':
         if not single_omics:
             binning_input_files = ('Preprocessing/mg.r1.preprocessed.fq',
                                    'Preprocessing/mg.r2.preprocessed.fq',
