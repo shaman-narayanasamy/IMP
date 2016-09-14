@@ -819,7 +819,6 @@ def binning(ctx, data_dir, single_omics,
     if single_step:
         steps = ['binning']
 
-
     data_dir = Path(data_dir).abspath()
     if not data_dir.isdir():
         click.secho('--data-dir must be a directtory.', fg='red', bold=True)
