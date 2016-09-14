@@ -394,7 +394,7 @@ def run(ctx, metagenomic, metranscriptomic,
         'THREADS': ctx.obj['threads'],
         'MG': ' '.join(mg_data),
         'MT': ' '.join(mt_data),
-        'IMP_ASSEMBLER': assembler,
+        'IMP_ASSEMBLER': ctx.obj['assembler'],
         'IMP_STEPS': ' '.join(steps)
     }
 
