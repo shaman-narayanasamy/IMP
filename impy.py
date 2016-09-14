@@ -805,7 +805,7 @@ def analysis(ctx, data_dir, single_omics,
 @click.option('--prokka-prefix', help="Prefix of the prokka output file.", default='prokka')
 @click.pass_context
 def binning(ctx, data_dir, single_omics,
-             execute, single_step, prefix, binning_method):
+             execute, single_step, prokka_prefix, binning_method):
     """
     Run IMP workflow.
 
@@ -830,12 +830,12 @@ def binning(ctx, data_dir, single_omics,
     if binning_method == 'binny':
         if not single_omics:
             binning_input_files = ('Analysis/results/mgmt_results.Rdat',
-                                   'Analysis/annotation/%s.faa' % prefix,
+                                   'Analysis/annotation/%s.faa' % prokka_prefix,
                                    'Analysis/annotation/annotation.filt.gff',
                                    'Assembly/mgmt.assembly.merged.fa')
         else:
             binning_input_files = ('Analysis/results/mg_results.Rdat',
-                                   'Analysis/annotation/%s.faa' % prefix,
+                                   'Analysis/annotation/%s.faa' % prokka_prefix,
                                    'Analysis/annotation/annotation.filt.gff',
                                    'Assembly/mg.assembly.merged.fa')
 
