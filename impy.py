@@ -43,14 +43,16 @@ def pass_obj(f):
 @click.option('--image-tag', default=IMP_VERSION, help='IMP image tag/version')
 @click.option('--image-repo', default=IMP_DEFAULT_TAR_REPOSITORY, help='IMP repository. Must point to a gzipped image.')
 @click.option('--enter', default=False, is_flag=True, help='Enter IMP docker image.')
-@click.option('-d', '--database-path', help='Set different database path.', default=IMP_DEFAULT_DB_DIR)
+@click.option('-a', '--assembler', help="Assembler to use.",  type=click.Choice(['idba', 'megahit']), default='megahit')
+@click.option('-b', '--binning-method', help="Binning method to use.",  type=click.Choice(['binny', 'maxbin']), default='binny')
 @click.option('-c', '--config-file-path', help='Set different config file path.', default=IMP_DEFAULT_CONFIG_FILE)
+@click.option('-d', '--database-path', help='Set different database path.', default=IMP_DEFAULT_DB_DIR)
 @click.option('-s', '--source-code', help='Use IMP source code at the file path specified instead of the one shipped inside the image.')
 @click.option('--threads', default=4, help='Number of threads to use')
 @click.option('--memtotal', default=8, help='Cap of memory to use for megahit. (GB)')
 @click.option('--memcore', default=2, help='Memory aloowed per core fo samtools. (GB)')
 @click.pass_context
-def cli(ctx, image_name, image_tag, image_repo, threads, memtotal, memcore, database_path, config_file_path, source_code, enter):
+def cli(ctx, image_name, image_tag, image_repo, threads, memtotal, assembler, binning_method, memcore, database_path, config_file_path, source_code, enter):
     """Integrated Metaomic Pipeline"""
     if not ctx.obj:
         ctx.obj = {}
@@ -65,6 +67,8 @@ def cli(ctx, image_name, image_tag, image_repo, threads, memtotal, memcore, data
     ctx.obj['threads'] = threads
     ctx.obj['memtotal'] = memtotal
     ctx.obj['memcore'] = memcore
+    ctx.obj['assembler'] = assembler
+    ctx.obj['binning-method'] = binning_method
     # validate
     if source_code is not None:
         source_code = Path(source_code)
@@ -297,7 +301,6 @@ def init(ctx):
 @click.option('-m', '--metagenomic', help="Path to the Metagenomic files.", multiple=True)
 @click.option('-t', '--metranscriptomic', help="Path to the Metatranscriptomic files.", multiple=True)
 @click.option('-o', '--output-directory', help="Output directory.", default=IMP_DEFAULT_OUTPUT_DIR)
-@click.option('-a', '--assembler', help="Assembler to use.",  type=click.Choice(['idba', 'megahit']), default='megahit')
 @click.option('--single-omics', is_flag=True, default=False, help='Activate single omics mode.')
 @click.option('-x', '--execute',
               help="Command to execute.",
@@ -305,7 +308,7 @@ def init(ctx):
               container_source_code_dir=CONTAINER_CODE_DIR))
 @click.pass_context
 def run(ctx, metagenomic, metranscriptomic,
-        assembler, output_directory, single_omics,
+        output_directory, single_omics,
         execute):
     """
     Run IMP workflow.
@@ -385,6 +388,7 @@ def run(ctx, metagenomic, metranscriptomic,
     # <-- end assembly validation
 
     ev = {
+        'IMP_BINNING_METHOD': ctx.obj['binning-method'],
         'MEMTOTAL': ctx.obj['memtotal'],
         'MEMCORE': ctx.obj['memcore'],
         'THREADS': ctx.obj['threads'],
@@ -433,7 +437,6 @@ def run(ctx, metagenomic, metranscriptomic,
 @click.option('-m', '--metagenomic', help="Path to the Metagenomic files.", multiple=True)
 @click.option('-t', '--metranscriptomic', help="Path to the Metatranscriptomic files.", multiple=True)
 @click.option('-o', '--output-directory', help="Output directory.", default=IMP_DEFAULT_OUTPUT_DIR)
-@click.option('-a', '--assembler', help="Assembler to use.",  type=click.Choice(['idba', 'megahit']), default='megahit')
 @click.option('--single-omics', is_flag=True, default=False, help='Activate single omics mode.')
 @click.option('-x', '--execute',
               help="Command to execute.",
@@ -499,12 +502,13 @@ def preprocessing(ctx, metagenomic, metranscriptomic,
 
 
     ev = {
+        'IMP_BINNING_METHOD': ctx.obj['binning-method'],
         'MEMTOTAL': ctx.obj['memtotal'],
         'MEMCORE': ctx.obj['memcore'],
         'THREADS': ctx.obj['threads'],
         'MG': ' '.join(mg_data),
         'MT': ' '.join(mt_data),
-        'IMP_ASSEMBLER': assembler,
+        'IMP_ASSEMBLER': ctx.obj['assembler'],
         'IMP_STEPS': ' '.join(steps)
     }
 
@@ -549,7 +553,6 @@ def preprocessing(ctx, metagenomic, metranscriptomic,
 @click.option('-m', '--metagenomic', help="Path to the Metagenomic files.", multiple=True)
 @click.option('-t', '--metranscriptomic', help="Path to the Metatranscriptomic files.", multiple=True)
 @click.option('-o', '--output-directory', help="Output directory.", default=IMP_DEFAULT_OUTPUT_DIR)
-@click.option('-a', '--assembler', help="Assembler to use.",  type=click.Choice(['idba', 'megahit']), default='megahit')
 @click.option('--single-omics', is_flag=True, default=False, help='Activate single omics mode.')
 @click.option('-x', '--execute',
               help="Command to execute.",
@@ -558,7 +561,7 @@ def preprocessing(ctx, metagenomic, metranscriptomic,
 @click.option('--single-step', help="Only execute assembly step.", is_flag=True)
 @click.pass_context
 def assembly(ctx, metagenomic, metranscriptomic,
-        assembler, output_directory, single_omics,
+        output_directory, single_omics,
         execute, single_step):
     """
     Run IMP workflow.
@@ -616,10 +619,11 @@ def assembly(ctx, metagenomic, metranscriptomic,
     # <-- end assembly validation
 
     ev = {
+        'IMP_BINNING_METHOD': ctx.obj['binning-method'],
         'MEMTOTAL': ctx.obj['memtotal'],
         'MEMCORE': ctx.obj['memcore'],
         'THREADS': ctx.obj['threads'],
-        'IMP_ASSEMBLER': assembler,
+        'IMP_ASSEMBLER': ctx.obj['assembler'],
         'IMP_STEPS': ' '.join(steps)
     }
     if mg_data:
@@ -753,6 +757,7 @@ def analysis(ctx, data_dir, single_omics,
         ctx.abort()
 
     ev = {
+        'IMP_BINNING_METHOD': ctx.obj['binning-method'],
         'MEMTOTAL': ctx.obj['memtotal'],
         'MEMCORE': ctx.obj['memcore'],
         'THREADS': ctx.obj['threads'],
@@ -787,6 +792,112 @@ def analysis(ctx, data_dir, single_omics,
     # execute the command
     call(docker_cmd, container_name)
 
+
+@cli.command()
+@click.option('--data-dir', help="Path to the data directory containing output files from previous IMP step.")
+@click.option('--single-omics', is_flag=True, default=False, help='Activate single omics mode.')
+@click.option('--binning-method', default='binny', type=click.Choice(['binny', 'maxbin']))
+@click.option('-x', '--execute',
+              help="Command to execute.",
+              default="snakemake -s {container_source_code_dir}/Snakefile".format(
+              container_source_code_dir=CONTAINER_CODE_DIR))
+@click.option('--single-step', help="Only execute analysis step.", is_flag=True)
+@click.option('--prokka-prefix', help="Prefix of the prokka output file.", default='prokka')
+@click.pass_context
+def binning(ctx, data_dir, single_omics,
+             execute, single_step, prefix, binning_method):
+    """
+    Run IMP workflow.
+
+    Binning --> Report
+    """
+
+    # database path
+    database_path = Path(ctx.obj['database-path']).abspath()
+
+    # environment variable
+    steps = ['binning', 'report']
+    if single_step:
+        steps = ['binning']
+
+
+    data_dir = Path(data_dir).abspath()
+    if not data_dir.isdir():
+        click.secho('--data-dir must be a directtory.', fg='red', bold=True)
+        ctx.abort()
+
+    # BINNY
+    if binning_method == 'binny':
+        if not single_omics:
+            binning_input_files = ('Analysis/results/mgmt_results.Rdat',
+                                   'Analysis/annotation/%s.faa' % prefix,
+                                   'Analysis/annotation/annotation.filt.gff',
+                                   'Assembly/mgmt.assembly.merged.fa')
+        else:
+            binning_input_files = ('Analysis/results/mg_results.Rdat',
+                                   'Analysis/annotation/%s.faa' % prefix,
+                                   'Analysis/annotation/annotation.filt.gff',
+                                   'Assembly/mg.assembly.merged.fa')
+
+    # MAXBIN
+    elif binning_method == 'maxbin':
+        if not single_omics:
+            binning_input_files = ('Preprocessing/mg.r1.preprocessed.fq',
+                                   'Preprocessing/mg.r2.preprocessed.fq',
+                                   'Assembly/mgmt.assembly.merged.fa',
+                                   'Analysis/mg.assembly.contig_depth.txt')
+        else:
+            binning_input_files = ('Preprocessing/mg.r1.preprocessed.fq',
+                                   'Preprocessing/mg.r2.preprocessed.fq',
+                                   'Assembly/mg.assembly.merged.fa',
+                                   'Analysis/mg.assembly.contig_depth.txt')
+
+    for f in binning_input_files:
+        if not Path(f).exists():
+            click.secho("`%s` not present." % f, fg='red', bold=True)
+            ctx.abort()
+
+    # update data path
+    mg_data = [CONTAINER_DATA_DIR + '/' + d for d in ('mg.r1.fq', 'mg.r2.fq')]
+    mt_data = [CONTAINER_DATA_DIR + '/' + d for d in ('mt.r1.fq', 'mt.r2.fq')]
+    if single_omics:
+        mt_data = []
+
+    ev = {
+        'IMP_BINNING_METHOD': ctx.obj['binning-method'],
+        'MEMTOTAL': ctx.obj['memtotal'],
+        'MEMCORE': ctx.obj['memcore'],
+        'THREADS': ctx.obj['threads'],
+        'IMP_STEPS': ' '.join(steps)
+    }
+    if mg_data:
+        ev['MG'] = ' '.join(mg_data)
+    if mt_data:
+        ev['MT'] = ' '.join(mt_data)
+
+    container_name = generate_container_name(data_dir)
+
+    run_cmd = "snakemake -s {container_source_code_dir}/Snakefile".format(
+        container_source_code_dir=CONTAINER_CODE_DIR
+    )
+    if execute:
+        run_cmd = execute
+    # docker command
+    docker_cmd = generate_docker_cmd(
+        container_name,
+        ctx.obj['database-path'],
+        ctx.obj['config-file-path'],
+        image_name=ctx.obj['image-name'],
+        image_tag=ctx.obj['image-tag'],
+        interactive=ctx.obj['enter'],
+        source_code=ctx.obj['source-code'],
+        command=run_cmd,
+        output_directory=data_dir,
+        environment=ev
+        )
+
+    # execute the command
+    call(docker_cmd, container_name)
 
 if __name__ == '__main__':
     cli(obj={})

@@ -56,6 +56,8 @@ IMP_STEPS = os.environ.get("IMP_STEPS", 'preprocessing assembly analysis binning
 if not os.path.exists(DBPATH):
     os.makedirs(DBPATH)
 
+IMP_BINNING_METHOD = os.environ.get("IMP_BINNING_METHOD", config['binning']['method'])
+
 # Get general parameters
 THREADS = os.environ.get("THREADS", config['threads'])
 MEMTOTAL = os.environ.get("MEMTOTAL", config['memory_total_gb'])
