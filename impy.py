@@ -804,7 +804,7 @@ def analysis(ctx, data_dir, single_omics,
 @click.option('--prokka-prefix', help="Prefix of the prokka output file.", default='prokka')
 @click.pass_context
 def binning(ctx, data_dir, single_omics,
-             execute, single_step, prokka_prefix, binning_method):
+             execute, single_step, prokka_prefix):
     """
     Run IMP workflow.
 
