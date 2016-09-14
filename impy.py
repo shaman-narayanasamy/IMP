@@ -26,15 +26,6 @@ CONTAINER_DATA_DIR = '/home/imp/data'
 CONTAINER_CONF_DIR = '/home/imp/conf'
 CONTAINER_CODE_DIR = '/home/imp/code'
 
-"""
-from functools import update_wrapper
-
-def pass_obj(f):
-    @click.pass_context
-    def new_func(ctx, *args, **kwargs):
-        return ctx.invoke(f, ctx.obj, *args, **kwargs)
-    return update_wrapper(new_func, f)
-"""
 
 @click.group(context_settings={
     'help_option_names': ['-h', '--help']
@@ -445,7 +436,7 @@ def run(ctx, metagenomic, metranscriptomic,
 @click.option('--single-step', help="Only execute preprocessing.", is_flag=True)
 @click.pass_context
 def preprocessing(ctx, metagenomic, metranscriptomic,
-        assembler, output_directory, single_omics,
+        output_directory, single_omics,
         execute, single_step):
     """
     Run IMP workflow.
