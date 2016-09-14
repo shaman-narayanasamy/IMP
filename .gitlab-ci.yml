@@ -10,7 +10,8 @@ databases:
     stage: manual
     when: manual
     script:
-        - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db init
+        - mkdir -p $CI_PROJECT_DIR/$CI_BUILD_ID
+        - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d $CI_PROJECT_DIR/$CI_BUILD_ID init
 
 
 before_script:
@@ -135,16 +136,6 @@ a-mt-megahit:
     stage: assembly
     script:
         - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db assembly -t /mnt/data/input/assembly-megahit/mt.r1.preprocessed.fq -t /mnt/data/input/assembly-megahit/mt.r2.preprocessed.fq -t /mnt/data/input/assembly-megahit/mt.se.preprocessed.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID --single-step --single-omics
-
-
-test:
-    stage: analysis
-    script:
-        - mkdir -p $CI_PROJECT_DIR/output-mgmt/{Assembly,Preprocessing}
-        - cp /mnt/data/input/analysis-mgmt/Assembly/* $CI_PROJECT_DIR/output-mgmt/Assembly
-        - cp /mnt/data/input/analysis-mgmt/Preprocessing/* $CI_PROJECT_DIR/output-mgmt/Preprocessing
-        - ./IMP -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mgmt --current "ls -hRalt /home/imp/output/"
-        - ./IMP -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db -o $CI_PROJECT_DIR/output-mgmt --current "snakemake Analysis/mgmt.assembly.length.txt"
 
 
 an-mgmt:
