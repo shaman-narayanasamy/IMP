@@ -10,7 +10,8 @@ databases:
     stage: manual
     when: manual
     script:
-        - ./test/scripts/init.sh
+        - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db init
+
 
 before_script:
   - pip3.4 install --editable . --user
