@@ -105,6 +105,7 @@ p-mt-nf:
 # Assembly
 a-mgmt-idba:
     stage: manual
+    when: manual
     script:
         - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db -a idba assembly  -m /mnt/data/input/assembly-megahit/mg.r1.preprocessed.fq -m /mnt/data/input/assembly-megahit/mg.r2.preprocessed.fq -m /mnt/data/input/assembly-megahit/mg.se.preprocessed.fq -t /mnt/data/input/assembly-megahit/mt.r1.preprocessed.fq -t /mnt/data/input/assembly-megahit/mt.r2.preprocessed.fq -t /mnt/data/input/assembly-megahit/mt.se.preprocessed.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID --single-step
 
