@@ -10,14 +10,14 @@ def read(fname):
 
 setup(
     name='impy',
-    version=read('VERSION'),
+    version='0.1',
     author="Shaman Narayanasamy, Yohan Jarosz",
     author_email="shaman.narayanasamy@uni.lu, yohan.jarosz@uni.lu",
     description=("Integrated Metaomic Pipeline command-line utility."),
-    long_description=read('README.md'),
-    keywords="metagenomics meatatranscriptomics pipeline integrated",
+    long_description=read('README.rst'),
+    keywords="metagenomics metatranscriptomics pipeline integrated ecosystems biology",
     url="http://r3lab.uni.lu/web/imp",
-    license = "<>",
+    license = "MIT",
     py_modules=['impy'],
     install_requires=[
         'Click',
@@ -31,27 +31,10 @@ setup(
         "Environment :: Console",
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Science/Research",
-        "License :: OSI Approved :: <> License",
+        "License :: OSI Approved :: MIT License",
         "Natural Language :: English",
-        "Programming Language :: Python :: 3",
+        "Programming Language :: Python",
         "Topic :: Scientific/Engineering :: Bio-Informatics",
         "License :: OSI Approved :: BSD License"
-    ],
-)
-
-setup(
-    name = "an_example_pypi_project",
-    version = "0.0.4",
-    author = "Andrew Carter",
-    author_email = "andrewjcarter@gmail.com",
-    description = ("An demonstration of how to create, document, and publish "
-                                   "to the cheese shop a5 pypi.org."),
-    license = "BSD",
-    keywords = "example documentation tutorial",
-    url = "http://packages.python.org/an_example_pypi_project",
-    packages=['an_example_pypi_project', 'tests'],
-    long_description=read('README.md'),
-    classifiers=[
-
     ],
 )
