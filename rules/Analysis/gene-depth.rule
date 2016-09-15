@@ -26,10 +26,12 @@ rule call_gene_depth:
                 pc=c
             }}
         }} END {{print pc,cov}}' < {output[1]} | tail -n +2 > {output[2]}
+
+
         # Record gene length file
         cut -f 1,4 {output[1]} | uniq > {output[3]}
         
-        if grep -q 'eC_number' {output[1]} 
+        if grep -q 'eC_number' {output[1]}
         then
 	    echo 'EC annotations available'
             echo 'Creating file {output[4]}'
