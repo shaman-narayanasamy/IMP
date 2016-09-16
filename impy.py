@@ -78,15 +78,6 @@ def cli(ctx, image_name, image_tag, image_repo, threads, memtotal, assembler, bi
     # # TODO # add environment variables
     # envs = ['-e {}="{}"'.format(*e.split('=')) for e in args['-e']]
 
-    # # TODO # split snakemake workflows into multiple
-
-    # # TODO # workflow for single omics
-@cli.command()
-@click.option('--single-omics', is_flag=True, default=False, help='Activate single omics mode.')
-@click.pass_context
-def test(ctx, single_omics, *args):
-    print(ctx.obj)
-    print(single_omics)
 
 def requirements():
     """
@@ -289,25 +280,6 @@ def init(ctx):
 
 
 
-
-@cli.command()
-@click.option('-m', '--metagenomic', help="Path to the Metagenomic files.", multiple=True)
-@click.option('-t', '--metranscriptomic', help="Path to the Metatranscriptomic files.", multiple=True)
-@click.option('-o', '--output-directory', help="Output directory.", default=IMP_DEFAULT_OUTPUT_DIR)
-@click.option('--single-omics', is_flag=True, default=False, help='Activate single omics mode.')
-@click.option('-x', '--execute',
-              help="Command to execute.",
-              default="snakemake -s {container_source_code_dir}/Snakefile".format(
-              container_source_code_dir=CONTAINER_CODE_DIR))
-@click.pass_context
-def run(ctx, metagenomic, metranscriptomic,
-        output_directory, single_omics,
-        execute):
-    preprocessing(ctx, metagenomic, metranscriptomic,
-            output_directory, single_omics,
-            execute, False)
-
-
 @cli.command()
 @click.option('-m', '--metagenomic', help="Path to the Metagenomic files.", multiple=True)
 @click.option('-t', '--metranscriptomic', help="Path to the Metatranscriptomic files.", multiple=True)
@@ -422,6 +394,22 @@ def preprocessing(ctx, metagenomic, metranscriptomic,
     call(docker_cmd, container_name)
 
 
+@cli.command()
+@click.option('-m', '--metagenomic', help="Path to the Metagenomic files.", multiple=True)
+@click.option('-t', '--metranscriptomic', help="Path to the Metatranscriptomic files.", multiple=True)
+@click.option('-o', '--output-directory', help="Output directory.", default=IMP_DEFAULT_OUTPUT_DIR)
+@click.option('--single-omics', is_flag=True, default=False, help='Activate single omics mode.')
+@click.option('-x', '--execute',
+              help="Command to execute.",
+              default="snakemake -s {container_source_code_dir}/Snakefile".format(
+              container_source_code_dir=CONTAINER_CODE_DIR))
+@click.pass_context
+def run(ctx, metagenomic, metranscriptomic,
+        output_directory, single_omics,
+        execute):
+        ctx.invoke(preprocessing, ctx, metagenomic, metranscriptomic,
+                   output_directory, single_omics,
+                   execute, False)
 
 
 @cli.command()
