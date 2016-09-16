@@ -53,7 +53,9 @@ def cli(ctx, image_name, image_tag, image_repo, threads, memtotal, assembler, bi
     ctx.obj['image-repo'] = image_repo
     ctx.obj['database-path'] = Path(database_path).abspath()
     ctx.obj['config-file-path'] = Path(config_file_path).abspath()
-    ctx.obj['source-code'] = Path(source_code).abspath()
+    ctx.obj['source-code'] = None
+    if source_code:
+        ctx.obj['source-code'] = Path(source_code).abspath()
     ctx.obj['enter'] = enter
     ctx.obj['threads'] = threads
     ctx.obj['memtotal'] = memtotal
