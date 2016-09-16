@@ -58,8 +58,6 @@ RUN set -x \
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
 
-RUN
-
 #### Add IMP user
 RUN groupadd imp && useradd -g imp -d /home/imp imp \
     && chown imp:imp -R /home/imp/ \
