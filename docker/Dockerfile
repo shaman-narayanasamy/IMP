@@ -18,11 +18,6 @@ RUN echo "`snakemake --bash-completion`" >> ~/.bashrc \
     && echo "export LD_LIBRARY_PATH=/usr/local/lib" >> ~/.bashrc
 
 
-#### Add IMP user
-RUN useradd -d /home/imp imp \
-    && echo 'imp:imp' |chpasswd \
-    && echo "imp ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/imp
-
 
 #####################
 # Ship IMP codebase #
@@ -63,7 +58,14 @@ RUN set -x \
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
 
-RUN sudo chown imp:imp -R /home/imp/
+RUN
+
+#### Add IMP user
+RUN groupadd imp && useradd -g imp -d /home/imp imp \
+    && chown imp:imp -R /home/imp/ \
+    && chmod -R 0777 /home/imp \
+    && echo 'imp:imp' |chpasswd \
+    && echo "imp ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/imp
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
