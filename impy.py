@@ -409,7 +409,7 @@ def run(ctx, metagenomic, metranscriptomic,
         execute):
         ctx.invoke(preprocessing, ctx, metagenomic, metranscriptomic,
                    output_directory, single_omics,
-                   execute, False)
+                   execute, single_step=False)
 
 
 @cli.command()
