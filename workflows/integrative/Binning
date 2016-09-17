@@ -23,12 +23,12 @@ include:
 # master command
 rule BINNING:
     input:
+        "Binning/MaxBin/maxbin_res.log"
 #        expand("Binning/binny/contigs2clusters.{pk}.{nn}.tsv",pk=config["binning"]["pk"],nn=config["binning"]["nn"]),
 #        "Binning/binny/checkM_output/checkm_table.tsv",
 #        "Binning/binny/run_checkM.done",
 #        "Binning/binny/separate_bins.done",
 #        "Binning/binny/essMarkerGenes/markersAll.tsv",
 #        "Binning/binny/getMarkerGenes.done",
-        "Binning/MaxBin/maxbin_res.log"
     output:
         touch('binning.done')
