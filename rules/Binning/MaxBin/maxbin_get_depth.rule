@@ -1,0 +1,13 @@
+rule maxbin_get_depth:
+    input:
+        "Analysis/mg.assembly.contig_depth.txt",
+        "Assembly/mgmt.assembly.merged.fa"
+    output:
+    shell:
+        """
+        cat {input[0]} \
+        <(awk 'BEGIN {OFS="\t"}; {print $0, 0}' \
+        <(diff --new-line-format="" --unchanged-line-format="" \
+        <(grep "^>" {input[1]} |sed -e 's/>//g' | sort) \
+        <(cut -f1 {input[0]} | sort))) > {output[0]}
+        """

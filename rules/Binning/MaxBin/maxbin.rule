@@ -12,7 +12,7 @@ rule maxbin:
         echo "[x] Interleave MG reads"
         TMPD=$(mktemp -d -t --tmpdir={TMPDIR} "XXXXXX")
         fq2fa --merge {input[0]} {input[1]} $TMPD/merged_MG.fa
-
+        
         ## Create MaxBin dir
         mkdir -p Binning/MaxBin
         

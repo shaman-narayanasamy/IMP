@@ -62,12 +62,9 @@ RUN set -x \
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
-
-RUN sudo chown imp:imp -R /home/imp/
-
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
-
+RUN sudo chown -R imp:imp /home/imp/
 
 ######################
 # runtime parameters #
