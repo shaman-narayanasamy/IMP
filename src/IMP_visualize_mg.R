@@ -131,9 +131,18 @@ annot.1 <- as.data.frame(cbind(annot.1, annot.1$end - annot.1$start + 1))
 colnames(annot.1)[ncol(annot.1)] <- "gene_length"
 
 # aggregate table and calculate total gene lengths within contig
+save.image(name_plot("mgmt_results.Rdat"))
 print("Calculating coding density of contigs")
-annot.2 <- cbind(annot.2, aggregate(gene_length~contig, data=annot.1, FUN=sum)[,2])
-colnames(annot.2)[ncol(annot.2)] <- "total_gene_length"
+# Create temporary table
+total_gene_length <- aggregate(gene_length~contig, data=annot.1, FUN=sum)
+colnames(total_gene_length)[ncol(total_gene_length)] <- "total_gene_length"
+annot.2 <- merge(annot.2, 
+		 total_gene_length,
+		 by="contig", 
+		 all.y=FALSE)
+
+# remove temporary table
+rm(total_gene_length)
 
 # create annotation table
 print("Creating annotation table")
