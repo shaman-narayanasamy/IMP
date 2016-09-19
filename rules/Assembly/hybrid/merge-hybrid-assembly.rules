@@ -10,7 +10,6 @@ rule collapse_hybrid_assemblies:
         cat {input} > $NAME.cat.fa
 
         # Options should be after input file!
-        cap3 $NAME.cat.fa -p 98 -o 100
         cap3 $NAME.cat.fa -p {config[cap3][identity]} -o {config[cap3][overlap]}
 
         # Concatenate assembled contigs, singletons and rename the contigs
