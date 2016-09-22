@@ -7,7 +7,10 @@ rule cap3:
     shell:
         """
         NAME=Assembly/{wildcards.type}.assembly
-        cap3 $NAME.cat.fa
+        cat {input} > $NAME.cat.fa
+        
+        cap3 $NAME.cat.fa -p {config[cap3][identity]} -o {config[cap3][overlap]}
+        
         # Concatenate assembled contigs, singletons and rename the contigs
         cat $NAME.cat.fa.cap.contigs $NAME.cat.fa.cap.singlets | \
         awk '/^>/{{print \">contig_\" ++i; next}}{{print}}' > $NAME.merged.fa
