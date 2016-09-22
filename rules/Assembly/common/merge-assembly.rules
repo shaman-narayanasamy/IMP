@@ -3,7 +3,7 @@ rule cap3:
         'Assembly/%s.%s_preprocessed.1.fa' % (ASS, IMP_ASSEMBLER),
         'Assembly/%s.%s_unmapped.2.fa' % (ASS, IMP_ASSEMBLER),
     output:
-        'Assembly/%s.assembly.merged.fa',
+        'Assembly/%s.assembly.merged.fa' % ASS,
     shell:
         """
         NAME=Assembly/%s.assembly
