@@ -9,6 +9,7 @@ rule cap3:
         NAME=Assembly/{wildcards.type}.assembly
         cat {input} > $NAME.cat.fa
         
+        # Run cap3 
         cap3 $NAME.cat.fa -p {config[cap3][identity]} -o {config[cap3][overlap]}
         
         # Concatenate assembled contigs, singletons and rename the contigs
