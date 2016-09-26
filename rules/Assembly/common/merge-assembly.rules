@@ -1,15 +1,18 @@
 rule cap3:
     input:
-        'Assembly/{type}.%s_preprocessed.1.fa' % IMP_ASSEMBLER,
-        'Assembly/{type}.%s_unmapped.2.fa' % IMP_ASSEMBLER,
+        'Assembly/%s.%s_preprocessed.1.fa' % (ASS, IMP_ASSEMBLER),
+        'Assembly/%s.%s_unmapped.2.fa' % (ASS, IMP_ASSEMBLER),
     output:
-        'Assembly/{type}.assembly.merged.fa',
+        'Assembly/%s.assembly.merged.fa' % ASS,
     shell:
         """
-        NAME=Assembly/{wildcards.type}.assembly
+        NAME=Assembly/%s.assembly
         cat {input} > $NAME.cat.fa
-        cap3 $NAME.cat.fa
+        
+        # Run cap3 
+        cap3 $NAME.cat.fa -p {config[cap3][identity]} -o {config[cap3][overlap]}
+        
         # Concatenate assembled contigs, singletons and rename the contigs
         cat $NAME.cat.fa.cap.contigs $NAME.cat.fa.cap.singlets | \
         awk '/^>/{{print \">contig_\" ++i; next}}{{print}}' > $NAME.merged.fa
-        """
+        """ % ASS

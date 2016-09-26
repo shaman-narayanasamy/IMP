@@ -65,9 +65,10 @@ RUN groupadd imp && useradd -g imp -d /home/imp imp \
     && echo 'imp:imp' |chpasswd \
     && echo "imp ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/imp
 
+
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
-
+RUN sudo chown -R imp:imp /home/imp/
 
 ######################
 # runtime parameters #

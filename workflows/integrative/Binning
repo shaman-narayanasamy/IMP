@@ -1,45 +1,14 @@
 # include rules for the Binning part of the workflow
-if IMP_BINNING_METHOD == 'binny':
-    include:
-        '../../rules/Binning/binny/find-essential-genes.rule'
 
-    include:
-        '../../rules/Binning/binny/binning.rule'
 
-    include:
-        '../../rules/Binning/binny/separate-bins.rule'
 
-    include:
-        '../../rules/Binning/binny/essential-gene_info.rule'
+include:
+    '../../rules/Binning/MaxBin/maxbin.rule'
 
-    include:
-        '../../rules/Binning/binny/extract-essential-genes.rule'
-
-    include:
-        '../../rules/Binning/binny/checkm.rule'
-
-elif IMP_BINNING_METHOD == 'maxbin':
-    include:
-        '../../rules/Binning/MaxBin/maxbin.rule'
-
-    include:
-        '../../rules/Binning/binny/checkm.rule'
-
-if IMP_BINNING_METHOD == 'binny':
-    inputs = [
-    expand("Binning/binny/contigs2clusters.{pk}.{nn}.tsv",pk=config["binning"]["pk"],nn=config["binning"]["nn"]),
-    "Binning/binny/checkM_output/checkm_table.tsv",
-    "Binning/binny/run_checkM.done",
-    "Binning/binny/separate_bins.done",
-    "Binning/binny/essMarkerGenes/markersAll.tsv",
-    "Binning/binny/getMarkerGenes.done",
-    ]
-elif IMP_BINNING_METHOD == 'maxbin':
-    inputs = "Binning/MaxBin/maxbin_res.log"
 
 # master command
 rule BINNING:
     input:
-        inputs
+        "Binning/MaxBin/maxbin_res.log"
     output:
         touch('binning.done')
