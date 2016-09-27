@@ -157,7 +157,8 @@ RUN cd /home/imp/lib \
     && wget --no-check-certificate https://webdav-r3lab.uni.lu/public/R3lab/IMP/Platypus-latest.tgz -nv \
     && tar -xvzf Platypus-latest.tgz \
     && cd Platypus_0.8.1 \
-    && bash buildPlatypus.sh
+    && bash buildPlatypus.sh \
+    && cd /home/imp/lib && rm Platypus-latest.tgz
 
 
 RUN cd /home/imp/lib \
@@ -228,6 +229,7 @@ RUN cd /home/imp/lib \
     && cd FragGeneScan1.30 \
     && make clean \
     && make fgs \
+    && chmod 777 -R /home/imp/lib/FragGeneScan1.30 \
     && rm /home/imp/lib/FragGeneScan1.30.tar.gz
 
 RUN wget https://webdav-r3lab.uni.lu/public/R3lab/IMP/linux64.tbl2asn.gz -O /tmp/tbl2asn.gz \
