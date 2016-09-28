@@ -138,6 +138,23 @@ def is_imp_container_installed(name, tag):
     click.secho("[x] Found IMP {name} {tag}".format(name=name, tag=tag), fg='green')
     return True
 
+@cli.command()
+@click.option('-p', '--port', help='Set the port to use.', default=8000)
+@click.option('-b', '--bind', help='Address to bind to.', default='127.0.0.1')
+@click.pass_context
+def serve_report(ctx, bind, port):
+    import http.server
+    import socketserver
+
+    handler = http.server.SimpleHTTPRequestHandler
+    httpd = socketserver.TCPServer((bind, port), handler)
+    click.secho("[x] Serving report http://%s:%s. Open REPORT.html" % (bind, port), fg='green')
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        httpd.server_close()
+
+
 
 @cli.command()
 @click.pass_context
