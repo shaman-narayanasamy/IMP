@@ -143,6 +143,9 @@ def is_imp_container_installed(name, tag):
 @click.option('-b', '--bind', help='Address to bind to.', default='127.0.0.1')
 @click.pass_context
 def serve_report(ctx, bind, port):
+    """
+    Run a small local webserver to browse the report.
+    """
     import http.server
     import socketserver
 
