@@ -31,14 +31,14 @@ rule mg_filtering:
         'Preprocessing/mg.r1.trimmed.fq',
         'Preprocessing/mg.r2.trimmed.fq',
         'Preprocessing/mg.se.trimmed.fq',
-        '{dir}/{ref}.fa'.format(dir=DBPATH + "/filtering", ref=config['filtering']['filter']),
+        '{dir}/{ref}.fa'.format(dir=DBPATH + "/filtering", ref=FILTER),
         expand(
-            "{p}/filtering/{filter}.{ext}", filter=config["filtering"]["filter"],
+            "{p}/filtering/{filter}.{ext}", filter=FILTER,
             ext=['fa', 'fa.amb', 'fa.ann', 'fa.bwt', 'fa.pac', 'fa.sa'], p=DBPATH)
     output:
-        'Preprocessing/mg.r1.trimmed.%s_filtered.fq' % config["filtering"]["filter"],
-        'Preprocessing/mg.r2.trimmed.%s_filtered.fq' % config["filtering"]["filter"],
-        'Preprocessing/mg.se.trimmed.%s_filtered.fq' % config["filtering"]["filter"]
+        'Preprocessing/mg.r1.trimmed.%s_filtered.fq' % FILTER,
+        'Preprocessing/mg.r2.trimmed.%s_filtered.fq' % FILTER,
+        'Preprocessing/mg.se.trimmed.%s_filtered.fq' % FILTER
     shell:
         FILTERING_CMD
 
@@ -47,23 +47,23 @@ rule mt_filtering:
         'Preprocessing/mt.r1.trimmed.rna_filtered.fq',
         'Preprocessing/mt.r2.trimmed.rna_filtered.fq',
         'Preprocessing/mt.se.trimmed.rna_filtered.fq',
-        '{dir}/{ref}.fa'.format(dir=DBPATH + "/filtering", ref=config['filtering']['filter']),
+        '{dir}/{ref}.fa'.format(dir=DBPATH + "/filtering", ref=FILTER),
         expand(
-            "{p}/filtering/{filter}.{ext}", filter=config["filtering"]["filter"],
+            "{p}/filtering/{filter}.{ext}", filter=FILTER,
             ext=['fa', 'fa.amb', 'fa.ann', 'fa.bwt', 'fa.pac', 'fa.sa'], p=DBPATH)
     output:
-        'Preprocessing/mt.r1.trimmed.rna_filtered.%s_filtered.fq' % config["filtering"]["filter"],
-        'Preprocessing/mt.r2.trimmed.rna_filtered.%s_filtered.fq'% config["filtering"]["filter"] ,
-        'Preprocessing/mt.se.trimmed.rna_filtered.%s_filtered.fq' % config["filtering"]["filter"]
+        'Preprocessing/mt.r1.trimmed.rna_filtered.%s_filtered.fq' % FILTER,
+        'Preprocessing/mt.r2.trimmed.rna_filtered.%s_filtered.fq'% FILTER ,
+        'Preprocessing/mt.se.trimmed.rna_filtered.%s_filtered.fq' % FILTER
     shell:
         FILTERING_CMD
 
 
 rule symlink_mt_preprocessed_files:
     input:
-        'Preprocessing/mt.r1.trimmed.rna_filtered.%s_filtered.fq' % config["filtering"]["filter"],
-        'Preprocessing/mt.r2.trimmed.rna_filtered.%s_filtered.fq' % config["filtering"]["filter"],
-        'Preprocessing/mt.se.trimmed.rna_filtered.%s_filtered.fq' % config["filtering"]["filter"]
+        'Preprocessing/mt.r1.trimmed.rna_filtered.%s_filtered.fq' % FILTER,
+        'Preprocessing/mt.r2.trimmed.rna_filtered.%s_filtered.fq' % FILTER,
+        'Preprocessing/mt.se.trimmed.rna_filtered.%s_filtered.fq' % FILTER
     output:
         'Preprocessing/mt.r1.preprocessed.fq',
         'Preprocessing/mt.r2.preprocessed.fq',
@@ -73,9 +73,9 @@ rule symlink_mt_preprocessed_files:
 
 rule symlink_mg_preprocessed_files:
     input:
-        'Preprocessing/mg.r1.trimmed.%s_filtered.fq' % config["filtering"]["filter"],
-        'Preprocessing/mg.r2.trimmed.%s_filtered.fq' % config["filtering"]["filter"],
-        'Preprocessing/mg.se.trimmed.%s_filtered.fq' % config["filtering"]["filter"]
+        'Preprocessing/mg.r1.trimmed.%s_filtered.fq' % FILTER,
+        'Preprocessing/mg.r2.trimmed.%s_filtered.fq' % FILTER,
+        'Preprocessing/mg.se.trimmed.%s_filtered.fq' % FILTER
     output:
         'Preprocessing/mg.r1.preprocessed.fq',
         'Preprocessing/mg.r2.preprocessed.fq',

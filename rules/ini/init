@@ -12,7 +12,7 @@ rule ALL:
     input:
         expand(
             "filtering/{filter}.{ext}",
-            filter=config["filtering"]["filter"],
+            filter=FILTER,
             ext=['fa', 'fa.amb', 'fa.ann', 'fa.bwt', 'fa.pac', 'fa.sa']
         ),
         expand("{path}/{files}.fasta", files=config["sortmerna"]["files"], path="sortmerna"),

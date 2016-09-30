@@ -397,6 +397,15 @@ def preprocessing(ctx, metagenomic, metranscriptomic,
             ctx.abort()
     common_path = Path(os.path.commonprefix(mg_data + mt_data)).dirname()
 
+    # if sreen file is provided, we must add it to the database dir and also update the config
+    if screen:
+        screen_path = Path(screen).abspath()
+        if not screen_path.exists():
+            click.secho('Path provided does not exist: `%s`.' % screen_path, fg='red', bold=True)
+            ctx.abort()
+        screen_path_name = p.name.splitext()[0]
+        shutil.copy(screen_path, database_path / screen_path_name + '.fa')
+
     # update data paths to remove the 'common path' from it.
     mg_data = [p.partition(common_path)[-1][1:] for p in mg_data]
     mt_data = [p.partition(common_path)[-1][1:] for p in mt_data]
@@ -436,6 +445,8 @@ def preprocessing(ctx, metagenomic, metranscriptomic,
     }
     if no_filtering:
         ev['PREPROCESSING_FILTERING'] = False
+    if screen:
+        ev['FILTER'] = screen_path_name
 
     # output directory
     output_directory = Path(output_directory).abspath()

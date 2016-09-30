@@ -45,10 +45,10 @@ rule sortmerna_databases_index:
 
 rule filtrering_database:
     output:
-        'filtering/{filter}.fa'.format(filter=config["filtering"]["filter"])
-        #expand("filtering/{filter}.{ext}", filter=config["filtering"]["filter"], ext=['fa'])
+        'filtering/{filter}.fa'.format(filter=FILTER)
+        #expand("filtering/{filter}.{ext}", filter=FILTER, ext=['fa'])
     params:
-        filter = config["filtering"]["filter"]
+        filter = FILTER
     shell:
         """
         TMPD=$(mktemp -d -t --tmpdir={TMPDIR} "XXXXXX")
