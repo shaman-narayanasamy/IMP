@@ -40,6 +40,11 @@ dag-mgmt-nf:
   script:
     - impy -s . -c $CI_PROJECT_DIR/test/no_filtering.conf.json -d /mnt/data/db run -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID -x "snakemake -n"
 
+dag-mgmt-nf2:
+  stage: dag
+  script:
+    - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db run -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID -x "snakemake -n" --no-filtering
+
 dag-mg-default:
   stage: dag
   script:
@@ -50,6 +55,11 @@ dag-mg-nf:
   script:
     - impy -s . -c $CI_PROJECT_DIR/test/no_filtering.conf.json -d /mnt/data/db run -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID --single-omics -x "snakemake -n"
 
+dag-mg-nf2:
+  stage: dag
+  script:
+    - impy -s . -c $CI_PROJECT_DIR/test/no_filtering.conf.json -d /mnt/data/db run -m $CI_PROJECT_DIR/test/MG.R1.small.fq -m $CI_PROJECT_DIR/test/MG.R2.small.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID --single-omics -x "snakemake -n" --no-filtering
+
 dag-mt-default:
   stage: dag
   script:
@@ -59,6 +69,11 @@ dag-mt-nf:
   stage: dag
   script:
     - impy -s . -c $CI_PROJECT_DIR/test/no_filtering.conf.json -d /mnt/data/db run -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID --single-omics -x "snakemake -n"
+
+dag-mt-nf2:
+  stage: dag
+  script:
+    - impy -s . -c $CI_PROJECT_DIR/test/no_filtering.conf.json -d /mnt/data/db run -t $CI_PROJECT_DIR/test/MT.R1.small.fq -t $CI_PROJECT_DIR/test/MT.R2.small.fq -o $CI_PROJECT_DIR/$CI_BUILD_ID --single-omics -x "snakemake -n" --no-filtering
 
 
 
