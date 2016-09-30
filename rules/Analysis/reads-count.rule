@@ -24,7 +24,7 @@ def reads_input_files(wildcards):
     base = raw_fq_files
     if 'preprocessing' in IMP_STEPS:
         base += preprocessed_fq_files
-        if config['preprocessing_filtering']:
+        if PREPROCESSING_FILTERING:
             base += trimmed_fq_files
     if wildcards.type == 'mt' and 'preprocessing' in IMP_STEPS:
         base += rna_filtered_fq_mt_files
