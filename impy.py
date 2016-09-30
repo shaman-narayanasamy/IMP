@@ -9,6 +9,7 @@ import urllib.request
 import shutil
 from copy import deepcopy
 import tempfile
+import tarfile
 import sys
 import re
 
@@ -123,6 +124,7 @@ def call(cmd, container_name):
         click.secho('killed.', fg='green')
         return p.terminate()
 
+
 def is_imp_container_installed(name, tag):
     """
     Check if IMP is installed
@@ -137,6 +139,7 @@ def is_imp_container_installed(name, tag):
         return False
     click.secho("[x] Found IMP {name} {tag}".format(name=name, tag=tag), fg='green')
     return True
+
 
 @cli.command()
 @click.option('-p', '--port', help='Set the port to use.', default=8000)
@@ -270,32 +273,48 @@ def generate_docker_cmd(container_name, database_path, configuration_file_path,
 
 
 @cli.command()
+@click.option('--generate', default=False, is_flag=True, help='Download and process the databases from original tools.')
 @click.pass_context
-def init(ctx):
+def init(ctx, generate):
     """
-    Initialise databases
+    Initialise databases.
     """
     if not is_imp_container_installed(ctx.obj['image-name'], ctx.obj['image-tag']):
         click.secho('IMP image not installed. Please run `impy install_imp_container` first.', bold=True)
 
-    container_name = generate_container_name(ctx.obj['database-path'])
+    if generate:
+        container_name = generate_container_name(ctx.obj['database-path'])
 
-    init_cmd = "snakemake -s {container_source_code_dir}/rules/ini/init".format(
-        container_source_code_dir=CONTAINER_CODE_DIR
-    )
-
-    docker_cmd = generate_docker_cmd(
-        container_name,
-        ctx.obj['database-path'],
-        ctx.obj['config-file-path'],
-        image_name=ctx.obj['image-name'],
-        image_tag=ctx.obj['image-tag'],
-        command=init_cmd,
-        interactive=ctx.obj['enter'],
-        source_code=ctx.obj['source-code'],
+        init_cmd = "snakemake -s {container_source_code_dir}/rules/ini/init".format(
+            container_source_code_dir=CONTAINER_CODE_DIR
         )
 
-    call(docker_cmd, container_name)
+        docker_cmd = generate_docker_cmd(
+            container_name,
+            ctx.obj['database-path'],
+            ctx.obj['config-file-path'],
+            image_name=ctx.obj['image-name'],
+            image_tag=ctx.obj['image-tag'],
+            command=init_cmd,
+            interactive=ctx.obj['enter'],
+            source_code=ctx.obj['source-code'],
+            )
+
+        call(docker_cmd, container_name)
+    else:
+        with open(ctx.obj['config-file-path']) as cfile:
+            config = json.load(cfile)
+            if config['filtering'] == 'hg38':
+                url = "https://webdav-r3lab.uni.lu/public/R3lab/IMP/db/hg38.tgz"
+                click.secho("[x] Downloading IMP databases at '%s'" %  ctx.obj['database-path'], fg='green')
+                with urllib.request.urlopen(url) as response, open( ctx.obj['database-path'], 'wb') as out_file:
+                    shutil.copyfileobj(response, out_file)
+                    tar = tarfile.open(out_file)
+                    tar.extractall()
+                    tar.close()
+            else:
+                click.secho('No databases already generated for "%s". Please run `impy init` with the `--generate` flag.' % config['filtering'], bold=True)
+
 
 
 
