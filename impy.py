@@ -272,6 +272,37 @@ def generate_docker_cmd(container_name, database_path, configuration_file_path,
     return cmd
 
 
+def reporthook(readsofar):
+    totalsize = 6333000000
+    if totalsize > 0:
+        percent = readsofar * 1e2 / totalsize
+        s = "\r%5.1f%% %*d / %d" % (
+            percent, len(str(totalsize)), readsofar, totalsize)
+        sys.stderr.write(s)
+
+
+def copyfileobj(fsrc, fdst, callback, length=16*1024):
+    copied = 0
+    while True:
+        buf = fsrc.read(length)
+        if not buf:
+            break
+        fdst.write(buf)
+        copied += len(buf)
+        callback(copied)
+    sys.stderr.write("\n")
+
+
+def get_members(tar, prefix):
+    if not prefix.endswith('/'):
+        prefix += '/'
+    offset = len(prefix)
+    for tarinfo in tar.getmembers():
+        if tarinfo.name.startswith(prefix):
+            tarinfo.name = tarinfo.name[offset:]
+            yield tarinfo
+
+
 @cli.command()
 @click.option('--generate', default=False, is_flag=True, help='Download and process the databases from original tools.')
 @click.pass_context
@@ -302,20 +333,24 @@ def init(ctx, generate):
 
         call(docker_cmd, container_name)
     else:
-        with open(ctx.obj['config-file-path']) as cfile:
-            config = json.load(cfile)
-            if config['filtering'] == 'hg38':
-                url = "https://webdav-r3lab.uni.lu/public/R3lab/IMP/db/hg38.tgz"
-                click.secho("[x] Downloading IMP databases at '%s'" %  ctx.obj['database-path'], fg='green')
-                with urllib.request.urlopen(url) as response, open( ctx.obj['database-path'], 'wb') as out_file:
-                    shutil.copyfileobj(response, out_file)
-                    tar = tarfile.open(out_file)
-                    tar.extractall()
-                    tar.close()
-            else:
-                click.secho('No databases already generated for "%s". Please run `impy init` with the `--generate` flag.' % config['filtering'], bold=True)
+        if ctx.obj['config-file-path'].exists():
+            with open(ctx.obj['config-file-path']) as cfile:
+                config = json.load(cfile)
+                if 'filtering' in config and config['filtering'] != 'hg38':
+                    click.secho('No databases already generated for "%s". Please run `impy init` with the `--generate` flag.' % config['filtering'], bold=True)
+                    ctx.abort()
 
-
+        url = "https://webdav-r3lab.uni.lu/public/R3lab/IMP/db/hg38.tgz"
+        tmp = ctx.obj['database-path'].parent / 'db.tgz'
+        click.secho("[x] Downloading IMP databases '%s' to '%s'" % (url, tmp), fg='green')
+        with urllib.request.urlopen(url) as response, open(tmp, 'wb') as out_file:
+            copyfileobj(response, out_file, reporthook)
+            shutil.copyfileobj(response, out_file)
+        click.secho("[x] Extracting to %s" % ctx.obj['database-path'], fg='green')
+        with tarfile.open(tmp, 'r') as tarball:
+            tarball.extractall(ctx.obj['database-path'], get_members(tarball, 'db'))
+        click.secho("[x] Removing tmp file:  %s" % tmp, fg='green')
+        shutil.remove(tmp)
 
 
 
@@ -324,6 +359,8 @@ def init(ctx, generate):
 @click.option('-t', '--metranscriptomic', help="Path to the Metatranscriptomic files.", multiple=True)
 @click.option('-o', '--output-directory', help="Output directory.", default=IMP_DEFAULT_OUTPUT_DIR)
 @click.option('--single-omics', is_flag=True, default=False, help='Activate single omics mode.')
+@click.option('--screen', help='Fasta file path to use for filtering.')
+@click.option('--no-filtering', is_flag=True, default=False, help='Skip filtering.')
 @click.option('-x', '--execute',
               help="Command to execute.",
               default="snakemake -s {container_source_code_dir}/Snakefile".format(
@@ -331,10 +368,10 @@ def init(ctx, generate):
 @click.option('--single-step', help="Only execute preprocessing.", is_flag=True)
 @click.pass_context
 def preprocessing(ctx, metagenomic, metranscriptomic,
-        output_directory, single_omics,
+        output_directory, single_omics, no_filtering, screen,
         execute, single_step):
     """
-    Run IMP workflow.
+    Run IMP workflow from preprocessing.
 
     Preprocessing --> Assembly --> Analysis --> Binning --> Report
     """
@@ -397,6 +434,8 @@ def preprocessing(ctx, metagenomic, metranscriptomic,
         'IMP_ASSEMBLER': ctx.obj['assembler'],
         'IMP_STEPS': ' '.join(steps)
     }
+    if no_filtering:
+        ev['PREPROCESSING_FILTERING'] = False
 
     # output directory
     output_directory = Path(output_directory).abspath()
@@ -438,19 +477,26 @@ def preprocessing(ctx, metagenomic, metranscriptomic,
 @click.option('-t', '--metranscriptomic', help="Path to the Metatranscriptomic files.", multiple=True)
 @click.option('-o', '--output-directory', help="Output directory.", default=IMP_DEFAULT_OUTPUT_DIR)
 @click.option('--single-omics', is_flag=True, default=False, help='Activate single omics mode.')
+@click.option('--screen', help='Fasta file path to use for filtering.')
+@click.option('--no-filtering', is_flag=True, default=False, help='Skip filtering.')
 @click.option('-x', '--execute',
               help="Command to execute.",
               default="snakemake -s {container_source_code_dir}/Snakefile".format(
               container_source_code_dir=CONTAINER_CODE_DIR))
 @click.pass_context
 def run(ctx, metagenomic, metranscriptomic,
-        output_directory, single_omics,
+        output_directory, single_omics, no_filtering, screen,
         execute):
+        """
+        Run IMP workflow
+        """
         ctx.invoke(preprocessing,
                    metagenomic=metagenomic,
                    metranscriptomic=metranscriptomic,
                    output_directory=output_directory,
                    single_omics=single_omics,
+                   no_filtering=no_filtering,
+                   screen=screen,
                    execute=execute,
                    single_step=False)
 

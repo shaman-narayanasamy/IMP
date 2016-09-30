@@ -69,7 +69,7 @@ data_input = {
 }
 
 
-if config['skip_preprocessing']:
+if PREPROCESSING_FILTERING:
     if MG:
         rule prepare_mg_data:
             input:

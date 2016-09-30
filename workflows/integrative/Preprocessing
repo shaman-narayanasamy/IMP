@@ -5,7 +5,7 @@
 #     "../../rules/Preprocessing/data_input.rules"
 
 # include only if user don't skip preprocessing
-if not config['skip_preprocessing']:
+if not PREPROCESSING_FILTERING:
     # trimming rules
     include:
         "../../rules/Preprocessing/trimming.rules"
