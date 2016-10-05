@@ -10,5 +10,5 @@ rule visualize_maxbin:
        """
        PLOT_SCRIPT="{SRCDIR}/IMP-MaxBin_VizBin.R"
 
-       Rscript {input} {SRCDIR}/IMP_plot_functions.R
+       Rscript $PLOT_SCRIPT {input} {SRCDIR}/IMP_plot_functions.R
        """
