@@ -42,6 +42,7 @@ print("Read in contig lenghts")
 contig.len <- read.table(contig.len.file)
 colnames(contig.len) <- c("contig", "length")
 
+## Merge data
 print("Merging MaxBin and VizBin data")
 vb.mb.dat <- merge(vb.points, mb.contigs, all.x=T, incomparables="NA")
 vb.mb.dat <- merge(vb.mb.dat, mb.summary, all.x=T, incomparables="NA")
@@ -51,15 +52,16 @@ print("Generate colour scheme")
 essPal <- colorRampPalette(brewer.pal(11,"Spectral"))(111)[111:1]
 
 mb.vb.plot <- ggplot(vb.mb.dat, aes(x=x, y=y)) + 
-geom_point(aes(size=length, alpha=abundance, colour=completeness)) +
+geom_point(aes(size=log10(length), alpha=abundance, colour=completeness)) +
 scale_colour_gradientn(colours=essPal,
-		       na.value="gray75",
-		       guide="colourbar",
-		       guide_legend(title="Completeness (%)")
-		       ) +
+                       na.value="gray75",
+                       guide="colourbar",
+                       guide_legend(title="Completeness (%)")
+                       ) +
 scale_alpha_continuous(range = c(0.5, 1),
-		       guide_legend(title="Abundance")
-		       ) +
+                       guide_legend(title="Abundance")
+                       ) +
+guides(size=guide_legend(title=log10len, order=1)) +
 theme_nothing()
 
 print("START: Visualization")
