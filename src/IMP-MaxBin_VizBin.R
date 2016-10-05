@@ -13,6 +13,7 @@ vb.points.file <- args[1]
 mb.summary.file <- args[2]
 mb.contigs.file <- args[3]
 contig.len.file <- args[4]
+function_script <- args[5]
 print("DONE: Reading arguments")
 
 ## Load IMP visualization functions
@@ -62,7 +63,7 @@ scale_alpha_continuous(range = c(0.5, 1),
 theme_nothing()
 
 print("START: Visualization")
-png(name_plot("Binning/MaxBin/IMP-MaxBin-vizbin_length_completeness_abundance.png"), width=plotWidth, height=plotHeight)
+png("Binning/MaxBin/IMP-MaxBin-vizbin_length_completeness_abundance.png", width=plotWidth, height=plotHeight)
 mb.vb.plot
 dev.off()
 print("DONE: Visualization")
