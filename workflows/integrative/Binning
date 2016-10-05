@@ -18,7 +18,10 @@
 
 include:
     '../../rules/Binning/MaxBin/maxbin.rule'
-
+include:
+    '../../rules/Binning/MaxBin/get_contig2bin.rule'
+include:
+    '../../rules/Binning/MaxBin/visualize_maxBin.rule'
 
 # master command
 rule BINNING:
