@@ -1,4 +1,4 @@
-rule maxbin:
+rule maxbin_contig2bin:
     input:
        "Binning/MaxBin/maxbin_res.log"
     output:
