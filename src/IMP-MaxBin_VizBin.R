@@ -7,20 +7,13 @@ require(stringr)
 require(ggplot2)
 require(RColorBrewer)
 
-
 print("START: Reading arguments")
-args                <- commandArgs(trailingOnly = TRUE)
+args <- commandArgs(trailingOnly = TRUE)
 vb.points.file <- args[1]
 mb.summary.file <- args[2]
 mb.contigs.file <- args[3]
 contig.len.file <- args[4]
 print("DONE: Reading arguments")
-
-#function_script  <- "~/Work/repository/IMP-dev/src/IMP_plot_functions.R"
-#vb.points.file <- "mgmt.vizbin.with-contig-names.points"
-#mb.summary.file <- "maxbin_res.summary"
-#mb.contigs.file <- "pukitiau.txt"
-#contig.len.file <- "mgmt.assembly.length.txt" 
 
 ## Load IMP visualization functions
 print("START: Reading functions")
