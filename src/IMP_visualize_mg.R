@@ -131,7 +131,7 @@ annot.1 <- as.data.frame(cbind(annot.1, annot.1$end - annot.1$start + 1))
 colnames(annot.1)[ncol(annot.1)] <- "gene_length"
 
 # aggregate table and calculate total gene lengths within contig
-save.image(name_plot("mgmt_results.Rdat"))
+save.image(name_plot("mg_results.Rdat"))
 print("Calculating coding density of contigs")
 # Create temporary table
 total_gene_length <- aggregate(gene_length~contig, data=annot.1, FUN=sum)
