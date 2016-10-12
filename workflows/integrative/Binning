@@ -27,7 +27,9 @@ include:
 rule BINNING:
     input:
         "Binning/MaxBin/maxbin_res.log",
-        "Binning/MaxBin/IMP-MaxBin-vizbin_length_completeness_abundance.png"
+        "Binning/MaxBin/IMP-MaxBin-vizbin_length_completeness_abundance.png",
+        "Binning/MaxBin/IMP-MaxBin-vizbin_length_bundance.png",
+        "Binning/MaxBin/MaxBin_VizBin-res.Rdat"
 #        expand("Binning/binny/contigs2clusters.{pk}.{nn}.tsv",pk=config["binning"]["pk"],nn=config["binning"]["nn"]),
 #        "Binning/binny/checkM_output/checkm_table.tsv",
 #        "Binning/binny/run_checkM.done",

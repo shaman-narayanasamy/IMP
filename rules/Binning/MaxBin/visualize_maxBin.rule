@@ -5,7 +5,9 @@ rule visualize_maxbin:
        "Binning/MaxBin/maxbin_contig2bin.txt",
        "Analysis/%s.assembly.length.txt" % ASS
    output:
-       "Binning/MaxBin/IMP-MaxBin-vizbin_length_completeness_abundance.png"
+       "Binning/MaxBin/IMP-MaxBin-vizbin_length_completeness_abundance.png",
+       "Binning/MaxBin/IMP-MaxBin-vizbin_length_bundance.png",
+       "Binning/MaxBin/MaxBin_VizBin-res.Rdat"
    shell:
        """
        PLOT_SCRIPT="{SRCDIR}/IMP-MaxBin_VizBin.R"

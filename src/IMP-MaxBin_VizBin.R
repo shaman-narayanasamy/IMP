@@ -10,7 +10,7 @@ require(RColorBrewer)
 print("START: Reading arguments")
 args <- commandArgs(trailingOnly = TRUE)
 vb.points.file <- args[1]
-mb.summary.file <- args[2]
+maxbin.res.file <- args[2]
 mb.contigs.file <- args[3]
 contig.len.file <- args[4]
 function_script <- args[5]
@@ -21,7 +21,7 @@ print("START: Reading functions")
 source(function_script)
 print("DONE: Reading functions")
 
-ead in VizBin points
+## Read in VizBin points
 print("Read in VizBin points")
 vb.points <- read.table(vb.points.file)
 colnames(vb.points) <- c("contig", "x", "y")
@@ -97,12 +97,14 @@ theme_nothing()
 
 
 print("START: Visualization")
-
-png(name_plot("Binning/MaxBin/IMP-MaxBin-vizbin_length_bundance.png"), width=plotWidth, height=plotHeight)
+png("Binning/MaxBin/IMP-MaxBin-vizbin_length_bundance.png", width=plotWidth, height=plotHeight)
 mb.vb.plot
 dev.off()
 
-png(name_plot("Binning/MaxBin/IMP-MaxBin-vizbin_length_completeness_abundance.png"), width=plotWidth, height=plotHeight)
+png("Binning/MaxBin/IMP-MaxBin-vizbin_length_completeness_abundance.png", width=plotWidth, height=plotHeight)
 mb.vb.plot.comp
 dev.off()
 print("DONE: Visualization")
+
+print("Saving image")
+save.image("Binning/MaxBin/MaxBin_VizBin-res.Rdat")
