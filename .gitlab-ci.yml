@@ -176,30 +176,32 @@ an-mt:
         - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db analysis --data-dir $CI_PROJECT_DIR/$CI_BUILD_ID --single-step --single-omics
 
 
-binny-mgmt:
-    stage: binning
-    script:
-        - mkdir -p $CI_PROJECT_DIR/$CI_BUILD_ID
-        - cp -r /mnt/data/input/binny-mgmt/* $CI_PROJECT_DIR/$CI_BUILD_ID
-        - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db binning --data-dir $CI_PROJECT_DIR/$CI_BUILD_ID --single-step
-
-binny-mg:
-    stage: binning
-    script:
-        - mkdir -p $CI_PROJECT_DIR/$CI_BUILD_ID
-        - cp -r /mnt/data/input/binny-mg/* $CI_PROJECT_DIR/$CI_BUILD_ID
-        - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db binning --data-dir $CI_PROJECT_DIR/$CI_BUILD_ID --single-step --single-omics
+# binny-mgmt:
+#     stage: binning
+#     script:
+#         - mkdir -p $CI_PROJECT_DIR/$CI_BUILD_ID
+#         - cp -r /mnt/data/input/binny-mgmt/* $CI_PROJECT_DIR/$CI_BUILD_ID
+#         - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db binning --data-dir $CI_PROJECT_DIR/$CI_BUILD_ID --single-step
+#
+# binny-mg:
+#     stage: binning
+#     script:
+#         - mkdir -p $CI_PROJECT_DIR/$CI_BUILD_ID
+#         - cp -r /mnt/data/input/binny-mg/* $CI_PROJECT_DIR/$CI_BUILD_ID
+#         - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db binning --data-dir $CI_PROJECT_DIR/$CI_BUILD_ID --single-step --single-omics
 
 
 maxbin-mgmt:
-    stage: binning
+    stage: manual
+    when: manual
     script:
         - mkdir -p $CI_PROJECT_DIR/$CI_BUILD_ID
         - cp -r /mnt/data/input/maxbin-mgmt/* $CI_PROJECT_DIR/$CI_BUILD_ID
         - impy -s . -c $CI_PROJECT_DIR/test/default.conf.json -d /mnt/data/db -b maxbin binning --data-dir $CI_PROJECT_DIR/$CI_BUILD_ID --single-step
 
 maxbin-mg:
-    stage: binning
+    stage: manual
+    when: manual
     script:
         - mkdir -p $CI_PROJECT_DIR/$CI_BUILD_ID
         - cp -r /mnt/data/input/maxbin-mg/* $CI_PROJECT_DIR/$CI_BUILD_ID
