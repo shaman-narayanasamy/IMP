@@ -151,6 +151,8 @@ annot.3 <- cbind(rownames(annot.3), annot.3, rowSums(annot.3[,c(1:ncol(annot.3))
 rownames(annot.3) <- NULL
 colnames(annot.3)[c(1, ncol(annot.3))] <- c("contig", "all_annotations")
 
+save.image(name_plot("mg_results.Rdat"))
+
 if (is.null(ncol(annot.3)))
 {
     print("Skipping annotation count")
