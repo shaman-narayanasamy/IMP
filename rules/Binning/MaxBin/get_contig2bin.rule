@@ -1,0 +1,11 @@
+rule maxbin_contig2bin:
+    input:
+       "Binning/MaxBin/maxbin_res.log"
+    output:
+       "Binning/MaxBin/maxbin_contig2bin.txt"
+    shell:
+        """
+        echo "Getting contig to bin mapping"
+        for f in $(ls Binning/MaxBin/*.fasta | cut -f3 -d "/"); do sed -e "s/$/\t$f/g" <(grep "^>" Binning/MaxBin/$f | sed -e 's/>//g') >> {output}; done
+        echo "Contig to bin mapping done"
+        """

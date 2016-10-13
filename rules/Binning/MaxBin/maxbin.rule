@@ -5,7 +5,8 @@ rule maxbin:
        "Assembly/%s.assembly.merged.fa" % ASS,
        "Analysis/mg.assembly.contig_depth.txt"
     output:
-       "Binning/MaxBin/maxbin_res.log"
+       "Binning/MaxBin/maxbin_res.log",
+       "Binning/MaxBin/maxbin_res.summary"
     shell:
         """
         ## Interleave fastq files
