@@ -26,17 +26,19 @@ rule call_gene_depth:
                 pc=c
             }}
         }} END {{print pc,cov}}' < {output[1]} | tail -n +2 > {output[2]}
-        
-        
+
+
         # Record gene length file
         cut -f 1,4 {output[1]} | uniq > {output[3]}
-
-        # Get Krona plot information
-        if [ $(grep -c "eC_number=" {input[0]} ) -ge 1 ]
+        
+        if grep -q 'eC_number' {output[1]}
         then
-        grep "eC_number=" {input[0]} | cut -f9 | cut -f1,2 -d ';'| sed 's/ID=//g'| sed 's/;eC_number=/\t/g' > {output[4]}
+	    echo 'EC annotations available'
+            echo 'Creating file {output[4]}'
+            grep "eC_number=" {input[0]} | cut -f9 | cut -f1,2 -d ';'| sed 's/ID=//g'| sed 's/;eC_number=/\t/g' > {output[4]}
         else
-        echo "No EC numbers reported. Creating empty output"
-        touch {output[4]}
+	    echo 'No EC annotations available'
+            echo 'Creating empty file {output[4]}'
+            touch {output[4]}
         fi
         """

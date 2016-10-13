@@ -20,12 +20,13 @@ PLOT_OUTPUT_FILES = [
     "Analysis/results/IMP-vizbin_length_rpkmRatio.png",
     "Analysis/results/mg.read_stats.html",
     "Analysis/results/mg.read_stats.txt",
-    "Analysis/results/MG_mapping_stats.html",
-    "Analysis/results/MG_mapping_stats.txt",
+    "Analysis/results/mg_mapping_stats.html",
+    "Analysis/results/mg_mapping_stats.txt",
     "Analysis/results/mt.read_stats.html",
     "Analysis/results/mt.read_stats.txt",
-    "Analysis/results/MT_mapping_stats.html",
-    "Analysis/results/MT_mapping_stats.txt",
+    "Analysis/results/mt_mapping_stats.html",
+    "Analysis/results/mt_mapping_stats.txt",
+    "Analysis/results/mgmt_results.Rdat",
 ]
 
 
@@ -54,5 +55,5 @@ rule visualize:
 
         echo "[x] PLOT `date +"%Y/%m/%d %H:%M:%S"`"
         mkdir -p Analysis/results
-        sudo Rscript $PLOT_SCRIPT Analysis/results {input} {SRCDIR}/IMP_plot_functions.R
+        Rscript $PLOT_SCRIPT Analysis/results {input} {SRCDIR}/IMP_plot_functions.R
         """

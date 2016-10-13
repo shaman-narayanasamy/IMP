@@ -45,10 +45,10 @@ rule sortmerna_databases_index:
 
 rule filtrering_database:
     output:
-        'filtering/{filter}.fa'.format(filter=config["filtering"]["filter"])
-        #expand("filtering/{filter}.{ext}", filter=config["filtering"]["filter"], ext=['fa'])
+        'filtering/{filter}.fa'.format(filter=FILTER)
+        #expand("filtering/{filter}.{ext}", filter=FILTER, ext=['fa'])
     params:
-        filter = config["filtering"]["filter"]
+        filter = FILTER
     shell:
         """
         TMPD=$(mktemp -d -t --tmpdir={TMPDIR} "XXXXXX")
@@ -89,7 +89,8 @@ rule kegg_information:
 
 rule prokka_databases:
     output:
-        expand("{db}", db=config["prokka"]["databases"])
+        expand("{db}", db=config["prokka"]["databases"]),
+        "hmm/essentials_genes.hmm"
     shell:
         """
         ### prokka by default will look databases where is located the binary.
@@ -109,5 +110,17 @@ rule prokka_databases:
         mkdir -p {DBPATH}
         cp -r $TMPDIR/db/* {DBPATH}/.
         rm -rf $TMPDIR
+        wget {config[prokka][essentials_genes_db_url]} --no-check-certificate -O {DBPATH}/hmm/essentials_genes.hmm
         prokka --setupdb
+        """
+
+rule checkm_data:
+    output:
+        "checkM/selected_marker_sets.tsv"
+    shell:
+        """
+        wget -c --no-check-certificate {config[checkm][data_url]} -O checkm_data.tgz
+        mkdir -p {DBPATH}/checkM
+        tar -xvzf checkm_data.tgz -C {DBPATH}/checkM
+        rm checkm_data.tgz
         """

@@ -5,9 +5,9 @@ rule trimming:
         DBPATH + "/adapters/adapters.done"
     output:
         'Preprocessing/{type}.r1.trimmed.fq',
-        temp('Preprocessing/{type}.se1.trimmed.fq'),
+        'Preprocessing/{type}.se1.trimmed.fq',
         'Preprocessing/{type}.r2.trimmed.fq',
-        temp('Preprocessing/{type}.se2.trimmed.fq')
+        'Preprocessing/{type}.se2.trimmed.fq'
     shell:
         """
         java -jar {config[trimmomatic][jarfile]} PE -threads {THREADS} {input[0]} {input[1]} {output} \

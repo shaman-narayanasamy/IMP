@@ -1,8 +1,8 @@
 # include rules for the Preprocessing part of the workflow
 
 # data input preparation
-include:
-    "../../../rules/Preprocessing/data_input.rules"
+# include:
+#     "../../../rules/Preprocessing/data_input.rules"
 
 # include only if user don't skip preprocessing
 if not config['skip_preprocessing']:
@@ -11,7 +11,7 @@ if not config['skip_preprocessing']:
         "../../../rules/Preprocessing/trimming.rules"
 
     # include filtering rule or not
-    if config['preprocessing_filtering']:
+    if PREPROCESSING_FILTERING:
         include:
             "../../../rules/Preprocessing/filtering.rules"
     else:
@@ -21,9 +21,8 @@ if not config['skip_preprocessing']:
 # master command
 rule PREPROCESSING:
     input:
-        expand([
-        'Preprocessing/{type}.r1.preprocessed.fq',
-        'Preprocessing/{type}.r2.preprocessed.fq',
-        'Preprocessing/{type}.se.preprocessed.fq'], type=TYPES)
+        'Preprocessing/mg.r1.preprocessed.fq',
+        'Preprocessing/mg.r2.preprocessed.fq',
+        'Preprocessing/mg.se.preprocessed.fq'
     output:
         touch('preprocessing.done')

@@ -1,0 +1,23 @@
+{
+    "filtering": {
+        "filter": "chr1_human",
+       	"url": "http://hgdownload.cse.ucsc.edu/goldenPath/hg38/chromosomes/chr1.fa.gz"
+    },
+    "skip_preprocessing": true,
+    "vizbin": {
+        "dimension": 5,
+        "perp": 1,
+        "cutoff": 100
+    },
+    "sortmerna": {
+        "mem": 1000
+    },
+    "trimmomatic": {
+        "leading": 1,
+        "minlen": 1,
+        "window_size": 1,
+        "window_quality": 1,
+        "strictness": 0,
+        "target_length": 5
+   }
+}

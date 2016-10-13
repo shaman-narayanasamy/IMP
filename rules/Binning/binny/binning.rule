@@ -1,0 +1,19 @@
+rule binning_clustering:
+    input:
+        "Analysis/results/{type}_results.Rdat".format(type=ASS),
+        "Binning/binny/ORFS.hmm.orfs.essential.hits_reduced",
+        "Binning/binny/ORFS-contig_links.bed"
+    output:
+        expand("Binning/binny/reachabilityDistanceEstimates.{pk}.{nn}.tsv \
+        Binning/binny/clusterFirstScan.{pk}.{nn}.tsv \
+        Binning/binny/bimodalClusterCutoffs.{pk}.{nn}.tsv \
+        Binning/binny/contigs2clusters.{pk}.{nn}.tsv \
+        Binning/binny/contigs2clusters.{pk}.{nn}.RDS \
+        Binning/binny/clusteringWS.{pk}.{nn}.Rdata \
+        Binning/binny/finalClusterMap.{pk}.{nn}.pdf".split(),pk=config["binning"]["pk"],nn=config["binning"]["nn"])
+    shell:
+        """
+        mkdir -p Binning/binny/clusterFiles
+        ## Run the R script for clustering the contigs
+        Rscript {SRCDIR}/binny.R {input} {config[binning][pk]} {config[binning][nn]}
+        """

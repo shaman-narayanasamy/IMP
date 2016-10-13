@@ -15,7 +15,7 @@ include:
 include:
     '../../../rules/Analysis/prokka.rule'
 include:
-    '../../../rules/Analysis/quast.rule'
+    '../../../rules/Analysis/metaquast.rule'
 include:
     '../../../rules/Analysis/reads-count.rule'
 include:
@@ -61,16 +61,17 @@ rule ANALYSIS:
         "Analysis/results/IMP-vizbin_length.png",
         "Analysis/results/IMP-vizbin_length_GC.png",
         "Analysis/results/IMP-vizbin_standard.png",
-        "Analysis/results/IMP-MT_var_count.png",
-        "Analysis/results/IMP-MT_coverage_density.png",
-        "Analysis/results/IMP-MT_reads_density.png",
-        "Analysis/results/IMP-MT_vizbin_length_cov.png",
-        "Analysis/results/IMP-MT_vizbin_length_depth.png",
-        "Analysis/results/IMP-MT_vizbin_length_vardens.png",
-        "Analysis/results/MT.read_stats.html",
-        "Analysis/results/MT.read_stats.txt",
-        "Analysis/results/MT_mapping_stats.html",
-        "Analysis/results/MT_mapping_stats.txt"
+        "Analysis/results/IMP-mt_var_count.png",
+        "Analysis/results/IMP-mt_coverage_density.png",
+        "Analysis/results/IMP-mt_reads_density.png",
+        "Analysis/results/IMP-mt_vizbin_length_cov.png",
+        "Analysis/results/IMP-mt_vizbin_length_depth.png",
+        "Analysis/results/IMP-mt_vizbin_length_vardens.png",
+        "Analysis/results/mt.read_stats.html",
+        "Analysis/results/mt.read_stats.txt",
+        "Analysis/results/mt_mapping_stats.html",
+        "Analysis/results/mt_mapping_stats.txt",
+        "Analysis/results/mt_results.Rdat",
 
     output:
         touch('analysis.done')

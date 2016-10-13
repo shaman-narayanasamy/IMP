@@ -8,7 +8,7 @@ print("Loading required R libraries")
 require(genomeIntervals)
 
 require(checkpoint)
-checkpoint('2015-04-27', scanForPackages=FALSE, checkpointLocation="/root/")
+checkpoint('2016-06-20', scanForPackages=FALSE, checkpointLocation="/home/imp/lib", project="/home/imp/lib")
 
 require(ggplot2)
 require(gtools)
@@ -163,10 +163,10 @@ annot <- readGff3(annot_file, isRightOpen = FALSE)
 print("Processing gff3 annotation file")
 annot.1 <- as.data.frame(
 			 cbind(
-			       as.character(annot@annotation$seq_name), 
+			       as.character(annot@annotation$seq_name),
 			       annot@.Data,
 			       str_split_fixed(str_split_fixed(
-							       getGffAttribute(annot, "inference"), 
+							       getGffAttribute(annot, "inference"),
 							       ",", 2)[,2], ":", 3)[,2]
 			       )
 			 )
@@ -200,14 +200,14 @@ annot.1 <- as.data.frame(cbind(annot.1, annot.1$end - annot.1$start + 1))
 colnames(annot.1)[ncol(annot.1)] <- "gene_length"
 
 # aggregate table and calculate total gene lengths within contig
-save.image(name_plot("MGMT_results.Rdat"))
+save.image(name_plot("mgmt_results.Rdat"))
 print("Calculating coding density of contigs")
 # Create temporary table
 total_gene_length <- aggregate(gene_length~contig, data=annot.1, FUN=sum)
 colnames(total_gene_length)[ncol(total_gene_length)] <- "total_gene_length"
-annot.2 <- merge(annot.2, 
+annot.2 <- merge(annot.2,
 		 total_gene_length,
-		 by="contig", 
+		 by="contig",
 		 all.y=FALSE)
 
 # remove temporary table
@@ -216,7 +216,7 @@ rm(total_gene_length)
 # create annotation table
 print("Creating annotation table")
 annot.3 <- as.data.frame.matrix(table(annot.1[,c(1,4)]))[,-1]
-annot.3 <- cbind(rownames(annot.3), annot.3, rowSums(annot.3[,c(2:ncol(annot.3))]))
+annot.3 <- cbind(rownames(annot.3), annot.3, rowSums(annot.3[,c(1:ncol(annot.3))]))
 rownames(annot.3) <- NULL
 colnames(annot.3)[c(1, ncol(annot.3))] <- c("contig", "all_annotations")
 
@@ -233,13 +233,13 @@ print("Reading in nucmer results")
 nucmer_try <- try(read.table(nucmer_file, header=F), silent=T)
 if(inherits(nucmer_try, "try-error")){
   print("WARNING: Nucmer file empty. No taxanomy was assigned to contigs")
-  nucmer_res <- read.table(text = "", 
-			   col.names = c("ref_start", "ref_end", "query_start", "query_end", 
-					 "ref_align_len", "query_align_len", "identity", 
+  nucmer_res <- read.table(text = "",
+			   col.names = c("ref_start", "ref_end", "query_start", "query_end",
+					 "ref_align_len", "query_align_len", "identity",
 					 "ref_id", "contig")
 	     )
-}else{ 
-  nucmer_res <- read.table(nucmer_file, header=F) 
+}else{
+  nucmer_res <- read.table(nucmer_file, header=F)
   colnames(nucmer_res) <- c("ref_start", "ref_end", "query_start", "query_end", "ref_align_len",
 			  "query_align_len", "identity", "ref_id", "contig")
 }
@@ -308,7 +308,7 @@ print("Computing query coverage of contigs against reference genomes")
 all.dat$query_cov <- all.dat$query_align_len / all.dat$length * 100
 all.dat$query_cov[na.omit(all.dat$query_cov > 100)] = 100
 
-save.image(name_plot("MGMT_results.Rdat"))
+save.image(name_plot("mgmt_results.Rdat"))
 print("DONE: Performing calculations")
 ###################################################################################################
 ## Organize filtering statistics and create table
@@ -457,31 +457,32 @@ vb_dat$log_depth_ratio <- outliers(vb_dat$log_depth_ratio,2)
 vb_dat$log_rpkm_ratio <- outliers(vb_dat$log_rpkm_ratio,2)
 vb_dat$log_var_ratio <- outliers(vb_dat$log_var_ratio,2)
 
-save.image(name_plot("MGMT_results.Rdat"))
+save.image(name_plot("mgmt_results.Rdat"))
 print("DONE: Incorporating VizBin data")
 ####################################################################
 ## ASSEMBLY STATISTICS AND VISUALIZATIONS
 ####################################################################
+pdf(NULL)
 print("START: Visualizing")
 ## Output filtering statistics table (text and tsv)
 
 ## Output mapping stats table
 print("Print metagenomic mapping statistics table")
-sink(name_plot("MG_mapping_stats.html"))
+sink(name_plot("mg_mapping_stats.html"))
 print(xtable(MG.map.summary, html.table.attributes=""), type="html")
 sink()
 
-write.table(MG.map.summary, name_plot("MG_mapping_stats.txt"),
+write.table(MG.map.summary, name_plot("mg_mapping_stats.txt"),
 	    sep="\t", quote=F,
 	    row.names=F)
 
 ## Output mapping stats table
 print("Print metatranscriptomics mapping statistics table")
-sink(name_plot("MT_mapping_stats.html"))
+sink(name_plot("mt_mapping_stats.html"))
 print(xtable(MT.map.summary, html.table.attributes=""), type="html")
 sink()
 
-write.table(MT.map.summary, name_plot("MT_mapping_stats.txt"),
+write.table(MT.map.summary, name_plot("mt_mapping_stats.txt"),
 	    sep="\t", quote=F,
 	    row.names=F)
 
@@ -528,25 +529,25 @@ theme_gray()
 print("Generating mapped reads density plot")
 
 png(name_plot("IMP-reads_density.png"), width=plotWidth, height=plotHeight)
-MGMT.beanplot(all.dat$MG_reads, all.dat$MT_reads)
+mgmt.beanplot(all.dat$MG_reads, all.dat$MT_reads)
 dev.off()
 
 ## Plot RPKM density
 print("Generating RPKM density plot")
 png(name_plot("IMP-rpkm_density.png"), width=plotWidth, height=plotHeight)
-MGMT.beanplot(all.dat$MG_rpkm, all.dat$MT_rpkm, ylabel = expression(log[10]*~"RPKM"))
+mgmt.beanplot(all.dat$MG_rpkm, all.dat$MT_rpkm, ylabel = expression(log[10]*~"RPKM"))
 dev.off()
 
 ## Plot coverage density
 print("Generating coverage density plot")
 png(name_plot("IMP-coverage_density.png"), width=plotWidth, height=plotHeight)
-MGMT.beanplot(all.dat$MG_cov, all.dat$MT_cov, ylabel = "fraction")
+mgmt.beanplot(all.dat$MG_cov, all.dat$MT_cov, ylabel = "fraction")
 dev.off()
 
 ## Plot depth density
 print("Generating depth density plot")
 png(name_plot("IMP-depth_density.png"), width=plotWidth, height=plotHeight)
-MGMT.beanplot(all.dat$MG_depth, all.dat$MT_depth, ylabel = expression(log[10]*~"avg. depth"))
+mgmt.beanplot(all.dat$MG_depth, all.dat$MT_depth, ylabel = expression(log[10]*~"avg. depth"))
 dev.off()
 
 ## Plot vizbin scatter plot with length and MG coverage info
@@ -591,13 +592,13 @@ theme_nothing()
 ## Plot variant count
 print("Generating variant count density plot")
 png(name_plot("IMP-var_count.png"), width=plotWidth, height=plotHeight)
-MGMT.beanplot(all.dat$MG_var, all.dat$MT_var)
+mgmt.beanplot(all.dat$MG_var, all.dat$MT_var)
 dev.off()
 
 ## Plot variant density
 print("Generating variant density density plot")
 png(name_plot("IMP-var_density.png"), width=plotWidth, height=plotHeight)
-MGMT.beanplot(all.dat$MG_var_dens, all.dat$MT_var_dens, ylabel = "count / RPKM")
+mgmt.beanplot(all.dat$MG_var_dens, all.dat$MT_var_dens, ylabel = "count / RPKM")
 dev.off()
 
 ## Plot vizbin scatter plot with length and MG variant info
@@ -709,6 +710,7 @@ gB <- ggplotGrob(vb.MTcov)
 gB$widhts <- gA$widths
 grid.newpage()
 
+
 png(name_plot("IMP-vizbin_standard.png"), width=plotWidth, height=plotHeight)
 vb.std
 dev.off()
@@ -775,7 +777,6 @@ print("DONE: Visualizing")
 ## Save the R workspace
 ####################################################################
 
-print("START: Saving R image: MGMT_results.Rdat")
-save.image(name_plot("MGMT_results.Rdat"))
-print("DONE: Saving R image: MGMT_results.Rdat")
-
+print("START: Saving R image: mgmt_results.Rdat")
+save.image(name_plot("mgmt_results.Rdat"))
+print("DONE: Saving R image: mgmt_results.Rdat")

@@ -38,8 +38,6 @@ if os.path.exists(CUSTOM_CONFIG_PATH):
         data = json.load(rhandle)
         config = dict_merge(config, data)
 
-#print(subprocess.check_output('pwd'))
-#print(config)
 
 # some parameters
 ROOT_DIR = os.environ.get("ROOTDIR", config['imp_root'])
@@ -52,9 +50,15 @@ MG = os.environ.get("MG", config['raws']['Metagenomics']).split()
 MT = os.environ.get("MT", config['raws']['Metatranscriptomics']).split()
 SAMPLE = os.environ.get("SAMPLE", config['sample'])
 DBPATH = os.environ.get("DBPATH", config['db_path'])
+IMP_SUDO = os.environ.get("IMP_SUDO", '')
 
+IMP_STEPS = os.environ.get("IMP_STEPS", 'preprocessing assembly analysis binning report').split()
 if not os.path.exists(DBPATH):
     os.makedirs(DBPATH)
+
+IMP_BINNING_METHOD = os.environ.get("IMP_BINNING_METHOD", config['binning']['method'])
+PREPROCESSING_FILTERING = os.environ.get("PREPROCESSING_FILTERING", config['preprocessing_filtering'])
+FILTER = os.environ.get("FILTER", config['filtering']['filter'])
 
 # Get general parameters
 THREADS = os.environ.get("THREADS", config['threads'])

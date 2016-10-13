@@ -74,7 +74,8 @@
     },
     "prokka": {
         "pkg_url": "https://webdav-r3lab.uni.lu/public/R3lab/IMP/prokka-1.11.tar.gz",
-	"prefix": "prokka",
+        "essentials_genes_db_url": "https://webdav-r3lab.uni.lu/public/R3lab/IMP/essential.hmm",
+	       "prefix": "prokka",
         "databases": [
             "cm/Bacteria.i1i",
             "genus/Staphylococcus.phr",
@@ -86,7 +87,15 @@
         "db_ec2pthy": "http://rest.kegg.jp/link/ec/pathway",
         "db_hierarchy": "http://rest.kegg.jp/list/pathway"
     },
-        "metaquast": {
+    "metaquast": {
         "max_genomes": 20
+    },
+    "binning": {
+        "method": "binny",
+        "pk": 10,
+        "nn": 4
+    },
+    "checkm": {
+        "data_url": "https://webdav-r3lab.uni.lu/public/R3lab/IMP/checkm_data_v1.0.6.tar.gz"
     }
 }

@@ -1,0 +1,18 @@
+# include rules for the Binning part of the workflow
+# This step is (or should be) common for all the omic analyses. So just include the same workflow
+# for the integrative analyses
+#
+#include:
+#    '../../integrative/Binning'
+
+rule no_binning:
+     input:
+        "analysis.done"
+     output:
+        touch("binning.done")
+     shell:
+        """
+        echo "No binning done for metatranscriptomic assemblies"
+        touch Binning/no_binning_for_mt_assembly.done
+        """
+

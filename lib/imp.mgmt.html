@@ -70,6 +70,7 @@
             <li><a href="#assembly" aria-controls="assembly" role="tab" data-toggle="tab">Assembly</a></li>
             <li><a href="#mapping" aria-controls="mapping" role="tab" data-toggle="tab">Mapping</a></li>
             <li><a id="annottab" href="#annotation" aria-controls="annotation" role="tab" data-toggle="tab">Annotation</a></li>
+            <li><a id="binningtab" href="#binning" aria-controls="binning" role="tab" data-toggle="tab">Binning</a></li>
             <li><a href="#variants" aria-controls="variants" role="tab" data-toggle="tab">Variants</a></li>
             <li><a href="#ratio" aria-controls="ratio" role="tab" data-toggle="tab">Ratio</a></li>
             <li><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Workflow overview</a></li>
@@ -254,6 +255,33 @@
               </div>
           </section>
         </div> -->
+
+        <!-- BINNING -->
+        <div role="tabpanel" class="tab-pane fade" id="binning">
+          <section id="binning-section" class="row">
+              <h1><small>MaxBin results</small></h1>
+
+              <div id="but-binning" class="row btn-group" data-toggle="buttons" name="binning-data">
+                  <label class="btn btn-primary active">
+                      <input id="but-binning1" type="radio" value="Binning/MaxBin/IMP-MaxBin-vizbin_length_bundance.png" class="btn btn-default" name="binning-data" checked>MaxBin bins
+                  </label>
+                  <label class="btn btn-primary">
+                      <input id="but-binning2" type="radio" value="Binning/MaxBin/IMP-MaxBin-vizbin_length_completeness_abundance.png" class="btn btn-default" name="binning-data">MaxBin bin completness
+                  </label>
+              </div>
+              <div class="row">
+                  <img id='binning-wrapper' class='img-responsive' src='Binning/MaxBin/IMP-MaxBin-vizbin_length_bundance.png'/>
+              </div>
+              <h4>
+                  MaxBin bin information
+              </h4>
+               <div id="maxbin-results" class="row"></div>
+               <p class="lead">
+                   Powered by <a href="https://microbiomejournal.biomedcentral.com/articles/10.1186/2049-2618-2-26">MaxBin</a> and <a href="http://claczny.github.io/VizBin/">VizBin</a>.
+               </p>
+          </section>
+        </div>
+
 
 
         <!-- RATIO -->

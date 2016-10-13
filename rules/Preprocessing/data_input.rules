@@ -69,35 +69,51 @@ data_input = {
 }
 
 
-def datainput(wildcards):
-    if wildcards.type in TYPES:
-        return data_input[wildcards.type]
-    return 'datainput-no-file-here'
-
-
 if config['skip_preprocessing']:
-    rule prepare_data_input:
-        input:
-            datainput
-        output:
-            "Preprocessing/{type}.r1.fq",
-            "Preprocessing/{type}.r2.fq",
-            "Preprocessing/{type}.se.fq",
-            "Preprocessing/{type}.r1.preprocessed.fq",
-            "Preprocessing/{type}.r2.preprocessed.fq",
-            "Preprocessing/{type}.se.preprocessed.fq",
-        params:
-            type = '{wildcards.type}'
-        run:
-            prepare_input_files(input, wildcards.type)
+    if MG:
+        rule prepare_mg_data:
+            input:
+                MG
+            output:
+                "Preprocessing/mg.r1.fq",
+                "Preprocessing/mg.r2.fq",
+                "Preprocessing/mg.se.fq",
+                "Preprocessing/mg.r1.preprocessed.fq",
+                "Preprocessing/mg.r2.preprocessed.fq",
+                "Preprocessing/mg.se.preprocessed.fq",
+            run:
+                prepare_input_files(input, 'mg')
+    if MT:
+        rule prepare_mt_data:
+            input:
+                MT
+            output:
+                "Preprocessing/mt.r1.fq",
+                "Preprocessing/mt.r2.fq",
+                "Preprocessing/mt.se.fq",
+                "Preprocessing/mt.r1.preprocessed.fq",
+                "Preprocessing/mt.r2.preprocessed.fq",
+                "Preprocessing/mt.se.preprocessed.fq",
+            run:
+                prepare_input_files(input, 'mt')
+
+
 else:
-    rule prepare_data_input:
-        input:
-            datainput
-        output:
-            "Preprocessing/{type}.r1.fq",
-            "Preprocessing/{type}.r2.fq"
-        params:
-            type = '{wildcards.type}'
-        run:
-            prepare_input_files(input, wildcards.type)
+    if MG:
+        rule prepare_mg_data:
+            input:
+                MG
+            output:
+                "Preprocessing/mg.r1.fq",
+                "Preprocessing/mg.r2.fq"
+            run:
+                prepare_input_files(input, 'mg')
+    if MT:
+        rule prepare_mt_data:
+            input:
+                MT
+            output:
+                "Preprocessing/mt.r1.fq",
+                "Preprocessing/mt.r2.fq"
+            run:
+                prepare_input_files(input, 'mt')

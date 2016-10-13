@@ -8,7 +8,7 @@ print("Loading required R libraries")
 require(genomeIntervals)
 
 require(checkpoint)
-checkpoint('2015-04-27', scanForPackages=FALSE, checkpointLocation="/root/")
+checkpoint('2016-06-20', scanForPackages=FALSE, checkpointLocation="~/lib", project="~/lib")
 
 require(ggplot2)
 require(gtools)
@@ -131,13 +131,25 @@ annot.1 <- as.data.frame(cbind(annot.1, annot.1$end - annot.1$start + 1))
 colnames(annot.1)[ncol(annot.1)] <- "gene_length"
 
 # aggregate table and calculate total gene lengths within contig
+save.image(name_plot("mg_results.Rdat"))
 print("Calculating coding density of contigs")
-annot.2 <- cbind(annot.2, aggregate(gene_length~contig, data=annot.1, FUN=sum)[,2])
-colnames(annot.2)[ncol(annot.2)] <- "total_gene_length"
+# Create temporary table
+total_gene_length <- aggregate(gene_length~contig, data=annot.1, FUN=sum)
+colnames(total_gene_length)[ncol(total_gene_length)] <- "total_gene_length"
+annot.2 <- merge(annot.2, 
+		 total_gene_length,
+		 by="contig", 
+		 all.y=FALSE)
+
+# remove temporary table
+rm(total_gene_length)
 
 # create annotation table
 print("Creating annotation table")
 annot.3 <- as.data.frame.matrix(table(annot.1[,c(1,4)]))[,-1]
+annot.3 <- cbind(rownames(annot.3), annot.3, rowSums(annot.3[,c(1:ncol(annot.3))]))
+rownames(annot.3) <- NULL
+colnames(annot.3)[c(1, ncol(annot.3))] <- c("contig", "all_annotations")
 
 if (is.null(ncol(annot.3)))
 {
@@ -162,13 +174,13 @@ print("Reading in nucmer results")
 nucmer_try <- try(read.table(nucmer_file, header=F), silent=T)
 if(inherits(nucmer_try, "try-error")){
   print("WARNING: Nucmer file empty. No taxanomy was assigned to contigs")
-  nucmer_res <- read.table(text = "", 
-			   col.names = c("ref_start", "ref_end", "query_start", "query_end", 
-					 "ref_align_len", "query_align_len", "identity", 
+  nucmer_res <- read.table(text = "",
+			   col.names = c("ref_start", "ref_end", "query_start", "query_end",
+					 "ref_align_len", "query_align_len", "identity",
 					 "ref_id", "contig")
 	     )
-}else{ 
-  nucmer_res <- read.table(nucmer_file, header=F) 
+}else{
+  nucmer_res <- read.table(nucmer_file, header=F)
   colnames(nucmer_res) <- c("ref_start", "ref_end", "query_start", "query_end", "ref_align_len",
 			  "query_align_len", "identity", "ref_id", "contig")
 }
@@ -191,7 +203,7 @@ print("DONE: Merging data")
 ###################################################################################################
 # Calculate and merge data
 print("Perform calculations")
-save.image(name_plot("results.Rdat"))
+save.image(name_plot("mg_results.Rdat"))
 # Get new column numbers
 newcols <- ncol(all.dat) + 1
 all.dat <- cbind(all.dat,
@@ -256,11 +268,11 @@ MG.read.count.final <- unique(MG.read.count[,c(5,4,2)])
 MG.read.count.final$count <- as.integer(MG.read.count.final$count)
 
 # Write out table in html and tab separated files
-sink(name_plot("MG.read_stats.html"))
+sink(name_plot("mg.read_stats.html"))
 print(xtable(MG.read.count.final, html.table.attributes=""), type = "html")
 sink()
 
-write.table(MG.read.count.final, name_plot("MG.read_stats.txt"),
+write.table(MG.read.count.final, name_plot("mg.read_stats.txt"),
 	    sep="\t", quote=F,
 	    row.names=F)
 
@@ -324,11 +336,11 @@ write.table(assembly.stats, name_plot("assembly_stats.txt"),
 
 ## Output mapping stats table
 print("Print metagenomic mapping statistics table")
-sink(name_plot("MG_mapping_stats.html"))
+sink(name_plot("mg_mapping_stats.html"))
 print(xtable(MG.map.summary, html.table.attributes=""), type="html")
 sink()
 
-write.table(MG.map.summary, name_plot("MG_mapping_stats.txt"),
+write.table(MG.map.summary, name_plot("mg_mapping_stats.txt"),
 	    sep="\t", quote=F,
 	    row.names=F)
 
@@ -370,11 +382,11 @@ print("Generating mapped reads plot")
 var1 <-log10(c(all.dat$MG_reads,all.dat$MG_rpkm))
 var1[is.infinite(var1)]=NA
 var2 <- c(rep("MG",nrow(all.dat)),rep("MG",nrow(all.dat)))
-MG_mapped_reads<-data.frame(var1,var2) 
+MG_mapped_reads<-data.frame(var1,var2)
 
-png(name_plot("IMP-MG_reads_density.png"), width=350, height=700)
+png(name_plot("IMP-mg_reads_density.png"), width=350, height=700)
 par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
-beanplot(var1 ~ var2, data= MG_mapped_reads,  side = "both",log="auto", 
+beanplot(var1 ~ var2, data= MG_mapped_reads,  side = "both",log="auto",
 what=c(1,1,1,0), border = NA, col = list("blue", c("red", "white")),
 bw="nrd0", main="Mappable reads", ylab=expression(log[10]*~"count"))
 legend("bottomleft", fill =c("blue", "red"), legend = c("No of reads mapped", "RPKM normalized"))
@@ -384,11 +396,11 @@ dev.off()
 print("Generating MG coverage plot")
 var1 <-c(all.dat$MG_cov,all.dat$MG_depth)
 var2 <- c(rep("MG",nrow(all.dat)),rep("MG",nrow(all.dat)))
-MG_coverage<-data.frame(var1,var2) 
+MG_coverage<-data.frame(var1,var2)
 
-png(name_plot("IMP-MG_coverage_density.png"), width=350, height=700)
+png(name_plot("IMP-mg_coverage_density.png"), width=350, height=700)
 par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
-beanplot(var1 ~ var2, data= MG_coverage,  side = "both",log="auto", 
+beanplot(var1 ~ var2, data= MG_coverage,  side = "both",log="auto",
 what=c(1,1,1,0), border = NA, col = list("blue", c("red", "white")),
 bw="nrd0", main="Coverage", ylab="fraction")
 legend("bottomleft", fill =c("blue", "red"), legend = c("Coverage", "depth"))
@@ -396,7 +408,7 @@ dev.off()
 
 ## Plot vizbin scatter plot with length and MG coverage info
 print("Generating vizbin plot for metagenomic coverage")
-png(name_plot("IMP-MG_vizbin_length_cov.png"), width=700, height=700)
+png(name_plot("IMP-mg_vizbin_length_cov.png"), width=700, height=700)
 ggplot(vb_dat, aes(x=x,y=y)) +
 geom_point(colour="blue", aes(alpha=MG_cov, size=log10(length))) +
 guides(size=guide_legend(title=log10len),
@@ -407,7 +419,7 @@ dev.off()
 
 ## Plot vizbin scatter plot with length and MG depth info
 print("Generating vizbin plot for metagenomic depth")
-png(name_plot("IMP-MG_vizbin_length_depth.png"),width=700, height=700)
+png(name_plot("IMP-mg_vizbin_length_depth.png"),width=700, height=700)
 ggplot(vb_dat, aes(x=x,y=y)) +
 geom_point(colour="blue", aes(alpha=MG_depth, size=log10(length))) +
 guides(size=guide_legend(title=log10len),
@@ -423,13 +435,13 @@ dev.off()
 var1 <-log10(c(all.dat$MG_var,all.dat$MG_dens))
 var1[is.infinite(var1)]=NA
 var2 <- c(rep("MG",nrow(all.dat)),rep("MG",nrow(all.dat)))
-MG_variant_count<-data.frame(var1,var2) 
+MG_variant_count<-data.frame(var1,var2)
 
 print("Generating variant count plots")
-png(name_plot("IMP-MG_var_count.png") ,width=350, height=700)
+png(name_plot("IMP-mg_var_count.png") ,width=350, height=700)
 
 par(lend = 1, mai = c(0.8, 0.8, 0.5, 0.5))
-beanplot(var1 ~ var2, data= MG_variant_count,  side = "both",log="auto", 
+beanplot(var1 ~ var2, data= MG_variant_count,  side = "both",log="auto",
 what=c(1,1,1,0), border = NA, col = list("blue", c("red", "white")),
 bw="nrd0", main="MG variant (SNPs & INDELS)", ylab=expression(log[10]*~count))
 legend("bottomleft", fill =c("blue", "red"), legend = c("No. of variants", "Variant density"))
@@ -440,7 +452,7 @@ dev.off()
 MG_var_label <- expression(bold(frac(variants[MG]/kb, MG[rpkm])))
 
 print("Generating vizbin plot for metagenomic variant density")
-png(name_plot("IMP-MG_vizbin_length_vardens.png"), width=700, height=700)
+png(name_plot("IMP-mg_vizbin_length_vardens.png"), width=700, height=700)
 ggplot(vb_dat, aes(x=x,y=y)) +
 geom_point(aes(colour=MG_var_dens, size=log10(length), order=MG_var_dens), alpha=0.75) +
 scale_colour_gradient(high="black", low="cyan") +
@@ -451,6 +463,4 @@ theme_nothing()
 dev.off()
 
 ## Save the R workspace
-save.image(name_plot("MG_results.Rdat"))
-
-
+save.image(name_plot("mg_results.Rdat"))

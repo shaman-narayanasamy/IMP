@@ -1,6 +1,8 @@
 .*
 !.gitignore
+!.gitlab-ci.yml
 *~
 conf/userconfig.imp.json
 output/*
+db
 __pycache__

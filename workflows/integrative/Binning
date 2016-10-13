@@ -1,0 +1,20 @@
+# include rules for the Binning part of the workflow
+
+
+
+include:
+    '../../rules/Binning/MaxBin/maxbin.rule'
+include:
+    '../../rules/Binning/MaxBin/get_contig2bin.rule'
+include:
+    '../../rules/Binning/MaxBin/visualize_maxBin.rule'
+
+# master command
+rule BINNING:
+    input:
+        "Binning/MaxBin/maxbin_res.log",
+        "Binning/MaxBin/IMP-MaxBin-vizbin_length_completeness_abundance.png",
+        "Binning/MaxBin/IMP-MaxBin-vizbin_length_bundance.png",
+        "Binning/MaxBin/MaxBin_VizBin-res.Rdat"
+    output:
+        touch('binning.done')

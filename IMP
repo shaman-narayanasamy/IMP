@@ -11,9 +11,12 @@ import tempfile
 import sys
 import re
 
-IMP_VERSION = '1.3'
+CURRENT_DIRECTORY = Path(__file__).parent.abspath()
+IMP_VERSION = '1.4'
 IMP_DEFAULT_TAR_REPOSITORY = 'https://webdav-r3lab.uni.lu/public/R3lab/IMP/dist/imp-%s.tar.gz' % IMP_VERSION
 IMP_IMAGE_NAME = 'docker-r3lab.uni.lu/imp/imp'
+IMP_DEFAULT_DB_DIR = CURRENT_DIRECTORY / 'db'
+
 
 __doc__ = """Integrated Metaomic Pipeline.
  ____  __  __  ____
@@ -41,7 +44,7 @@ Options:
   -h --help         Show this help and exit
   -m MG             Path to the metagenomics paired files (must be 2 files).
   -t MT             Path to the metatranscriptomic paired files (2 files).
-  -d DBPATH         Path to the databases [default: db]
+  -d DBPATH         Path to the databases [default: {db}]
   -i IMAGENAME      Name of the docker image. Useful when you want to run your own built container. [default: {name}]
   -v VERSION        Version of the docker image. Useful when you want to run your own built container. [default: {version}]
   -o OUTPUT         Path to the output directory
@@ -75,7 +78,8 @@ Advanced use:
 """.format(
     name=IMP_IMAGE_NAME,
     version=IMP_VERSION,
-    repo=IMP_DEFAULT_TAR_REPOSITORY
+    repo=IMP_DEFAULT_TAR_REPOSITORY,
+    db=IMP_DEFAULT_DB_DIR
 )
 
 _IMP_OUTPUT_DIR = '/home/imp/output'
@@ -109,7 +113,7 @@ def check_imp_installed(name, version, repo):
     Check if IMP is installed. Install it if not.
     """
     if not is_imp_installed(name, version):
-        install_imp(repo)
+        install_imp(repo, version)
 
 
 def is_imp_installed(name, version):
@@ -118,13 +122,14 @@ def is_imp_installed(name, version):
     """
     try:
         imp_image = subprocess.Popen(['docker', 'images', name], stdout=subprocess.PIPE)
-        is_installed = subprocess.check_output(['grep', version], stdin=imp_image.stdout)
+        is_installed = subprocess.check_output(['grep', " %s " % version], stdin=imp_image.stdout)
     except subprocess.CalledProcessError:
         return False
+    print("[x] Found IMP {n} {v}".format(n=name, v=version))
     return True
 
 
-def install_imp(repo):
+def install_imp(repo, version):
     """
     Install IMP.
     """
@@ -195,11 +200,12 @@ def init(args):
     if args['--current']:
         formatting_args['p'] = CURRENT_PATH
         formatting_args['cont_code'] =  _IMP_CODE_DIR
-        docker_cmd = 'docker run --rm -e "LOCAL_USER_ID=`id -u $USER`" -e "LOCAL_GROUP_ID=`id -g $USER`" --name {name} -v {p}:{cont_code} -v {d}:{cont_db} -v {conf}:{cont_conf} -e CONFIGFILE={cont_conf}/{c}{interactive} {n}:{v}'
+        docker_cmd = 'docker run --rm -e "IMP_SUDO=sudo " -e "LOCAL_USER_ID=`id -u $USER`" -e "LOCAL_GROUP_ID=`id -g $USER`" --name {name} -v {p}:{cont_code} -v {d}:{cont_db} -v {conf}:{cont_conf} -e CONFIGFILE={cont_conf}/{c}{interactive} {n}:{v}'
     if args['--enter']:
         formatting_args['interactive'] = ' -it'
     # format docker command
     docker_cmd = docker_cmd.format(**formatting_args)
+    print(docker_cmd)
     # IMP command + user mapping (see https://github.com/docker/docker/pull/12648)
 
     if args['--enter']:
@@ -212,10 +218,9 @@ def init(args):
         database_path.makedirs()
     if not config_directory.exists():
         config_directory.makedirs()
-        
+
     _call(cmd, out_container_name)
     #subprocess.call(cmd, shell=True)
-
 
 def run(args):
     CURRENT_PATH = Path(__file__).parent.abspath()
@@ -276,6 +281,8 @@ def run(args):
     if args['-a']:
         envs += ['-e IMP_ASSEMBLER=%s' % args['-a']]
 
+    # set IMP_SUDO
+    envs += ['-e IMP_SUDO=sudo ']
     # CL
     cmd = ['docker', 'run'] + mount_points + envs
 
@@ -312,9 +319,8 @@ def run(args):
     else:
         # put default command if not specified
         if not args['COMMANDS']:
-            args['COMMANDS'] = ['snakemake', 'ALL']
-        # add the workflow file
-        args['COMMANDS'] += ['-s', workflow_file]
+            args['COMMANDS'] = ['snakemake', '-s', workflow_file, 'ALL']
+        # protect command
         cmd += args['COMMANDS']
         cmd = ' '.join(cmd)
         # cmd = ' '.join(cmd) + map_user(' '.join(args['COMMANDS']), '{cont_out}')
@@ -350,12 +356,14 @@ def _call(cmd, container_name):
     try:
         p = subprocess.Popen(cmd, shell=True)
         p.wait()
+        if p.returncode != 0:
+            raise Exception("Abort")
     except KeyboardInterrupt:
         print('Killing container...')
         k = subprocess.Popen("docker kill %s" % container_name, shell=True)
         k.wait()
         print('Terminated')
-        p.terminate()
+        return p.terminate()
 
 if __name__ == '__main__':
     check_installation()

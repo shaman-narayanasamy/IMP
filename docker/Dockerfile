@@ -1,8 +1,8 @@
 # Base container with tools needed for the IMP pipeline
 #
-# VERSION       1.3
+# VERSION       1.4
 
-FROM docker-r3lab.uni.lu/imp/imp-tools:1.3
+FROM docker-r3lab.uni.lu/imp/imp-tools:1.4
 MAINTAINER yohan.jarosz@uni.lu
 
 USER root
@@ -18,11 +18,6 @@ RUN echo "`snakemake --bash-completion`" >> ~/.bashrc \
     && echo "export LD_LIBRARY_PATH=/usr/local/lib" >> ~/.bashrc
 
 
-#### Add IMP user
-RUN useradd -d /home/imp imp \
-    && echo 'imp:imp' |chpasswd \
-    && echo "imp ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/imp
-
 
 #####################
 # Ship IMP codebase #
@@ -37,12 +32,15 @@ RUN mkdir -p /home/imp/code /home/imp/output /home/imp/data /home/imp/bin /home/
 
 # R with checkpoint libraries
 ADD dependencies.R /home/imp/lib/
-RUN mkdir /root/.checkpoint \
-    && echo "r <- getOption('repos'); r['CRAN'] <- 'http://cran.us.r-project.org'; options(repos = r);" > /root/.Rprofile \
-    && Rscript -e "install.packages('checkpoint')" \
-    && Rscript -e "library(checkpoint);checkpoint('2015-04-27', project='/home/imp/lib')" \
+RUN mkdir /home/imp/lib/.checkpoint \
+    && echo "r <- getOption('repos'); r['CRAN'] <- 'https://cloud.r-project.org/'; options(repos = r);" > /home/imp/.Rprofile \
+    && Rscript -e "install.packages('checkpoint', repos='https://cloud.r-project.org/')" \
+    && Rscript -e "library(checkpoint);checkpoint('2016-06-20', checkpointLocation='/home/imp/lib', project='/home/imp/lib')" \
     && Rscript -e "source('http://bioconductor.org/biocLite.R');biocLite('genomeIntervals')"\
-    && chmod -R 777 /root/.checkpoint /root/.Rprofile
+    && chmod -R 777 /home/imp/lib/.checkpoint /home/imp/.Rprofile
+
+# add Snakemake
+RUN pip3 install snakemake==3.7.1
 
 #### Add gosu
 ENV GOSU_VERSION 1.7
@@ -60,19 +58,23 @@ RUN set -x \
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
 
-RUN chown imp:imp -R /home/imp
+#### Add IMP user
+RUN groupadd imp && useradd -g imp -d /home/imp imp \
+    && chown imp:imp -R /home/imp/ \
+    && chmod -R 0777 /home/imp \
+    && echo 'imp:imp' |chpasswd \
+    && echo "imp ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/imp
+
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-
 
 
 ######################
 # runtime parameters #
 ######################
-ENV PATH /home/imp/bin:/home/imp/lib/trinityrnaseq_r20140717:/home/imp/lib/Platypus_0.8.1:/home/imp/lib/megahit:/home/imp/lib/fastqc/FastQC:$PATH
+ENV PATH /home/imp/lib/FragGeneScan1.30:/home/imp/lib/MaxBin-2.2.1:/home/imp/lib/pullseq/src:/home/imp/lib/Platypus_0.8.1:/home/imp/lib/megahit:/home/imp/lib/fastqc/FastQC:$PATH
 ENV LD_LIBRARY_PATH /usr/local/lib/:/home/imp/lib/Platypus_0.8.1
 VOLUME ["/home/imp/data", "/home/imp/output", "/home/imp/databases", "/home/imp/code"]
 WORKDIR /home/imp/code
-
 
 CMD ["snakemake", "ALL"]

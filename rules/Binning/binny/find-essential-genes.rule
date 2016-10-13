@@ -1,0 +1,30 @@
+rule binning_essential_genes:
+    input:
+        "Analysis/annotation/{p}.faa".format(p=config['prokka']['prefix']),
+        "Analysis/annotation/annotation.filt.gff",
+        "%s/hmm/essentials_genes.hmm" % DBPATH
+    output:
+        "Binning/binny/ORFS.hmmer.essential.out",
+        "Binning/binny/ORFS.hmm.orfs.essential.hits",
+        "Binning/binny/ORFS.hmm.orfs.essential.hits_reduced",
+        "Binning/binny/ORFS-contig_links.bed",
+        "Binning/binny/ORFS.hmm.orfs.essential.hits.protids",
+        "Binning/binny/ORFS.hmm.orfs.essential.hits.faa"
+    shell:
+        """
+        TBL_TMP=$(mktemp --tmpdir={TMPDIR} -t "XXXX_hmmer.essential.hits")
+        BED_TMP=$(mktemp --tmpdir={TMPDIR} -t "XXXX_binning-bed.tmp")
+
+        # Predict essential genes using hmm search
+        hmmsearch --tblout {output[1]} --cut_tc --notextw {input[2]} {input[0]} > {output[0]}
+        #sed 's/ \+ /\t/g' <(grep -v "^#" {output[1]}) | cut -f1,2,3,4,5 > {output[2]}
+        paste <(sed 's/ \+ /\t/g' <(grep -v "^#" {output[1]}) | cut -f1,2,3,4) <(grep -v "^#" {output[1]} | sed 's/ \+ /\t/g' | cut -f5 | sed 's/\s.*$//') > {output[2]}
+        
+        # Prepare file that links contigs to genes (using .gff file)
+        grep CDS --line-buffered {input[1]} | awk '{{printf("%s\\t%s\\t%s\\t%s\\t0\\t%s\\n",$1,$4,$5,$9,$7)}}' > $BED_TMP
+        awk '{{gsub(/ID=/,""); gsub(/;.*\t0/,"\t0");print}}' $BED_TMP > {output[3]}
+
+        protids={output[4]}
+        cut -f1 {output[2]} > {output[4]}
+        pullseq -i {input[0]} -n ${{protids}} > {output[5]}
+        """

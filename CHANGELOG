@@ -1,3 +1,10 @@
+# v 1.4.0
+    * Update command line utility: impy
+    * Integrate more tools into the pipeline (e.g. MaxBin)
+    * Part of the pipeline can be launched without the others
+    * Testing pipeline workflow and tools
+    * Update container to version 1.4
+
 # v 1.2.0
     * Upgrade Snakemake to the latest Version
     * Current version of the IMP code is shipped inside the docker container
