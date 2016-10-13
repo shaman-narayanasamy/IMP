@@ -1,6 +1,6 @@
 # v 1.4.0
     * Update command line utility: impy
-    * Integrate more tools into the pipeline (e.g. Binny and MaxBin)
+    * Integrate more tools into the pipeline (e.g. MaxBin)
     * Part of the pipeline can be launched without the others
     * Testing pipeline workflow and tools
     * Update container to version 1.4

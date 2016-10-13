@@ -10,7 +10,7 @@ def read(fname):
 
 setup(
     name='impy',
-    version='0.1.dev16',
+    version='0.2',
     author="Shaman Narayanasamy, Yohan Jarosz",
     author_email="shaman.narayanasamy@uni.lu, yohan.jarosz@uni.lu",
     description=("Integrated Metaomic Pipeline command-line utility."),
