@@ -158,7 +158,7 @@ if (is.null(ncol(annot.3)))
     print("Skipping annotation count")
     annot.4 <- annot.2
 }else{
-    annot.3 <- cbind(rownames(annot.3), annot.3, rowSums(annot.3[,c(2:ncol(annot.3))]))
+    annot.3 <- cbind(rownames(annot.3), annot.3, rowSums(annot.3[,c(3:ncol(annot.3))]))
     rownames(annot.3) <- NULL
     colnames(annot.3)[c(1, ncol(annot.3))] <- c("contig", "all_annotations")
     annot.4 <- merge(annot.2, annot.3, by="contig")
