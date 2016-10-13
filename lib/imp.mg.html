@@ -242,12 +242,24 @@
           <section id="binning-section" class="row">
               <h1><small>MaxBin results</small></h1>
 
-              <div id="maxbin-results" class="row"></div>
-              <div id="maxbin-images" class="row">
-                  <img class='img-responsive' src='Binning/MaxBin/IMP-MaxBin-vizbin_length_completeness_abundance.png'/>
-                  <img class='img-responsive' src='Binning/MaxBin/IMP-MaxBin-vizbin_length_bundance.png'/>
+              <div id="but-binning" class="row btn-group" data-toggle="buttons" name="binning-data">
+                  <label class="btn btn-primary active">
+                      <input id="but-binning1" type="radio" value="Binning/MaxBin/IMP-MaxBin-vizbin_length_bundance.png" class="btn btn-default" name="binning-data" checked>MaxBin bins
+                  </label>
+                  <label class="btn btn-primary">
+                      <input id="but-binning2" type="radio" value="Binning/MaxBin/IMP-MaxBin-vizbin_length_completeness_abundance.png" class="btn btn-default" name="binning-data">MaxBin bin completness
+                  </label>
               </div>
-
+              <div class="row">
+                  <img id='binning-wrapper' class='img-responsive' src='Binning/MaxBin/IMP-MaxBin-vizbin_length_bundance.png'/>
+              </div>
+              <h4>
+                  MaxBin bin information
+              </h4>
+               <div id="maxbin-results" class="row"></div>
+               <p class="lead">
+                   Powered by <a href="https://microbiomejournal.biomedcentral.com/articles/10.1186/2049-2618-2-26">MaxBin</a> and <a href="http://claczny.github.io/VizBin/">VizBin</a>.
+               </p>
           </section>
         </div>
 
