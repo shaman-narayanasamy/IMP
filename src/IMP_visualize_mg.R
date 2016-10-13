@@ -131,7 +131,6 @@ annot.1 <- as.data.frame(cbind(annot.1, annot.1$end - annot.1$start + 1))
 colnames(annot.1)[ncol(annot.1)] <- "gene_length"
 
 # aggregate table and calculate total gene lengths within contig
-save.image(name_plot("mg_results.Rdat"))
 print("Calculating coding density of contigs")
 # Create temporary table
 total_gene_length <- aggregate(gene_length~contig, data=annot.1, FUN=sum)
@@ -151,13 +150,13 @@ annot.3 <- cbind(rownames(annot.3), annot.3, rowSums(annot.3[,c(1:ncol(annot.3))
 rownames(annot.3) <- NULL
 colnames(annot.3)[c(1, ncol(annot.3))] <- c("contig", "all_annotations")
 
+
 if (is.null(ncol(annot.3)))
 {
     print("Skipping annotation count")
     annot.4 <- annot.2
 }else{
-    annot.3 <- cbind(rownames(annot.3), annot.3, rowSums(annot.3[,c(2:ncol(annot.3))]))
-    rownames(annot.3) <- NULL
+    annot.3 <- cbind(annot.3, rowSums(annot.3[,c(3:ncol(annot.3))]))
     colnames(annot.3)[c(1, ncol(annot.3))] <- c("contig", "all_annotations")
     annot.4 <- merge(annot.2, annot.3, by="contig")
 }
